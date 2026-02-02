@@ -4,40 +4,40 @@
  */
 package model;
 
-/**
- *
- * @author Lenovo
- */
 import java.time.LocalDateTime;
 
+/**
+ *
+ * @author BA LIEM
+ */
 public class Book {
     private int bookId;
     private String title;
     private String author;
     private double price;
     private String description;
-    private Category cate;
+    private Category category;
     private int stock;
     private String publisher;
     private int discount;
-    private String imgUrl;
+    private String urlImg;
     private boolean isActive;
     private LocalDateTime createdAt;
 
     public Book() {
     }
 
-    public Book(int bookId, String title, String author, double price, String description, Category cate, int stock, String publisher, int discount, String imgUrl, boolean isActive, LocalDateTime createdAt) {
+    public Book(int bookId, String title, String author, double price, String description, Category category, int stock, String publisher, int discount, String urlImg, boolean isActive, LocalDateTime createdAt) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
         this.price = price;
         this.description = description;
-        this.cate = cate;
+        this.category = category;
         this.stock = stock;
         this.publisher = publisher;
         this.discount = discount;
-        this.imgUrl = imgUrl;
+        this.urlImg = urlImg;
         this.isActive = isActive;
         this.createdAt = createdAt;
     }
@@ -82,12 +82,12 @@ public class Book {
         this.description = description;
     }
 
-    public Category getCate() {
-        return cate;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setCate(Category cate) {
-        this.cate = cate;
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public int getStock() {
@@ -114,12 +114,12 @@ public class Book {
         this.discount = discount;
     }
 
-    public String getImgUrl() {
-        return imgUrl;
+    public String getUrlImg() {
+        return urlImg;
     }
 
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
+    public void setUrlImg(String urlImg) {
+        this.urlImg = urlImg;
     }
 
     public boolean isIsActive() {
@@ -137,11 +137,6 @@ public class Book {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
-
-    @Override
-    public String toString() {
-        return "Book{" + "bookId=" + bookId + ", title=" + title + ", author=" + author + ", price=" + price + ", description=" + description + ", cate=" + cate + ", stock=" + stock + ", publisher=" + publisher + ", discount=" + discount + ", imgUrl=" + imgUrl + ", isActive=" + isActive + ", createdAt=" + createdAt + '}';
-    }
-    
     
 }
+    
