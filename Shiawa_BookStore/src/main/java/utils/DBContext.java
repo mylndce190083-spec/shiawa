@@ -16,26 +16,26 @@ import java.util.logging.Logger;
  * @author LEGION
  */
 public class DBContext {
-      protected Connection conn = null;
+    protected Connection connection = null;
 
     public DBContext() {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             String dbURL = "jdbc:sqlserver://localhost:1433;"
-                    + "databaseName=DB_DESIGN;"
+                    + "databaseName=shiawa;"
                     + "user=sa;"
-                    + "password=admin;"
+                    + "password=1607;"
                     + "encrypt=true;trustServerCertificate=true;";
-            conn = DriverManager.getConnection(dbURL);
-            if (conn != null) {
-                DatabaseMetaData dm = (DatabaseMetaData) conn.getMetaData();
+            connection = DriverManager.getConnection(dbURL);
+            if (connection != null) {
+                DatabaseMetaData dm = (DatabaseMetaData) connection.getMetaData();
                 System.out.println("Driver name: " + dm.getDriverName());
                 System.out.println("Driver version: " + dm.getDriverVersion());
                 System.out.println("Product name: "
                         + dm.getDatabaseProductName());
                 System.out.println("Product version: "
                         + dm.getDatabaseProductVersion());
-            }else{
+            } else {
                 System.out.println("NULL");
             }
         } catch (SQLException ex) {
@@ -48,5 +48,8 @@ public class DBContext {
     public static void main(String[] args) {
         DBContext db = new DBContext();
     }
-}
 
+    public Connection getConnection() {
+        return connection;
+    }
+}

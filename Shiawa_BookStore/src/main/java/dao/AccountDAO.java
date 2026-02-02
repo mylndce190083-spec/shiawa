@@ -4,12 +4,12 @@
  */
 package dao;
 
-import db.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import model.Account;
+import utils.DBContext;
 
 /**
  *
@@ -20,28 +20,27 @@ public class AccountDAO extends DBContext {
         List<Account> list = new ArrayList<>();
 
         String sql = """
-        SELECT customer_id AS id, username, 'Customer' AS role, email
-        FROM Customer
+                SELECT customer_id AS id, username, 'Customer' AS role, email
+                FROM Customer
 
-        UNION ALL
+                UNION ALL
 
-        SELECT s.staff_id AS id, s.username, r.name AS role, s.email
-        FROM Staff s
-        JOIN Role r ON s.role_id = r.role_id
+                SELECT s.staff_id AS id, s.username, r.name AS role, s.email
+                FROM Staff s
+                JOIN Role r ON s.role_id = r.role_id
 
-        ORDER BY username
-        """;
+                ORDER BY username
+                """;
 
         try (PreparedStatement ps = getConnection().prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 list.add(new Account(
-                    rs.getInt("id"),
-                    rs.getString("username"),
-                    rs.getString("role"),
-                    rs.getString("email")
-                ));
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("role"),
+                        rs.getString("email")));
             }
         } catch (Exception e) {
             e.printStackTrace();

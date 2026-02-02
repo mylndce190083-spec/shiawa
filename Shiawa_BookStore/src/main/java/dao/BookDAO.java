@@ -4,18 +4,15 @@
  */
 package dao;
 
-import db.DBContext;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.Book;
 import model.Category;
+import utils.DBContext;
 
 /**
  *
@@ -27,23 +24,23 @@ public class BookDAO extends DBContext {
         List<BookAdmin> list = new ArrayList<>();
 
         String sql = """
-        SELECT
-            b.book_id,
-            b.title,
-            b.author,
-            b.price,
-            b.stock,
-            b.publisher,
-            b.discount,
-            b.url_img,
-            b.is_active,
-            b.created_at,
-            c.name AS category_name
-        FROM Book b
-        LEFT JOIN Category c
-            ON b.category_id = c.category_id
-        ORDER BY b.book_id
-    """;
+                    SELECT
+                        b.book_id,
+                        b.title,
+                        b.author,
+                        b.price,
+                        b.stock,
+                        b.publisher,
+                        b.discount,
+                        b.url_img,
+                        b.is_active,
+                        b.created_at,
+                        c.name AS category_name
+                    FROM Book b
+                    LEFT JOIN Category c
+                        ON b.category_id = c.category_id
+                    ORDER BY b.book_id
+                """;
 
         try (PreparedStatement ps = getConnection().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
@@ -71,10 +68,10 @@ public class BookDAO extends DBContext {
 
     public void insertBook(BookAdmin b) {
         String sql = """
-        INSERT INTO Book
-        (title, author, price, stock, category_id, is_active)
-        VALUES (?, ?, ?, ?, ?, 1)
-    """;
+                    INSERT INTO Book
+                    (title, author, price, stock, category_id, is_active)
+                    VALUES (?, ?, ?, ?, ?, 1)
+                """;
 
         try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
             ps.setString(1, b.getTitle());
@@ -101,38 +98,47 @@ public class BookDAO extends DBContext {
                 String author = rs.getString("author");
                 double price = rs.getDouble("price");
                 String description = rs.getString("description");
-                //tao cate
+                // tao cate
                 int cateId = rs.getInt("category_id");
                 Category cate = dao.getCategoryById(cateId);
-                
+                if (cate == null) {
+                    cate = new Category(cateId, "Unknown");
+                }
+
                 int stock = rs.getInt("stock");
                 String publisher = rs.getString("publisher");
                 int discount = rs.getInt("discount");
                 String imgUrl = rs.getString("url_img");
                 boolean isActive = rs.getBoolean("is_active");
-                LocalDateTime createAte = rs.getTimestamp("created_at").toLocalDateTime();
-                //tao doi tuong product
-                Book b = new Book(id, title, author, price, description, cate, stock, publisher, discount, imgUrl, isActive, createAte);
+
+                // xu ly NULL value cho created_at
+                LocalDateTime createAte = null;
+                if (rs.getTimestamp("created_at") != null) {
+                    createAte = rs.getTimestamp("created_at").toLocalDateTime();
+                }
+                // tao doi tuong product
+                Book b = new Book(id, title, author, price, description, cate, stock, publisher, discount, imgUrl,
+                        isActive, createAte);
                 list.add(b);
             }
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
         return list;
     }
-    
+
     public Book getBookById(int id) {
+        Book b = new Book();
         try {
-            String sql = "SELECT b.*, c.name AS category_name \n" +
-                    "        FROM Book b \n" +
-                    "        LEFT JOIN Category c ON b.category_id = c.category_id \n" +
+            String sql = "SELECT b.*, c.name AS category_name " +
+                    "        FROM Book b " +
+                    "        LEFT JOIN Category c ON b.category_id = c.category_id " +
                     "        WHERE b.book_id = ?";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                Book b = new Book();
                 b.setBookId(rs.getInt("book_id"));
                 b.setTitle(rs.getString("title"));
                 b.setAuthor(rs.getString("author"));
@@ -142,16 +148,16 @@ public class BookDAO extends DBContext {
                 b.setDiscount(rs.getInt("discount"));
                 b.setUrlImg(rs.getString("url_img"));
                 b.setIsActive(rs.getBoolean("is_active"));
-                b.setCreatedAt(rs.getTimestamp("create_at").toLocalDateTime());
+                // b.setCreatedAt(rs.getTimestamp("create_at").toLocalDateTime());
                 Category cate = new Category();
                 cate.setCateName(rs.getString("category_name"));
+                b.setCategory(cate);
                 return b;
-                
+
             }
         } catch (SQLException ex) {
-           return null;
+            return null;
         }
-        return null;
+        return b;
     }
-    }
-
+}

@@ -5,7 +5,6 @@
 package controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -16,33 +15,31 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author admin
  */
-@WebServlet(name = "BookDetailController", urlPatterns = {"/bookdetail"})
+@WebServlet(name = "BookDetailController", urlPatterns = { "/bookdetail" })
 public class BookDetailController extends HttpServlet {
-
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String idString = request.getParameter("id");
-       if (idString != null) {
-                int id = Integer.parseInt(idString);
-                dao.BookDAO bookDAO = new dao.BookDAO();
-                model.Book foundBook = bookDAO.getBookById(id);
-                if(foundBook != null) {
-                    request.setAttribute("book", foundBook);
-                    request.getRequestDispatcher("bookdetail.jsp").forward(request, response);
-                } else {
-                    response.sendRedirect("index.jsp");
-                }
+        if (idString != null) {
+            int id = Integer.parseInt(idString);
+            dao.BookDAO bookDAO = new dao.BookDAO();
+            var foundBook = bookDAO.getBookById(id);
+            if (foundBook != null) {
+                request.setAttribute("book", foundBook);
+                request.getRequestDispatcher("/client/bookdetail.jsp").forward(request, response);
+            } else {
+                response.sendRedirect("index.jsp");
             }
-        
-     
+        }
+
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       
+
     }
 
     /**
