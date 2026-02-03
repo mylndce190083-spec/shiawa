@@ -1,6 +1,6 @@
 <%-- 
-    Document   : delete
-    Created on : Jan 31, 2026, 10:50:46 AM
+    Document   : detail
+    Created on : Feb 3, 2026, 4:51:08 PM
     Author     : BA LIEM
 --%>
 
@@ -119,7 +119,7 @@
                         <div class="d-flex align-items-center justify-content-between mb-4">
                             <!--<h6 class="mb-0">User List</h6>-->
                             <div class="d-flex justify-content-between align-items-center">
-                                <h6 class="mb-0">Delete Book</h6>
+                                <h6 class="mb-0">Book Detail</h6>
                             </div>                         
                         </div>
 
@@ -135,73 +135,60 @@
 
                             <!-- Book Information -->
                             <div class="col-md-8">
-                                <form action="${pageContext.request.contextPath}/book" method="post">
-                                    <input type="hidden" name="view" value="delete">
-                                    <input type="hidden" name="bookId" value="${book.bookId}">
+                                <table class="table table-bordered text-start">
+                                    <tr>
+                                        <th width="30%">Book ID</th>
+                                        <td>${book.bookId}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Title</th>
+                                        <td>${book.title}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Author</th>
+                                        <td>${book.author}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Category</th>
+                                        <td>${book.categoryName}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Price</th>
+                                        <td>${book.price}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Stock</th>
+                                        <td>${book.stock}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Status</th>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${book.isActive}">
+                                                    <span class="badge bg-success">Active</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="badge bg-danger">Inactive</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Created At</th>
+                                        <td>${book.createdAt}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Description</th>
+                                        <td>${book.description}</td>
+                                    </tr>
 
-                                    <table class="table table-bordered text-start">
-                                        <tr>
-                                            <th width="30%">Book ID</th>
-                                            <td>${book.bookId}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Title</th>
-                                            <td>${book.title}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Author</th>
-                                            <td>${book.author}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Category</th>
-                                            <td>${book.categoryName}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Price</th>
-                                            <td>${book.price}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Stock</th>
-                                            <td>${book.stock}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Status</th>
-                                            <td>
-                                                <c:choose>
-                                                    <c:when test="${book.isActive}">
-                                                        <span class="badge bg-success">Active</span>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <span class="badge bg-danger">Inactive</span>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Created At</th>
-                                            <td>${book.createdAt}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Description</th>
-                                            <td>${book.description}</td>
-                                        </tr>
+                                </table>
 
-                                    </table>
-
-                                    <!-- Save & Back Button -->
-                                    <div class="mt-3">
-                                        <button type="submit" class="btn btn-danger"
-                                                onclick="return confirm('Are you sure you want to delete this book?')">
-                                            <i class="fa fa-trash me-2"></i>Confirm Delete
-                                        </button>
-
-                                        <a href="${pageContext.request.contextPath}/book"
-                                           class="btn btn-secondary ms-2">
-                                            Cancel
-                                        </a>
-                                    </div>
-                                </form>
-
+                                <!-- Back Button -->
+                                <a href="${pageContext.request.contextPath}/book"
+                                   class="btn btn-secondary mt-3">
+                                    <i class="fa fa-arrow-left me-2"></i>Back to Book List
+                                </a>
                             </div>
                         </div>
 

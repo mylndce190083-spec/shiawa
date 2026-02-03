@@ -74,7 +74,7 @@
                            class="nav-item nav-link ${pageContext.request.requestURI.contains('/account') ? 'active' : ''}">
                             <i class="fa fa-users me-2">
                             </i>Account</a>
-                            
+
                         <a href="${pageContext.request.contextPath}/book" 
                            class="nav-item nav-link ${pageContext.request.requestURI.contains('/book') ? 'active' : ''}">
                             <i class="fa fa-book me-2">
@@ -116,6 +116,17 @@
                 <!-- Recent Sales Start -->
                 <div class="container-fluid pt-4 px-4">
                     <div class="bg-light text-center rounded p-4">
+                        <c:if test="${not empty sessionScope.msg}">
+                            <div class="alert alert-${sessionScope.msgType} alert-dismissible fade show" role="alert">
+                                ${sessionScope.msg}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+
+                            <!-- Xóa message sau khi hiển thị -->
+                            <c:remove var="msg" scope="session"/>
+                            <c:remove var="msgType" scope="session"/>
+                        </c:if>
+
                         <div class="d-flex align-items-center justify-content-between mb-4">
                             <!--<h6 class="mb-0">User List</h6>-->
                             <div class="d-flex justify-content-between align-items-center">
@@ -149,10 +160,20 @@
                                             <td>${b.price}</td>
                                             <td>${b.stock}</td>
                                             <td class="text-center">
-                                                <a href="book?view=detail&id=${b.bookId}" class="btn btn-sm btn-primary">Detail</a>
-                                                <a href="book?view=edit&id=${b.bookId}" class="btn btn-sm btn-warning">Edit</a>
-                                                <a href="book?view=delete&id=${b.bookId}" class="btn btn-sm btn-danger"
-                                                   onclick="return confirm('Delete this book?')">Delete</a>
+                                                <a href="${pageContext.request.contextPath}/book?view=detail&id=${b.bookId}"
+                                                   class="btn btn-sm btn-primary">
+                                                    Detail
+                                                </a>
+                                                <a href="${pageContext.request.contextPath}/book?view=edit&id=${b.bookId}"
+                                                   class="btn btn-sm btn-warning">
+                                                    Edit
+                                                </a>
+
+                                                <a href="${pageContext.request.contextPath}/book?view=delete&id=${b.bookId}"
+                                                   class="btn btn-sm btn-danger">
+                                                    Delete
+                                                </a>
+
                                             </td>
                                         </tr>
                                     </c:forEach>

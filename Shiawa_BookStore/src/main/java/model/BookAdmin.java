@@ -22,6 +22,7 @@ public class BookAdmin {
     private String createdAt;
     private String categoryName;
     private int categoryId;
+    private String description;
 
     public BookAdmin() {
     }
@@ -134,6 +135,14 @@ public class BookAdmin {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 }
