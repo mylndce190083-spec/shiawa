@@ -148,7 +148,7 @@ public class BookDAO extends DBContext {
                 b.setDiscount(rs.getInt("discount"));
                 b.setUrlImg(rs.getString("url_img"));
                 b.setIsActive(rs.getBoolean("is_active"));
-                b.setDescription(rs.getString("description")); 
+                b.setDescription(rs.getString("description"));
                 b.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
                 Category cate = new Category();
                 cate.setCateName(rs.getString("category_name"));
@@ -160,5 +160,34 @@ public class BookDAO extends DBContext {
             return null;
         }
         return b;
+    }
+
+    public List<Book> getSimilarBook(int categoryId) {
+        List<Book> list = new ArrayList<>();
+        String sql = "SELECT TOP 6 b.*, c.name AS category_name\n"
+                + "FROM Book b\n"
+                + "LEFT JOIN Category c ON b.category_id = c.category_id"
+                + " Where c.category_id = ? ";
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, categoryId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Book b = new Book();
+                b.setBookId(rs.getInt("book_id"));
+                b.setTitle(rs.getString("title"));
+                b.setPrice(rs.getDouble("price"));
+                b.setUrlImg(rs.getString("url_img"));
+
+                Category c = new Category();
+                c.setCateName(rs.getString("category_name"));
+                b.setCategory(c);
+
+                list.add(b);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }

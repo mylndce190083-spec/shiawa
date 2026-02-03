@@ -10,12 +10,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import model.Book;
 
 /**
  *
  * @author admin
  */
-@WebServlet(name = "BookDetailController", urlPatterns = { "/bookdetail" })
+@WebServlet(name = "BookDetailController", urlPatterns = {"/bookdetail"})
 public class BookDetailController extends HttpServlet {
 
     @Override
@@ -27,6 +29,10 @@ public class BookDetailController extends HttpServlet {
             dao.BookDAO bookDAO = new dao.BookDAO();
             var foundBook = bookDAO.getBookById(id);
             if (foundBook != null) {
+                int categoryId = foundBook.getCategory().getCateId();
+                List<Book> similarBooks = bookDAO.getSimilarBook(categoryId);
+
+                request.setAttribute("similarBooks", similarBooks);
                 request.setAttribute("book", foundBook);
                 request.getRequestDispatcher("/client/bookdetail.jsp").forward(request, response);
             } else {
