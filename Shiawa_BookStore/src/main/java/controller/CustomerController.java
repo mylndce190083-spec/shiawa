@@ -4,16 +4,23 @@
  */
 package controller;
 
+<<<<<<< HEAD
 import dao.CustomerDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
+=======
+import java.io.IOException;
+>>>>>>> 6eec6e2c6e3608949a045ca087e1b084a6b72c92
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+<<<<<<< HEAD
 import java.util.List;
 import model.Customer;
+=======
+>>>>>>> 6eec6e2c6e3608949a045ca087e1b084a6b72c92
 
 /**
  *
