@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * @author MY
  */
 public class Customer {
-   private int customer_id;
+    private int customer_id;
     private String username;
     private String password;
     private String fullName;
@@ -22,12 +22,13 @@ public class Customer {
     private String avatar;
     private Date date_of_birth;
     private String gender;
-     private LocalDateTime create_at;
+    private LocalDateTime create_at;
 
     public Customer() {
     }
 
-    public Customer(int customer_id, String username, String password, String fullName, String email, String phone, String address, String avatar, Date date_of_birth, String gender, LocalDateTime create_at) {
+    public Customer(int customer_id, String username, String password, String fullName, String email, String phone,
+            String address, String avatar, Date date_of_birth, String gender, LocalDateTime create_at) {
         this.customer_id = customer_id;
         this.username = username;
         this.password = password;
@@ -129,6 +130,4 @@ public class Customer {
         this.create_at = create_at;
     }
 
-    }
-
-    
+}

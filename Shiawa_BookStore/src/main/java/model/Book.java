@@ -8,13 +8,15 @@ package model;
  *
  * @author Lenovo
  */
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class Book {
-    private int bookId;
+
+    private int book_id;
     private String title;
     private String author;
-    private double price;
+    private Double price;
     private String description;
     private Category cate;
     private int stock;
@@ -27,8 +29,8 @@ public class Book {
     public Book() {
     }
 
-    public Book(int bookId, String title, String author, double price, String description, Category cate, int stock, String publisher, int discount, String imgUrl, boolean isActive, LocalDateTime createdAt) {
-        this.bookId = bookId;
+    public Book(int book_id, String title, String author, Double price, String description, Category cate, int stock, String publisher, int discount, String imgUrl, boolean isActive, LocalDateTime createdAt) {
+        this.book_id = book_id;
         this.title = title;
         this.author = author;
         this.price = price;
@@ -42,12 +44,12 @@ public class Book {
         this.createdAt = createdAt;
     }
 
-    public int getBookId() {
-        return bookId;
+    public int getBook_id() {
+        return book_id;
     }
 
-    public void setBookId(int bookId) {
-        this.bookId = bookId;
+    public void setBook_id(int book_id) {
+        this.book_id = book_id;
     }
 
     public String getTitle() {
@@ -66,11 +68,11 @@ public class Book {
         this.author = author;
     }
 
-    public double getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
@@ -140,8 +142,7 @@ public class Book {
 
     @Override
     public String toString() {
-        return "Book{" + "bookId=" + bookId + ", title=" + title + ", author=" + author + ", price=" + price + ", description=" + description + ", cate=" + cate + ", stock=" + stock + ", publisher=" + publisher + ", discount=" + discount + ", imgUrl=" + imgUrl + ", isActive=" + isActive + ", createdAt=" + createdAt + '}';
+        return "Book{" + "bookId=" + book_id + ", title=" + title + ", author=" + author + ", price=" + price + ", description=" + description + ", cate=" + cate + ", stock=" + stock + ", publisher=" + publisher + ", discount=" + discount + ", imgUrl=" + imgUrl + ", isActive=" + isActive + ", createdAt=" + createdAt + '}';
     }
-    
-    
+
 }

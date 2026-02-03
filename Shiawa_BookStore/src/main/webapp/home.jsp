@@ -9,44 +9,48 @@
 <!DOCTYPE html>
 <html lang="vi">
 
-<head>
-    <meta charset="UTF-8">
-    <title>Book Store</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/css.css">
+    <head>
+        <meta charset="UTF-8">
+        <title>Book Store</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <link rel="stylesheet" href="assets/css.css">
 
-</head>
+    </head>
 
-<body>
+    <body>
 
-    <header class="header">
+        <header class="header">
 
-        <!-- LOGO -->
-        <div class="logo" id="backToShop">
-            <img src="assets/log.jpg" class="rounded-img">
-        </div>
+            <!-- LOGO -->
+            <a href="${pageContext.request.contextPath}/home">
+                <div class="logo" id="backToShop">
+                    <img src="assets/log.jpg" class="rounded-img">
+                </div>
+            </a>
 
-        <!-- SEARCH (GIỮA) -->
-        <div class="search-box">
-            <input type="text">
-            <button>
-                <i class="fa-solid fa-magnifying-glass"></i>
-            </button>
-        </div>
 
-        <!-- ICONS -->
-        <div class="icons">
-            <div class="icon" id="cartIcon">
-                <i class="fa-solid fa-cart-shopping"></i>
-                <span>Giỏ hàng</span>
+            <!-- SEARCH (GIỮA) -->
+            <div class="search-box">
+                <input type="text">
+                <button>
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
             </div>
 
+            <!-- ICONS -->
+
+            <div class="icons">
+                <a href="cart" class="icon" id="cartIcon">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>Giỏ hàng</span>
+                </a>
+            </div>
 
             <div class="icon" id="accountIcon">
                 <i class="fa-regular fa-user"></i>
                 <span>Tài khoản</span>
             </div>
-        </div>
+       
 
     </header>
     <nav class="breadcrumb">
@@ -80,110 +84,84 @@
                     <span class="discount">-${b.discount}%</span>
                 </div>
                 <p class="sold">Đã bán 120</p>
-                <button class="add-cart">Thêm giỏ hàng</button>
+                <form action="${pageContext.request.contextPath}/cart" method="post">
+                    <input type="hidden" name="book_id" value="${b.book_id}">
+                    <input type="hidden" name="quantity" value="1">
+
+                    <button type="submit" class="add-cart">
+                        Thêm giỏ hàng
+                    </button>
+                </form>
+
             </div>
         </c:forEach>
-
-        <div class="book" data-category="Business" data-name="Bùi Kiến Thành – Người Mở Khóa" data-price="150000">
-            <img src="https://via.placeholder.com/160x220">
-            <p class="title">Bùi Kiến Thành – Người Mở Khóa</p>
-            <div class="price">
-                <span class="new-price">150.000đ</span>
-                <span class="discount">-15%</span>
-            </div>
-            <p class="sold">Đã bán 85</p>
-            <button class="add-cart">Thêm giỏ hàng</button>
-        </div>
-
-        <div class="book" data-category="Novel" data-name="Stop Overthinking" data-price="90000">
-            <img src="https://via.placeholder.com/160x220">
-            <p class="title">Stop Overthinking</p>
-            <div class="price">
-                <span class="new-price">90.000đ</span>
-                <span class="discount">-5%</span>
-            </div>
-            <p class="sold">Đã bán 200</p>
-            <button class="add-cart">Thêm giỏ hàng</button>
-        </div>
-
-        <div class="book" data-category="Mystery" data-name="Những Mô Hình Tư Duy Vĩ Đại" data-price="180000">
-            <img src="https://via.placeholder.com/160x220">
-            <p class="title">Những Mô Hình Tư Duy Vĩ Đại</p>
-            <div class="price">
-                <span class="new-price">180.000đ</span>
-                <span class="discount">-20%</span>
-            </div>
-            <p class="sold">Đã bán 60</p>
-            <button class="add-cart">Thêm giỏ hàng</button>
-        </div>
-
     </section>
 
-    <section class="cart-page" id="cartPage" style="display:none;">
-
-        <h2>Your Cart</h2>
-
-        <div class="cart-header">
-            <span></span>
-            <span>Book</span>
-            <span>Price</span>
-            <span>Quantity</span>
-            <span>Subtotal</span>
-        </div>
-
-        <div id="cartItems"></div>
-        <div class="cart-item">
-            <input type="checkbox" class="select-item" data-price="10" data-qty="1">
-
-            <div class="product">
-                <img src="https://via.placeholder.com/80x100">
-                <span>Book name</span>
+    <!--    <section class="cart-page" id="cartPage" style="display:none;">
+    
+            <h2>Your Cart</h2>
+    
+            <div class="cart-header">
+                <span></span>
+                <span>Book</span>
+                <span>Price</span>
+                <span>Quantity</span>
+                <span>Subtotal</span>
             </div>
-
-            <span>$10</span>
-
-            <div class="quantity">
-                <button>-</button>
-                <span>1</span>
-                <button>+</button>
+    
+            <div id="cartItems"></div>
+            <div class="cart-item">
+                <input type="checkbox" class="select-item" data-price="10" data-qty="1">
+    
+                <div class="product">
+                    <img src="https://via.placeholder.com/80x100">
+                    <span>Book name</span>
+                </div>
+    
+                <span>$10</span>
+    
+                <div class="quantity">
+                    <button>-</button>
+                    <span>1</span>
+                    <button>+</button>
+                </div>
+    
+                <span class="subtotal">$10</span>
             </div>
-
-            <span class="subtotal">$10</span>
-        </div>
-
-        <div class="cart-item">
-            <input type="checkbox" class="select-item" data-price="15" data-qty="1">
-
-            <div class="product">
-                <img src="https://via.placeholder.com/80x100">
-                <span>Another book</span>
+    
+            <div class="cart-item">
+                <input type="checkbox" class="select-item" data-price="15" data-qty="1">
+    
+                <div class="product">
+                    <img src="https://via.placeholder.com/80x100">
+                    <span>Another book</span>
+                </div>
+    
+                <span>$15</span>
+    
+                <div class="quantity">
+                    <button>-</button>
+                    <span>1</span>
+                    <button>+</button>
+                </div>
+    
+                <span class="subtotal">$15</span>
             </div>
-
-            <span>$15</span>
-
-            <div class="quantity">
-                <button>-</button>
-                <span>1</span>
-                <button>+</button>
+    
+             VOUCHER 
+            <div class="voucher">
+                <input type="text" id="voucherInput" placeholder="Nhập mã giảm giá">
+                <button id="applyVoucher">Áp dụng</button>
+                <p id="voucherMessage"></p>
             </div>
-
-            <span class="subtotal">$15</span>
+    
+             TOTAL 
+            <div class="cart-footer">
+                <strong id="totalPrice">Total: $0</strong>
+            </div>
+            <div class="cart-actions"> <button class="pay-btn">PAY NOW</button> </div>
         </div>
-
-        <!-- VOUCHER -->
-        <div class="voucher">
-            <input type="text" id="voucherInput" placeholder="Nhập mã giảm giá">
-            <button id="applyVoucher">Áp dụng</button>
-            <p id="voucherMessage"></p>
-        </div>
-
-        <!-- TOTAL -->
-        <div class="cart-footer">
-            <strong id="totalPrice">Total: $0</strong>
-        </div>
-        <div class="cart-actions"> <button class="pay-btn">PAY NOW</button> </div>
-        </div>
-    </section>
+    </section>-->
 
     <!-- ACCOUNT PAGE -->
     <section class="account-page" id="accountPage" style="display:none;">

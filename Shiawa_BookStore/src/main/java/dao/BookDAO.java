@@ -17,7 +17,7 @@ import utils.DBContext;
  *
  * @author Lenovo
  */
-public class BookDAO extends DBContext{
+public class BookDAO extends DBContext {
     public List<Book> getAllBook() {
         List<Book> list = new ArrayList<>();
         CategoryDAO dao = new CategoryDAO();
@@ -31,30 +31,53 @@ public class BookDAO extends DBContext{
                 String author = rs.getString("author");
                 double price = rs.getDouble("price");
                 String description = rs.getString("description");
-                //tao cate
+                // tao cate
                 int cateId = rs.getInt("category_id");
                 Category cate = dao.getCategoryById(cateId);
-                
+
                 int stock = rs.getInt("stock");
                 String publisher = rs.getString("publisher");
                 int discount = rs.getInt("discount");
                 String imgUrl = rs.getString("url_img");
                 boolean isActive = rs.getBoolean("is_active");
                 LocalDateTime createAte = rs.getTimestamp("created_at").toLocalDateTime();
-                //tao doi tuong product
-                Book b = new Book(id, title, author, price, description, cate, stock, publisher, discount, imgUrl, isActive, createAte);
+                // tao doi tuong product
+                Book b = new Book(id, title, author, price, description, cate, stock, publisher, discount, imgUrl,
+                        isActive, createAte);
                 list.add(b);
             }
-            
+
         } catch (Exception e) {
-            
+
         }
         return list;
     }
-    
+
+    public Book getBookById(int bookId) {
+        String sql = """
+                    SELECT book_id, title, price, image_url
+                    FROM Book
+                    WHERE book_id = ?
+                """;
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("book_id");
+                String title = rs.getString("title");
+                double price = rs.getDouble("price");
+                String imgUrl = rs.getString("url_img");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
         BookDAO dao = new BookDAO();
-        List<Book> list= dao.getAllBook();
+        List<Book> list = dao.getAllBook();
         for (Book e : list) {
             System.out.println(e);
         }

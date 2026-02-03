@@ -219,7 +219,7 @@ body {
 }
 /* giỏ hàng */
 .cart-page {
-    display: none;
+     display: block;
     margin-top: 40px;
 }
 

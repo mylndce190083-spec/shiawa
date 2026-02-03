@@ -16,13 +16,13 @@ public class CartItem {
     private int customer_id;
     private int book_id;
     private int quantity;
-    private BigDecimal price;
+    private Double price;
    private LocalDateTime create_at;
-
+   private Book book;
     public CartItem() {
     }
 
-    public CartItem(int cart_item_id, int customer_id, int book_id, int quantity, BigDecimal price, LocalDateTime create_at) {
+    public CartItem(int cart_item_id, int customer_id, int book_id, int quantity, Double price, LocalDateTime create_at) {
         this.cart_item_id = cart_item_id;
         this.customer_id = customer_id;
         this.book_id = book_id;
@@ -63,11 +63,11 @@ public class CartItem {
         this.quantity = quantity;
     }
 
-    public BigDecimal getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
@@ -77,6 +77,14 @@ public class CartItem {
 
     public void setCreate_at(LocalDateTime create_at) {
         this.create_at = create_at;
+    }
+
+    public Book getBook() {
+        return book;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
     }
 
 }
