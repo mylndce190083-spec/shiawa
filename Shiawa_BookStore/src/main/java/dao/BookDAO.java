@@ -8,9 +8,12 @@ import db.DBContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import model.Book;
+import model.BookAdmin;
+import model.Category;
 
 /**
  *
@@ -18,8 +21,8 @@ import model.Book;
  */
 public class BookDAO extends DBContext {
 
-    public List<Book> getAllBooks() {
-        List<Book> list = new ArrayList<>();
+    public List<BookAdmin> getAllBooksInfo() {
+        List<BookAdmin> list = new ArrayList<>();
 
         String sql = """
         SELECT
@@ -43,7 +46,7 @@ public class BookDAO extends DBContext {
         try (PreparedStatement ps = getConnection().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                Book b = new Book();
+                BookAdmin b = new BookAdmin();
                 b.setBookId(rs.getInt("book_id"));
                 b.setTitle(rs.getString("title"));
                 b.setAuthor(rs.getString("author"));
@@ -64,7 +67,7 @@ public class BookDAO extends DBContext {
         return list;
     }
 
-    public void insertBook(Book b) {
+    public void insertBook(BookAdmin b) {
         String sql = """
         INSERT INTO Book
         (title, author, price, stock, category_id, is_active)
@@ -83,4 +86,37 @@ public class BookDAO extends DBContext {
         }
     }
 
+    public List<Book> getAllBook() {
+        List<Book> list = new ArrayList<>();
+        CategoryDAO dao = new CategoryDAO();
+        String sql = "select * from Book";
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("book_id");
+                String title = rs.getString("title");
+                String author = rs.getString("author");
+                double price = rs.getDouble("price");
+                String description = rs.getString("description");
+                //tao cate
+                int cateId = rs.getInt("category_id");
+                Category cate = dao.getCategoryById(cateId);
+                
+                int stock = rs.getInt("stock");
+                String publisher = rs.getString("publisher");
+                int discount = rs.getInt("discount");
+                String imgUrl = rs.getString("url_img");
+                boolean isActive = rs.getBoolean("is_active");
+                LocalDateTime createAte = rs.getTimestamp("created_at").toLocalDateTime();
+                //tao doi tuong product
+                Book b = new Book(id, title, author, price, description, cate, stock, publisher, discount, imgUrl, isActive, createAte);
+                list.add(b);
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }

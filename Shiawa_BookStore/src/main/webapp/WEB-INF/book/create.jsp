@@ -89,66 +89,146 @@
                 </nav>
             </div>
             <!-- Sidebar End -->
-            <h2>Add New Book</h2>
 
-            <form action="${pageContext.request.contextPath}/book" method="post">
-                <input type="hidden" name="view" value="add"/>
 
-                Title: <input type="text" name="title" required/><br/>
-                Author: <input type="text" name="author" required/><br/>
-                Price: <input type="number" step="0.01" name="price" required/><br/>
-                Stock: <input type="number" name="stock" required/><br/>
-                <label>Category:</label>
-                <select name="categoryId" required>
-                    <option value="">-- Select Category --</option>
-                    <c:forEach var="c" items="${categoryList}">
-                        <option value="${c.categoryId}">
-                            ${c.name}
-                        </option>
-                    </c:forEach>
-                </select>
-                <br/>
+            <!-- Content Start -->
+            <div class="content">
+                <!-- Navbar Start -->
+                <nav class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
+                    <a href="index.jsp" class="navbar-brand d-flex d-lg-none me-4">
+                        <h2 class="text-primary mb-0"><i class="fa fa-hashtag"></i></h2>
+                    </a>
+                    <a href="#" class="sidebar-toggler flex-shrink-0">
+                        <button type="button" class="btn btn-success rounded-pill m-2">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                    </a>
+                    <form class="d-none d-md-flex ms-4">
+                        <input class="form-control border-0" type="search" placeholder="Search">
+                    </form>
+                    <div class="navbar-nav align-items-center ms-auto">
 
-                <button type="submit">Save</button>
-                <a href="${pageContext.request.contextPath}/book">Cancel</a>
-            </form>
+                    </div>
+                </nav>
+                <!-- Navbar End -->
 
-            <!-- Footer Start -->
-            <div class="container-fluid pt-4 px-4">
-                <div class="bg-light rounded-top p-4">
-                    <div class="row">
-                        <div class="col-12 col-sm-6 text-center text-sm-start">
-                            &copy; <a href="#" class="text-primary">Your Site Name</a>, All Right Reserved.
+
+                <!-- Recent Sales Start -->
+                <div class="container-fluid pt-4 px-4">
+                    <div class="bg-light text-center rounded p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-4">
+                            <!--<h6 class="mb-0">User List</h6>-->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">Book List</h6>
+                            </div>
+                            <div class="d-flex gap-4">
+                                <a class="btn btn-sm btn-success" href="${pageContext.request.contextPath}/book?view=add">Add Book</a>
+                                <a href="" class="text-primary">Show All</a>
+                            </div>
                         </div>
-                        <div class="col-12 col-sm-6 text-center text-sm-end">
-                            <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
-                            Designed By <a href="https://htmlcodex.com" class="text-primary">HTML Codex</a>
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+
+                                        <h4 class="mb-4 text-success">
+                                            <i class="fa fa-plus-circle me-2"></i>Add New Book
+                                        </h4>
+
+                                        <form action="${pageContext.request.contextPath}/book" method="post">
+                                            <input type="hidden" name="view" value="add"/>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Title</label>
+                                                <input type="text" name="title" class="form-control" required>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Author</label>
+                                                <input type="text" name="author" class="form-control" required>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">Price</label>
+                                                    <input type="number" step="0.01" name="price" class="form-control" required>
+                                                </div>
+
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">Stock</label>
+                                                    <input type="number" name="stock" class="form-control" required>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Category</label>
+                                                <select name="categoryId" class="form-select" required>
+                                                    <option value="">-- Select Category --</option>
+                                                    <c:forEach var="c" items="${categoryList}">
+                                                        <option value="${c.categoryId}">
+                                                            ${c.categoryName}
+                                                        </option>
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
+
+                                            <div class="d-flex justify-content-between mt-4">
+                                                <button type="submit" class="btn btn-success">
+                                                    <i class="fa fa-save me-2"></i>Save
+                                                </button>
+
+                                                <a href="${pageContext.request.contextPath}/book" class="btn btn-secondary">
+                                                    Cancel
+                                                </a>
+                                            </div>
+
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- Recent Sales End -->
+
+                <!-- Footer Start -->
+                <div class="container-fluid pt-4 px-4">
+                    <div class="bg-light rounded-top p-4">
+                        <div class="row">
+                            <div class="col-12 col-sm-6 text-center text-sm-start">
+                                &copy; <a href="#" class="text-primary">Your Site Name</a>, All Right Reserved.
+                            </div>
+                            <div class="col-12 col-sm-6 text-center text-sm-end">
+                                <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
+                                Designed By <a href="https://htmlcodex.com" class="text-primary">HTML Codex</a>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <!-- Footer End -->
             </div>
-            <!-- Footer End -->
+            <!-- Content End -->
+
+
+            <!-- Back to Top -->
+            <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
         </div>
-        <!-- Content End -->
 
+        <!-- JavaScript Libraries -->
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="assets/lib/chart/chart.min.js"></script>
+        <script src="assets/lib/easing/easing.min.js"></script>
+        <script src="assets/lib/waypoints/waypoints.min.js"></script>
+        <script src="assets/lib/owlcarousel/owl.carousel.min.js"></script>
+        <script src="assets/lib/tempusdominus/js/moment.min.js"></script>
+        <script src="assets/lib/tempusdominus/js/moment-timezone.min.js"></script>
+        <script src="assets/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
 
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
-    </div>
-
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/lib/chart/chart.min.js"></script>
-    <script src="assets/lib/easing/easing.min.js"></script>
-    <script src="assets/lib/waypoints/waypoints.min.js"></script>
-    <script src="assets/lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="assets/lib/tempusdominus/js/moment.min.js"></script>
-    <script src="assets/lib/tempusdominus/js/moment-timezone.min.js"></script>
-    <script src="assets/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
-
-    <!-- Template Javascript -->
-    <script src="assets/js/main.js"></script>
-</body>
+        <!-- Template Javascript -->
+        <script src="assets/js/main.js"></script>
+    </body>
 
 </html>

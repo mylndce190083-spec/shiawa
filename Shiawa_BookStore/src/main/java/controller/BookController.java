@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import model.Book;
+import model.BookAdmin;
 import model.Category;
 
 /**
@@ -31,14 +31,14 @@ public class BookController extends HttpServlet {
         
         if ("add".equals(view)) {
             CategoryDAO cateDAO = new CategoryDAO();
-            List <Category> cateList = cateDAO.getAllCategories();
-            request.setAttribute("categorys", cateList);
+            List <Category> cateList = cateDAO.getIdNameCategory();
+            request.setAttribute("categoryList", cateList);
             request.getRequestDispatcher("/WEB-INF/book/create.jsp").forward(request, response);
             return;
         }
         
         BookDAO dao = new BookDAO();
-        List<Book> list = dao.getAllBooks();
+        List<BookAdmin> list = dao.getAllBooksInfo();
 
         request.setAttribute("bookList", list);
         request.getRequestDispatcher("/WEB-INF/book/list.jsp").forward(request, response);
@@ -58,7 +58,7 @@ public class BookController extends HttpServlet {
            int stock = Integer.parseInt(request.getParameter("stock"));
            int categoryId = Integer.parseInt(request.getParameter("categoryId"));
            
-           Book b = new Book();
+           BookAdmin b = new BookAdmin();
            b.setTitle(title);
            b.setAuthor(author);
            b.setPrice(price);
@@ -68,6 +68,7 @@ public class BookController extends HttpServlet {
            BookDAO bdao = new BookDAO();
            bdao.insertBook(b);
        }
+       response.sendRedirect(request.getContextPath() + "/book");
     }
 
     /**
