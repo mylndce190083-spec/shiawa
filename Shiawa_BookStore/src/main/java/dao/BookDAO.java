@@ -149,7 +149,7 @@ public class BookDAO extends DBContext {
                 b.setUrlImg(rs.getString("url_img"));
                 b.setIsActive(rs.getBoolean("is_active"));
                 b.setDescription(rs.getString("description")); 
-                b.setCreatedAt(rs.getTimestamp("create_at").toLocalDateTime());
+                b.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
                 Category cate = new Category();
                 cate.setCateName(rs.getString("category_name"));
                 b.setCategory(cate);
