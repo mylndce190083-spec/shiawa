@@ -131,10 +131,10 @@ public class BookDAO extends DBContext {
     public Book getBookById(int id) {
         Book b = new Book();
         try {
-            String sql = "SELECT b.*, c.name AS category_name " +
-                    "        FROM Book b " +
-                    "        LEFT JOIN Category c ON b.category_id = c.category_id " +
-                    "        WHERE b.book_id = ?";
+            String sql = "SELECT b.*, c.name AS category_name "
+                    + "        FROM Book b "
+                    + "        LEFT JOIN Category c ON b.category_id = c.category_id "
+                    + "        WHERE b.book_id = ?";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
@@ -148,7 +148,8 @@ public class BookDAO extends DBContext {
                 b.setDiscount(rs.getInt("discount"));
                 b.setUrlImg(rs.getString("url_img"));
                 b.setIsActive(rs.getBoolean("is_active"));
-                // b.setCreatedAt(rs.getTimestamp("create_at").toLocalDateTime());
+                b.setDescription(rs.getString("description")); 
+                b.setCreatedAt(rs.getTimestamp("create_at").toLocalDateTime());
                 Category cate = new Category();
                 cate.setCateName(rs.getString("category_name"));
                 b.setCategory(cate);
