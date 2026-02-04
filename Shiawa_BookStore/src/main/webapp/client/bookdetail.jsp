@@ -149,21 +149,17 @@
                 <div class="row row-cols-2 row-cols-md-6 g-3">
                     <c:forEach items="${similarBooks}" var="b">
 
-                        <c:if test="${b.bookId != book.bookId}">
-                            <a href="${pageContext.request.contextPath}/bookdetail?id=${b.bookId}"
-                               style="text-decoration: none; color: inherit;">
+                        <a href="${pageContext.request.contextPath}/bookdetail?id=${b.bookId}"
+                           style="text-decoration: none; color: inherit;">
 
-                                <div class="book-item">
-                                    <img src="${b.urlImg}" width="120">
-                                    <p>${b.title}</p>
-                                    <p>${b.category.cateName}</p>
-                                    <p>${b.price}</p>
-                                </div>
-                            </a>
-                        </c:if>
-
+                            <div class="book-item">
+                                <img src="${b.urlImg}" width="120">
+                                <p>${b.title}</p>
+                                <p>${b.category.cateName}</p>
+                                <p>${b.price}</p>
+                            </div>
+                        </a>
                     </c:forEach>
-
                 </div>
 
             </div>
