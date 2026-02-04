@@ -4,9 +4,12 @@
     Author     : BA LIEM
 --%>
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> origin/huynhmy
+=======
+>>>>>>> ff4604f57312f32b1294c5535e269f9d494f2113
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
@@ -95,7 +98,10 @@
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> ff4604f57312f32b1294c5535e269f9d494f2113
             <!-- Sidebar Start -->
             <div class="sidebar pe-4 pb-3">
                 <nav class="navbar bg-light navbar-light">
@@ -136,7 +142,10 @@
             <!-- Sidebar End -->
 
 
+<<<<<<< HEAD
 >>>>>>> origin/huynhmy
+=======
+>>>>>>> ff4604f57312f32b1294c5535e269f9d494f2113
             <!-- Content Start -->
             <div class="content">
                 <!-- Navbar Start -->
@@ -210,9 +219,13 @@
                 <!-- Recent Sales End -->
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> origin/huynhmy
+=======
+
+>>>>>>> ff4604f57312f32b1294c5535e269f9d494f2113
                 <!-- Footer Start -->
                 <div class="container-fluid pt-4 px-4">
                     <div class="bg-light rounded-top p-4">

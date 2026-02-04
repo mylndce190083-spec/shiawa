@@ -135,5 +135,4 @@ public class BookAdmin {
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
-
 }

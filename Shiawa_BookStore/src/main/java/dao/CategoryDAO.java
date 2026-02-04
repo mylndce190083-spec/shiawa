@@ -46,21 +46,19 @@ public class CategoryDAO extends DBContext {
             while (rs.next()) {
                 int id = rs.getInt("category_id");
                 String name = rs.getString("name");
-                // tao doi tuong category
+                //tao doi tuong category
                 Category cate = new Category(id, name);
                 list.add(cate);
             }
 
         } catch (Exception e) {
-            System.out.println("Error in getAllCategory: " + e.getMessage());
-            e.printStackTrace();
-            Logger.getLogger(CategoryDAO.class.getName()).log(Level.SEVERE, null, e);
+
         }
         return list;
     }
-
+    
     public Category getCategoryById(int id) {
-        String sql = "select * from Category where category_id=?";
+        String sql ="select * from Category where category_id=?";
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setInt(1, id);
@@ -71,7 +69,7 @@ public class CategoryDAO extends DBContext {
                 Category c = new Category(cat_id, cat_name);
                 return c;
             }
-        } catch (Exception e) {
+        } catch(Exception e) {
             System.out.println("Not found!");
         }
         return null;
