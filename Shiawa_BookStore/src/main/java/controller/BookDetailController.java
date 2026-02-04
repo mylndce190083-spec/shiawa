@@ -30,7 +30,7 @@ public class BookDetailController extends HttpServlet {
             var foundBook = bookDAO.getBookById(id);
             if (foundBook != null) {
                 int categoryId = foundBook.getCategory().getCateId();
-                List<Book> similarBooks = bookDAO.getSimilarBook(categoryId, foundBook.getBookId());
+                List<Book> similarBooks = bookDAO.getSimilarBook(categoryId);
 
                 request.setAttribute("similarBooks", similarBooks);
                 request.setAttribute("book", foundBook);

@@ -15,8 +15,6 @@ public class Account {
     private String email;
 
     public Account() {
-        this.id = -1;
-        this.role = "customer";
     }
 
     public Account(int id, String username, String role, String email) {
@@ -56,11 +54,6 @@ public class Account {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    @Override
-    public String toString() {
-        return "Account{" + "id=" + id + ", username=" + username + ", role=" + role + ", email=" + email + '}';
     }
     
     

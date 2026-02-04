@@ -97,7 +97,7 @@
                             <ul class="list-unstyled text-secondary">
                                 <li>
                                     <strong>Danh mục:</strong> ${book.category.cateName}
-</li>
+                                </li>
                                 <li>
                                     <strong>Nhà xuất bản:</strong> ${book.publisher}
                                 </li>
@@ -149,24 +149,28 @@
                 <div class="row row-cols-2 row-cols-md-6 g-3">
                     <c:forEach items="${similarBooks}" var="b">
 
-                        <a href="${pageContext.request.contextPath}/bookdetail?id=${b.bookId}"
-                           style="text-decoration: none; color: inherit;">
+                        <c:if test="${b.bookId != book.bookId}">
+                            <a href="${pageContext.request.contextPath}/bookdetail?id=${b.bookId}"
+                               style="text-decoration: none; color: inherit;">
 
-                            <div class="book-item">
-                                <img src="${b.urlImg}" width="120">
-                                <p>${b.title}</p>
-                                <p>${b.category.cateName}</p>
-                                <p>${b.price}</p>
-                            </div>
-                        </a>
+                                <div class="book-item">
+                                    <img src="${b.urlImg}" width="120">
+                                    <p>${b.title}</p>
+                                    <p>${b.category.cateName}</p>
+                                    <p>${b.price}</p>
+                                </div>
+                            </a>
+                        </c:if>
+
                     </c:forEach>
+
                 </div>
 
             </div>
 
         </div>
         <jsp:include page="./layout/footer.jsp" />
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 
 </html>
