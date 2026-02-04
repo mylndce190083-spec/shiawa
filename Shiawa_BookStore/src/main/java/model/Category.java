@@ -6,34 +6,39 @@ package model;
 
 /**
  *
- * @author BA LIEM
+ * @author Lenovo
  */
 public class Category {
-    private int categoryId;
-    private String categoryName;
+    private int cateId;
+    private String cateName;
+
+    public Category(int cateId, String cateName) {
+        this.cateId = cateId;
+        this.cateName = cateName;
+    }
 
     public Category() {
     }
 
-    public Category(int categoryId, String categoryName) {
-        this.categoryId = categoryId;
-        this.categoryName = categoryName;
+    public int getCateId() {
+        return cateId;
     }
 
-    public int getCategoryId() {
-        return categoryId;
+    public void setCateId(int cateId) {
+        this.cateId = cateId;
     }
 
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
+    public String getCateName() {
+        return cateName;
     }
 
-    public String getCategoryName() {
-        return categoryName;
+    public void setCateName(String cateName) {
+        this.cateName = cateName;
     }
 
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
+    @Override
+    public String toString() {
+        return "Category{" + "cateId=" + cateId + ", cateName=" + cateName + '}';
     }
     
     

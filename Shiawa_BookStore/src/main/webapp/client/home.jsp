@@ -8,9 +8,11 @@
                 <head>
                     <meta charset="UTF-8">
                     <title>Book Store</title>
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
                     <link rel="stylesheet"
                         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-                    <link rel="stylesheet" href="assets/css.css">
+                    <link rel="stylesheet" href="assets/css/css">
 
                 </head>
 
@@ -35,7 +37,7 @@
                         <div class="icons">
                             <div class="icon" id="cartIcon">
                                 <i class="fa-solid fa-cart-shopping"></i>
-                                <span>Giỏ hàng</span>
+                                <span>Giỏ hàng dsfasf</span>
                             </div>
 
 
@@ -71,7 +73,7 @@
                         <c:forEach items="${listB}" var="b">
                             <a href="${pageContext.request.contextPath}/bookdetail?id=${b.bookId}"
                                 style="text-decoration: none; color: inherit;">
-                                <div class="book" data-category="${b.category.cateName}" data-name="${b.title}"
+<div class="book" data-category="${b.category.cateName}" data-name="${b.title}"
                                     data-price="${b.price}">
 
                                     <img src="${b.urlImg}" alt="${b.title}">
@@ -123,7 +125,7 @@
                             data-price="180000">
                             <img src="https://via.placeholder.com/160x220">
                             <p class="title">Những Mô Hình Tư Duy Vĩ Đại</p>
-                            <div class="price">
+<div class="price">
                                 <span class="new-price">180.000đ</span>
                                 <span class="discount">-20%</span>
                             </div>
@@ -161,7 +163,6 @@
                                 <span>1</span>
                                 <button>+</button>
                             </div>
-
                             <span class="subtotal">$10</span>
                         </div>
 
@@ -195,7 +196,7 @@
                         <div class="cart-footer">
                             <strong id="totalPrice">Total: $0</strong>
                         </div>
-                        <div class="cart-actions"> <button class="pay-btn">PAY NOW</button> </div>
+<div class="cart-actions"> <button class="pay-btn">PAY NOW</button> </div>
                         </div>
                     </section>
 

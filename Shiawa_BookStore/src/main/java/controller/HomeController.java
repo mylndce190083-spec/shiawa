@@ -33,7 +33,7 @@ public class HomeController extends HttpServlet {
 
         request.setAttribute("listB", list);
         request.setAttribute("listC", clist);
-        request.getRequestDispatcher("/WEB-INF/home/home.jsp").forward(request, response);
+        request.getRequestDispatcher("/client/home.jsp").forward(request, response);
     }
 
     @Override

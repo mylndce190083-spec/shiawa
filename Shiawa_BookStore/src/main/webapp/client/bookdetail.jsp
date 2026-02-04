@@ -97,7 +97,7 @@
                             <ul class="list-unstyled text-secondary">
                                 <li>
                                     <strong>Danh mục:</strong> ${book.category.cateName}
-                                </li>
+</li>
                                 <li>
                                     <strong>Nhà xuất bản:</strong> ${book.publisher}
                                 </li>
@@ -166,7 +166,7 @@
 
         </div>
         <jsp:include page="./layout/footer.jsp" />
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 
 </html>

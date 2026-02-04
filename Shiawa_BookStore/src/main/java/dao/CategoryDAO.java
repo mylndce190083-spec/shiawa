@@ -27,8 +27,8 @@ public class CategoryDAO extends DBContext {
 
             while (rs.next()) {
                 Category c = new Category();
-                c.setCategoryId(rs.getInt("category_id"));
-                c.setCategoryName(rs.getString("name"));
+                c.setCateId(rs.getInt("category_id"));
+                c.setCateName(rs.getString("name"));
                 list.add(c);
             }
         } catch (Exception e) {

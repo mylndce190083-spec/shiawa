@@ -149,8 +149,8 @@ public class BookDAO extends DBContext {
                 b.setDescription(rs.getString("description"));
                 b.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
                 Category cate = new Category();
-                cate.setCategoryId(rs.getInt("cateId"));
-                cate.setCategoryName(rs.getString("category_name"));
+                cate.setCateId(rs.getInt("cateId"));
+                cate.setCateName(rs.getString("category_name"));
                 b.setCategory(cate);
                 return b;
 
@@ -161,14 +161,15 @@ public class BookDAO extends DBContext {
         return b;
     }
 
-    public List<Book> getSimilarBook(int categoryId) {
+    public List<Book> getSimilarBook(int categoryId, int bookId) {
         List<Book> list = new ArrayList<>();
         String sql = "SELECT TOP 6 b.*, c.name AS category_name "
                 + "FROM Book b "
                 + "LEFT JOIN Category c ON b.category_id = c.category_id"
-                + " Where c.category_id = ? ";
+                + " Where c.category_id = ? and b.book_id <> ?";
         try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
             ps.setInt(1, categoryId);
+            ps.setInt(2, bookId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Book b = new Book();
@@ -178,7 +179,7 @@ public class BookDAO extends DBContext {
                 b.setUrlImg(rs.getString("url_img"));
 
                 Category c = new Category();
-                c.setCategoryName(rs.getString("category_name"));
+                c.setCateName(rs.getString("category_name"));
                 b.setCategory(c);
 
                 list.add(b);
