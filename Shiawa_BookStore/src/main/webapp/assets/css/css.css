@@ -52,6 +52,19 @@ body {
     display: flex;
     gap: 25px;
 }
+.icon a {
+    text-decoration: none;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.icons a:hover {
+    text-decoration: none;   /* hover cũng không gạch */
+    color: inherit;
+}
 
 .icon {
     display: flex;
@@ -219,7 +232,7 @@ body {
 }
 /* giỏ hàng */
 .cart-page {
-     display: block;
+    
     margin-top: 40px;
 }
 
@@ -236,6 +249,21 @@ body {
     border-bottom: 2px solid black;
     padding-bottom: 10px;
 }
+/* đẩy form xóa sang phải */
+.delete-form {
+    margin-left: auto;   /* chìa khóa */
+}
+
+/* nút xóa dạng icon */
+.delete-btn {
+    background: none;        /* bỏ nền */
+    border: none;            /* bỏ viền */
+    font-size: 20px;
+    cursor: pointer;
+    color: #888;
+    padding: 5px;
+}
+
 
 /* ITEM */
 .cart-item {

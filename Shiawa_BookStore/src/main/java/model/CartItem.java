@@ -12,47 +12,56 @@ import java.time.LocalDateTime;
  * @author MY
  */
 public class CartItem {
-    private int cart_item_id;
-    private int customer_id;
-    private int book_id;
+
+    private int cartItemId;
+    private int customerId;
+    private int bookId;
     private int quantity;
     private Double price;
-   private LocalDateTime create_at;
-   private Book book;
+    private LocalDateTime createAt;
+    private Book book;
+
     public CartItem() {
     }
 
-    public CartItem(int cart_item_id, int customer_id, int book_id, int quantity, Double price, LocalDateTime create_at) {
-        this.cart_item_id = cart_item_id;
-        this.customer_id = customer_id;
-        this.book_id = book_id;
+    public CartItem(
+            int cartItemId,
+            int customerId,
+            int bookId,
+            int quantity,
+            Double price,
+            LocalDateTime createAt
+    ) {
+        this.cartItemId = cartItemId;
+        this.customerId = customerId;
+        this.bookId = bookId;
         this.quantity = quantity;
         this.price = price;
-        this.create_at = create_at;
+        this.createAt = createAt;
     }
 
-    public int getCart_item_id() {
-        return cart_item_id;
+    public int getCartItemId() {
+        return cartItemId;
     }
 
-    public void setCart_item_id(int cart_item_id) {
-        this.cart_item_id = cart_item_id;
+    public void setCartItemId(int cartItemId) {
+        this.cartItemId = cartItemId;
     }
 
-    public int getCustomer_id() {
-        return customer_id;
+    public int getCustomerId() {
+        return customerId;
     }
 
-    public void setCustomer_id(int customer_id) {
-        this.customer_id = customer_id;
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
     }
 
-    public int getBook_id() {
-        return book_id;
+    public int getBookId() {
+        return bookId;
     }
 
-    public void setBook_id(int book_id) {
-        this.book_id = book_id;
+    public void setBookId(int bookId) {
+        this.bookId = bookId;
     }
 
     public int getQuantity() {
@@ -71,12 +80,12 @@ public class CartItem {
         this.price = price;
     }
 
-    public LocalDateTime getCreate_at() {
-        return create_at;
+    public LocalDateTime getCreateAt() {
+        return createAt;
     }
 
-    public void setCreate_at(LocalDateTime create_at) {
-        this.create_at = create_at;
+    public void setCreateAt(LocalDateTime createAt) {
+        this.createAt = createAt;
     }
 
     public Book getBook() {

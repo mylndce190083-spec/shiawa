@@ -8,23 +8,22 @@ package model;
  *
  * @author BA LIEM
  */
-public class Customer {
-
+public class Account {
     private int id;
     private String username;
-    //private String role;
+    private String role;
     private String email;
-    private String createdAt;
 
-    public Customer() {
+    public Account() {
+        this.id = -1;
+        this.role = "customer";
     }
 
-    public Customer(int id, String username, String email, String createdAt) {
+    public Account(int id, String username, String role, String email) {
         this.id = id;
         this.username = username;
-        //this.role = role;
+        this.role = role;
         this.email = email;
-        this.createdAt = createdAt;
     }
 
     public int getId() {
@@ -43,13 +42,13 @@ public class Customer {
         this.username = username;
     }
 
-    /*public String getRole() {
+    public String getRole() {
         return role;
     }
 
     public void setRole(String role) {
         this.role = role;
-    }*/
+    }
 
     public String getEmail() {
         return email;
@@ -59,13 +58,10 @@ public class Customer {
         this.email = email;
     }
 
+    @Override
+    public String toString() {
+        return "Account{" + "id=" + id + ", username=" + username + ", role=" + role + ", email=" + email + '}';
+    }
     
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
-
+    
 }

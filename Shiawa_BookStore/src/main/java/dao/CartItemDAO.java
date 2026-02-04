@@ -4,14 +4,16 @@
  */
 package dao;
 
+import db.DBContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import model.Book;
 import model.CartItem;
-import utils.DBContext;
 
 /**
  *
@@ -20,18 +22,76 @@ import utils.DBContext;
 public class CartItemDAO extends DBContext {
 
     // tìm cart item theo customer + book
-    public CartItem findItem(int customer_id, int book_id) {
-        String sql = "SELECT * FROM CartItem WHERE customer_id=? AND book_id=?";
-        try (
-                PreparedStatement ps = conn.prepareStatement(sql)) {
+//    public CartItem findItem(int customerId, int bookId) {
+//        String sql = """
+//        SELECT c.cart_item_id, c.quantity, c.price, c.created_at,
+//               b.book_id, b.title, b.url_img
+//        FROM CartItem c
+//        JOIN Book b ON c.book_id = b.book_id
+//        WHERE c.customer_id = ? AND c.book_id = ?
+//    """;
+//
+//        try {
+//            PreparedStatement ps = getConnection().prepareStatement(sql);
+//            ps.setInt(1, customerId);
+//            ps.setInt(2, bookId);
+//
+//            ResultSet rs = ps.executeQuery();
+//
+//            if (rs.next()) {
+//                CartItem item = new CartItem(
+//                        rs.getInt("cart_item_id"),
+//                        customerId,
+//                        bookId,
+//                        rs.getInt("quantity"),
+//                        rs.getDouble("price"),
+//                        rs.getTimestamp("created_at").toLocalDateTime()
+//                );
+//
+//                Book book = new Book();
+//                book.setBookId(rs.getInt("book_id"));
+//                book.setTitle(rs.getString("title"));
+//                book.setUrlImg(rs.getString("url_img"));
+//
+//                item.setBook(book); // 🔥 QUAN TRỌNG
+//
+//                return item;
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
+    public CartItem findItem(int customerId, int bookId) {
+        String sql = """
+            SELECT c.cart_item_id, c.quantity, c.price, c.created_at,
+                   b.book_id, b.title, b.url_img
+            FROM CartItem c
+            JOIN Book b ON c.book_id = b.book_id
+            WHERE c.customer_id = ? AND c.book_id = ?
+        """;
 
-            ps.setInt(1, customer_id);
-            ps.setInt(2, book_id);
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, customerId);
+            ps.setInt(2, bookId);
+
             ResultSet rs = ps.executeQuery();
-
             if (rs.next()) {
-                CartItem item = new CartItem();
-                item.setQuantity(rs.getInt("quantity"));
+                CartItem item = new CartItem(
+                        rs.getInt("cart_item_id"),
+                        customerId,
+                        bookId,
+                        rs.getInt("quantity"),
+                        rs.getDouble("price"),
+                        rs.getTimestamp("created_at").toLocalDateTime()
+                );
+
+                Book book = new Book();
+                book.setBookId(bookId);
+                book.setTitle(rs.getString("title"));
+                book.setUrlImg(rs.getString("url_img"));
+
+                item.setBook(book);
                 return item;
             }
         } catch (Exception e) {
@@ -40,37 +100,68 @@ public class CartItemDAO extends DBContext {
         return null;
     }
 
+//    public void insert(CartItem item) {
+//        String sql = "INSERT INTO CartItem(customer_id, book_id, quantity, price) VALUES (?,?,?,?)";
+//
+//        try {
+//            PreparedStatement ps = getConnection().prepareStatement(sql);
+//            ps.setInt(1, item.getCustomerId());
+//            ps.setInt(2, item.getBookId());
+//            ps.setInt(3, item.getQuantity());
+//            ps.setDouble(4, item.getPrice());
+//
+//            ps.executeUpdate(); // INSERT → executeUpdate
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+    // insert mới
     public void insert(CartItem item) {
+        String sql = """
+            INSERT INTO CartItem(customer_id, book_id, quantity, price, created_at)
+            VALUES (?,?,?,?,?)
+        """;
 
-        String sql = "INSERT INTO CartItem(customer_id, book_id, quantity, price) VALUES (?,?,?,?)";
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, item.getCustomerId());
+            ps.setInt(2, item.getBookId());
+            ps.setInt(3, item.getQuantity());
+            ps.setDouble(4, item.getPrice());
+            ps.setTimestamp(5, Timestamp.valueOf(item.getCreateAt()));
 
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                int id = rs.getInt("customer_id");
-                int book_id = rs.getInt("book_id");
-                int quantity = rs.getInt("quantity");
-                Double price = rs.getDouble("price");
-
-                ps.executeUpdate();
-            }
+            ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void update(CartItem item) {
-        String sql = "UPDATE CartItem SET quantity=? WHERE customer_id=? AND book_id=?";
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                int id = rs.getInt("customer_id");
-                int book_id = rs.getInt("book_id");
-                int quantity = rs.getInt("quantity");
-            }
+
+//    public void update(CartItem item) {
+//        String sql = "UPDATE CartItem SET quantity=? WHERE customer_id=? AND book_id=?";
+//
+//        try {
+//            PreparedStatement ps = getConnection().prepareStatement(sql);
+//            ps.setInt(1, item.getQuantity());
+//            ps.setInt(2, item.getCustomerId());
+//            ps.setInt(3, item.getBookId());
+//
+//            ps.executeUpdate(); // UPDATE → executeUpdate
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+     // update số lượng
+    public void updateQuantity(int customerId, int bookId, int quantity) {
+        String sql = """
+            UPDATE CartItem
+            SET quantity = ?
+            WHERE customer_id = ? AND book_id = ?
+        """;
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, quantity);
+            ps.setInt(2, customerId);
+            ps.setInt(3, bookId);
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -81,36 +172,50 @@ public class CartItemDAO extends DBContext {
         List<CartItem> list = new ArrayList<>();
 
         String sql = """
-        SELECT c.cart_item_id, c.customer_id, c.book_id,
-               c.quantity, c.price, c.create_at,
-               b.title, b.image_url
+        SELECT c.cart_item_id,
+               c.customer_id,
+               c.book_id,
+               c.quantity,
+               c.price,
+               c.created_at,
+               b.title,
+               b.url_img
         FROM CartItem c
         JOIN Book b ON c.book_id = b.book_id
         WHERE c.customer_id = ?
     """;
 
         try {
-            PreparedStatement ps = conn.prepareStatement(sql);
+            PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setInt(1, customerId);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                CartItem item = new CartItem();
-                item.setCart_item_id(rs.getInt("cart_item_id"));
-                item.setCustomer_id(rs.getInt("customer_id"));
-                item.setBook_id(rs.getInt("book_id"));
-                item.setQuantity(rs.getInt("quantity"));
-                item.setPrice(rs.getDouble("price"));
-                item.setCreate_at(rs.getTimestamp("create_at").toLocalDateTime());
+                int cartItemId = rs.getInt("cart_item_id");
+                int bookId = rs.getInt("book_id");
+                int quantity = rs.getInt("quantity");
+                double price = rs.getDouble("price");
 
-                // 🔥 SET BOOK
+                Timestamp t = rs.getTimestamp("created_at");
+                LocalDateTime createAt = (t != null) ? t.toLocalDateTime() : null;
+
+                // tạo Book (theo style quen tay)
                 Book book = new Book();
-                book.setBook_id(rs.getInt("book_id"));
+                book.setBookId(bookId);
                 book.setTitle(rs.getString("title"));
-                book.setImgUrl(rs.getString("image_url"));
+                book.setUrlImg(rs.getString("url_img"));
+
+                // tạo CartItem bằng constructor
+                CartItem item = new CartItem(
+                        cartItemId,
+                        customerId,
+                        bookId,
+                        quantity,
+                        price,
+                        createAt
+                );
 
                 item.setBook(book);
-
                 list.add(item);
             }
         } catch (Exception e) {
@@ -120,4 +225,58 @@ public class CartItemDAO extends DBContext {
         return list;
     }
 
+//    public void delete(int customerId, int bookId) {
+//        String sql = """
+//        DELETE FROM CartItem
+//        WHERE customer_id = ? AND book_id = ?
+//    """;
+//
+//        try (
+//                PreparedStatement ps = getConnection().prepareStatement(sql);) {
+//            ps.setInt(1, customerId);
+//            ps.setInt(2, bookId);
+//            ps.executeUpdate();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+    // xóa
+    public void delete(int customerId, int bookId) {
+        String sql = """
+            DELETE FROM CartItem
+            WHERE customer_id = ? AND book_id = ?
+        """;
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, customerId);
+            ps.setInt(2, bookId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        CartItemDAO dao = new CartItemDAO();
+
+        int customerId = 1;
+
+        List<CartItem> cart = dao.getCartByCustomerId(customerId);
+
+        if (cart.isEmpty()) {
+            System.out.println("❌ Giỏ hàng trống");
+        } else {
+            System.out.println("✅ Số sản phẩm trong giỏ: " + cart.size());
+
+            for (CartItem item : cart) {
+                System.out.println("---------------");
+                System.out.println("CartItem ID : " + item.getCartItemId());
+                System.out.println("Book ID     : " + item.getBookId());
+                System.out.println("Book title  : " + item.getBook().getTitle());
+                System.out.println("Price       : " + item.getPrice());
+                System.out.println("Quantity    : " + item.getQuantity());
+                System.out.println("Image       : " + item.getBook().getUrlImg());
+            }
+        }
+    }
 }

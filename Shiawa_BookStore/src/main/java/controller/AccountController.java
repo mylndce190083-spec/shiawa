@@ -4,44 +4,37 @@
  */
 package controller;
 
-import dao.BookDAO;
-import dao.CategoryDAO;
+import dao.AccountDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import model.Book;
-import model.Category;
+import model.Account;
 
 /**
  *
  * @author BA LIEM
  */
-@WebServlet(name = "HomeController", urlPatterns = {"/home"})
-public class HomeController extends HttpServlet {
+@WebServlet(name = "AccountController", urlPatterns = {"/account"})
+public class AccountController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        BookDAO dao = new BookDAO();
-        CategoryDAO cdao = new CategoryDAO();
-        List<Book> list = dao.getAllBook();
-        List<Category> clist = cdao.getAllCategory();
-        
-        request.setAttribute("listB", list);
-        request.setAttribute("listC", clist);
-        request.getRequestDispatcher("/WEB-INF/home/home.jsp").forward(request, response);
+        AccountDAO dao = new AccountDAO();
+        List<Account> list = dao.getAllUsers();
+
+        request.setAttribute("accounts", list);
+        request.getRequestDispatcher("/WEB-INF/account/list.jsp").forward(request, response);
     }
 
-    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
     }
 
     /**
