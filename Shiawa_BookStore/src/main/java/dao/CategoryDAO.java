@@ -4,6 +4,7 @@
  */
 package dao;
 
+import db.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -11,14 +12,31 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Category;
-import utils.DBContext;
 
 /**
  *
- * @author Lenovo
+ * @author BA LIEM
  */
 public class CategoryDAO extends DBContext {
+    public List<Category> getIdNameCategory() {
+        List<Category> list = new ArrayList<>();
+        String sql = "SELECT category_id, name FROM Category";
 
+        try (PreparedStatement ps = getConnection().prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Category c = new Category();
+                c.setCategoryId(rs.getInt("category_id"));
+                c.setCategoryName(rs.getString("name"));
+                list.add(c);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    
     public List<Category> getAllCategory() {
         List<Category> list = new ArrayList<>();
         String sql = "select * from Category";
@@ -57,15 +75,5 @@ public class CategoryDAO extends DBContext {
             System.out.println("Not found!");
         }
         return null;
-    }
-
-    public static void main(String[] args) {
-        CategoryDAO dao = new CategoryDAO();
-        List<Category> list = dao.getAllCategory();
-        for (Category e : list) {
-            System.out.println(e);
-        }
-        Category c = dao.getCategoryById(1);
-        System.out.println(c);
     }
 }
