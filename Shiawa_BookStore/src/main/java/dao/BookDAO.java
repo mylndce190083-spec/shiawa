@@ -5,6 +5,7 @@
 package dao;
 
 import db.DBContext;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
@@ -16,7 +17,7 @@ import model.Category;
 
 /**
  *
- * @author Lenovo
+ * @author BA LIEM
  */
 public class BookDAO extends DBContext {
 
@@ -101,7 +102,7 @@ public class BookDAO extends DBContext {
                 //tao cate
                 int cateId = rs.getInt("category_id");
                 Category cate = dao.getCategoryById(cateId);
-
+                
                 int stock = rs.getInt("stock");
                 String publisher = rs.getString("publisher");
                 int discount = rs.getInt("discount");
@@ -112,13 +113,13 @@ public class BookDAO extends DBContext {
                 Book b = new Book(id, title, author, price, description, cate, stock, publisher, discount, imgUrl, isActive, createAte);
                 list.add(b);
             }
-
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
         return list;
     }
-
+    
     public Book getBookById(int bookId) {
         String sql = """
         SELECT *
@@ -156,5 +157,4 @@ public class BookDAO extends DBContext {
         }
         return null;
     }
-
 }

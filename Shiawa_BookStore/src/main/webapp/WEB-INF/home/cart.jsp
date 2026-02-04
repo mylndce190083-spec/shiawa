@@ -52,8 +52,8 @@
         </header>
 
 
-
-        <section class="cart-page" id="cartPage">
+                    
+        <!--section class="cart-page" id="cartPage"-->
 
             <h2>Your Cart</h2>
 
@@ -152,7 +152,7 @@
                 <button class="pay-btn">PAY NOW</button>
             </div>
 
-        </section>
+        <!--/section-->
 
         <script>
             function updateTotal() {

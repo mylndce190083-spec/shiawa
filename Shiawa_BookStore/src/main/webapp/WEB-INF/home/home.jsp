@@ -36,11 +36,11 @@
 
             <!-- ICONS -->
             <div class="icons">
-
                 <a href="${pageContext.request.contextPath}/cart" class="icon">
                     <i class="fa-solid fa-cart-shopping"></i>
                     <span>Giỏ hàng</span>
                 </a>
+
                 <c:if test="${not empty sessionScope.user}">
                     <div class="icon" id="orderIcon">
                         <i class="fa-solid fa-clipboard-list"></i>
@@ -48,11 +48,18 @@
                     </div>
                 </c:if>
 
-
                 <a href="login" class="icon">
                     <i class="fa-regular fa-user"></i>
                     <span>Tài khoản</span>
                 </a>
+
+                <c:if test="${not empty sessionScope.user}">
+                <a href="logout" class="icon">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Logout</span>
+                </a>
+                </c:if>
+
             </div>
 
         </header>
@@ -94,150 +101,148 @@
                             Thêm giỏ hàng
                         </button>
                     </form>
-
-
                 </div>
             </c:forEach>
 
-            <!--            <div class="book" data-category="Business" data-name="Bùi Kiến Thành – Người Mở Khóa" data-price="150000">
-                            <img src="https://via.placeholder.com/160x220">
-                            <p class="title">Bùi Kiến Thành – Người Mở Khóa</p>
-                            <div class="price">
-                                <span class="new-price">150.000đ</span>
-                                <span class="discount">-15%</span>
-                            </div>
-                            <p class="sold">Đã bán 85</p>
-                            <button class="add-cart">Thêm giỏ hàng</button>
-                        </div>
-            
-                        <div class="book" data-category="Novel" data-name="Stop Overthinking" data-price="90000">
-                            <img src="https://via.placeholder.com/160x220">
-                            <p class="title">Stop Overthinking</p>
-                            <div class="price">
-                                <span class="new-price">90.000đ</span>
-                                <span class="discount">-5%</span>
-                            </div>
-                            <p class="sold">Đã bán 200</p>
-                            <button class="add-cart">Thêm giỏ hàng</button>
-                        </div>
-            
-                        <div class="book" data-category="Mystery" data-name="Những Mô Hình Tư Duy Vĩ Đại" data-price="180000">
-                            <img src="https://via.placeholder.com/160x220">
-                            <p class="title">Những Mô Hình Tư Duy Vĩ Đại</p>
-                            <div class="price">
-                                <span class="new-price">180.000đ</span>
-                                <span class="discount">-20%</span>
-                            </div>
-                            <p class="sold">Đã bán 60</p>
-                            <button class="add-cart">Thêm giỏ hàng</button>
-                        </div>
-            
-                    </section>
-            
-                    <section class="cart-page" id="cartPage" style="display:none;">
-            
-                        <h2>Your Cart</h2>
-            
-                        <div class="cart-header">
-                            <span></span>
-                            <span>Book</span>
-                            <span>Price</span>
-                            <span>Quantity</span>
-                            <span>Subtotal</span>
-                        </div>
-            
-                        <div id="cartItems"></div>
-                        <div class="cart-item">
-                            <input type="checkbox" class="select-item" data-price="10" data-qty="1">
-            
-                            <div class="product">
-                                <img src="https://via.placeholder.com/80x100">
-                                <span>Book name</span>
-                            </div>
-            
-                            <span>$10</span>
-            
-                            <div class="quantity">
-                                <button>-</button>
-                                <span>1</span>
-                                <button>+</button>
-                            </div>
-            
-                            <span class="subtotal">$10</span>
-                        </div>
-            
-                        <div class="cart-item">
-                            <input type="checkbox" class="select-item" data-price="15" data-qty="1">
-            
-                            <div class="product">
-                                <img src="https://via.placeholder.com/80x100">
-                                <span>Another book</span>
-                            </div>
-            
-                            <span>$15</span>
-            
-                            <div class="quantity">
-                                <button>-</button>
-                                <span>1</span>
-                                <button>+</button>
-                            </div>
-            
-                            <span class="subtotal">$15</span>
-                        </div>-->
+            <div class="book" data-category="Business" data-name="Bùi Kiến Thành – Người Mở Khóa" data-price="150000">
+                <img src="https://via.placeholder.com/160x220">
+                <p class="title">Bùi Kiến Thành – Người Mở Khóa</p>
+                <div class="price">
+                    <span class="new-price">150.000đ</span>
+                    <span class="discount">-15%</span>
+                </div>
+                <p class="sold">Đã bán 85</p>
+                <button class="add-cart">Thêm giỏ hàng</button>
+            </div>
+
+            <div class="book" data-category="Novel" data-name="Stop Overthinking" data-price="90000">
+                <img src="https://via.placeholder.com/160x220">
+                <p class="title">Stop Overthinking</p>
+                <div class="price">
+                    <span class="new-price">90.000đ</span>
+                    <span class="discount">-5%</span>
+                </div>
+                <p class="sold">Đã bán 200</p>
+                <button class="add-cart">Thêm giỏ hàng</button>
+            </div>
+
+            <div class="book" data-category="Mystery" data-name="Những Mô Hình Tư Duy Vĩ Đại" data-price="180000">
+                <img src="https://via.placeholder.com/160x220">
+                <p class="title">Những Mô Hình Tư Duy Vĩ Đại</p>
+                <div class="price">
+                    <span class="new-price">180.000đ</span>
+                    <span class="discount">-20%</span>
+                </div>
+                <p class="sold">Đã bán 60</p>
+                <button class="add-cart">Thêm giỏ hàng</button>
+            </div>
+
+        </section>
+
+        <section class="cart-page" id="cartPage" style="display:none;">
+
+            <h2>Your Cart</h2>
+
+            <div class="cart-header">
+                <span></span>
+                <span>Book</span>
+                <span>Price</span>
+                <span>Quantity</span>
+                <span>Subtotal</span>
+            </div>
+
+            <div id="cartItems"></div>
+            <div class="cart-item">
+                <input type="checkbox" class="select-item" data-price="10" data-qty="1">
+
+                <div class="product">
+                    <img src="https://via.placeholder.com/80x100">
+                    <span>Book name</span>
+                </div>
+
+                <span>$10</span>
+
+                <div class="quantity">
+                    <button>-</button>
+                    <span>1</span>
+                    <button>+</button>
+                </div>
+
+                <span class="subtotal">$10</span>
+            </div>
+
+            <div class="cart-item">
+                <input type="checkbox" class="select-item" data-price="15" data-qty="1">
+
+                <div class="product">
+                    <img src="https://via.placeholder.com/80x100">
+                    <span>Another book</span>
+                </div>
+
+                <span>$15</span>
+
+                <div class="quantity">
+                    <button>-</button>
+                    <span>1</span>
+                    <button>+</button>
+                </div>
+
+                <span class="subtotal">$15</span>
+            </div>
 
             <!-- VOUCHER -->
-            <!--            <div class="voucher">
-                            <input type="text" id="voucherInput" placeholder="Nhập mã giảm giá">
-                            <button id="applyVoucher">Áp dụng</button>
-                            <p id="voucherMessage"></p>
-                        </div>
-            
-                         TOTAL 
-                        <div class="cart-footer">
-                            <strong id="totalPrice">Total: $0</strong>
-                        </div>
-                        <div class="cart-actions"> <button class="pay-btn">PAY NOW</button> </div>
-                    </div>
-                </section>-->
+            <div class="voucher">
+                <input type="text" id="voucherInput" placeholder="Nhập mã giảm giá">
+                <button id="applyVoucher">Áp dụng</button>
+                <p id="voucherMessage"></p>
+            </div>
 
-            <!-- ACCOUNT PAGE -->
-            <section class="account-page" id="accountPage" style="display:none;">
+            <!-- TOTAL -->
+            <div class="cart-footer">
+                <strong id="totalPrice">Total: $0</strong>
+            </div>
+            <div class="cart-actions"> <button class="pay-btn">PAY NOW</button> </div>
+        </div>
+    </section>
 
-                <h2>Tài khoản</h2>
+    <!-- ACCOUNT PAGE -->
+    <section class="account-page" id="accountPage" style="display:none;">
 
-                <!-- TABS -->
-                <div class="account-tabs">
-                    <span class="tab active" data-tab="login">Đăng nhập</span>
-                    <span class="tab" data-tab="register">Đăng ký</span>
-                </div>
+        <h2>Tài khoản</h2>
 
-                <!-- LOGIN -->
-                <div class="tab-content active" id="login">
-                    <label>Số điện thoại / Email</label>
-                    <input type="text" placeholder="Nhập số điện thoại hoặc email">
+        <!-- TABS -->
+        <div class="account-tabs">
+            <span class="tab active" data-tab="login">Đăng nhập</span>
+            <span class="tab" data-tab="register">Đăng ký</span>
+        </div>
 
-                    <label>Mật khẩu</label>
-                    <input type="password" placeholder="Nhập mật khẩu">
+        <!-- LOGIN -->
+        <div class="tab-content active" id="login">
+            <label>Số điện thoại / Email</label>
+            <input type="text" placeholder="Nhập số điện thoại hoặc email">
 
-                    <a href="#" class="forgot">Quên mật khẩu?</a>
+            <label>Mật khẩu</label>
+            <input type="password" placeholder="Nhập mật khẩu">
 
-                    <button class="submit-btn">Đăng nhập</button>
-                </div>
+            <a href="#" class="forgot">Quên mật khẩu?</a>
 
-                <!-- REGISTER -->
-                <div class="tab-content" id="register">
-                    <input type="text" placeholder="First Name">
-                    <input type="text" placeholder="Last Name">
-                    <input type="email" placeholder="Email">
-                    <input type="password" placeholder="Password">
+            <button class="submit-btn">Đăng nhập</button>
+        </div>
 
-                    <button class="submit-btn">Create Account</button>
-                </div>
+        <!-- REGISTER -->
+        <div class="tab-content" id="register">
+            <input type="text" placeholder="First Name">
+            <input type="text" placeholder="Last Name">
+            <input type="email" placeholder="Email">
+            <input type="password" placeholder="Password">
 
-            </section>
+            <button class="submit-btn">Create Account</button>
+        </div>
 
-            <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
-    </body>
+    </section>
+
+    <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
+</body>
 
 
 </html>

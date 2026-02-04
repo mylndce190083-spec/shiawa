@@ -60,7 +60,8 @@ public class CustomerDAO extends DBContext {
 //        }
 //        return 0;
 //    }
-     public Customer getCustomerByAccountId(int accountId) {
+    
+    public Customer getCustomerByAccountId(int accountId) {
         String sql = "SELECT customer_id FROM Customer WHERE customer_id = ?";
 
         try {
@@ -78,4 +79,5 @@ public class CustomerDAO extends DBContext {
         }
         return null;
     }
+
 }

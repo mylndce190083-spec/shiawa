@@ -83,7 +83,14 @@
                         <a href="table.jsp" class="nav-item nav-link"><i class="fa fa-headset me-2"></i>Customer
                             Support</a>
                         <a href="chart.html" class="nav-item nav-link"><i class="fa fa-user-edit me-2"></i>Edit Profile</a>
-                        <a href="#" class="nav-item nav-link"><i class="fa fa-sign-out-alt me-2"></i>Logout</a>
+                        <!--<a href="${pageContext.request.contextPath}/logout" 
+                           class="nav-item nav-link ${pageContext.request.requestURI.contains('/logout') ? 'active' : ''}">
+                            <i class="fa fa-sign-out-alt me-2">
+                            </i>Logout</a> -->
+                            <a href="Logout" 
+                           class="nav-item nav-link">
+                            <i class="fa fa-sign-out-alt me-2">
+                            </i>Logout</a>
                     </div>
                 </nav>
             </div>
@@ -123,7 +130,10 @@
                         <a href="table.jsp" class="nav-item nav-link"><i class="fa fa-headset me-2"></i>Customer
                             Support</a>
                         <a href="chart.html" class="nav-item nav-link"><i class="fa fa-user-edit me-2"></i>Edit Profile</a>
-                        <a href="#" class="nav-item nav-link"><i class="fa fa-sign-out-alt me-2"></i>Logout</a>
+                        <a href="${pageContext.request.contextPath}/logout" 
+                           class="nav-item nav-link ${pageContext.request.requestURI.contains('/logout') ? 'active' : ''}">
+                            <i class="fa fa-sign-out-alt me-2">
+                            </i>Logout</a>
                     </div>
                 </nav>
             </div>

@@ -88,7 +88,7 @@ public class LoginController extends HttpServlet {
             if (user.getRole().equals("customer")) {
                 response.sendRedirect("home");
             } else if (user.getRole().equals("Admin")) {
-                response.sendRedirect("book");
+                response.sendRedirect("account");
             }
         }
     }
