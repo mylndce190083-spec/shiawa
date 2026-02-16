@@ -127,10 +127,22 @@
                         <div class="row">
                             <!-- Book Image -->
                             <div class="col-md-4 text-center">
-                                <img src="${book.urlImg != null ? book.urlImg : 'assets/img/no-image.png'}"
-                                     alt="Book Image"
-                                     class="img-fluid rounded border"
-                                     style="max-height: 300px;">
+                                <c:set var="primaryFound" value="false"/>
+
+                                <c:forEach var="img" items="${bookImages}">
+                                    <c:if test="${img.primary}">
+                                        <img src="${pageContext.request.contextPath}/${img.imageUrl}"
+                                             class="img-fluid rounded border"
+                                             style="max-height: 300px;">
+                                        <c:set var="primaryFound" value="true"/>
+                                    </c:if>
+                                </c:forEach>
+
+                                <c:if test="${!primaryFound}">
+                                    <img src="${pageContext.request.contextPath}/assets/img/no-image.png"
+                                         class="img-fluid rounded border"
+                                         style="max-height: 300px;">
+                                </c:if>
                             </div>
 
                             <!-- Book Information -->

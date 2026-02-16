@@ -53,9 +53,11 @@ public class BookController extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("id"));
 
             BookDAO dao = new BookDAO();
+            BookImageDAO imgDao = new BookImageDAO();
             BookAdmin book = dao.getBookAdminById(id);
 
             request.setAttribute("book", book);
+            request.setAttribute("bookImages", imgDao.getByBookId(id));
             request.getRequestDispatcher("/WEB-INF/book/detail.jsp").forward(request, response);
             return;
         } else if ("edit".equals(view)) {
@@ -75,10 +77,13 @@ public class BookController extends HttpServlet {
             return;
         } else if ("delete".equals(view)) {
             int id = Integer.parseInt(request.getParameter("id"));
+            
             BookDAO dao = new BookDAO();
+            BookImageDAO imgDao = new BookImageDAO();
             BookAdmin book = dao.getBookAdminById(id);
 
             request.setAttribute("book", book);
+            request.setAttribute("bookImages", imgDao.getByBookId(id));
             request.getRequestDispatcher("/WEB-INF/book/delete.jsp")
                     .forward(request, response);
             return;

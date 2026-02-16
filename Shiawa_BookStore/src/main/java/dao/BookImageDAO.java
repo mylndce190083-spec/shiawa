@@ -119,26 +119,39 @@ public class BookImageDAO extends DBContext {
     }
 
     public void clearPrimaryByBookId(int bookId) {
-    String sql = "UPDATE BookImages SET is_primary = 0 WHERE book_id = ?";
+        String sql = "UPDATE BookImages SET is_primary = 0 WHERE book_id = ?";
 
-    try {
-        PreparedStatement ps = getConnection().prepareStatement(sql);
-        ps.setInt(1, bookId);
-        ps.executeUpdate();
-    } catch (Exception e) {
-        e.printStackTrace();
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, bookId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-}
-public void setPrimaryId(int imageId) {
-    String sql = "UPDATE BookImages SET is_primary = 1 WHERE image_id = ?";
 
-    try {
-        PreparedStatement ps = getConnection().prepareStatement(sql);
-        ps.setInt(1, imageId);
-        ps.executeUpdate();
-    } catch (Exception e) {
-        e.printStackTrace();
+    public void setPrimaryId(int imageId) {
+        String sql = "UPDATE BookImages SET is_primary = 1 WHERE image_id = ?";
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, imageId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-}
+
+    public void deleteByBookId(int bookId) {
+        String sql = "UPDATE BookImages SET is_active = 0 WHERE book_id = ?";
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, bookId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

@@ -210,10 +210,32 @@ public class BookDAO extends DBContext {
     }
 
     public void hardDeleteBook(int bookId) {
-        String sql = "DELETE FROM Book WHERE book_id = ?";
-        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
-            ps.setInt(1, bookId);
-            ps.executeUpdate();
+
+        String deleteImages = "DELETE FROM BookImages WHERE book_id = ?";
+        String deleteBook = "DELETE FROM Book WHERE book_id = ?";
+
+        try (Connection conn = getConnection()) {
+
+            conn.setAutoCommit(false); // transaction
+
+            try (
+                    PreparedStatement psImg = conn.prepareStatement(deleteImages); PreparedStatement psBook = conn.prepareStatement(deleteBook)) {
+
+                // 1. Xóa ảnh trước
+                psImg.setInt(1, bookId);
+                psImg.executeUpdate();
+
+                // 2. Xóa book
+                psBook.setInt(1, bookId);
+                psBook.executeUpdate();
+
+                conn.commit();
+
+            } catch (Exception e) {
+                conn.rollback();
+                e.printStackTrace();
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
