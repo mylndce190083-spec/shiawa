@@ -103,9 +103,7 @@
                             <i class="fa fa-bars"></i>
                         </button>
                     </a>
-                    <form class="d-none d-md-flex ms-4">
-                        <input class="form-control border-0" type="search" placeholder="Search">
-                    </form>
+
                     <div class="navbar-nav align-items-center ms-auto">
 
                     </div>
@@ -132,55 +130,90 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <h6 class="mb-0">Book List</h6>
                             </div>
-                            <div class="d-flex gap-4">
-                                <a class="btn btn-sm btn-success" href="${pageContext.request.contextPath}/book?view=add">Add Book</a>
-                                <a href="" class="text-primary">Show All</a>
+                            <div class="d-flex gap-3 align-items-center">
+                                <form action="${pageContext.request.contextPath}/book" method="get" class="d-flex">
+                                    <input type="text" 
+                                           name="keyword"
+                                           value="${keyword}"
+                                           class="form-control form-control-sm me-2"
+                                           placeholder="Search book by name">
+
+                                    <button type="submit" class="btn btn-sm btn-outline-success">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </form>
+
+                                <c:if test="${not empty keyword}">
+                                    <a href="${pageContext.request.contextPath}/book"
+                                       class="btn btn-sm btn-secondary">
+                                        Show All
+                                    </a>
+                                </c:if>
+
+                                <a class="btn btn-sm btn-success" 
+                                   href="${pageContext.request.contextPath}/book?view=add">
+                                    Add Book
+                                </a>
                             </div>
+
                         </div>
+                        <c:if test="${not empty searchMsg}">
+                            <div class="alert alert-warning text-start mb-3">
+                                ${searchMsg}
+                            </div>
+                        </c:if>
+
                         <div class="table-responsive">
-                            <table class="table text-start align-middle table-bordered table-hover mb-0">
-                                <thead>
-                                    <tr class="text-success">
-                                        <th>ID</th>
-                                        <th>Title</th>
-                                        <th>Author</th>
-                                        <th>Category</th>
-                                        <th>Price</th>
-                                        <th>Stock</th>
-                                        <th class="text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <c:forEach var="b" items="${bookList}">
-                                        <tr>
-                                            <td>${b.bookId}</td>
-                                            <td>${b.title}</td>
-                                            <td>${b.author}</td>
-                                            <td>${b.categoryName}</td>
-                                            <td>${b.price}</td>
-                                            <td>${b.stock}</td>
-                                            <td class="text-center">
-                                                <a href="${pageContext.request.contextPath}/book?view=detail&id=${b.bookId}"
-                                                   class="btn btn-sm btn-primary">
-                                                    Detail
-                                                </a>
-                                                <a href="${pageContext.request.contextPath}/book?view=edit&id=${b.bookId}"
-                                                   class="btn btn-sm btn-warning">
-                                                    Edit
-                                                </a>
+                            <c:choose>
+                                <c:when test="${empty bookList}">
+                                    <!-- chỉ hiện thông báo, không hiện bảng -->
+                                </c:when>
+                                <c:otherwise>
+                                    <table class="table text-start align-middle table-bordered table-hover mb-0">
+                                        <thead>
+                                            <tr class="text-success">
+                                                <th>ID</th>
+                                                <th>Title</th>
+                                                <th>Author</th>
+                                                <th>Category</th>
+                                                <th>Price</th>
+                                                <th>Stock</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <c:forEach var="b" items="${bookList}">
+                                                <tr>
+                                                    <td>${b.bookId}</td>
+                                                    <td>${b.title}</td>
+                                                    <td>${b.author}</td>
+                                                    <td>${b.categoryName}</td>
+                                                    <td>${b.price}</td>
+                                                    <td>${b.stock}</td>
+                                                    <td class="text-center">
+                                                        <a href="${pageContext.request.contextPath}/book?view=detail&id=${b.bookId}"
+                                                           class="btn btn-sm btn-primary">
+                                                            Detail
+                                                        </a>
+                                                        <a href="${pageContext.request.contextPath}/book?view=edit&id=${b.bookId}"
+                                                           class="btn btn-sm btn-warning">
+                                                            Edit
+                                                        </a>
 
-                                                <a href="${pageContext.request.contextPath}/book?view=delete&id=${b.bookId}"
-                                                   class="btn btn-sm btn-danger">
-                                                    Delete
-                                                </a>
+                                                        <a href="${pageContext.request.contextPath}/book?view=delete&id=${b.bookId}"
+                                                           class="btn btn-sm btn-danger">
+                                                            Delete
+                                                        </a>
 
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
 
-                                </tbody>
+                                        </tbody>
 
-                            </table>
+                                    </table>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
 
                     </div>

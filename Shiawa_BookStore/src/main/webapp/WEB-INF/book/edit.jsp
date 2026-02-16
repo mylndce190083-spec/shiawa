@@ -123,19 +123,91 @@
                             </div>                         
                         </div>
 
+                        <form action="${pageContext.request.contextPath}/book" method="post" enctype="multipart/form-data">
+                            <div class="row">
+                                <!-- LEFT: IMAGE MANAGEMENT -->
+                                <div class="col-md-4">
 
-                        <div class="row">
-                            <!-- Book Image -->
-                            <div class="col-md-4 text-center">
-                                <img src="${book.urlImg != null ? book.urlImg : 'assets/img/no-image.png'}"
-                                     alt="Book Image"
-                                     class="img-fluid rounded border"
-                                     style="max-height: 300px;">
-                            </div>
+                                    <h6>Book Images</h6>
 
-                            <!-- Book Information -->
-                            <div class="col-md-8">
-                                <form action="${pageContext.request.contextPath}/book" method="post">
+                                    <!-- Upload form riêng -->
+    <!--                                <form action="${pageContext.request.contextPath}/book_img"
+                                          method="post"
+                                          enctype="multipart/form-data"
+                                          class="mb-3">
+    
+                                        <input type="hidden" name="action" value="upload">
+                                        <input type="hidden" name="bookId" value="${book.bookId}">
+    
+                                        <input type="file" name="image" class="form-control mb-2" required>
+    
+                                        <button type="submit" class="btn btn-success w-100">
+                                            <i class="fa fa-upload me-2"></i>Upload Image
+                                        </button>
+                                    </form>-->
+
+                                    <!-- Danh sách ảnh -->
+                                    <c:forEach var="img" items="${bookImages}">
+                                        <c:if test="${not empty img.imageUrl}">
+                                            <div class="border rounded p-2 mb-3 text-center">
+
+                                                <img src="${pageContext.request.contextPath}/${img.imageUrl}"
+                                                     class="img-fluid rounded mb-2"
+                                                     style="max-height:150px"
+                                                     onerror="this.src='assets/img/no-image.png'">
+                                                <input type="hidden"
+                                                       name="deleteImageIds"
+                                                       id="delete_${img.imageId}"
+                                                       value="">
+
+                                                <div class="d-flex justify-content-between">
+
+                                                    <!-- Set Primary -->
+                                                    <div>
+                                                        <!--                                                        <input type="hidden" name="action" value="setPrimary">
+                                                                                                                <input type="hidden" name="imageId" value="${img.imageId}">
+                                                                                                                <input type="hidden" name="bookId" value="${book.bookId}">
+                                                                                                                <button type="submit"
+                                                                                                                        class="btn btn-sm ${img.primary ? 'btn-warning' : 'btn-outline-warning'}"
+                                                        ${img.primary ? 'disabled' : ''}>
+                                                    <i class="fa fa-star"></i>
+                                                </button>-->
+                                                        <button type="button"
+                                                                onclick="setPrimary(${img.imageId}, this)"
+                                                                class="btn btn-sm ${img.primary ? 'btn-warning' : 'btn-outline-warning'}">
+                                                            <i class="fa fa-star"></i>
+                                                        </button>
+
+
+                                                    </div>
+
+                                                    <!-- Delete -->
+                                                    <div>
+                                                        <!--                                                        <input type="hidden" name="action" value="delete">
+                                                                                                                <input type="hidden" name="imageId" value="${img.imageId}">
+                                                                                                                <input type="hidden" name="bookId" value="${book.bookId}">
+                                                                                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                                                                                    <i class="fa fa-trash"></i>
+                                                                                                                </button>-->
+                                                        <button type="button"
+                                                                onclick="markDelete(${img.imageId}, this)"
+                                                                class="btn btn-danger btn-sm">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </c:if>
+                                    </c:forEach>
+
+                                </div>
+                                <!-- Book Information -->
+                                <div class="col-md-8">
+
                                     <input type="hidden" name="view" value="edit">
                                     <input type="hidden" name="bookId" value="${book.bookId}">
 
@@ -218,6 +290,13 @@
                                             </td>
                                         </tr>
 
+                                        <tr>
+                                            <th>Upload Images</th>
+                                            <td>
+                                                <input type="file" name="images" multiple class="form-control">
+                                            </td>
+                                        </tr>
+
                                     </table>
 
                                     <!-- Save & Back Button -->
@@ -231,11 +310,11 @@
                                             Cancel
                                         </a>
                                     </div>
-                                </form>
 
+
+                                </div>
                             </div>
-                        </div>
-
+                        </form>
 
                     </div>
                 </div>
@@ -277,6 +356,58 @@
 
         <!-- Template Javascript -->
         <script src="assets/js/main.js"></script>
+        <script>
+                                                                    function previewImage(input) {
+                                                                        if (input.files && input.files[0]) {
+                                                                            const reader = new FileReader();
+                                                                            reader.onload = function (e) {
+                                                                                document.getElementById('previewImg').src = e.target.result;
+                                                                            }
+                                                                            reader.readAsDataURL(input.files[0]);
+                                                                        }
+                                                                    }
+        </script>
+
+        <script>
+            let selectedPrimary = null;
+
+            function setPrimary(imageId, btn) {
+
+                // Bỏ màu tất cả sao
+                document.querySelectorAll('.fa-star').forEach(icon => {
+                    icon.parentElement.classList.remove('btn-warning');
+                    icon.parentElement.classList.add('btn-outline-warning');
+                });
+
+                // Set màu cho cái đang chọn
+                btn.classList.remove('btn-outline-warning');
+                btn.classList.add('btn-warning');
+
+                selectedPrimary = imageId;
+
+                // Nếu chưa có input hidden thì tạo
+                let input = document.getElementById("primaryImageInput");
+                if (!input) {
+                    input = document.createElement("input");
+                    input.type = "hidden";
+                    input.name = "primaryImageId";
+                    input.id = "primaryImageInput";
+                    document.querySelector("form[action*='/book']").appendChild(input);
+                }
+
+                input.value = imageId;
+            }
+
+            function markDelete(imageId, btn) {
+
+                // Ẩn ảnh ngay lập tức
+                btn.closest(".border").style.display = "none";
+
+                // Set hidden value
+                document.getElementById("delete_" + imageId).value = imageId;
+            }
+        </script>
+
     </body>
 
 </html>
