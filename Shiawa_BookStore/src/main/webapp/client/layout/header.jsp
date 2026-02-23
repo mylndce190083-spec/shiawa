@@ -27,7 +27,7 @@
 
                     <!-- SEARCH -->
                     <form class="d-flex me-3" action="search">
-                        <input class="form-control me-2" type="search" name="q" placeholder="Tìm kiếm sách...">
+                        <input class="form-control me-2" type="search" name="keyword" placeholder="Tìm kiếm sách...">
                         <button class="btn btn-outline-success" type="submit">
                             <i class="bi bi-search"></i>
                         </button>

@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Book;
 import model.Category;
 import utils.DBContext;
@@ -189,6 +191,29 @@ public class BookDAO extends DBContext {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return list;
+    }
+
+    public List<Book> searchBookByName(String keyword) {
+        List<Book> list = new ArrayList<>();
+
+        String sql = "SELECT * FROM Book WHERE title LIKE ?";
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setString(1, "%" + keyword + "%");
+            ResultSet rs = ps.executeQuery();           
+            while (rs.next()) {
+                Book b = new Book();
+                b.setBookId(rs.getInt("book_id"));
+                b.setTitle(rs.getString("title"));
+                b.setPrice(rs.getDouble("price"));
+                b.setUrlImg(rs.getString("url_img"));
+                list.add(b);
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
         return list;
     }
 }
