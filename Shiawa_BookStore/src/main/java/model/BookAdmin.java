@@ -2,13 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package dao;
+package model;
 
 /**
  *
- * @author admin
+ * @author BA LIEM
  */
 public class BookAdmin {
+
     private int bookId;
     private String title;
     private String author;
@@ -25,7 +26,7 @@ public class BookAdmin {
     public BookAdmin() {
     }
 
-    public BookAdmin(int bookId, String title, String author, double price, int stock, String publisher, int discount, String urlImg, boolean isActive, String createdAt, String categoryName, int categoryId) {
+    public BookAdmin(int bookId, String title, String author, double price, int stock, String publisher, int discount, String urlImg, boolean isActive, String createdAt, String categoryName) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
@@ -37,6 +38,13 @@ public class BookAdmin {
         this.isActive = isActive;
         this.createdAt = createdAt;
         this.categoryName = categoryName;
+    }
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
     }
 
@@ -128,14 +136,4 @@ public class BookAdmin {
         this.categoryName = categoryName;
     }
 
-    public int getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
-    }
-    
-    
-    
 }

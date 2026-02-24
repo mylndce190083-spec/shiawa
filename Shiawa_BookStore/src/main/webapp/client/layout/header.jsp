@@ -1,54 +1,42 @@
-<%@page contentType="text/html" pageEncoding="UTF-8" %>
-    <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
-            <div class="container">
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-                <!-- LOGO -->
-                <a class="navbar-brand fw-bold text-success" href="home">
-                    <i class="bi bi-book"></i> SHIAWA
-                </a>
+<header class="header">
+    <div class="logo" id="backToShop" onclick="window.location.href = '${pageContext.request.contextPath}/home'">
+        <img src="${pageContext.request.contextPath}/assets/img/logo.jpg" class="rounded-img" alt="Logo">
+    </div>
 
-                <!-- TOGGLE MOBILE -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+    <form action="${pageContext.request.contextPath}/search" method="get" class="search-box">
+        <input type="text" name="keyword" placeholder="Tìm kiếm sách bạn muốn..." value="${keyword}">
+        <button type="submit">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+    </form>
 
-                <!-- MENU -->
-                <div class="collapse navbar-collapse" id="mainNavbar">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link fw-semibold" href="home">Trang chủ</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link fw-semibold" href="books">Sách</a>
-                        </li>
-                    </ul>
+    <div class="icons">
+        <a href="${pageContext.request.contextPath}/cart" class="icon">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span>Giỏ hàng</span>
+        </a>
 
-                    <!-- SEARCH -->
-                    <form class="d-flex me-3" action="search">
-                        <input class="form-control me-2" type="search" name="keyword" placeholder="Tìm kiếm sách...">
-                        <button class="btn btn-outline-success" type="submit">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </form>
-
-                    <!-- USER -->
-                    <c:choose>
-                        <c:when test="${sessionScope.user != null}">
-                            <a href="cart" class="btn btn-outline-success me-2">
-                                <i class="bi bi-cart"></i>
-                            </a>
-                            <span class="fw-semibold text-success me-2">
-                                Hi, ${sessionScope.user.name}
-                            </span>
-                            <a href="logout" class="btn btn-success">Logout</a>
-                        </c:when>
-                        <c:otherwise>
-                            <a href="login" class="btn btn-outline-success me-2">Login</a>
-                            <a href="register" class="btn btn-success">Register</a>
-                        </c:otherwise>
-                    </c:choose>
+        <c:choose>
+            <c:when test="${not empty sessionScope.user}">
+                <div class="icon">
+                    <i class="fa-solid fa-user-check"></i>
+                    <span>Hi, ${sessionScope.user.username}</span>
                 </div>
-            </div>
-        </nav>
+                <a href="${pageContext.request.contextPath}/logout" class="icon">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Đăng xuất</span>
+                </a>
+            </c:when>
+            <c:otherwise>
+                <a href="${pageContext.request.contextPath}/login" class="icon">
+                    <i class="fa-regular fa-user"></i>
+                    <span>Tài khoản</span>
+                </a>
+            </c:otherwise>
+        </c:choose>
+    </div>
+</header>
