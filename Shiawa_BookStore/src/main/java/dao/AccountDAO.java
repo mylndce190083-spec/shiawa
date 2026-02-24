@@ -5,6 +5,7 @@
 package dao;
 
 import db.DBContext;
+import java.security.MessageDigest;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -89,6 +90,24 @@ public class AccountDAO extends DBContext {
 
         return u;
     }
+    
+    public String hashMD5(String pass){
+        String hashPass = "";
+        try {
+            MessageDigest ms = MessageDigest.getInstance("MD5");
+            byte[] bytePass = ms.digest(pass.getBytes());
+            //[0x1a, 0x09, 0x1b, 0xa, 0x77,...]
+            for (byte bytePas : bytePass) {
+                //0x1a, 0x09, 0x1b, 0xa
+                String ch = String.format("%02x", bytePas);
+                //1a, 09, 1b, 0a
+                hashPass += ch;
+            }
+        } catch (Exception e) {
+        }
+        return hashPass;
+    }
+    
 public static void main(String[] args) {
         AccountDAO dao = new AccountDAO();
         //System.out.println(dao.hashMD5("123456"));

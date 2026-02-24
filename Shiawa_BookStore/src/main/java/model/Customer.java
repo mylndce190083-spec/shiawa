@@ -12,6 +12,7 @@ public class Customer {
 
     private int id;
     private String username;
+    private String password;
     //private String role;
     private String email;
     private String createdAt;
@@ -19,12 +20,21 @@ public class Customer {
     public Customer() {
     }
 
-    public Customer(int id, String username, String email, String createdAt) {
+    public Customer(int id, String username, String password, String email, String createdAt) {
         this.id = id;
         this.username = username;
+        this.password = password;
         //this.role = role;
         this.email = email;
         this.createdAt = createdAt;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public int getId() {

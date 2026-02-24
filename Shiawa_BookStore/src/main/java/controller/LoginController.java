@@ -74,13 +74,15 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String username = request.getParameter("username");
+        String email = request.getParameter("email");
         String password = request.getParameter("password");
         AccountDAO dao = new AccountDAO();
-        Account user = dao.login(username, password);
+        String hashPassword = dao.hashMD5(password);
+        Account user = dao.login(email, hashPassword);
         HttpSession session = request.getSession();
 
         if (user.getId() == -1) {
+            session.setAttribute("error", "Sai email hoặc mật khẩu!");
             response.sendRedirect("login");
         } else {
 //            request.setAttribute("user", user);
