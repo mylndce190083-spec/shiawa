@@ -135,7 +135,6 @@ public class CartItemDAO extends DBContext {
         }
     }
 
-
 //    public void update(CartItem item) {
 //        String sql = "UPDATE CartItem SET quantity=? WHERE customer_id=? AND book_id=?";
 //
@@ -150,7 +149,7 @@ public class CartItemDAO extends DBContext {
 //            e.printStackTrace();
 //        }
 //    }
-     // update số lượng
+    // update số lượng
     public void updateQuantity(int customerId, int bookId, int quantity) {
         String sql = """
             UPDATE CartItem
@@ -277,6 +276,20 @@ public class CartItemDAO extends DBContext {
                 System.out.println("Quantity    : " + item.getQuantity());
                 System.out.println("Image       : " + item.getBook().getUrlImg());
             }
+        }
+    }
+
+    public void clearCart(int customerId) {
+
+        String sql = "DELETE FROM CartItem WHERE customer_id = ?";
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+
+            ps.setInt(1, customerId);
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

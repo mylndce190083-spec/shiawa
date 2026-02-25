@@ -244,24 +244,47 @@ public class CartController extends HttpServlet {
                 dao.delete(customerId, bookId);
                 break;
 
-            
         }
-                response.sendRedirect(request.getContextPath() + "/cart");
-        }
+        CartItem updatedItem = dao.findItem(customerId, bookId);
+        int newQty = (updatedItem != null) ? updatedItem.getQuantity() : 0;
 
-        /**
-         * Returns a short description of the servlet.
-         *
-         * @return a String containing servlet description
-         */
-        @Override
-        public String getServletInfo
-        
-            () {
+// Kiểm tra có phải AJAX không
+        boolean isAjax = "XMLHttpRequest"
+                .equals(request.getHeader("X-Requested-With"));
+
+        if (isAjax) {
+
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+
+            String message = "";
+
+            if ("add".equals(action)) {
+                message = "Added to cart successfully!";
+            }
+
+            String json = "{"
+                    + "\"quantity\":" + newQty + ","
+                    + "\"message\":\"" + message + "\""
+                    + "}";
+
+            response.getWriter().print(json);
+
+        } else {
+            // Nếu là submit form bình thường (delete)
+            response.sendRedirect(request.getContextPath() + "/cart");
+        }
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
         return "Short description";
-        }// </editor-fold>
-
-    
+    }// </editor-fold>
 
     public static void main(String[] args) {
 
