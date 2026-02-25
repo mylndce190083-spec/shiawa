@@ -78,7 +78,10 @@
                             <i class="fa fa-book me-2">
                             </i>Book</a>
                         <a href="category.jsp" class="nav-item nav-link"><i class="fa fa-tags me-2"></i>Category</a>
-                        <a href="form.jsp" class="nav-item nav-link"><i class="fa fa-shopping-cart me-2"></i>Order</a>
+                        <a href="${pageContext.request.contextPath}/OrderAdmin" 
+                           class="nav-item nav-link ${pageContext.request.requestURI.contains('/OrderAdmin') ? 'active' : ''}">
+                            <i class="fa fa-book me-2">
+                            </i>Order</a>
                         <a href="table.jsp" class="nav-item nav-link"><i class="fa fa-headset me-2"></i>Customer
                             Support</a>
                         <a href="chart.html" class="nav-item nav-link"><i class="fa fa-user-edit me-2"></i>Edit Profile</a>
