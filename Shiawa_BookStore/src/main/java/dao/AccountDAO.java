@@ -22,12 +22,12 @@ public class AccountDAO extends DBContext {
         List<Account> list = new ArrayList<>();
 
         String sql = """
-        SELECT customer_id AS id, username, 'Customer' AS role, email
+        SELECT customer_id AS id, username, 'Customer' AS role, email, status
         FROM Customer
 
         UNION ALL
 
-        SELECT s.staff_id AS id, s.username, r.name AS role, s.email
+        SELECT s.staff_id AS id, s.username, r.name AS role, s.email, s.status
         FROM Staff s
         JOIN Role r ON s.role_id = r.role_id
 
@@ -41,7 +41,8 @@ public class AccountDAO extends DBContext {
                         rs.getInt("id"),
                         rs.getString("username"),
                         rs.getString("role"),
-                        rs.getString("email")
+                        rs.getString("email"),
+                        rs.getString("status")
                 ));
             }
         } catch (Exception e) {
@@ -64,6 +65,7 @@ public class AccountDAO extends DBContext {
                 u.setId(rs.getInt("customer_id"));
                 u.setUsername(rs.getString("username"));
                 u.setEmail(rs.getString("email"));
+                u.setStatus(rs.getString("status"));
             }
         } catch (Exception e) {
         }
@@ -80,8 +82,9 @@ public class AccountDAO extends DBContext {
                 if (rs.next()) {
                     u.setId(rs.getInt("Staff_id"));
                     u.setUsername(rs.getString("username"));
-                    u.setRole(rs.getString("name"));
+                    u.setRole(rs.getString("name"));//name là role
                     u.setEmail(rs.getString("email"));
+                    u.setStatus(rs.getString("status"));
                 }
             } catch (Exception e) {
 

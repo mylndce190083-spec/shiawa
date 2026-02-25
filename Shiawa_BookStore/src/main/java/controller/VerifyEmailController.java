@@ -4,7 +4,7 @@
  */
 package controller;
 
-import dao.AccountDAO;
+import dao.CustomerDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,15 +12,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import model.Account;
 
 /**
  *
  * @author Lenovo
  */
-@WebServlet(name = "LoginController", urlPatterns = {"/login"})
-public class LoginController extends HttpServlet {
+@WebServlet(name = "VerifyEmailController", urlPatterns = {"/verify"})
+public class VerifyEmailController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +37,10 @@ public class LoginController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LoginController</title>");
+            out.println("<title>Servlet VerifyEmailController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LoginController at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet VerifyEmailController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -60,6 +58,17 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String token = request.getParameter("token");
+
+        CustomerDAO dao = new CustomerDAO();
+        boolean verified = dao.verifyUser(token);
+
+        if (verified) {
+            request.setAttribute("message", "Tài khoản xác minh thành công, bạn có thể đăng nhập!");
+        } else {
+            request.setAttribute("message", "Invalid verification link!");
+        }
+
         request.getRequestDispatcher("/WEB-INF/account/login.jsp").forward(request, response);
     }
 
@@ -74,30 +83,7 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        AccountDAO dao = new AccountDAO();
-        String hashPassword = dao.hashMD5(password);
-        Account user = dao.login(email, hashPassword);
-        HttpSession session = request.getSession();
-
-        if (user.getId() == -1) {
-            session.setAttribute("error", "Sai email hoặc mật khẩu!");
-            response.sendRedirect("login");
-        } else {
-            if (!"active".equals(user.getStatus())) {
-                session.setAttribute("error", "Email chưa xác thực");
-                response.sendRedirect("login");
-                return;
-            }
-//            request.setAttribute("user", user);
-            session.setAttribute("user", user);
-            if (user.getRole().equals("customer")) {
-                response.sendRedirect("home");
-            } else if (user.getRole().equals("Admin")) {
-                response.sendRedirect("account");
-            }
-        }
+        processRequest(request, response);
     }
 
     /**

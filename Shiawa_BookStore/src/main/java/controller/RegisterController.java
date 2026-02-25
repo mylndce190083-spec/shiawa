@@ -14,7 +14,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.UUID;
 import model.Customer;
+import utils.Email;
 
 /**
  *
@@ -79,6 +81,7 @@ public class RegisterController extends HttpServlet {
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
         String email = request.getParameter("email").trim();
+        String token = UUID.randomUUID().toString();
 
         // biểu thức chính quy để kiểm tra input
         String usernameRegex = "^[a-zA-Z0-9_]{3,20}$";
@@ -126,10 +129,16 @@ public class RegisterController extends HttpServlet {
                     .forward(request, response);
         } else {
             String hashPassword = adao.hashMD5(password);
-            Customer c = new Customer(1, username, hashPassword, email, "00");
+            Customer c = new Customer(1, username, hashPassword, email, "00", "inactive", token);
             dao.insert(c);
             HttpSession session = request.getSession();
-            session.setAttribute("success", "Đăng kí thành công! Bạn có thể đăng nhập");
+            session.setAttribute("success", "Đăng kí thành công! Vui lòng xác minh email để đăng nhập");
+            try {
+                Email.sendVerificationEmail(email, token);
+                System.out.println("Email sent!");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             response.sendRedirect("login");
         }
     }

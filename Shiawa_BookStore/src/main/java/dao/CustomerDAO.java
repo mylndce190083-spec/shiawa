@@ -95,17 +95,30 @@ public class CustomerDAO extends DBContext {
     }
     
     public void insert(Customer customer) {
-        String sql = "INSERT INTO Customer(username, password, email) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Customer(username, password, email, verify_token) VALUES (?, ?, ?, ?)";
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, customer.getUsername());
             ps.setString(2, customer.getPassword());
             ps.setString(3, customer.getEmail());
+            ps.setString(4, customer.getVerifyToken());
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    
+    public boolean verifyUser(String token) {
+    String sql = "UPDATE Customer SET status='active', verify_token=NULL WHERE verify_token=?";
+    try {
+        PreparedStatement ps = getConnection().prepareStatement(sql);
+        ps.setString(1, token);
+        return ps.executeUpdate() > 0;
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return false;
+}
     
     public static void main(String[] args) {
         CustomerDAO dao = new CustomerDAO();
