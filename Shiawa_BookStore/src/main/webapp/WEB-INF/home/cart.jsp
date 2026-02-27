@@ -120,9 +120,10 @@
                                 <span class="subtotal">
                                     $${item.price * item.quantity}
                                 </span>
-                                <button class="delete-btn"
-                                         style="color:#ee4d2d !important;"
-                                         onclick="deleteItem(${item.bookId})">
+                               
+                                <button type="button"
+                                        class="delete-btn"
+                                        onclick="deleteItem(${item.bookId})">
                                     xóa
                                 </button>
                             </div>
