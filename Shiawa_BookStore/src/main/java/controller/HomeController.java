@@ -24,40 +24,24 @@ import model.Category;
 @WebServlet(name = "HomeController", urlPatterns = {"/home"})
 public class HomeController extends HttpServlet {
 
-//    @Override
-//    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-//            throws ServletException, IOException {
-//        BookDAO dao = new BookDAO();
-//        CategoryDAO cdao = new CategoryDAO();
-//        List<Book> list = dao.getAllBook();
-//        List<Category> clist = cdao.getAllCategory();
-//        
-//        request.setAttribute("listB", list);
-//        request.setAttribute("listC", clist);
-//        request.getRequestDispatcher("/WEB-INF/home/home.jsp").forward(request, response);
-//        
-//        
-//    }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         BookDAO dao = new BookDAO();
         CategoryDAO cdao = new CategoryDAO();
-
         List<Book> list = dao.getAllBook();
-
-        // THAY THẾ DÒNG CŨ BẰNG DÒNG DƯỚI ĐÂY:
-        List<Category> clist = cdao.getGroupCategories();
-
+        List<Category> clist = cdao.getAllCategory();
+        
         request.setAttribute("listB", list);
-        request.setAttribute("listC", clist); // listC giờ đây là danh sách Cha đã chứa sẵn Con
+        request.setAttribute("listC", clist);
         request.getRequestDispatcher("/WEB-INF/home/home.jsp").forward(request, response);
     }
 
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        
     }
 
     /**

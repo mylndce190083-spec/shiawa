@@ -3,7 +3,7 @@
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
-        <title>Đăng nhập</title>
+        <title>Đăng kí</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <link href="${pageContext.request.contextPath}/assets/css/css.css" rel="stylesheet" type="text/css"/>
     </head>
@@ -44,35 +44,26 @@
 
             <!-- TABS -->
             <div class="account-tabs">
-                <a href="${pageContext.request.contextPath}/login" class="tab active" data-tab="login">Đăng nhập</a>
-                <a href="${pageContext.request.contextPath}/register" class="tab" data-tab="register">Đăng ký</a>
+                <a href="${pageContext.request.contextPath}/login" class="tab" data-tab="login">Đăng nhập</a>
+                <a href="${pageContext.request.contextPath}/register" class="tab active" data-tab="register">Đăng ký</a>
             </div>
 
-            <!-- LOGIN -->
-            <div class="tab-content active" id="login">
-                <form action="login" method="post">
+            <!-- REGISTER -->
+            <div class="tab-content active" id="register">
+                <form action="register" method="post">
+                    <label>Tên tài khoản</label>
+                    <input type="text" name="username" placeholder="Name">
                     <label>Email</label>
-                    <input type="text" name="email" placeholder="Email" required>
+                    <input type="email" name="email" placeholder="Email">
                     <label>Mật khẩu</label>
-                    <input type="password" name="password" placeholder="Mật khẩu" required>
-                    <p style="color:green;">
-                        ${sessionScope.success}
-                    </p>
-                    <%
-                        session.removeAttribute("success");
-                    %>
+                    <input type="password" name="password" placeholder="Password">
+                    <label>Xác nhận mật khẩu</label>
+                    <input type="password" name="confirmPassword" placeholder="Confirm Password">
                     <p style="color:red;">
-                        ${sessionScope.error}
+                        ${error}
                     </p>
-                    <%
-                        session.removeAttribute("error");
-                    %>
-                    <p style="color:green;">
-                        ${message}
-                    </p>
-                    <a href="#" class="forgot">Quên mật khẩu?</a>
 
-                    <button type="submit" class="submit-btn">Đăng nhập</button>
+                    <button type="submit" class="submit-btn">Create Account</button>
                 </form>
             </div>
 

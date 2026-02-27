@@ -4,29 +4,21 @@
  */
 package model;
 
-import java.util.List;
-
 /**
  *
  * @author BA LIEM
  */
 public class Category {
-
     private int categoryId;
     private String categoryName;
-    private int parentId;
-    private List<Category> childCategories;
 
     public Category() {
     }
 
-    public Category(int categoryId, String categoryName, int parentId) {
+    public Category(int categoryId, String categoryName) {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
-        this.parentId = parentId;
     }
-
-   
 
     public int getCategoryId() {
         return categoryId;
@@ -43,21 +35,6 @@ public class Category {
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
-
-    public int getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(int parentId) {
-        this.parentId = parentId;
-    }
-
-    public List<Category> getChildCategories() {
-        return childCategories;
-    }
-
-    public void setChildCategories(List<Category> childCategories) {
-        this.childCategories = childCategories;
-    }
-
+    
+    
 }

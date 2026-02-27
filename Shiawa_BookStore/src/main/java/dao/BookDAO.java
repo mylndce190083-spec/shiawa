@@ -5,6 +5,7 @@
 package dao;
 
 import db.DBContext;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,11 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Book;
 import model.BookAdmin;
+import model.CartItem;
 import model.Category;
 
 /**
  *
- * @author Lenovo
+ * @author BA LIEM
  */
 public class BookDAO extends DBContext {
 
@@ -129,7 +131,7 @@ public class BookDAO extends DBContext {
 
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
-            ps.setInt(1, bookId); 
+            ps.setInt(1, bookId);
 
             ResultSet rs = ps.executeQuery();
 
@@ -157,6 +159,44 @@ public class BookDAO extends DBContext {
         }
         return null;
     }
+
+    public int getStock(Connection con, int bookId) throws Exception {
+
+        String sql = "SELECT stock FROM Book WHERE book_id = ?";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, bookId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("stock");
+                }
+            }
+        }
+
+        throw new Exception("Book not found");
+    }
+
+    public void updateStock(Connection con,
+            int bookId,
+            int quantity) throws Exception {
+
+        String sql = """
+            UPDATE Book
+            SET stock = stock - ?
+            WHERE book_id = ?
+        """;
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, quantity);
+            ps.setInt(2, bookId);
+
+            ps.executeUpdate();
+        }
+    }
+    
     public List<Book> getSimilarBook(int categoryId) {
         List<Book> list = new ArrayList<>();
         String sql = "SELECT TOP 6 b.*, c.name AS category_name "
@@ -209,6 +249,9 @@ public class BookDAO extends DBContext {
         return list;
     }
 }
+
+
+
 
 
 
