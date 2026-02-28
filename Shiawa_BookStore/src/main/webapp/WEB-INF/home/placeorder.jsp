@@ -270,10 +270,10 @@
 
             let provincesData = [];
 
- // 🔥 Giá trị giữ lại từ server
-            const selectedProvince = "${province}";
-            const selectedDistrict = "${district}";
-            const selectedWard = "${ward}";
+            // 🔥 Giá trị giữ lại từ server
+            let selectedProvince = "${province}";
+            let selectedDistrict = "${district}";
+            let selectedWard = "${ward}";
 
             fetch("https://provinces.open-api.vn/api/?depth=3")
                     .then(res => res.json())
@@ -344,11 +344,14 @@
                 }
             }
 
- // Event khi người dùng tự chọn
+            // Event khi người dùng tự chọn
             province.addEventListener("change", function () {
                 selectedProvince = this.value;
                 selectedDistrict = "";
                 selectedWard = "";
+                district.innerHTML = "<option value=''>Chọn Quận / Huyện</option>";
+                ward.innerHTML = "<option value=''>Chọn Phường / Xã</option>";
+
                 autoLoadDistrict();
             });
 

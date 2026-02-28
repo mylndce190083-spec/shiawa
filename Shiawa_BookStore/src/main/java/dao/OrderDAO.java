@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import model.CartItem;
 import model.Orders;
@@ -124,6 +126,89 @@ public class OrderDAO extends DBContext {
 
         } finally {
             con.close();
+        }
+    }
+
+    public List<Orders> getOrdersByCustomer(int customerId) {
+        List<Orders> list = new ArrayList<>();
+        String sql = "SELECT * FROM Orders WHERE customer_id = ? ORDER BY order_date DESC";
+
+        try {
+
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, customerId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Orders o = new Orders();
+                o.setOrderId(rs.getInt("order_id"));
+                o.setCustomerId(rs.getInt("customer_id"));
+                o.setStaffId(rs.getInt("staff_id"));
+                Timestamp ts = rs.getTimestamp("order_date");
+                if (ts != null) {
+                    o.setOrderDate(ts.toLocalDateTime());
+                }
+                o.setStatus(rs.getString("status"));
+                o.setShippingAddress(rs.getString("shipping_address"));
+                o.setShippingFee(rs.getDouble("shipping_fee"));
+
+                list.add(o);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public List<Orders> getOrdersByStatus(int customerId, String status) {
+        List<Orders> list = new ArrayList<>();
+        String sql = "SELECT * FROM Orders WHERE customer_id = ? AND status = ? ORDER BY order_date DESC";
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, customerId);
+            ps.setString(2, status);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Orders o = new Orders();
+                o.setOrderId(rs.getInt("order_id"));
+                o.setCustomerId(rs.getInt("customer_id"));
+                o.setStaffId(rs.getInt("staff_id"));
+                Timestamp ts = rs.getTimestamp("order_date");
+                if (ts != null) {
+                    o.setOrderDate(ts.toLocalDateTime());
+                }
+                o.setStatus(rs.getString("status"));
+                o.setShippingAddress(rs.getString("shipping_address"));
+                o.setShippingFee(rs.getDouble("shipping_fee"));
+
+                list.add(o);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public void cancelOrderIfPending(int orderId, int customerId) {
+
+        String sql = """
+        UPDATE Orders
+        SET status = 'Cancelled'
+        WHERE order_id = ?
+        AND customer_id = ?
+        AND status = 'Pending'
+    """;
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, orderId);
+            ps.setInt(2, customerId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

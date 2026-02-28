@@ -14,7 +14,7 @@ public class Orders {
     private int orderId;          
     private int customerId;     
     private int staffId;          
-
+ private double totalAmount;
     private LocalDateTime orderDate;   
     private String status;             
     private int discount;              
@@ -24,10 +24,11 @@ public class Orders {
     public Orders() {
     }
 
-    public Orders(int orderId, int customerId, int staffId, LocalDateTime orderDate, String status, int discount, String shippingAddress, double shippingFee) {
+    public Orders(int orderId, int customerId, int staffId, double totalAmount, LocalDateTime orderDate, String status, int discount, String shippingAddress, double shippingFee) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.staffId = staffId;
+        this.totalAmount = totalAmount;
         this.orderDate = orderDate;
         this.status = status;
         this.discount = discount;
@@ -57,6 +58,14 @@ public class Orders {
 
     public void setStaffId(int staffId) {
         this.staffId = staffId;
+    }
+
+    public double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(double totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     public LocalDateTime getOrderDate() {
@@ -98,5 +107,5 @@ public class Orders {
     public void setShippingFee(double shippingFee) {
         this.shippingFee = shippingFee;
     }
-    
+
 }

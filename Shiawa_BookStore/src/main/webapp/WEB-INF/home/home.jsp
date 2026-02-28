@@ -42,10 +42,13 @@
                 </a>
 
                 <c:if test="${not empty sessionScope.user}">
-                    <div class="icon" id="orderIcon">
-                        <i class="fa-solid fa-clipboard-list"></i>
-                        <span>Order list</span>
-                    </div>
+                    <a href="${pageContext.request.contextPath}/OrderList" 
+                       style="text-decoration:none; color:inherit;">
+                        <div class="icon">
+                            <i class="fa-solid fa-clipboard-list"></i>
+                            <span>Danh sách mua hàng</span>
+                        </div>
+                    </a>
                 </c:if>
 
                 <a href="login" class="icon">
@@ -54,10 +57,10 @@
                 </a>
 
                 <c:if test="${not empty sessionScope.user}">
-                <a href="logout" class="icon">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>Logout</span>
-                </a>
+                    <a href="logout" class="icon">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Logout</span>
+                    </a>
                 </c:if>
 
             </div>

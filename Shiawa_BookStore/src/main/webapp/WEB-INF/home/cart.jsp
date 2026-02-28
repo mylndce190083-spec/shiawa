@@ -62,14 +62,14 @@
 
         <section class="cart-page" id="cartPage">
 
-            <h2>Your Cart</h2>
+            <h2>Giỏ hàng</h2>
 
             <div class="cart-header">
                 <span></span>
-                <span>Book</span>
-                <span>Price</span>
-                <span>Quantity</span>
-                <span>Subtotal</span>
+                <span>Sách</span>
+                <span>Giá</span>
+                <span>Số lượng</span>
+                <span>Tổng</span>
             </div>
 
             <!-- CART ITEMS -->
@@ -131,7 +131,7 @@
 
                         <div class="cart-footer">
                             <strong>
-                                Total: $<span id="totalPrice">0</span>
+                                Tổng: $<span id="totalPrice">0</span>
                             </strong>
                         </div>
                         <!-- VOUCHER -->
