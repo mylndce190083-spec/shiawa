@@ -270,9 +270,16 @@ public class CartController extends HttpServlet {
 
             response.getWriter().print(json);
 
+//        } else {
+//           
+//            response.sendRedirect(request.getContextPath() + "/cart");
+//        }
         } else {
-            // Nếu là submit form bình thường (delete)
-            response.sendRedirect(request.getContextPath() + "/cart");
+            if ("buy_now".equals(action)) {
+                response.sendRedirect(request.getContextPath() + "/checkout"); 
+            } else {
+                response.sendRedirect(request.getContextPath() + "/cart"); 
+            }
         }
     }
 

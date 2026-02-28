@@ -185,7 +185,7 @@
 
 
 
-                        <form action="${pageContext.request.contextPath}/cart" method="post">
+<!--                        <form action="${pageContext.request.contextPath}/cart" method="post">
                             <input type="hidden" name="book_id" value="${book.bookId}">
                             <input type="hidden" name="action" value="add">
 
@@ -193,12 +193,34 @@
                                 <button type="button" class="btn btn-buy px-5 py-2 fw-bold">
                                     <i class="bi bi-lightning-fill"></i> Mua ngay
                                 </button>
+                                
 
                                 <button type="submit" class="btn btn-cart px-4 py-2 fw-bold">
                                     <i class="bi bi-cart-plus"></i> Thêm vào giỏ
                                 </button>
                             </div>
-                        </form>
+                        </form>-->
+
+                        <div class="d-flex gap-3">
+                            <form action="${pageContext.request.contextPath}/cart" method="post">
+                                <input type="hidden" name="book_id" value="${book.bookId}">
+                                <input type="hidden" name="action" value="buy_now"> 
+
+                                <div class="d-flex gap-3">
+                                    <button type="submit" class="btn btn-buy px-5 py-2 fw-bold">
+                                        <i class="bi bi-lightning-fill"></i> Mua ngay
+                                    </button>
+                                </div>
+                            </form>
+
+                            <form action="${pageContext.request.contextPath}/cart" method="post">
+                                <input type="hidden" name="book_id" value="${book.bookId}">
+                                <input type="hidden" name="action" value="add">
+                                <button type="submit" class="btn btn-cart px-4 py-2 fw-bold">
+                                    <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                                </button>
+                            </form>
+                        </div>
                     </div>
 
                 </div>
