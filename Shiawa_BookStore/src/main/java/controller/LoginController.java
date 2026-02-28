@@ -5,6 +5,7 @@
 package controller;
 
 import dao.AccountDAO;
+import dao.CartItemDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,7 +14,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
 import model.Account;
+import model.CartItem;
 
 /**
  *
@@ -92,7 +95,21 @@ public class LoginController extends HttpServlet {
             }
 //            request.setAttribute("user", user);
             session.setAttribute("user", user);
+
             if (user.getRole().equals("customer")) {
+
+                CartItemDAO cartDAO = new CartItemDAO();
+
+                List<CartItem> cartItems
+                        = cartDAO.getCartByCustomerId(user.getId());
+                // 👈 dùng user.getId() nếu id = customerId
+
+                int totalQuantity = 0;
+                for (CartItem ci : cartItems) {
+                    totalQuantity += ci.getQuantity();
+                }
+
+                session.setAttribute("cartSize", totalQuantity);
                 response.sendRedirect("home");
             } else if (user.getRole().equals("Admin")) {
                 response.sendRedirect("account");

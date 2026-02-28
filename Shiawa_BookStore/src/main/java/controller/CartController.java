@@ -245,6 +245,15 @@ public class CartController extends HttpServlet {
                 break;
 
         }
+        // 🔥 Cập nhật lại tổng số sản phẩm trong giỏ
+        List<CartItem> cartItems = dao.getCartByCustomerId(customerId);
+
+        int totalQuantity = 0;
+        for (CartItem ci : cartItems) {
+            totalQuantity += ci.getQuantity();
+        }
+
+        session.setAttribute("cartSize", totalQuantity);
         CartItem updatedItem = dao.findItem(customerId, bookId);
         int newQty = (updatedItem != null) ? updatedItem.getQuantity() : 0;
 
@@ -265,6 +274,7 @@ public class CartController extends HttpServlet {
 
             String json = "{"
                     + "\"quantity\":" + newQty + ","
+                    + "\"totalCartItems\":" + totalQuantity + ","
                     + "\"message\":\"" + message + "\""
                     + "}";
 

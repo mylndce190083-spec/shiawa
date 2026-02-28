@@ -145,6 +145,26 @@ public class CheckoutController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/cart");
                 return;
             }
+               /*check hàng*/
+            boolean hasOutOfStock = false;
+
+            for (CartItem item : selectedItems) {
+                if (item.getBook().getStock() <= 0) {
+                    hasOutOfStock = true;
+                    break;
+                }
+            }
+
+            if (hasOutOfStock) {
+                request.setAttribute("stockError",
+                        "Có sản phẩm trong danh sách đã hết hàng!");
+
+                request.setAttribute("orderItems", selectedItems);
+
+                request.getRequestDispatcher("/WEB-INF/home/placeorder.jsp")
+                        .forward(request, response);
+                return;
+            }
 
             double total = 0;
             for (CartItem item : selectedItems) {

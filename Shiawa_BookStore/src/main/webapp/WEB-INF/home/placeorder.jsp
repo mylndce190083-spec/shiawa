@@ -13,7 +13,7 @@
         <style>
             body {
                 font-family: Arial;
-                background: #f5f5f5;
+                background: #4CAF50;
             }
 
             .container {
@@ -25,7 +25,7 @@
             }
 
             .box {
-                background: white;
+                background:white;
                 padding: 20px;
                 border-radius: 10px;
             }
@@ -102,7 +102,7 @@
             .btn {
                 width: 100%;
                 padding: 12px ;
-                background: #e53935;
+                background: darkslategrey;
                 color: white;
                 border: none;
                 border-radius: 6px;
@@ -149,7 +149,7 @@
                     <span>Số lượng </span>
                     <span>Giá </span>
                 </div>
-
+                <c:set var="hasOutOfStock" value="false"/>
                 <c:forEach var="item" items="${orderItems}">
                     <div class="order-item">
 
@@ -175,7 +175,14 @@
                                 groupingUsed="true" 
                                 maxFractionDigits="0" /> đ
                         </div>
+                        <c:if test="${item.book.stock == 0}">
+                            <div style="color:red; font-weight:bold;">
+                                Sản phẩm này đã hết hàng
+                            </div>
+                            <c:set var="hasOutOfStock" value="true"/>
+                        </c:if>
                     </div>
+
                 </c:forEach>
 
 
@@ -248,7 +255,10 @@
                     <c:forEach var="item" items="${orderItems}">
                         <input type="hidden" name="selectedItem" value="${item.bookId}" />
                     </c:forEach>
-                    <button type="submit" name="action" value="confirm">
+                    <button type="submit"
+                            name="action"
+                            value="confirm"
+                            ${hasOutOfStock ? "disabled" : ""}>
                         Đặt hàng
                     </button>
 

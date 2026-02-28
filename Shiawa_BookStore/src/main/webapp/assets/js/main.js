@@ -10,8 +10,8 @@
         }, 1);
     };
     spinner();
-    
-    
+
+
     // Back to top button
     $(window).scroll(function () {
         if ($(this).scrollTop() > 300) {
@@ -55,7 +55,7 @@
         items: 1,
         dots: true,
         loop: true,
-        nav : false
+        nav: false
     });
 
 
@@ -81,7 +81,7 @@
                     backgroundColor: "rgba(0, 156, 255, .3)"
                 }
             ]
-            },
+        },
         options: {
             responsive: true
         }
@@ -107,12 +107,12 @@
                     fill: true
                 }
             ]
-            },
+        },
         options: {
             responsive: true
         }
     });
-    
+
 
 
     // Single Line Chart
@@ -122,11 +122,11 @@
         data: {
             labels: [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150],
             datasets: [{
-                label: "Salse",
-                fill: false,
-                backgroundColor: "rgba(0, 156, 255, .3)",
-                data: [7, 8, 8, 9, 9, 9, 10, 11, 14, 14, 15]
-            }]
+                    label: "Salse",
+                    fill: false,
+                    backgroundColor: "rgba(0, 156, 255, .3)",
+                    data: [7, 8, 8, 9, 9, 9, 10, 11, 14, 14, 15]
+                }]
         },
         options: {
             responsive: true
@@ -141,15 +141,15 @@
         data: {
             labels: ["Italy", "France", "Spain", "USA", "Argentina"],
             datasets: [{
-                backgroundColor: [
-                    "rgba(0, 156, 255, .7)",
-                    "rgba(0, 156, 255, .6)",
-                    "rgba(0, 156, 255, .5)",
-                    "rgba(0, 156, 255, .4)",
-                    "rgba(0, 156, 255, .3)"
-                ],
-                data: [55, 49, 44, 24, 15]
-            }]
+                    backgroundColor: [
+                        "rgba(0, 156, 255, .7)",
+                        "rgba(0, 156, 255, .6)",
+                        "rgba(0, 156, 255, .5)",
+                        "rgba(0, 156, 255, .4)",
+                        "rgba(0, 156, 255, .3)"
+                    ],
+                    data: [55, 49, 44, 24, 15]
+                }]
         },
         options: {
             responsive: true
@@ -164,15 +164,15 @@
         data: {
             labels: ["Italy", "France", "Spain", "USA", "Argentina"],
             datasets: [{
-                backgroundColor: [
-                    "rgba(0, 156, 255, .7)",
-                    "rgba(0, 156, 255, .6)",
-                    "rgba(0, 156, 255, .5)",
-                    "rgba(0, 156, 255, .4)",
-                    "rgba(0, 156, 255, .3)"
-                ],
-                data: [55, 49, 44, 24, 15]
-            }]
+                    backgroundColor: [
+                        "rgba(0, 156, 255, .7)",
+                        "rgba(0, 156, 255, .6)",
+                        "rgba(0, 156, 255, .5)",
+                        "rgba(0, 156, 255, .4)",
+                        "rgba(0, 156, 255, .3)"
+                    ],
+                    data: [55, 49, 44, 24, 15]
+                }]
         },
         options: {
             responsive: true
@@ -187,21 +187,121 @@
         data: {
             labels: ["Italy", "France", "Spain", "USA", "Argentina"],
             datasets: [{
-                backgroundColor: [
-                    "rgba(0, 156, 255, .7)",
-                    "rgba(0, 156, 255, .6)",
-                    "rgba(0, 156, 255, .5)",
-                    "rgba(0, 156, 255, .4)",
-                    "rgba(0, 156, 255, .3)"
-                ],
-                data: [55, 49, 44, 24, 15]
-            }]
+                    backgroundColor: [
+                        "rgba(0, 156, 255, .7)",
+                        "rgba(0, 156, 255, .6)",
+                        "rgba(0, 156, 255, .5)",
+                        "rgba(0, 156, 255, .4)",
+                        "rgba(0, 156, 255, .3)"
+                    ],
+                    data: [55, 49, 44, 24, 15]
+                }]
         },
         options: {
             responsive: true
         }
     });
 
-    
+    const cartIcon = document.getElementById("cartIcon");
+
+    document.querySelectorAll(".add-cart-form").forEach(form => {
+
+        form.addEventListener("submit", function (e) {
+
+            e.preventDefault(); // ❌ chặn nhảy trang
+
+            const formData = new FormData(this);
+
+            // 🔥 Gửi AJAX đến CartController
+            fetch(this.action, {
+                method: "POST",
+                body: formData
+            })
+                    .then(res => res.text())
+                    .then(data => {
+
+                        // ===== HIỆU ỨNG BAY =====
+                        const product = this.closest(".book");
+                        const img = product.querySelector("img");
+
+                        if (img) {
+                            const flyingImg = img.cloneNode(true);
+
+                            const imgRect = img.getBoundingClientRect();
+                            const cartRect = cartIcon.getBoundingClientRect();
+
+                            flyingImg.style.position = "fixed";
+                            flyingImg.style.left = imgRect.left + "px";
+                            flyingImg.style.top = imgRect.top + "px";
+                            flyingImg.style.width = imgRect.width + "px";
+                            flyingImg.style.height = imgRect.height + "px";
+                            flyingImg.style.transition = "all 0.8s ease";
+                            flyingImg.style.zIndex = "9999";
+
+                            document.body.appendChild(flyingImg);
+
+                            setTimeout(() => {
+                                flyingImg.style.left = cartRect.left + "px";
+                                flyingImg.style.top = cartRect.top + "px";
+                                flyingImg.style.width = "20px";
+                                flyingImg.style.height = "20px";
+                                flyingImg.style.opacity = "0.5";
+                            }, 10);
+
+                            setTimeout(() => {
+                                flyingImg.remove();
+                            }, 800);
+                        }
+
+                        // ===== TĂNG SỐ BADGE =====
+                        let badge = document.getElementById("cartCount");
+
+                        if (!badge) {
+                            badge = document.createElement("span");
+                            badge.id = "cartCount";
+                            badge.className = "cart-badge";
+                            badge.innerText = "1";
+                            cartIcon.appendChild(badge);
+                        } else {
+                            badge.innerText = parseInt(badge.innerText) + 1;
+                        }
+
+                    });
+
+        });
+
+    });
+    function addToCart(event, bookId) {
+        event.preventDefault(); // chặn reload trang
+
+        fetch("${pageContext.request.contextPath}/cart", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "action=add&book_id=" + bookId
+        })
+                .then(response => response.text())
+                .then(data => {
+
+                    // tạo thông báo
+                    let msg = document.createElement("div");
+                    msg.innerText = "✅ Đã thêm vào giỏ hàng!";
+                    msg.style.position = "fixed";
+                    msg.style.top = "20px";
+                    msg.style.right = "20px";
+                    msg.style.background = "green";
+                    msg.style.color = "white";
+                    msg.style.padding = "10px 15px";
+                    msg.style.borderRadius = "5px";
+                    msg.style.zIndex = "9999";
+
+                    document.body.appendChild(msg);
+
+                    setTimeout(() => {
+                        msg.remove();
+                    }, 2000);
+                });
+    }
 })(jQuery);
 
