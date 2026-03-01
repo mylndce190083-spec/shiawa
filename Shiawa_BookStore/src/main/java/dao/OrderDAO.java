@@ -271,21 +271,91 @@ public class OrderDAO extends DBContext {
 
     public void cancelOrderIfPending(int orderId, int customerId) {
 
-        String sql = """
-        UPDATE Orders
-        SET status = 'Cancelled'
-        WHERE order_id = ?
-        AND customer_id = ?
-        AND status = 'Pending'
-    """;
+        Connection con = null;
 
         try {
-            PreparedStatement ps = getConnection().prepareStatement(sql);
-            ps.setInt(1, orderId);
-            ps.setInt(2, customerId);
-            ps.executeUpdate();
+            con = getConnection();
+            con.setAutoCommit(false); // 🔥 bật transaction
+
+            // 1️⃣ Kiểm tra đơn có thuộc customer và đang Pending không
+            String checkSql = """
+            SELECT status 
+            FROM Orders 
+            WHERE order_id = ? AND customer_id = ?
+        """;
+
+            PreparedStatement psCheck = con.prepareStatement(checkSql);
+            psCheck.setInt(1, orderId);
+            psCheck.setInt(2, customerId);
+
+            ResultSet rs = psCheck.executeQuery();
+
+            if (rs.next()) {
+                String status = rs.getString("status");
+
+                if ("Pending".equalsIgnoreCase(status)) {
+
+                    // 2️⃣ Lấy danh sách sản phẩm trong đơn
+                    String itemSql = """
+                    SELECT book_id, quantity
+                    FROM OrderDetail
+                    WHERE order_id = ?
+                """;
+
+                    PreparedStatement psItem = con.prepareStatement(itemSql);
+                    psItem.setInt(1, orderId);
+                    ResultSet rsItem = psItem.executeQuery();
+
+                    while (rsItem.next()) {
+                        int bookId = rsItem.getInt("book_id");
+                        int quantity = rsItem.getInt("quantity");
+
+                        // 3️⃣ Cộng lại stock
+                        String updateStock = """
+                        UPDATE Book
+                        SET stock = stock + ?
+                        WHERE book_id = ?
+                    """;
+
+                        PreparedStatement psStock = con.prepareStatement(updateStock);
+                        psStock.setInt(1, quantity);
+                        psStock.setInt(2, bookId);
+                        psStock.executeUpdate();
+                    }
+
+                    // 4️⃣ Update status
+                    String updateOrder = """
+                    UPDATE Orders
+                    SET status = 'Cancelled'
+                    WHERE order_id = ?
+                """;
+
+                    PreparedStatement psUpdate = con.prepareStatement(updateOrder);
+                    psUpdate.setInt(1, orderId);
+                    psUpdate.executeUpdate();
+
+                    con.commit(); // ✅ nếu mọi thứ OK
+                }
+            }
+
         } catch (Exception e) {
+            try {
+                if (con != null) {
+                    con.rollback(); // ❌ rollback nếu lỗi
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
             e.printStackTrace();
+        } finally {
+            try {
+                if (con != null) {
+                    con.setAutoCommit(true);
+                    con.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -375,4 +445,5 @@ public class OrderDAO extends DBContext {
         return null;
 
     }
+
 }

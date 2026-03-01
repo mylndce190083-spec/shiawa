@@ -172,7 +172,7 @@
             <c:forEach var="o" items="${orders}">
 
                 <a href="${pageContext.request.contextPath}/OrderDetail?id=${o.orderId}"
-                    class="order-link">
+                   class="order-link">
                     <div style="background:white; padding:20px; margin-bottom:20px; border-radius:10px;">
 
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -188,7 +188,7 @@
                                 ${o.status == 'Pending' ? 'Chờ xác nhận' :
                                   o.status == 'Shipping' ? 'Đang giao' :
                                   o.status == 'Completed' ? 'Hoàn thành' :
-                                  o.status == 'CANCELLED' ? 'Đã hủy' : o.status}
+                                  o.status == 'Cancelled' ? 'Đã hủy' : o.status}
                             </div>
 
                         </div>
@@ -215,7 +215,22 @@
                 <div style="text-align:right; font-size:18px; font-weight:bold; color:black;">
                     Tổng tiền: ${o.totalAmount} VND
                 </div>
+                <c:if test="${o.status == 'Pending'}">
+                    <form action="${pageContext.request.contextPath}/OrderList" 
+                          method="post" 
+                          style="text-align:right; margin-top:10px;"
+                          onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?');">
 
+                        <input type="hidden" name="action" value="cancel">
+                        <input type="hidden" name="orderId" value="${o.orderId}">
+
+                        <button type="submit" 
+                                style="background:#ff4d4f; color:white; border:none;
+                                padding:8px 16px; border-radius:6px; cursor:pointer;">
+                            Hủy đơn
+                        </button>
+                    </form>
+                </c:if>
             </div>
 
         </c:forEach>
