@@ -5,6 +5,7 @@
 package controller;
 
 import dao.OrderDAO;
+import dao.OrderDetailDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,13 +16,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.Account;
+import model.OrderItem;
 import model.Orders;
 
 /**
  *
  * @author MY
  */
-@WebServlet(name = "OrderListController", urlPatterns = {"/OrderList"})
+@WebServlet(name = "OrderListController", urlPatterns = {"/OrderList/*"})
 public class OrderListController extends HttpServlet {
 
     /**
@@ -70,19 +72,33 @@ public class OrderListController extends HttpServlet {
             return;
         }
 
-        String status = request.getParameter("status");
+        // 🔥 ĐẶT ĐOẠN MỚI Ở ĐÂY
+        String pathInfo = request.getPathInfo();
+        String status = "ALL";
+
+        if (pathInfo != null) {
+            status = pathInfo.substring(1).toUpperCase();
+        }
 
         OrderDAO dao = new OrderDAO();
+        OrderDetailDAO detailDAO = new OrderDetailDAO();
         List<Orders> orders;
 
-        if (status == null || status.equals("ALL")) {
+        if (status== null || status.equals( "ALL")) {
             orders = dao.getOrdersByCustomer(user.getId());
         } else {
             orders = dao.getOrdersByStatus(user.getId(), status);
         }
+        for (Orders o : orders) {
+            List<OrderItem> items = detailDAO.getItemsByOrderId(o.getOrderId());
+            System.out.println("OrderID: " + o.getOrderId() + " | Items: " + items.size());
+            o.setItems(items);
+        }
 
-        request.setAttribute("orders", orders);
-        request.getRequestDispatcher("/WEB-INF/home/orderlist.jsp")
+        request.setAttribute(
+                "orders", orders);
+        request.getRequestDispatcher(
+                "/WEB-INF/home/orderlist.jsp")
                 .forward(request, response);
     }
 

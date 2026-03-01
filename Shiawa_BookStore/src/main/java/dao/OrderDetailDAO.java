@@ -4,8 +4,12 @@
  */
 package dao;
 
+import db.DBContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import model.CartItem;
 import model.OrderItem;
 
@@ -13,7 +17,7 @@ import model.OrderItem;
  *
  * @author MY
  */
-public class OrderDetailDAO extends db.DBContext {
+public class OrderDetailDAO extends DBContext {
 
     public void insertOrderDetail(Connection con,
             int orderId,
@@ -36,5 +40,39 @@ public class OrderDetailDAO extends db.DBContext {
 
             ps.executeUpdate();
         }
+    }
+
+    public List<OrderItem> getItemsByOrderId(int orderId) {
+        List<OrderItem> list = new ArrayList<>();
+
+        String sql = """
+        SELECT 
+            od.quantity,
+            od.price,
+            b.title,
+            b.url_img
+        FROM OrderDetail od
+        JOIN Book b ON od.book_id = b.book_id
+        WHERE od.order_id = ?
+    """;
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, orderId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                OrderItem item = new OrderItem();
+                item.setTitle(rs.getString("title"));
+                item.setUrl_img(rs.getString("url_img"));
+                item.setQuantity(rs.getInt("quantity"));
+                item.setPrice(rs.getDouble("price"));
+
+                list.add(item);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
     }
 }

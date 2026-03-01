@@ -5,26 +5,29 @@
 package model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  *
  * @author MY
  */
 public class Orders {
-    private int orderId;          
-    private int customerId;     
-    private int staffId;          
- private double totalAmount;
-    private LocalDateTime orderDate;   
-    private String status;             
-    private int discount;              
-    private String shippingAddress;   
-    private double shippingFee;  
+
+    private int orderId;
+    private int customerId;
+    private int staffId;
+    private double totalAmount;
+    private LocalDateTime orderDate;
+    private String status;
+    private int discount;
+    private String shippingAddress;
+    private double shippingFee;
+    private List<OrderItem> items;
 
     public Orders() {
     }
 
-    public Orders(int orderId, int customerId, int staffId, double totalAmount, LocalDateTime orderDate, String status, int discount, String shippingAddress, double shippingFee) {
+    public Orders(int orderId, int customerId, int staffId, double totalAmount, LocalDateTime orderDate, String status, int discount, String shippingAddress, double shippingFee, List<OrderItem> items) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.staffId = staffId;
@@ -34,6 +37,7 @@ public class Orders {
         this.discount = discount;
         this.shippingAddress = shippingAddress;
         this.shippingFee = shippingFee;
+        this.items = items;
     }
 
     public int getOrderId() {
@@ -106,6 +110,14 @@ public class Orders {
 
     public void setShippingFee(double shippingFee) {
         this.shippingFee = shippingFee;
+    }
+
+    public List<OrderItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
     }
 
 }

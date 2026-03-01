@@ -131,28 +131,62 @@ public class OrderDAO extends DBContext {
 
     public List<Orders> getOrdersByCustomer(int customerId) {
         List<Orders> list = new ArrayList<>();
-        String sql = "SELECT * FROM Orders WHERE customer_id = ? ORDER BY order_date DESC";
+
+        String sql = """
+        SELECT 
+            o.order_id,
+            o.customer_id,
+            o.staff_id,
+            o.order_date,
+            o.status,
+            o.shipping_address,
+            o.shipping_fee,
+            o.discount,
+            SUM(od.quantity * od.price) 
+                + ISNULL(o.shipping_fee,0)
+                - ISNULL(o.discount,0) AS total_amount
+        FROM Orders o
+        JOIN OrderDetail od ON o.order_id = od.order_id
+        WHERE o.customer_id = ?
+        GROUP BY 
+            o.order_id,
+            o.customer_id,
+            o.staff_id,
+            o.order_date,
+            o.status,
+            o.shipping_address,
+            o.shipping_fee,
+            o.discount
+        ORDER BY o.order_date DESC
+    """;
 
         try {
-
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setInt(1, customerId);
             ResultSet rs = ps.executeQuery();
+
             while (rs.next()) {
                 Orders o = new Orders();
+
                 o.setOrderId(rs.getInt("order_id"));
                 o.setCustomerId(rs.getInt("customer_id"));
                 o.setStaffId(rs.getInt("staff_id"));
+
                 Timestamp ts = rs.getTimestamp("order_date");
                 if (ts != null) {
                     o.setOrderDate(ts.toLocalDateTime());
                 }
+
                 o.setStatus(rs.getString("status"));
                 o.setShippingAddress(rs.getString("shipping_address"));
                 o.setShippingFee(rs.getDouble("shipping_fee"));
 
+                // 🔥 QUAN TRỌNG
+                o.setTotalAmount(rs.getDouble("total_amount"));
+
                 list.add(o);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -162,7 +196,34 @@ public class OrderDAO extends DBContext {
 
     public List<Orders> getOrdersByStatus(int customerId, String status) {
         List<Orders> list = new ArrayList<>();
-        String sql = "SELECT * FROM Orders WHERE customer_id = ? AND status = ? ORDER BY order_date DESC";
+
+        String sql = """
+        SELECT 
+            o.order_id,
+            o.customer_id,
+            o.staff_id,
+            o.order_date,
+            o.status,
+            o.shipping_address,
+            o.shipping_fee,
+            o.discount,
+            SUM(od.quantity * od.price) 
+                + ISNULL(o.shipping_fee,0)
+                - ISNULL(o.discount,0) AS total_amount
+        FROM Orders o
+        JOIN OrderDetail od ON o.order_id = od.order_id
+        WHERE o.customer_id = ? AND o.status = ?
+        GROUP BY 
+            o.order_id,
+            o.customer_id,
+            o.staff_id,
+            o.order_date,
+            o.status,
+            o.shipping_address,
+            o.shipping_fee,
+            o.discount
+        ORDER BY o.order_date DESC
+    """;
 
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
@@ -172,19 +233,26 @@ public class OrderDAO extends DBContext {
 
             while (rs.next()) {
                 Orders o = new Orders();
+
                 o.setOrderId(rs.getInt("order_id"));
                 o.setCustomerId(rs.getInt("customer_id"));
                 o.setStaffId(rs.getInt("staff_id"));
+
                 Timestamp ts = rs.getTimestamp("order_date");
                 if (ts != null) {
                     o.setOrderDate(ts.toLocalDateTime());
                 }
+
                 o.setStatus(rs.getString("status"));
                 o.setShippingAddress(rs.getString("shipping_address"));
                 o.setShippingFee(rs.getDouble("shipping_fee"));
 
+                // 🔥 QUAN TRỌNG
+                o.setTotalAmount(rs.getDouble("total_amount"));
+
                 list.add(o);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
