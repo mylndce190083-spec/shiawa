@@ -225,7 +225,12 @@
                     <c:if test="${not empty detailError}">
                         <div class="error-msg">${detailError}</div>
                     </c:if>
-
+                    <input type="text" name="receiverName"
+                           value="${receiverName}"
+                           placeholder="Họ và tên người nhận" required>
+                    <c:if test="${not empty receiverNameError}">
+                        <div class="error-msg">${receiverNameError}</div>
+                    </c:if>
 
                     <input type="text" name="phone"
                            value="${phone}"

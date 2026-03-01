@@ -8,7 +8,9 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import model.Book;
 import model.CartItem;
+import model.OrderItem;
 import model.Orders;
 
 /*
@@ -24,13 +26,17 @@ public class OrderDAO extends DBContext {
     public int insertOrder(Connection con,
             int customerId,
             String shippingAddress,
-            double shippingFee) throws Exception {
+            double shippingFee,
+            String receiverName,
+            String phone
+    ) throws Exception {
 
         String sql = """
         INSERT INTO Orders
         (customer_id, staff_id, order_date, status,
-         discount, shipping_address, shipping_fee)
-        VALUES (?, ?, GETDATE(), ?, ?, ?, ?)
+         discount, shipping_address, shipping_fee,receiver_name,phone)
+        VALUES (?, ?, GETDATE(), ?, ?, ?, ?,?,?)
+                    
     """;
 
         try (PreparedStatement ps
@@ -42,7 +48,8 @@ public class OrderDAO extends DBContext {
             ps.setInt(4, 0);
             ps.setString(5, shippingAddress);
             ps.setDouble(6, shippingFee);
-
+            ps.setString(7, receiverName);
+            ps.setString(8, phone);
             ps.executeUpdate();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -58,7 +65,9 @@ public class OrderDAO extends DBContext {
     public int createOrder(int customerId,
             List<CartItem> items,
             String shippingAddress,
-            double shippingFee) throws Exception {
+            double shippingFee,
+            String receiverName,
+            String phone) throws Exception {
 
         Connection con = getConnection();
 
@@ -71,7 +80,7 @@ public class OrderDAO extends DBContext {
 
             // 1️⃣ Insert order trước
             int orderId = insertOrder(con, customerId,
-                    shippingAddress, shippingFee);
+                    shippingAddress, shippingFee, receiverName, phone);
 
             BookDAO bookDAO = new BookDAO();
             OrderDetailDAO detailDAO = new OrderDetailDAO();
@@ -278,5 +287,92 @@ public class OrderDAO extends DBContext {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public Orders getOrderById(int id) {
+
+        String sql = """
+        SELECT o.order_id,
+                   o.order_date,
+                   o.status,
+                   o.discount,
+                   o.shipping_address,
+                   o.shipping_fee,
+                   o.receiver_name,
+                   c.full_name,
+                   o.phone
+            FROM Orders o
+            JOIN Customer c ON o.customer_id = c.customer_id
+            WHERE o.order_id = ?
+    """;
+
+        try {
+            Connection con = getConnection();
+
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Orders o = new Orders();
+                o.setOrderId(rs.getInt("order_id"));
+                Timestamp ts = rs.getTimestamp("order_date");
+                if (ts != null) {
+                    o.setOrderDate(ts.toLocalDateTime());
+                }
+                o.setStatus(rs.getString("status"));
+                o.setDiscount(rs.getInt("discount"));
+                o.setShippingAddress(rs.getString("shipping_address"));
+                o.setShippingFee(rs.getDouble("shipping_fee"));
+                o.setCustomerName(rs.getString("full_name"));
+                o.setPhone(rs.getString("phone")); // ✅ thêm dòng này
+                o.setReceiverName(rs.getString("receiver_name"));
+
+                // 🔥 LOAD ORDER ITEMS
+                String itemSql = """
+                SELECT oi.quantity,
+                       b.book_id,
+                       b.title,
+                       b.url_img
+                FROM OrderDetail oi
+                JOIN Book b ON oi.book_id = b.book_id
+                WHERE oi.order_id = ?
+            """;
+
+                PreparedStatement ps2 = con.prepareStatement(itemSql);
+                ps2.setInt(1, id);
+                ResultSet rs2 = ps2.executeQuery();
+
+                List<OrderItem> items = new ArrayList<>();
+
+                while (rs2.next()) {
+                    System.out.println("BOOK ID: " + rs2.getInt("book_id"));
+                    System.out.println("TITLE: " + rs2.getString("title"));
+                    System.out.println("IMG: " + rs2.getString("url_img"));
+                    System.out.println("QTY: " + rs2.getInt("quantity"));
+                    Book b = new Book();
+                    b.setBookId(rs2.getInt("book_id"));
+                    b.setTitle(rs2.getString("title"));
+                    b.setUrlImg(rs2.getString("url_img"));
+
+                    OrderItem item = new OrderItem();
+                    item.setQuantity(rs2.getInt("quantity"));
+                    item.setBook(b);
+// 🔥 thêm 2 dòng này
+                    item.setTitle(rs2.getString("title"));
+                    item.setUrl_img(rs2.getString("url_img"));
+
+                    items.add(item);
+                }
+
+                o.setItems(items);   // 🔥 CÁI QUAN TRỌNG NHẤT
+
+                return o;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+
     }
 }

@@ -23,11 +23,15 @@ public class Orders {
     private String shippingAddress;
     private double shippingFee;
     private List<OrderItem> items;
+    private String customerName;
+    private String phone;
+    private String voucherName;
+    private String receiverName;
 
     public Orders() {
     }
 
-    public Orders(int orderId, int customerId, int staffId, double totalAmount, LocalDateTime orderDate, String status, int discount, String shippingAddress, double shippingFee, List<OrderItem> items) {
+    public Orders(int orderId, int customerId, int staffId, double totalAmount, LocalDateTime orderDate, String status, int discount, String shippingAddress, double shippingFee, List<OrderItem> items, String customerName, String phone, String voucherName, String receiverName) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.staffId = staffId;
@@ -38,6 +42,10 @@ public class Orders {
         this.shippingAddress = shippingAddress;
         this.shippingFee = shippingFee;
         this.items = items;
+        this.customerName = customerName;
+        this.phone = phone;
+        this.voucherName = voucherName;
+        this.receiverName = receiverName;
     }
 
     public int getOrderId() {
@@ -120,4 +128,37 @@ public class Orders {
         this.items = items;
     }
 
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getVoucherName() {
+        return voucherName;
+    }
+
+    public void setVoucherName(String voucherName) {
+        this.voucherName = voucherName;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
+    }
+
+   
 }

@@ -145,7 +145,7 @@ public class CheckoutController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/cart");
                 return;
             }
-               /*check hàng*/
+            /*check hàng*/
             boolean hasOutOfStock = false;
 
             for (CartItem item : selectedItems) {
@@ -226,6 +226,7 @@ public class CheckoutController extends HttpServlet {
                 String ward = request.getParameter("ward");
                 String detail = request.getParameter("detailAddress");
                 String phone = request.getParameter("phone");
+                String receiverName = request.getParameter("receiverName");
                 // ===== VALIDATE ĐỊA CHỈ + SỐ ĐIỆN THOẠI =====
 
                 String phoneRegex = "^(03|05|07|08|09)[0-9]{8}$";
@@ -264,6 +265,10 @@ public class CheckoutController extends HttpServlet {
                             "Số điện thoại phải đủ 10 số và bắt đầu bằng 03,05,07,08,09!");
                     hasError = true;
                 }
+                if (receiverName == null || receiverName.trim().isEmpty()) {
+                    request.setAttribute("receiverNameError", "Vui lòng nhập tên người nhận");
+                    hasError = true;
+                }
 
 // ===== NẾU CÓ LỖI =====
                 if (hasError) {
@@ -274,7 +279,7 @@ public class CheckoutController extends HttpServlet {
                     request.setAttribute("ward", ward);
                     request.setAttribute("detailAddress", detail);
                     request.setAttribute("phone", phone);
-
+                    request.setAttribute("receiverName", receiverName);
                     request.setAttribute("orderItems", selectedItems);
                     request.setAttribute("totalAmount", total);
 
@@ -296,7 +301,8 @@ public class CheckoutController extends HttpServlet {
                         user.getId(),
                         selectedItems,
                         shippingAddress,
-                        shippingFee
+                        shippingFee,
+                        receiverName, phone
                 );
 
                 // Xóa cart sau khi đặt thành công

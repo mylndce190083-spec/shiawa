@@ -17,11 +17,11 @@ public class OrderItem {
     private String url_img;
     private int quantity;
     private double price;
-
+  private Book book;
     public OrderItem() {
     }
 
-    public OrderItem(int orderDetailId, int orderId, int bookId, String title, String url_img, int quantity, double price) {
+    public OrderItem(int orderDetailId, int orderId, int bookId, String title, String url_img, int quantity, double price, Book book) {
         this.orderDetailId = orderDetailId;
         this.orderId = orderId;
         this.bookId = bookId;
@@ -29,9 +29,8 @@ public class OrderItem {
         this.url_img = url_img;
         this.quantity = quantity;
         this.price = price;
+        this.book = book;
     }
-
-    
 
     public int getOrderDetailId() {
         return orderDetailId;
@@ -89,5 +88,13 @@ public class OrderItem {
         this.price = price;
     }
 
-    
+    public Book getBook() {
+        return book;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
+    }
+
+   
 }

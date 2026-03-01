@@ -29,7 +29,7 @@
                 margin-bottom:20px;
             }
 
-            
+
 
             /* CARD */
             .order-card{
@@ -123,6 +123,10 @@
             .tab-link.active::after {
                 width: 100%;
             }
+            .order-link{
+                text-decoration:none;
+                color:inherit;
+            }
         </style>
     </head>
     <body>
@@ -167,51 +171,54 @@
 
             <c:forEach var="o" items="${orders}">
 
-                <div style="background:white; padding:20px; margin-bottom:20px; border-radius:10px;">
+                <a href="${pageContext.request.contextPath}/OrderDetail?id=${o.orderId}"
+                    class="order-link">
+                    <div style="background:white; padding:20px; margin-bottom:20px; border-radius:10px;">
 
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
 
-                        <div style="font-weight:bold;">
-                            Mã đơn: ${o.orderId}
-                        </div>
-
-                        <div style="
-                             font-weight:bold;
-                             color: red;
-                             ">
-                            ${o.status == 'Pending' ? 'Chờ xác nhận' :
-                              o.status == 'Shipping' ? 'Đang giao' :
-                              o.status == 'Completed' ? 'Hoàn thành' :
-                              o.status == 'CANCELLED' ? 'Đã hủy' : o.status}
-                        </div>
-
-                    </div>
-
-                    <c:forEach var="item" items="${o.items}">
-                        <div style="display:flex; align-items:center; margin-bottom:15px;">
-
-                            <img src="${pageContext.request.contextPath}/${item.url_img}"
-                                 style="width:80px; height:105px; object-fit:cover; border-radius:8px; margin-right:15px;"/>
-
-                            <div style="flex:1;">
-                                <div style="font-weight:500;">${item.title}</div>
-                                <div>Số lượng: ${item.quantity}</div>
+                            <div style="font-weight:bold;">
+                                Mã đơn: ${o.orderId}
                             </div>
 
-
+                            <div style="
+                                 font-weight:bold;
+                                 color: red;
+                                 ">
+                                ${o.status == 'Pending' ? 'Chờ xác nhận' :
+                                  o.status == 'Shipping' ? 'Đang giao' :
+                                  o.status == 'Completed' ? 'Hoàn thành' :
+                                  o.status == 'CANCELLED' ? 'Đã hủy' : o.status}
+                            </div>
 
                         </div>
-                    </c:forEach>
 
-                    <hr>
+                        <c:forEach var="item" items="${o.items}">
+                            <div style="display:flex; align-items:center; margin-bottom:15px;">
 
-                    <div style="text-align:right; font-size:18px; font-weight:bold; color:black;">
-                        Tổng tiền: ${o.totalAmount} VND
-                    </div>
+                                <img src="${pageContext.request.contextPath}/${item.url_img}"
+                                     style="width:80px; height:105px; object-fit:cover; border-radius:8px; margin-right:15px;"/>
 
+                                <div style="flex:1;">
+                                    <div style="font-weight:500;">${item.title}</div>
+                                    <div>Số lượng: ${item.quantity}</div>
+                                </div>
+
+
+
+                            </div>
+                    </a>
+                </c:forEach>
+
+                <hr>
+
+                <div style="text-align:right; font-size:18px; font-weight:bold; color:black;">
+                    Tổng tiền: ${o.totalAmount} VND
                 </div>
 
-            </c:forEach>
-        </div>
-    </body>
+            </div>
+
+        </c:forEach>
+    </div>
+</body>
 </html>
