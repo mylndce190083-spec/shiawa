@@ -18,46 +18,47 @@
 
     </head>
     <body>
-      
+
         <c:if test="${not empty success}">
             <div style="color: green; font-weight: bold;">
                 ${success}
             </div>
             <c:remove var="success" scope="session"/>
         </c:if>
-        <header class="header">
-
-            <a href="${pageContext.request.contextPath}/home">
-                <div class="logo" id="backToShop">
-                    <img src="${pageContext.request.contextPath}/assets/img/logo.jpg" class="rounded-img">
-                </div>
-            </a>
-
-            <div class="search-box">
-                <input type="text">
-                <button>
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
+        <!--        <header class="header">
+        
+                    <a href="${pageContext.request.contextPath}/home">
+                        <div class="logo" id="backToShop">
+                            <img src="${pageContext.request.contextPath}/assets/img/logo.jpg" class="rounded-img">
+                        </div>
+                    </a>
+        
+                    <div class="search-box">
+                        <input type="text">
+                        <button>
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </div>
+                    <div class="icon" id="cartIcon">
+                        <a href="${pageContext.request.contextPath}/cart">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                            <span>Giỏ hàng</span>
+                        </a>
+                    </div>
+        <c:if test="${not empty sessionScope.user}">
+            <div class="icon" id="orderIcon">
+                <i class="fa-solid fa-clipboard-list"></i>
+                <span>Order list</span>
             </div>
-            <div class="icon" id="cartIcon">
-                <a href="${pageContext.request.contextPath}/cart">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    <span>Giỏ hàng</span>
-                </a>
-            </div>
-            <c:if test="${not empty sessionScope.user}">
-                <div class="icon" id="orderIcon">
-                    <i class="fa-solid fa-clipboard-list"></i>
-                    <span>Order list</span>
-                </div>
-            </c:if>
-            <div class="icon" id="accountIcon">
-                <i class="fa-regular fa-user"></i>
-                <span>Tài khoản</span>
-            </div>
+        </c:if>
+        <div class="icon" id="accountIcon">
+            <i class="fa-regular fa-user"></i>
+            <span>Tài khoản</span>
+        </div>
 
 
-        </header>
+    </header>-->
+        <jsp:include page="/client/layout/header.jsp" />
 
 
 

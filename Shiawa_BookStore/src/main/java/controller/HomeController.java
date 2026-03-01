@@ -27,15 +27,40 @@ public class HomeController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        BookDAO dao = new BookDAO();
-        CategoryDAO cdao = new CategoryDAO();
-        List<Book> list = dao.getAllBook();
-        List<Category> clist = cdao.getAllCategory();
-        
-        request.setAttribute("listB", list);
-        request.setAttribute("listC", clist);
-        request.getRequestDispatcher("/WEB-INF/home/home.jsp").forward(request, response);
+//        BookDAO dao = new BookDAO();
+//        CategoryDAO cdao = new CategoryDAO();
+//        List<Book> list = dao.getAllBook();
+//        List<Category> clist = cdao.getAllCategory();
+//        
+//        request.setAttribute("listB", list);
+//        request.setAttribute("listC", clist);
+//        request.getRequestDispatcher("/WEB-INF/home/home.jsp").forward(request, response);
+//    }
+
+    BookDAO dao = new BookDAO();
+    CategoryDAO cdao = new CategoryDAO();
+    
+    // 1. Lấy ID thể loại từ URL (nếu có)
+    String cateIdRaw = request.getParameter("id");
+    List<Book> list;
+
+    if (cateIdRaw != null && !cateIdRaw.isEmpty()) {
+        // Nếu có ID -> Gọi hàm lọc sách theo thể loại đã viết trong BookDAO
+        int cateId = Integer.parseInt(cateIdRaw);
+        list = dao.getBooksByCategoryId(cateId); 
+    } else {
+        // Nếu không có ID -> Lấy tất cả sách như cũ
+        list = dao.getAllBook();
     }
+
+    List<Category> clist = cdao.getAllCategory();
+
+    request.setAttribute("listB", list);
+    request.setAttribute("listC", clist);
+    
+    // 2. Chuyển hướng về trang home.jsp (hoặc booklist.jsp tùy bạn muốn hiện ở đâu)
+    request.getRequestDispatcher("/WEB-INF/home/home.jsp").forward(request, response);
+}
 
     
     @Override

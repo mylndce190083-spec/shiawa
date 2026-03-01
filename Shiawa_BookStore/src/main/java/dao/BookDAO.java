@@ -196,7 +196,7 @@ public class BookDAO extends DBContext {
             ps.executeUpdate();
         }
     }
-    
+
     public List<Book> getSimilarBook(int categoryId) {
         List<Book> list = new ArrayList<>();
         String sql = "SELECT TOP 6 b.*, c.name AS category_name "
@@ -232,7 +232,7 @@ public class BookDAO extends DBContext {
         String sql = "SELECT * FROM Book WHERE title LIKE ?";
         try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
             ps.setString(1, "%" + keyword + "%");
-            ResultSet rs = ps.executeQuery();           
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Book b = new Book();
                 b.setBookId(rs.getInt("book_id"));
@@ -248,10 +248,24 @@ public class BookDAO extends DBContext {
 
         return list;
     }
+
+    public List<Book> getBooksByCategoryId(int cateId) {
+        List<Book> list = new ArrayList<>();
+        String sql = "SELECT * FROM Book WHERE category_id = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, cateId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Book b = new Book();
+                b.setBookId(rs.getInt("book_id")); 
+                b.setTitle(rs.getString("title")); 
+                b.setPrice(rs.getDouble("price")); 
+                b.setUrlImg(rs.getString("url_img")); 
+                list.add(b);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }
-
-
-
-
-
-

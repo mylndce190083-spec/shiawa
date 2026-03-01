@@ -49,14 +49,14 @@
             }
 
             .parent-link:hover {
-                color: #ff9800; /* Đổi sang màu cam khi di chuột */
+                color: #ff9800; 
             }
 
-            /* Ẩn danh mục con mặc định */
+
             .child-dropdown {
                 display: none;
                 position: absolute;
-                top: 100%;
+                top: 95%;
                 left: 0;
                 background-color: #ffffff;
                 min-width: 200px;
@@ -65,8 +65,17 @@
                 border-radius: 4px;
                 padding: 8px 0;
                 border: 1px solid #eee;
+                margin-top: 0;
             }
-
+            .child-dropdown::before {
+                content: "";
+                position: absolute;
+                top: -15px; 
+                left: 0;
+                width: 100%;
+                height: 20px;
+                background: transparent; 
+            }
             .child-dropdown a {
                 display: block;
                 padding: 10px 20px;
@@ -81,8 +90,6 @@
                 color: #2e7d32;
                 padding-left: 25px;
             }
-
-            /* Hiệu ứng: Di chuột vào CHA hiện CON */
             .menu-item:hover .child-dropdown {
                 display: block;
             }
@@ -106,7 +113,6 @@
         </nav>
 
         <hr>
-
         <nav class="category-nav">
             <div class="menu-container">
                 <div class="menu-item">
@@ -116,7 +122,8 @@
                             <c:if test="${c.categoryName == 'Sách Văn học' || c.categoryName == 'Văn học nước ngoài' || 
                                           c.categoryName == 'Văn học trong nước' || c.categoryName == 'Trinh thám / Kinh dị' || 
                                           c.categoryName == 'Manga / Truyện tranh' || c.categoryName == 'Thiếu nhi'}">
-                                  <a href="search?cateId=${c.categoryId}">${c.categoryName}</a>
+                                <%-- Trỏ về home kèm id để lọc --%>
+                                <a href="${pageContext.request.contextPath}/home?id=${c.categoryId}">${c.categoryName}</a>
                             </c:if>
                         </c:forEach>
                     </div>
@@ -128,7 +135,7 @@
                         <c:forEach items="${listC}" var="c">
                             <c:if test="${c.categoryName == 'Sách CNTT' || c.categoryName == 'Kinh tế' || 
                                           c.categoryName == 'Ngôn ngữ' || c.categoryName == 'Sách giáo khoa'}">
-                                  <a href="search?cateId=${c.categoryId}">${c.categoryName}</a>
+                                  <a href="${pageContext.request.contextPath}/home?id=${c.categoryId}">${c.categoryName}</a>
                             </c:if>
                         </c:forEach>
                     </div>
@@ -139,7 +146,7 @@
                     <div class="child-dropdown">
                         <c:forEach items="${listC}" var="c">
                             <c:if test="${c.categoryName == 'Kỹ năng sống'}">
-                                <a href="search?cateId=${c.categoryId}">${c.categoryName}</a>
+                                <a href="${pageContext.request.contextPath}/home?id=${c.categoryId}">${c.categoryName}</a>
                             </c:if>
                         </c:forEach>
                     </div>
@@ -150,7 +157,7 @@
                     <div class="child-dropdown">
                         <c:forEach items="${listC}" var="c">
                             <c:if test="${c.categoryName == 'Nghệ thuật'}">
-                                <a href="search?cateId=${c.categoryId}">${c.categoryName}</a>
+                                <a href="${pageContext.request.contextPath}/home?id=${c.categoryId}">${c.categoryName}</a>
                             </c:if>
                         </c:forEach>
                     </div>
