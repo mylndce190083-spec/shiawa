@@ -101,90 +101,6 @@ public class CartController extends HttpServlet {
         System.out.println(">>> CartController doPost CALLED");
         System.out.println("ACTION = " + request.getParameter("action"));
         System.out.println("BOOK_ID = " + request.getParameter("book_id"));
-//        HttpSession session = request.getSession();
-//        Account user = (Account) session.getAttribute("user");
-//
-//        if (user == null || !"customer".equals(user.getRole())) {
-//            response.sendRedirect(request.getContextPath() + "/login");
-//            return;
-//        }
-//
-//        CustomerDAO customerDAO = new CustomerDAO();
-//        Customer customer = customerDAO.getCustomerByAccountId(user.getId());
-//
-//        if (customer == null) {
-//            response.sendRedirect(request.getContextPath() + "/cart");
-//            return;
-//        }
-//
-//        int customerId = user.getId();
-//
-//        String action = request.getParameter("action");
-//        String bookIdRaw = request.getParameter("book_id");
-//
-//        if (action == null || bookIdRaw == null) {
-//            response.sendRedirect(request.getContextPath() + "/cart");
-//            return;
-//        }
-//
-//        int bookId = Integer.parseInt(bookIdRaw);
-//
-//        CartItemDAO dao = new CartItemDAO();
-//        CartItem item = dao.findItem(customerId, bookId);
-//
-//        switch (action) {
-//            case "add":   // ✅ ADD TO CART
-//                if (item != null) {
-//                    // đã có → tăng số lượng
-//                    item.setQuantity(item.getQuantity() + 1);
-//                    dao.update(item);
-//                } else {
-//                    // chưa có → INSERT
-//                    BookDAO bookDAO = new BookDAO();
-//                    Book book = bookDAO.getBookById(bookId);
-//
-//                    if (book != null) {
-//                        CartItem newItem = new CartItem(
-//                                0,
-//                                customerId,
-//                                bookId,
-//                                1,
-//                                book.getPrice(),
-//                                java.time.LocalDateTime.now()
-//                        );
-//                        dao.insert(newItem);
-//                    }
-//                }
-//                break;
-//            case "increase":
-//                if (item != null) {
-//                    item.setQuantity(item.getQuantity() + 1);
-//                    dao.update(item);
-//                }
-//                break;
-//
-//            case "decrease":
-//                if (item != null) {
-//                    int newQty = item.getQuantity() - 1;
-//                    if (newQty <= 0) {
-//                        dao.delete(customerId, bookId);
-//                    } else {
-//                        item.setQuantity(newQty);
-//                        dao.update(item);
-//                    }
-//                }
-//                break;
-//
-//            case "delete":
-//                dao.delete(customerId, bookId);
-//                break;
-//
-//            default:
-//                break;
-//        }
-//
-//        response.sendRedirect(request.getContextPath() + "/cart");
-//    }
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
 
@@ -247,8 +163,6 @@ public class CartController extends HttpServlet {
         }
         CartItem updatedItem = dao.findItem(customerId, bookId);
         int newQty = (updatedItem != null) ? updatedItem.getQuantity() : 0;
-
-// Kiểm tra có phải AJAX không
         boolean isAjax = "XMLHttpRequest"
                 .equals(request.getHeader("X-Requested-With"));
 
@@ -269,11 +183,6 @@ public class CartController extends HttpServlet {
                     + "}";
 
             response.getWriter().print(json);
-
-//        } else {
-//           
-//            response.sendRedirect(request.getContextPath() + "/cart");
-//        }
         } else {
             if ("buy_now".equals(action)) {
                 response.sendRedirect(request.getContextPath() + "/checkout"); 
