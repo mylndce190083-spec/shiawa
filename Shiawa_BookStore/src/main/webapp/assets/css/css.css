@@ -394,7 +394,7 @@ body {
 /* HEADER */
 .cart-header {
    display: grid;
-    grid-template-columns: 40px 2fr 1fr 1fr 1fr;
+    grid-template-columns: 120px 2fr 1fr 1fr 1fr;
     
     font-weight: bold;
     border-bottom: 2px solid black;

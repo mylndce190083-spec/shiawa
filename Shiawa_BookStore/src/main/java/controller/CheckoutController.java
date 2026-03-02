@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import model.Account;
-import model.Address;
+
 import model.CartItem;
 import model.Customer;
 import model.OrderItem;
@@ -145,6 +145,26 @@ public class CheckoutController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/cart");
                 return;
             }
+            /*check hàng*/
+            boolean hasOutOfStock = false;
+
+            for (CartItem item : selectedItems) {
+                if (item.getBook().getStock() <= 0) {
+                    hasOutOfStock = true;
+                    break;
+                }
+            }
+
+            if (hasOutOfStock) {
+                request.setAttribute("stockError",
+                        "Có sản phẩm trong danh sách đã hết hàng!");
+
+                request.setAttribute("orderItems", selectedItems);
+
+                request.getRequestDispatcher("/WEB-INF/home/placeorder.jsp")
+                        .forward(request, response);
+                return;
+            }
 
             double total = 0;
             for (CartItem item : selectedItems) {
@@ -200,9 +220,80 @@ public class CheckoutController extends HttpServlet {
             request.setAttribute("totalAmount", total);
             try {
 
-                String shippingAddress = request.getParameter("address");
-                double shippingFee = 0;
+                // Lấy từng phần địa chỉ
+                String province = request.getParameter("province");
+                String district = request.getParameter("district");
+                String ward = request.getParameter("ward");
+                String detail = request.getParameter("detailAddress");
+                String phone = request.getParameter("phone");
+                String receiverName = request.getParameter("receiverName");
+                // ===== VALIDATE ĐỊA CHỈ + SỐ ĐIỆN THOẠI =====
 
+                String phoneRegex = "^(03|05|07|08|09)[0-9]{8}$";
+                String addressDetailRegex = "^.{3,100}$";
+
+                boolean hasError = false;
+
+// ===== VALIDATE PROVINCE =====
+                if (province == null || province.trim().isEmpty()) {
+                    request.setAttribute("provinceError", "Vui lòng chọn Tỉnh / Thành phố!");
+                    hasError = true;
+                }
+
+// ===== VALIDATE DISTRICT =====
+                if (district == null || district.trim().isEmpty()) {
+                    request.setAttribute("districtError", "Vui lòng chọn Quận / Huyện!");
+                    hasError = true;
+                }
+
+// ===== VALIDATE WARD =====
+                if (ward == null || ward.trim().isEmpty()) {
+                    request.setAttribute("wardError", "Vui lòng chọn Phường / Xã!");
+                    hasError = true;
+                }
+
+// ===== VALIDATE DETAIL ADDRESS =====
+                if (detail == null || !detail.matches(addressDetailRegex)) {
+                    request.setAttribute("detailError",
+                            "Địa chỉ chi tiết phải từ 3 đến 100 ký tự!");
+                    hasError = true;
+                }
+
+// ===== VALIDATE PHONE =====
+                if (phone == null || !phone.matches(phoneRegex)) {
+                    request.setAttribute("phoneError",
+                            "Số điện thoại phải đủ 10 số và bắt đầu bằng 03,05,07,08,09!");
+                    hasError = true;
+                }
+                if (receiverName == null || receiverName.trim().isEmpty()) {
+                    request.setAttribute("receiverNameError", "Vui lòng nhập tên người nhận");
+                    hasError = true;
+                }
+
+// ===== NẾU CÓ LỖI =====
+                if (hasError) {
+
+                    // giữ lại dữ liệu người dùng đã nhập
+                    request.setAttribute("province", province);
+                    request.setAttribute("district", district);
+                    request.setAttribute("ward", ward);
+                    request.setAttribute("detailAddress", detail);
+                    request.setAttribute("phone", phone);
+                    request.setAttribute("receiverName", receiverName);
+                    request.setAttribute("orderItems", selectedItems);
+                    request.setAttribute("totalAmount", total);
+
+                    request.getRequestDispatcher("/WEB-INF/home/placeorder.jsp")
+                            .forward(request, response);
+                    return;
+                }
+// Gộp lại thành 1 chuỗi
+                String shippingAddress = detail + ", "
+                        + ward + ", "
+                        + district + ", "
+                        + province;
+
+                double shippingFee = 20000;
                 OrderDAO orderDAO = new OrderDAO();
 
                 // 🔥 Gọi 1 lần duy nhất
@@ -210,7 +301,8 @@ public class CheckoutController extends HttpServlet {
                         user.getId(),
                         selectedItems,
                         shippingAddress,
-                        shippingFee
+                        shippingFee,
+                        receiverName, phone
                 );
 
                 // Xóa cart sau khi đặt thành công

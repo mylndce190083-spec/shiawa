@@ -171,18 +171,19 @@ public class CartItemDAO extends DBContext {
         List<CartItem> list = new ArrayList<>();
 
         String sql = """
-        SELECT c.cart_item_id,
-               c.customer_id,
-               c.book_id,
-               c.quantity,
-               c.price,
-               c.created_at,
-               b.title,
-               b.url_img
-        FROM CartItem c
-        JOIN Book b ON c.book_id = b.book_id
-        WHERE c.customer_id = ?
-    """;
+    SELECT c.cart_item_id,
+           c.customer_id,
+           c.book_id,
+           c.quantity,
+           c.price,
+           c.created_at,
+           b.title,
+           b.url_img,
+           b.stock
+    FROM CartItem c
+    JOIN Book b ON c.book_id = b.book_id
+    WHERE c.customer_id = ?
+""";
 
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
@@ -194,7 +195,7 @@ public class CartItemDAO extends DBContext {
                 int bookId = rs.getInt("book_id");
                 int quantity = rs.getInt("quantity");
                 double price = rs.getDouble("price");
-
+                int stock = rs.getInt("stock");
                 Timestamp t = rs.getTimestamp("created_at");
                 LocalDateTime createAt = (t != null) ? t.toLocalDateTime() : null;
 
@@ -203,7 +204,7 @@ public class CartItemDAO extends DBContext {
                 book.setBookId(bookId);
                 book.setTitle(rs.getString("title"));
                 book.setUrlImg(rs.getString("url_img"));
-
+                book.setStock(stock);
                 // tạo CartItem bằng constructor
                 CartItem item = new CartItem(
                         cartItemId,

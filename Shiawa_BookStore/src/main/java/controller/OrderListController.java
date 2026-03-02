@@ -4,12 +4,8 @@
  */
 package controller;
 
-import dao.AccountDAO;
-<<<<<<< HEAD
-import dao.CustomerDAO;
-=======
-import dao.CartItemDAO;
->>>>>>> origin/huynhmy
+import dao.OrderDAO;
+import dao.OrderDetailDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -20,18 +16,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.Account;
-<<<<<<< HEAD
-import model.Customer;
-=======
-import model.CartItem;
->>>>>>> origin/huynhmy
+import model.OrderItem;
+import model.Orders;
 
 /**
  *
- * @author Lenovo
+ * @author MY
  */
-@WebServlet(name = "LoginController", urlPatterns = {"/login"})
-public class LoginController extends HttpServlet {
+@WebServlet(name = "OrderListController", urlPatterns = {"/OrderList/*"})
+public class OrderListController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -50,10 +43,10 @@ public class LoginController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LoginController</title>");
+            out.println("<title>Servlet OrderListController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LoginController at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet OrderListController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -71,7 +64,42 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/account/login.jsp").forward(request, response);
+        HttpSession session = request.getSession();
+        Account user = (Account) session.getAttribute("user");
+
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
+        // 🔥 ĐẶT ĐOẠN MỚI Ở ĐÂY
+        String pathInfo = request.getPathInfo();
+        String status = "ALL";
+
+        if (pathInfo != null) {
+            status = pathInfo.substring(1).toUpperCase();
+        }
+
+        OrderDAO dao = new OrderDAO();
+        OrderDetailDAO detailDAO = new OrderDetailDAO();
+        List<Orders> orders;
+
+        if (status== null || status.equals( "ALL")) {
+            orders = dao.getOrdersByCustomer(user.getId());
+        } else {
+            orders = dao.getOrdersByStatus(user.getId(), status);
+        }
+        for (Orders o : orders) {
+            List<OrderItem> items = detailDAO.getItemsByOrderId(o.getOrderId());
+            System.out.println("OrderID: " + o.getOrderId() + " | Items: " + items.size());
+            o.setItems(items);
+        }
+
+        request.setAttribute(
+                "orders", orders);
+        request.getRequestDispatcher(
+                "/WEB-INF/home/orderlist.jsp")
+                .forward(request, response);
     }
 
     /**
@@ -85,50 +113,28 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        AccountDAO dao = new AccountDAO();
-        CustomerDAO cdao = new CustomerDAO();
-        String hashPassword = dao.hashMD5(password);
-        Account user = dao.login(email, hashPassword);
-        Customer customer = cdao.getCustomerByAccountIdUpgraded(user.getId());
         HttpSession session = request.getSession();
+        Account user = (Account) session.getAttribute("user");
 
-        if (user.getId() == -1) {
-            session.setAttribute("error", "Sai email hoặc mật khẩu!");
-            response.sendRedirect("login");
-        } else {
-            if (!"active".equals(user.getStatus())) {
-                session.setAttribute("error", "Email chưa xác thực");
-                response.sendRedirect("login");
-                return;
-            }
-//            request.setAttribute("user", user);
-            session.setAttribute("user", user);
-
-            if (user.getRole().equals("customer")) {
-<<<<<<< HEAD
-                session.setAttribute("customer", customer);
-=======
-
-                CartItemDAO cartDAO = new CartItemDAO();
-
-                List<CartItem> cartItems
-                        = cartDAO.getCartByCustomerId(user.getId());
-                // 👈 dùng user.getId() nếu id = customerId
-
-                int totalQuantity = 0;
-                for (CartItem ci : cartItems) {
-                    totalQuantity += ci.getQuantity();
-                }
-
-                session.setAttribute("cartSize", totalQuantity);
->>>>>>> origin/huynhmy
-                response.sendRedirect("home");
-            } else if (user.getRole().equals("Admin")) {
-                response.sendRedirect("account");
-            }
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
         }
+
+        String action = request.getParameter("action");
+
+        if ("cancel".equals(action)) {
+
+            int orderId = Integer.parseInt(request.getParameter("orderId"));
+
+            OrderDAO dao = new OrderDAO();
+
+            // Chỉ hủy nếu đơn thuộc về user đó
+            dao.cancelOrderIfPending(orderId, user.getId());
+        }
+
+        // Redirect lại để load danh sách mới
+        response.sendRedirect(request.getContextPath() + "/OrderList");
     }
 
     /**

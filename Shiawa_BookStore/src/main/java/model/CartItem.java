@@ -20,24 +20,20 @@ public class CartItem {
     private Double price;
     private LocalDateTime createAt;
     private Book book;
+    private int stock;
 
     public CartItem() {
     }
 
-    public CartItem(
-            int cartItemId,
-            int customerId,
-            int bookId,
-            int quantity,
-            Double price,
-            LocalDateTime createAt
-    ) {
+    public CartItem(int cartItemId, int customerId, int bookId, int quantity, double price, LocalDateTime createAt) {
         this.cartItemId = cartItemId;
         this.customerId = customerId;
         this.bookId = bookId;
         this.quantity = quantity;
         this.price = price;
         this.createAt = createAt;
+        this.book = book;
+        this.stock = stock;
     }
 
     public int getCartItemId() {
@@ -94,6 +90,14 @@ public class CartItem {
 
     public void setBook(Book book) {
         this.book = book;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
     }
 
 }

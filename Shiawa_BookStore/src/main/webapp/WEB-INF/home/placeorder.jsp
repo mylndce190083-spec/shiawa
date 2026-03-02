@@ -13,7 +13,7 @@
         <style>
             body {
                 font-family: Arial;
-                background: #f5f5f5;
+                background: #4CAF50;
             }
 
             .container {
@@ -25,7 +25,7 @@
             }
 
             .box {
-                background: white;
+                background:white;
                 padding: 20px;
                 border-radius: 10px;
             }
@@ -102,7 +102,7 @@
             .btn {
                 width: 100%;
                 padding: 12px ;
-                background: #e53935;
+                background: darkslategrey;
                 color: white;
                 border: none;
                 border-radius: 6px;
@@ -123,6 +123,13 @@
             button[name="action"][value="confirm"]:hover {
                 background-color: darkred;
             }
+
+            .error-msg {
+                color: #e53935;
+                font-size: 13px;
+                margin-top: 4px;
+            }
+
         </style>
     </head>
 
@@ -142,7 +149,7 @@
                     <span>Số lượng </span>
                     <span>Giá </span>
                 </div>
-
+                <c:set var="hasOutOfStock" value="false"/>
                 <c:forEach var="item" items="${orderItems}">
                     <div class="order-item">
 
@@ -168,27 +175,16 @@
                                 groupingUsed="true" 
                                 maxFractionDigits="0" /> đ
                         </div>
+                        <c:if test="${item.book.stock == 0}">
+                            <div style="color:red; font-weight:bold;">
+                                Sản phẩm này đã hết hàng
+                            </div>
+                            <c:set var="hasOutOfStock" value="true"/>
+                        </c:if>
                     </div>
+
                 </c:forEach>
 
-                <h3>📍 ĐỊA CHỈ NHẬN HÀNG</h3>
-
-                <select name="province" id="province" required>
-                    <option value="">Chọn Tỉnh / Thành phố</option>
-                </select>
-
-                <select name="district" id="district" disabled required>
-                    <option value="">Chọn Quận / Huyện</option>
-                </select>
-
-                <select name="ward" id="ward" disabled required>
-                    <option value="">Chọn Phường / Xã</option>
-                </select>
-
-                <input type="text" name="detail"
-                       placeholder="Số nhà, tên đường" required>
-                <input type="text" name="detail"
-                       placeholder="số điện thoại" required>
 
 
             </div>
@@ -196,30 +192,78 @@
             <!-- RIGHT -->
             <div class="box">
 
-                <h3>🧾 TÓM TẮT ĐƠN HÀNG</h3>
-
-                <div class="summary-row">
-                    <span>Thành tiền:</span>
-                    <span id="subtotal">0 đ</span>
-                </div>
-
-                <div class="summary-row">
-                    <span>Phí vận chuyển:</span>
-                    <span>20.000 đ</span>
-                </div>
-
-                <div class="summary-row total">
-                    <span>Tổng thanh toán:</span>
-                    <span id="total">0 đ</span>
-                </div>
-
                 <form action="${pageContext.request.contextPath}/checkout" method="post">
+                    <h3>📍 ĐỊA CHỈ NHẬN HÀNG</h3>
+
+                    <select name="province" id="province" required>
+                        <option value="">Chọn Tỉnh / Thành phố</option>
+                    </select>
+                    <c:if test="${not empty provinceError}">
+                        <div class="error-msg">${provinceError}</div>
+                    </c:if>
+
+
+                    <select name="district" id="district" required>
+                        <option value="">Chọn Quận / Huyện</option>
+                    </select>
+                    <c:if test="${not empty districtError}">
+                        <div class="error-msg">${districtError}</div>
+                    </c:if>
+
+
+                    <select name="ward" id="ward" required>
+                        <option value="">Chọn Phường / Xã</option>
+                    </select>
+                    <c:if test="${not empty wardError}">
+                        <div class="error-msg">${wardError}</div>
+                    </c:if>
+
+
+                    <input type="text" name="detailAddress"
+                           value="${detailAddress}"
+                           placeholder="Số nhà, tên đường" required>
+                    <c:if test="${not empty detailError}">
+                        <div class="error-msg">${detailError}</div>
+                    </c:if>
+                    <input type="text" name="receiverName"
+                           value="${receiverName}"
+                           placeholder="Họ và tên người nhận" required>
+                    <c:if test="${not empty receiverNameError}">
+                        <div class="error-msg">${receiverNameError}</div>
+                    </c:if>
+
+                    <input type="text" name="phone"
+                           value="${phone}"
+                           placeholder="Số điện thoại" required>
+                    <c:if test="${not empty phoneError}">
+                        <div class="error-msg">${phoneError}</div>
+                    </c:if>
+                    <h3>🧾 TÓM TẮT ĐƠN HÀNG</h3>
+
+                    <div class="summary-row">
+                        <span>Thành tiền:</span>
+                        <span id="subtotal">0 đ</span>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Phí vận chuyển:</span>
+                        <span>20.000 đ</span>
+                    </div>
+
+                    <div class="summary-row total">
+                        <span>Tổng thanh toán:</span>
+                        <span id="total">0 đ</span>
+                    </div>
+
+
 
                     <c:forEach var="item" items="${orderItems}">
                         <input type="hidden" name="selectedItem" value="${item.bookId}" />
                     </c:forEach>
-                    <input type="text" name="address" required />
-                    <button type="submit" name="action" value="confirm">
+                    <button type="submit"
+                            name="action"
+                            value="confirm"
+                            ${hasOutOfStock ? "disabled" : ""}>
                         Đặt hàng
                     </button>
 
@@ -234,73 +278,104 @@
         <!-- ================== JAVASCRIPT ================== -->
 
         <script>
+
             const province = document.getElementById("province");
             const district = document.getElementById("district");
             const ward = document.getElementById("ward");
+
             let provincesData = [];
-            // ===== LOAD TỈNH =====
+
+            // 🔥 Giá trị giữ lại từ server
+            let selectedProvince = "${province}";
+            let selectedDistrict = "${district}";
+            let selectedWard = "${ward}";
+
             fetch("https://provinces.open-api.vn/api/?depth=3")
-                    .then(res => {
-                        if (!res.ok) {
-                            throw new Error("Network response was not ok");
-                        }
-                        return res.json();
-                    })
+                    .then(res => res.json())
                     .then(data => {
+
                         provincesData = data;
+
                         province.innerHTML = "<option value=''>Chọn Tỉnh / Thành phố</option>";
+
                         data.forEach(p => {
                             let option = document.createElement("option");
                             option.value = p.name;
                             option.textContent = p.name;
                             province.appendChild(option);
                         });
-                    })
-                    .catch(err => {
-                        console.error("Lỗi load tỉnh thành:", err);
-                        alert("Không load được danh sách tỉnh thành!");
-                    });
-            // ===== CHỌN TỈNH =====
-            province.addEventListener("change", function () {
 
-                district.innerHTML = "<option value=''>Chọn Quận / Huyện</option>";
-                ward.innerHTML = "<option value=''>Chọn Phường / Xã</option>";
-                ward.disabled = true;
-                let selectedProvince = provincesData.find(p => p.name === this.value);
-                if (!selectedProvince) {
-                    district.disabled = true;
+                        // 🔥 Nếu có province cũ → tự load lại
+                        if (selectedProvince) {
+                            province.value = selectedProvince;
+                            autoLoadDistrict();
+                        }
+                    });
+
+            function autoLoadDistrict() {
+
+                let p = provincesData.find(x => x.name === selectedProvince);
+                if (!p)
                     return;
-                }
 
                 district.disabled = false;
-                selectedProvince.districts.forEach(d => {
+                district.innerHTML = "<option value=''>Chọn Quận / Huyện</option>";
+
+                p.districts.forEach(d => {
                     let option = document.createElement("option");
                     option.value = d.name;
                     option.textContent = d.name;
                     district.appendChild(option);
                 });
-            });
-            // ===== CHỌN QUẬN =====
-            district.addEventListener("change", function () {
 
-                ward.innerHTML = "<option value=''>Chọn Phường / Xã</option>";
-                let selectedProvince = provincesData.find(p => p.name === province.value);
-                if (!selectedProvince)
-                    return;
-                let selectedDistrict = selectedProvince.districts.find(d => d.name === this.value);
-                if (!selectedDistrict) {
-                    ward.disabled = true;
-                    return;
+                if (selectedDistrict) {
+                    district.value = selectedDistrict;
+                    autoLoadWard();
                 }
+            }
+
+            function autoLoadWard() {
+
+                let p = provincesData.find(x => x.name === selectedProvince);
+                if (!p)
+                    return;
+
+                let d = p.districts.find(x => x.name === selectedDistrict);
+                if (!d)
+                    return;
 
                 ward.disabled = false;
-                selectedDistrict.wards.forEach(w => {
+                ward.innerHTML = "<option value=''>Chọn Phường / Xã</option>";
+
+                d.wards.forEach(w => {
                     let option = document.createElement("option");
                     option.value = w.name;
                     option.textContent = w.name;
                     ward.appendChild(option);
                 });
+
+                if (selectedWard) {
+                    ward.value = selectedWard;
+                }
+            }
+
+            // Event khi người dùng tự chọn
+            province.addEventListener("change", function () {
+                selectedProvince = this.value;
+                selectedDistrict = "";
+                selectedWard = "";
+                district.innerHTML = "<option value=''>Chọn Quận / Huyện</option>";
+                ward.innerHTML = "<option value=''>Chọn Phường / Xã</option>";
+
+                autoLoadDistrict();
             });
+
+            district.addEventListener("change", function () {
+                selectedDistrict = this.value;
+                selectedWard = "";
+                autoLoadWard();
+            });
+
             // ===== TÍNH TỔNG TIỀN THEO CHECKBOX =====
 
             function formatCurrency(number) {
@@ -329,6 +404,7 @@
             }
 
             window.onload = calculateSummary;
+
         </script>
 
     </body>

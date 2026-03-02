@@ -13,7 +13,7 @@
         <style>
             body {
                 font-family: Arial, sans-serif;
-                background: #f4f6f9;
+                background: #E8F5E9;
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -79,7 +79,7 @@
                 🏠 Về trang chủ
             </a>
 
-            <a href="${pageContext.request.contextPath}/order-history" class="btn btn-order">
+            <a href="${pageContext.request.contextPath}/OrderList" class="btn btn-order">
                 📦 Xem đơn hàng
             </a>
         </div>
