@@ -168,9 +168,9 @@ public class OrderDAO extends DBContext {
             o.discount
         ORDER BY o.order_date DESC
     """;
-
         try {
-            PreparedStatement ps = getConnection().prepareStatement(sql);
+            Connection con = getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, customerId);
             ResultSet rs = ps.executeQuery();
 
@@ -189,17 +189,54 @@ public class OrderDAO extends DBContext {
                 o.setStatus(rs.getString("status"));
                 o.setShippingAddress(rs.getString("shipping_address"));
                 o.setShippingFee(rs.getDouble("shipping_fee"));
-
-                // 🔥 QUAN TRỌNG
                 o.setTotalAmount(rs.getDouble("total_amount"));
 
+                // 🔥 LOAD ITEMS CHO TỪNG ORDER
+                String itemSql = """
+            SELECT oi.quantity,
+                   b.book_id,
+                   b.title,
+                   b.url_img,
+                   oi.price
+            FROM OrderDetail oi
+            JOIN Book b ON oi.book_id = b.book_id
+            WHERE oi.order_id = ?
+        """;
+
+                PreparedStatement ps2 = con.prepareStatement(itemSql);
+                ps2.setInt(1, o.getOrderId());
+                ResultSet rs2 = ps2.executeQuery();
+
+                List<OrderItem> items = new ArrayList<>();
+
+                while (rs2.next()) {
+                    Book b = new Book();
+                    b.setBookId(rs2.getInt("book_id"));
+                    b.setTitle(rs2.getString("title"));
+                    b.setUrlImg(rs2.getString("url_img"));
+
+                    OrderItem item = new OrderItem();
+                    item.setQuantity(rs2.getInt("quantity"));
+                    item.setBook(b);
+                    item.setTitle(rs2.getString("title"));
+                    item.setUrl_img(rs2.getString("url_img"));
+                    item.setPrice(rs2.getDouble("price"));
+
+                    items.add(item);
+                }
+
+                o.setItems(items);   // 🔥 CÁI QUAN TRỌNG NHẤT
+                int totalQuantity = 0;
+                for (OrderItem item : items) {
+                    totalQuantity += item.getQuantity();
+                }
+                o.setQuantity(totalQuantity);
                 list.add(o);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return list;
     }
 
@@ -402,7 +439,8 @@ public class OrderDAO extends DBContext {
                 SELECT oi.quantity,
                        b.book_id,
                        b.title,
-                       b.url_img
+                       b.url_img,
+                       oi.price
                 FROM OrderDetail oi
                 JOIN Book b ON oi.book_id = b.book_id
                 WHERE oi.order_id = ?
@@ -415,10 +453,6 @@ public class OrderDAO extends DBContext {
                 List<OrderItem> items = new ArrayList<>();
 
                 while (rs2.next()) {
-                    System.out.println("BOOK ID: " + rs2.getInt("book_id"));
-                    System.out.println("TITLE: " + rs2.getString("title"));
-                    System.out.println("IMG: " + rs2.getString("url_img"));
-                    System.out.println("QTY: " + rs2.getInt("quantity"));
                     Book b = new Book();
                     b.setBookId(rs2.getInt("book_id"));
                     b.setTitle(rs2.getString("title"));
@@ -430,7 +464,7 @@ public class OrderDAO extends DBContext {
 // 🔥 thêm 2 dòng này
                     item.setTitle(rs2.getString("title"));
                     item.setUrl_img(rs2.getString("url_img"));
-
+                    item.setPrice(rs2.getDouble("price"));
                     items.add(item);
                 }
 

@@ -193,47 +193,62 @@
 
                         </div>
 
+
                         <c:forEach var="item" items="${o.items}">
-                            <div style="display:flex; align-items:center; margin-bottom:15px;">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:15px;">
 
-                                <img src="${pageContext.request.contextPath}/${item.url_img}"
-                                     style="width:80px; height:105px; object-fit:cover; border-radius:8px; margin-right:15px;"/>
+                                <!-- BÊN TRÁI: Ảnh + thông tin -->
+                                <div style="display:flex; align-items:flex-start;">
 
-                                <div style="flex:1;">
-                                    <div style="font-weight:500;">${item.title}</div>
-                                    <div>Số lượng: ${item.quantity}</div>
+                                    <img src="${pageContext.request.contextPath}/${item.url_img}"
+                                         style="width:80px; height:105px; object-fit:cover; border-radius:8px; margin-right:15px;"/>
+
+                                    <div style="margin-top:22px;">
+                                        <div style="font-weight:500; margin-bottom: 7px">${item.title}</div>
+                                        <div>Số lượng: ${item.quantity}</div>
+                                    </div>
+
                                 </div>
 
+                                <!-- BÊN PHẢI: Giá -->
+                                <div style="display:flex; flex-direction:column; align-items:flex-end; margin-top:50px">
 
+                                    <!-- Đơn giá nhỏ -->
+                                    <div style="font-size:13px; color:#888;">
+                                        Tổng tiền : ${item.price * item.quantity} VND
+                                    </div>
+
+
+
+                                </div>
 
                             </div>
-                    </a>
+                        </c:forEach>
+
+                        <hr>
+
+                        <div style="text-align:right; font-size:18px; font-weight:bold; color:black;">
+                            Tổng số tiền( ${o.quantity} sản phẩm): ${o.totalAmount} VND
+                        </div>
+                        <c:if test="${o.status == 'Pending'}">
+                            <form action="${pageContext.request.contextPath}/OrderList" 
+                                  method="post" 
+                                  style="text-align:right; margin-top:10px;"
+                                  onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?');">
+
+                                <input type="hidden" name="action" value="cancel">
+                                <input type="hidden" name="orderId" value="${o.orderId}">
+
+                                <button type="submit" 
+                                        style="background:#ff4d4f; color:white; border:none;
+                                        padding:8px 16px; border-radius:6px; cursor:pointer;">
+                                    Hủy đơn
+                                </button>
+                            </form>
+                        </c:if>
+                    </div>
+
                 </c:forEach>
-
-                <hr>
-
-                <div style="text-align:right; font-size:18px; font-weight:bold; color:black;">
-                    Tổng tiền: ${o.totalAmount} VND
-                </div>
-                <c:if test="${o.status == 'Pending'}">
-                    <form action="${pageContext.request.contextPath}/OrderList" 
-                          method="post" 
-                          style="text-align:right; margin-top:10px;"
-                          onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?');">
-
-                        <input type="hidden" name="action" value="cancel">
-                        <input type="hidden" name="orderId" value="${o.orderId}">
-
-                        <button type="submit" 
-                                style="background:#ff4d4f; color:white; border:none;
-                                padding:8px 16px; border-radius:6px; cursor:pointer;">
-                            Hủy đơn
-                        </button>
-                    </form>
-                </c:if>
-            </div>
-
-        </c:forEach>
-    </div>
-</body>
+        </div>
+    </body>
 </html>

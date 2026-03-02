@@ -13,7 +13,7 @@
         <style>
             body {
                 font-family: Arial, sans-serif;
-                background: #f4f6f9;
+                background: #E8F5E9;
                 display: flex;
                 justify-content: center;
                 align-items: center;

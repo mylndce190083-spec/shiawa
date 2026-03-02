@@ -78,7 +78,7 @@
 
                 <c:forEach var="item" items="${order.items}">
                     <div class="product-item">
-                        <img src="${pageContext.request.contextPath}/${item.book.urlImg}" width="80">
+                        <img src="${item.book.urlImg}" width="80">
                         <div>
                             <div>${item.book.title}</div>
                             <div>Số lượng: ${item.quantity}</div>
