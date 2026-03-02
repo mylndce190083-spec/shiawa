@@ -153,7 +153,6 @@
                 </c:if>
 
                 <c:if test="${not empty sessionScope.user}">
-<<<<<<< HEAD
                     <a href="profile" class="icon">
                         <i class="fa-regular fa-user"></i>
                         <span>Tài khoản</span>
@@ -162,8 +161,6 @@
 
 
                 <c:if test="${not empty sessionScope.user}">
-=======
->>>>>>> origin/huynhmy
                     <a href="logout" class="icon">
                         <i class="fa-solid fa-right-from-bracket"></i>
                         <span>Logout</span>

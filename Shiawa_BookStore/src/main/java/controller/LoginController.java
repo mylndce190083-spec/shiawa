@@ -5,11 +5,8 @@
 package controller;
 
 import dao.AccountDAO;
-<<<<<<< HEAD
 import dao.CustomerDAO;
-=======
 import dao.CartItemDAO;
->>>>>>> origin/huynhmy
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -20,11 +17,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.Account;
-<<<<<<< HEAD
 import model.Customer;
-=======
 import model.CartItem;
->>>>>>> origin/huynhmy
 
 /**
  *
@@ -107,9 +101,7 @@ public class LoginController extends HttpServlet {
             session.setAttribute("user", user);
 
             if (user.getRole().equals("customer")) {
-<<<<<<< HEAD
                 session.setAttribute("customer", customer);
-=======
 
                 CartItemDAO cartDAO = new CartItemDAO();
 
@@ -123,7 +115,6 @@ public class LoginController extends HttpServlet {
                 }
 
                 session.setAttribute("cartSize", totalQuantity);
->>>>>>> origin/huynhmy
                 response.sendRedirect("home");
             } else if (user.getRole().equals("Admin")) {
                 response.sendRedirect("account");
