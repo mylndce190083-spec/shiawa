@@ -15,10 +15,26 @@
     </form>
 
     <div class="icons">
-        <a href="${pageContext.request.contextPath}/cart" class="icon">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <span>Giỏ hàng</span>
-        </a>
+        <a href="${pageContext.request.contextPath}/cart" class="icon cart-icon">
+                    <i class="fa-solid fa-cart-shopping"></i>
+
+                    <span id="cartBadge" class="cart-badge"
+                          style="${sessionScope.cartSize > 0 ? '' : 'display:none;'}">
+                        ${sessionScope.cartSize}
+                    </span>
+
+                    <span>Giỏ hàng</span>
+                </a>
+
+        <c:if test="${not empty sessionScope.user}">
+            <a href="${pageContext.request.contextPath}/OrderList" 
+               style="text-decoration:none; color:inherit;">
+                <div class="icon">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <span>Danh sách mua hàng</span>
+                </div>
+            </a>
+        </c:if>
 
         <c:choose>
             <c:when test="${not empty sessionScope.user}">

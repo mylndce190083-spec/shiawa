@@ -187,15 +187,12 @@
     <body>
 
         <jsp:include page="/client/layout/header.jsp" />
-
-<<<<<<< HEAD
-=======
-            <!-- LOGO -->
+<!--             LOGO 
             <div class="logo" id="backToShop">
                 <img src="${pageContext.request.contextPath}/assets/img/logo.jpg" class="rounded-img">
             </div>
 
-            <!-- SEARCH (GIỮA) -->
+             SEARCH (GIỮA) 
             <div class="search-box">
                 <input type="text">
                 <button>
@@ -203,12 +200,12 @@
                 </button>
             </div>
 
-            <!-- ICONS -->
+             ICONS 
             <div class="icons">
-                <!-- comment  <a href="${pageContext.request.contextPath}/cart" class="icon">
+                 comment  <a href="${pageContext.request.contextPath}/cart" class="icon">
                     <i class="fa-solid fa-cart-shopping"></i>
                     <span>Giỏ hàng</span>
-                </a>-->
+                </a>
 
                 <a href="${pageContext.request.contextPath}/cart" class="icon cart-icon">
                     <i class="fa-solid fa-cart-shopping"></i>
@@ -252,10 +249,9 @@
                     </a>
                 </c:if>
 
-            </div>
+            </div>-->
 
-        </header>
->>>>>>> origin/Hien_OTP
+       
         <nav class="breadcrumb">
             <a href="#">Trang chủ</a>
             <span>›</span>
@@ -393,36 +389,17 @@
                         <span class="discount">-${b.discount}%</span>
                     </div>
                     <p class="sold">Đã bán 120</p>
-<<<<<<< HEAD
 
-                    <form action="${pageContext.request.contextPath}/cart" method="post">
-                        <input type="hidden" name="action" value="add">
-                        <input type="hidden" name="book_id" value="${b.bookId}">
-                        <button type="submit" class="add-cart">Thêm giỏ hàng</button>
-=======
-                    <!-- comment <form action="${pageContext.request.contextPath}/cart" method="post">
-                        <input type="hidden" name="action" value="add">
-                        <input type="hidden" name="book_id" value="${b.bookId}">
-                        <button type="submit" class="add-cart">
-                            Thêm giỏ hàng
-                        </button>
-                    </form> -->
                     <form onsubmit="addToCart(event, ${b.bookId})">
                         <button type="submit" class="add-cart">
                             Thêm giỏ hàng
                         </button>
->>>>>>> origin/Hien_OTP
+
                     </form>
                 </div>
             </c:forEach>
         </section>
 
-<<<<<<< HEAD
-        <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
-    </body>
-
-</html>
-=======
             <div class="book" data-category="Business" data-name="Bùi Kiến Thành – Người Mở Khóa" data-price="150000">
                 <img src="https://via.placeholder.com/160x220">
                 <p class="title">Bùi Kiến Thành – Người Mở Khóa</p>
@@ -622,4 +599,3 @@
 
 
 </html>
->>>>>>> origin/Hien_OTP

@@ -36,8 +36,7 @@
         }
     </style>
     <body>
-<<<<<<< HEAD
-=======
+
         <c:if test="${not empty success}">
             <div style="color: green; font-weight: bold;">
                 ${success}
@@ -45,40 +44,11 @@
             <c:remove var="success" scope="session"/>
         </c:if>
         <header class="header">
->>>>>>> origin/Hien_OTP
 
         <c:if test="${not empty success}">
             <div style="color: green; font-weight: bold;">
                 ${success}
             </div>
-<<<<<<< HEAD
-            <c:remove var="success" scope="session"/>
-        </c:if>
-        <!--        <header class="header">
-        
-                    <a href="${pageContext.request.contextPath}/home">
-                        <div class="logo" id="backToShop">
-                            <img src="${pageContext.request.contextPath}/assets/img/logo.jpg" class="rounded-img">
-                        </div>
-                    </a>
-        
-                    <div class="search-box">
-                        <input type="text">
-                        <button>
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </button>
-                    </div>
-                    <div class="icon" id="cartIcon">
-                        <a href="${pageContext.request.contextPath}/cart">
-                            <i class="fa-solid fa-cart-shopping"></i>
-                            <span>Giỏ hàng</span>
-                        </a>
-                    </div>
-        <c:if test="${not empty sessionScope.user}">
-            <div class="icon" id="orderIcon">
-                <i class="fa-solid fa-clipboard-list"></i>
-                <span>Order list</span>
-=======
             <div class="icon" id="cartIcon">
                <!-- <a href="${pageContext.request.contextPath}/cart">
                     <i class="fa-solid fa-cart-shopping"></i>
@@ -110,7 +80,6 @@
             <div class="icon" id="accountIcon">
                 <i class="fa-regular fa-user"></i>
                 <span>Tài khoản</span>
->>>>>>> origin/Hien_OTP
             </div>
         </c:if>
         <div class="icon" id="accountIcon">
@@ -183,11 +152,8 @@
                                     </div>
                                 </div>
 
-<<<<<<< HEAD
-                                <span class="subtotal">
-=======
+
                                 <span class="subtotal" id="subtotal-${item.bookId}">
->>>>>>> origin/Hien_OTP
                                     $${item.price * item.quantity}
                                 </span>
 
@@ -201,11 +167,8 @@
 
                         <div class="cart-footer">
                             <strong>
-<<<<<<< HEAD
-                                Total: $<span id="totalPrice">0</span>
-=======
+
                                 Tổng: $<span id="totalPrice">0</span>
->>>>>>> origin/Hien_OTP
                             </strong>
                         </div>
                         <!-- VOUCHER -->
@@ -297,20 +260,16 @@
                     method: "POST",
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded",
-<<<<<<< HEAD
-                        "X-Requested-With": "XMLHttpRequest"   // 🔥 QUAN TRỌNG
-=======
+
                         "X-Requested-With": "XMLHttpRequest"
->>>>>>> origin/Hien_OTP
+
                     },
                     body: "action=" + action + "&book_id=" + bookId
                 })
                         .then(response => response.json())
                         .then(data => {
 
-<<<<<<< HEAD
-                            document.getElementById("qty-" + bookId).innerText = data.quantity;
-=======
+
                             // ✅ 1. Cập nhật số lượng hiển thị
                             document.getElementById("qty-" + bookId).innerText = data.quantity;
 // 👇 server nên trả về totalCartItems
@@ -337,7 +296,6 @@
 
                             // ✅ 5. Tính lại tổng tiền
                             updateTotal();
->>>>>>> origin/Hien_OTP
 
                             if (data.message) {
                                 alert(data.message);
@@ -361,12 +319,7 @@
 
                             // xóa dòng khỏi giao diện
                             document.getElementById("row-" + bookId).remove();
-<<<<<<< HEAD
 
-                        })
-                        .catch(error => console.error("Error:", error));
-            }
-=======
                             updateCartBadge(data.totalCartItems);
                          
                         })
@@ -393,7 +346,6 @@
                     badge.style.display = "none";
                 }
             }
->>>>>>> origin/Hien_OTP
         </script>
 
 
