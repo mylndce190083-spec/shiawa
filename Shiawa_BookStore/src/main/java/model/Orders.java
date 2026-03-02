@@ -5,34 +5,52 @@
 package model;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 
 /**
  *
  * @author MY
  */
 public class Orders {
-    private int orderId;          
-    private int customerId;     
-    private int staffId;          
 
-    private LocalDateTime orderDate;   
-    private String status;             
-    private int discount;              
-    private String shippingAddress;   
-    private double shippingFee;  
+
+    private int orderId;
+    private int customerId;
+    private int staffId;
+    private double totalAmount;
+    private LocalDateTime orderDate;
+    private String status;
+    private int discount;
+    private String shippingAddress;
+    private double shippingFee;
+    private List<OrderItem> items;
+    private String customerName;
+    private String phone;
+    private String voucherName;
+    private String receiverName;
+    private int quantity;
 
     public Orders() {
     }
 
-    public Orders(int orderId, int customerId, int staffId, LocalDateTime orderDate, String status, int discount, String shippingAddress, double shippingFee) {
+
+    public Orders(int orderId, int customerId, int staffId, double totalAmount, LocalDateTime orderDate, String status, int discount, String shippingAddress, double shippingFee, List<OrderItem> items, String customerName, String phone, String voucherName, String receiverName, int quantity) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.staffId = staffId;
+        this.totalAmount = totalAmount;
         this.orderDate = orderDate;
         this.status = status;
         this.discount = discount;
         this.shippingAddress = shippingAddress;
         this.shippingFee = shippingFee;
+        this.items = items;
+        this.customerName = customerName;
+        this.phone = phone;
+        this.voucherName = voucherName;
+        this.receiverName = receiverName;
+        this.quantity = quantity;
     }
 
     public int getOrderId() {
@@ -58,6 +76,14 @@ public class Orders {
     public void setStaffId(int staffId) {
         this.staffId = staffId;
     }
+    public double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
 
     public LocalDateTime getOrderDate() {
         return orderDate;
@@ -98,5 +124,54 @@ public class Orders {
     public void setShippingFee(double shippingFee) {
         this.shippingFee = shippingFee;
     }
-    
+
+
+    public List<OrderItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getVoucherName() {
+        return voucherName;
+    }
+
+    public void setVoucherName(String voucherName) {
+        this.voucherName = voucherName;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
 }

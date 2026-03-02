@@ -13,7 +13,7 @@
         <style>
             body {
                 font-family: Arial;
-                background: #f5f5f5;
+                background: #4CAF50;
             }
 
             .container {
@@ -25,7 +25,9 @@
             }
 
             .box {
+
                 background: white;
+
                 padding: 20px;
                 border-radius: 10px;
             }
@@ -102,7 +104,9 @@
             .btn {
                 width: 100%;
                 padding: 12px ;
+
                 background: #e53935;
+
                 color: white;
                 border: none;
                 border-radius: 6px;
@@ -149,6 +153,7 @@
                     <span>Số lượng </span>
                     <span>Giá </span>
                 </div>
+                <c:set var="hasOutOfStock" value="false"/>
 
                 <c:forEach var="item" items="${orderItems}">
                     <div class="order-item">
@@ -175,7 +180,15 @@
                                 groupingUsed="true" 
                                 maxFractionDigits="0" /> đ
                         </div>
+                        <c:if test="${item.book.stock == 0}">
+                            <div style="color:red; font-weight:bold;">
+                                Sản phẩm này đã hết hàng
+                            </div>
+                            <c:set var="hasOutOfStock" value="true"/>
+                        </c:if>
                     </div>
+
+
                 </c:forEach>
 
 
@@ -218,6 +231,12 @@
                     <c:if test="${not empty detailError}">
                         <div class="error-msg">${detailError}</div>
                     </c:if>
+                    <input type="text" name="receiverName"
+                           value="${receiverName}"
+                           placeholder="Họ và tên người nhận" required>
+                    <c:if test="${not empty receiverNameError}">
+                        <div class="error-msg">${receiverNameError}</div>
+                    </c:if>
 
 
                     <input type="text" name="phone"
@@ -248,7 +267,12 @@
                     <c:forEach var="item" items="${orderItems}">
                         <input type="hidden" name="selectedItem" value="${item.bookId}" />
                     </c:forEach>
-                    <button type="submit" name="action" value="confirm">
+
+                    <button type="submit"
+                            name="action"
+                            value="confirm"
+                            ${hasOutOfStock ? "disabled" : ""}>
+
                         Đặt hàng
                     </button>
 
@@ -270,10 +294,12 @@
 
             let provincesData = [];
 
- // 🔥 Giá trị giữ lại từ server
-            const selectedProvince = "${province}";
-            const selectedDistrict = "${district}";
-            const selectedWard = "${ward}";
+
+            // 🔥 Giá trị giữ lại từ server
+            let selectedProvince = "${province}";
+            let selectedDistrict = "${district}";
+            let selectedWard = "${ward}";
+
 
             fetch("https://provinces.open-api.vn/api/?depth=3")
                     .then(res => res.json())
@@ -344,11 +370,18 @@
                 }
             }
 
- // Event khi người dùng tự chọn
+
+            // Event khi người dùng tự chọn
+
             province.addEventListener("change", function () {
                 selectedProvince = this.value;
                 selectedDistrict = "";
                 selectedWard = "";
+
+                district.innerHTML = "<option value=''>Chọn Quận / Huyện</option>";
+                ward.innerHTML = "<option value=''>Chọn Phường / Xã</option>";
+
+
                 autoLoadDistrict();
             });
 

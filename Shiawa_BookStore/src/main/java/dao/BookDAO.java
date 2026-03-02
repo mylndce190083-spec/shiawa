@@ -268,4 +268,16 @@ public class BookDAO extends DBContext {
         }
         return list;
     }
+    public void increaseStock(Connection con,int bookId, int quantity) {
+        String sql = "UPDATE Book SET stock = stock + ? WHERE book_id = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+
+
+            ps.setInt(1, quantity);
+            ps.setInt(2, bookId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

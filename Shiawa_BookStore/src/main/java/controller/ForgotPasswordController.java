@@ -4,9 +4,7 @@
  */
 package controller;
 
-import dao.AccountDAO;
 import dao.CustomerDAO;
-import dao.CartItemDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,18 +12,15 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.util.List;
-import model.Account;
-import model.Customer;
-import model.CartItem;
+import java.sql.Timestamp;
+import utils.Email;
 
 /**
  *
  * @author Lenovo
  */
-@WebServlet(name = "LoginController", urlPatterns = {"/login"})
-public class LoginController extends HttpServlet {
+@WebServlet(name = "ForgotPasswordController", urlPatterns = {"/forgot-password"})
+public class ForgotPasswordController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -44,10 +39,10 @@ public class LoginController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LoginController</title>");
+            out.println("<title>Servlet ForgotPasswordController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LoginController at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ForgotPasswordController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -65,7 +60,7 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/account/login.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/home/forgot.jsp").forward(request, response);
     }
 
     /**
@@ -80,46 +75,26 @@ public class LoginController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        AccountDAO dao = new AccountDAO();
-        CustomerDAO cdao = new CustomerDAO();
-        String hashPassword = dao.hashMD5(password);
-        Account user = dao.login(email, hashPassword);
-        Customer customer = cdao.getCustomerByAccountIdUpgraded(user.getId());
-        HttpSession session = request.getSession();
+        CustomerDAO dao = new CustomerDAO();
 
-        if (user.getId() == -1) {
-            session.setAttribute("error", "Sai email hoặc mật khẩu!");
-            response.sendRedirect("login");
-        } else {
-            if (!"active".equals(user.getStatus())) {
-                session.setAttribute("error", "Email chưa xác thực");
-                response.sendRedirect("login");
-                return;
-            }
-//            request.setAttribute("user", user);
-            session.setAttribute("user", user);
-
-            if (user.getRole().equals("customer")) {
-                session.setAttribute("customer", customer);
-
-                CartItemDAO cartDAO = new CartItemDAO();
-
-                List<CartItem> cartItems
-                        = cartDAO.getCartByCustomerId(user.getId());
-                // 👈 dùng user.getId() nếu id = customerId
-
-                int totalQuantity = 0;
-                for (CartItem ci : cartItems) {
-                    totalQuantity += ci.getQuantity();
-                }
-
-                session.setAttribute("cartSize", totalQuantity);
-                response.sendRedirect("home");
-            } else if (user.getRole().equals("Admin")) {
-                response.sendRedirect("account");
-            }
+        if (!dao.checkEmailExist(email)) {
+            request.setAttribute("error", "Email not found!");
+            request.getRequestDispatcher("/WEB-INF/home/forgot.jsp").forward(request, response);
+            return;
         }
+
+        // Tạo OTP 6 số
+        String otp = String.valueOf((int)(Math.random() * 900000) + 100000);
+
+        // Hết hạn sau 5 phút
+        Timestamp expiry = new Timestamp(System.currentTimeMillis() + 5 * 60 * 1000);
+
+        dao.saveOTP(email, otp, expiry);
+
+        Email.sendOTP(email, otp);
+
+        request.setAttribute("message", "OTP sent to your email!");
+        request.getRequestDispatcher("/WEB-INF/home/verify-otp.jsp").forward(request, response);
     }
 
     /**

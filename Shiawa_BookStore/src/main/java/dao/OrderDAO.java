@@ -5,8 +5,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
+import model.Book;
 import model.CartItem;
+import model.OrderItem;
 import model.Orders;
 
 /*
@@ -22,13 +26,17 @@ public class OrderDAO extends DBContext {
     public int insertOrder(Connection con,
             int customerId,
             String shippingAddress,
-            double shippingFee) throws Exception {
+            double shippingFee,
+            String receiverName,
+            String phone
+    ) throws Exception {
+
 
         String sql = """
         INSERT INTO Orders
         (customer_id, staff_id, order_date, status,
-         discount, shipping_address, shipping_fee)
-        VALUES (?, ?, GETDATE(), ?, ?, ?, ?)
+         discount, shipping_address, shipping_fee,receiver_name,phone)
+        VALUES (?, ?, GETDATE(), ?, ?, ?, ?,?,?)                   
     """;
 
         try (PreparedStatement ps
@@ -40,7 +48,8 @@ public class OrderDAO extends DBContext {
             ps.setInt(4, 0);
             ps.setString(5, shippingAddress);
             ps.setDouble(6, shippingFee);
-
+            ps.setString(7, receiverName);
+            ps.setString(8, phone);
             ps.executeUpdate();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -56,8 +65,9 @@ public class OrderDAO extends DBContext {
     public int createOrder(int customerId,
             List<CartItem> items,
             String shippingAddress,
-            double shippingFee) throws Exception {
-
+            double shippingFee,
+            String receiverName,
+            String phone) throws Exception {
         Connection con = getConnection();
 
         if (con == null) {
@@ -69,7 +79,7 @@ public class OrderDAO extends DBContext {
 
             // 1️⃣ Insert order trước
             int orderId = insertOrder(con, customerId,
-                    shippingAddress, shippingFee);
+                    shippingAddress, shippingFee, receiverName, phone);
 
             BookDAO bookDAO = new BookDAO();
             OrderDetailDAO detailDAO = new OrderDetailDAO();
@@ -125,5 +135,349 @@ public class OrderDAO extends DBContext {
         } finally {
             con.close();
         }
+    }
+
+
+    public List<Orders> getOrdersByCustomer(int customerId) {
+        List<Orders> list = new ArrayList<>();
+
+        String sql = """
+        SELECT 
+            o.order_id,
+            o.customer_id,
+            o.staff_id,
+            o.order_date,
+            o.status,
+            o.shipping_address,
+            o.shipping_fee,
+            o.discount,
+            SUM(od.quantity * od.price) 
+                + ISNULL(o.shipping_fee,0)
+                - ISNULL(o.discount,0) AS total_amount
+        FROM Orders o
+        JOIN OrderDetail od ON o.order_id = od.order_id
+        WHERE o.customer_id = ?
+        GROUP BY 
+            o.order_id,
+            o.customer_id,
+            o.staff_id,
+            o.order_date,
+            o.status,
+            o.shipping_address,
+            o.shipping_fee,
+            o.discount
+        ORDER BY o.order_date DESC
+    """;
+        try {
+            Connection con = getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, customerId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Orders o = new Orders();
+
+                o.setOrderId(rs.getInt("order_id"));
+                o.setCustomerId(rs.getInt("customer_id"));
+                o.setStaffId(rs.getInt("staff_id"));
+
+                Timestamp ts = rs.getTimestamp("order_date");
+                if (ts != null) {
+                    o.setOrderDate(ts.toLocalDateTime());
+                }
+
+                o.setStatus(rs.getString("status"));
+                o.setShippingAddress(rs.getString("shipping_address"));
+                o.setShippingFee(rs.getDouble("shipping_fee"));
+                o.setTotalAmount(rs.getDouble("total_amount"));
+
+                // 🔥 LOAD ITEMS CHO TỪNG ORDER
+                String itemSql = """
+            SELECT oi.quantity,
+                   b.book_id,
+                   b.title,
+                   b.url_img,
+                   oi.price
+            FROM OrderDetail oi
+            JOIN Book b ON oi.book_id = b.book_id
+            WHERE oi.order_id = ?
+        """;
+
+                PreparedStatement ps2 = con.prepareStatement(itemSql);
+                ps2.setInt(1, o.getOrderId());
+                ResultSet rs2 = ps2.executeQuery();
+
+                List<OrderItem> items = new ArrayList<>();
+
+                while (rs2.next()) {
+                    Book b = new Book();
+                    b.setBookId(rs2.getInt("book_id"));
+                    b.setTitle(rs2.getString("title"));
+                    b.setUrlImg(rs2.getString("url_img"));
+
+                    OrderItem item = new OrderItem();
+                    item.setQuantity(rs2.getInt("quantity"));
+                    item.setBook(b);
+                    item.setTitle(rs2.getString("title"));
+                    item.setUrl_img(rs2.getString("url_img"));
+                    item.setPrice(rs2.getDouble("price"));
+
+                    items.add(item);
+                }
+
+                o.setItems(items);   // 🔥 CÁI QUAN TRỌNG NHẤT
+                int totalQuantity = 0;
+                for (OrderItem item : items) {
+                    totalQuantity += item.getQuantity();
+                }
+                o.setQuantity(totalQuantity);
+                list.add(o);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<Orders> getOrdersByStatus(int customerId, String status) {
+        List<Orders> list = new ArrayList<>();
+
+        String sql = """
+        SELECT 
+            o.order_id,
+            o.customer_id,
+            o.staff_id,
+            o.order_date,
+            o.status,
+            o.shipping_address,
+            o.shipping_fee,
+            o.discount,
+            SUM(od.quantity * od.price) 
+                + ISNULL(o.shipping_fee,0)
+                - ISNULL(o.discount,0) AS total_amount
+        FROM Orders o
+        JOIN OrderDetail od ON o.order_id = od.order_id
+        WHERE o.customer_id = ? AND o.status = ?
+        GROUP BY 
+            o.order_id,
+            o.customer_id,
+            o.staff_id,
+            o.order_date,
+            o.status,
+            o.shipping_address,
+            o.shipping_fee,
+            o.discount
+        ORDER BY o.order_date DESC
+    """;
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, customerId);
+            ps.setString(2, status);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Orders o = new Orders();
+
+                o.setOrderId(rs.getInt("order_id"));
+                o.setCustomerId(rs.getInt("customer_id"));
+                o.setStaffId(rs.getInt("staff_id"));
+
+                Timestamp ts = rs.getTimestamp("order_date");
+                if (ts != null) {
+                    o.setOrderDate(ts.toLocalDateTime());
+                }
+
+                o.setStatus(rs.getString("status"));
+                o.setShippingAddress(rs.getString("shipping_address"));
+                o.setShippingFee(rs.getDouble("shipping_fee"));
+
+                // 🔥 QUAN TRỌNG
+                o.setTotalAmount(rs.getDouble("total_amount"));
+
+                list.add(o);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public void cancelOrderIfPending(int orderId, int customerId) {
+
+        Connection con = null;
+
+        try {
+            con = getConnection();
+            con.setAutoCommit(false); // 🔥 bật transaction
+
+            // 1️⃣ Kiểm tra đơn có thuộc customer và đang Pending không
+            String checkSql = """
+            SELECT status 
+            FROM Orders 
+            WHERE order_id = ? AND customer_id = ?
+        """;
+
+            PreparedStatement psCheck = con.prepareStatement(checkSql);
+            psCheck.setInt(1, orderId);
+            psCheck.setInt(2, customerId);
+
+            ResultSet rs = psCheck.executeQuery();
+
+            if (rs.next()) {
+                String status = rs.getString("status");
+
+                if ("Pending".equalsIgnoreCase(status)) {
+
+                    // 2️⃣ Lấy danh sách sản phẩm trong đơn
+                    String itemSql = """
+                    SELECT book_id, quantity
+                    FROM OrderDetail
+                    WHERE order_id = ?
+                """;
+
+                    PreparedStatement psItem = con.prepareStatement(itemSql);
+                    psItem.setInt(1, orderId);
+                    ResultSet rsItem = psItem.executeQuery();
+
+                    while (rsItem.next()) {
+                        int bookId = rsItem.getInt("book_id");
+                        int quantity = rsItem.getInt("quantity");
+
+                        // 3️⃣ Cộng lại stock
+                        String updateStock = """
+                        UPDATE Book
+                        SET stock = stock + ?
+                        WHERE book_id = ?
+                    """;
+
+                        PreparedStatement psStock = con.prepareStatement(updateStock);
+                        psStock.setInt(1, quantity);
+                        psStock.setInt(2, bookId);
+                        psStock.executeUpdate();
+                    }
+
+                    // 4️⃣ Update status
+                    String updateOrder = """
+                    UPDATE Orders
+                    SET status = 'Cancelled'
+                    WHERE order_id = ?
+                """;
+
+                    PreparedStatement psUpdate = con.prepareStatement(updateOrder);
+                    psUpdate.setInt(1, orderId);
+                    psUpdate.executeUpdate();
+
+                    con.commit(); // ✅ nếu mọi thứ OK
+                }
+            }
+
+        } catch (Exception e) {
+            try {
+                if (con != null) {
+                    con.rollback(); // ❌ rollback nếu lỗi
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            try {
+                if (con != null) {
+                    con.setAutoCommit(true);
+                    con.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public Orders getOrderById(int id) {
+
+        String sql = """
+        SELECT o.order_id,
+                   o.order_date,
+                   o.status,
+                   o.discount,
+                   o.shipping_address,
+                   o.shipping_fee,
+                   o.receiver_name,
+                   c.full_name,
+                   o.phone
+            FROM Orders o
+            JOIN Customer c ON o.customer_id = c.customer_id
+            WHERE o.order_id = ?
+    """;
+
+        try {
+            Connection con = getConnection();
+
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Orders o = new Orders();
+                o.setOrderId(rs.getInt("order_id"));
+                Timestamp ts = rs.getTimestamp("order_date");
+                if (ts != null) {
+                    o.setOrderDate(ts.toLocalDateTime());
+                }
+                o.setStatus(rs.getString("status"));
+                o.setDiscount(rs.getInt("discount"));
+                o.setShippingAddress(rs.getString("shipping_address"));
+                o.setShippingFee(rs.getDouble("shipping_fee"));
+                o.setCustomerName(rs.getString("full_name"));
+                o.setPhone(rs.getString("phone")); // ✅ thêm dòng này
+                o.setReceiverName(rs.getString("receiver_name"));
+
+                // 🔥 LOAD ORDER ITEMS
+                String itemSql = """
+                SELECT oi.quantity,
+                       b.book_id,
+                       b.title,
+                       b.url_img,
+                       oi.price
+                FROM OrderDetail oi
+                JOIN Book b ON oi.book_id = b.book_id
+                WHERE oi.order_id = ?
+            """;
+
+                PreparedStatement ps2 = con.prepareStatement(itemSql);
+                ps2.setInt(1, id);
+                ResultSet rs2 = ps2.executeQuery();
+
+                List<OrderItem> items = new ArrayList<>();
+
+                while (rs2.next()) {
+
+                    Book b = new Book();
+                    b.setBookId(rs2.getInt("book_id"));
+                    b.setTitle(rs2.getString("title"));
+                    b.setUrlImg(rs2.getString("url_img"));
+
+                    OrderItem item = new OrderItem();
+                    item.setQuantity(rs2.getInt("quantity"));
+                    item.setBook(b);
+// 🔥 thêm 2 dòng này
+                    item.setTitle(rs2.getString("title"));
+                    item.setUrl_img(rs2.getString("url_img"));
+                    item.setPrice(rs2.getDouble("price"));
+                    items.add(item);
+                }
+
+                o.setItems(items);   // 🔥 CÁI QUAN TRỌNG NHẤT
+
+                return o;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+
     }
 }
