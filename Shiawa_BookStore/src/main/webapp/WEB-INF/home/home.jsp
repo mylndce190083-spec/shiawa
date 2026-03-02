@@ -48,16 +48,26 @@
                     </div>
                 </c:if>
 
-                <a href="login" class="icon">
-                    <i class="fa-regular fa-user"></i>
-                    <span>Tài khoản</span>
-                </a>
+                <c:if test="${empty sessionScope.user}">
+                    <a href="login" class="icon">
+                        <i class="fa-regular fa-user"></i>
+                        <span>Tài khoản</span>
+                    </a>
+                </c:if>
 
                 <c:if test="${not empty sessionScope.user}">
-                <a href="logout" class="icon">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>Logout</span>
-                </a>
+                    <a href="profile" class="icon">
+                        <i class="fa-regular fa-user"></i>
+                        <span>Tài khoản</span>
+                    </a>
+                </c:if>
+
+
+                <c:if test="${not empty sessionScope.user}">
+                    <a href="logout" class="icon">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Logout</span>
+                    </a>
                 </c:if>
 
             </div>

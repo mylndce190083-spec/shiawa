@@ -18,11 +18,15 @@ public class Customer {
     private String createdAt;
     private String status;
     private String verifyToken;
+    private String avatar;
+    private String phone;
+    private String address;
 
     public Customer() {
     }
 
-    public Customer(int id, String username, String password, String email, String createdAt, String status, String verifyToken) {
+    public Customer(int id, String username, String password, String email, String createdAt, String status, String verifyToken,
+            String avatar, String phone, String address) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -31,8 +35,36 @@ public class Customer {
         this.createdAt = createdAt;
         this.status = status;
         this.verifyToken = verifyToken;
+        this.avatar = avatar;
+        this.phone = phone;
+        this.address = address;
     }
 
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    
     public String getStatus() {
         return status;
     }
@@ -96,6 +128,11 @@ public class Customer {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" + "id=" + id + ", username=" + username + ", password=" + password + ", email=" + email + ", createdAt=" + createdAt + ", status=" + status + ", verifyToken=" + verifyToken + ", avatar=" + avatar + ", phone=" + phone + ", address=" + address + '}';
     }
 
 }

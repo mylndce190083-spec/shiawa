@@ -70,7 +70,7 @@
                     <p style="color:green;">
                         ${message}
                     </p>
-                    <a href="#" class="forgot">Quên mật khẩu?</a>
+                    <a href="${pageContext.request.contextPath}/forgot-password" class="forgot">Quên mật khẩu?</a>
 
                     <button type="submit" class="submit-btn">Đăng nhập</button>
                 </form>
