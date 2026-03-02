@@ -453,6 +453,7 @@ public class OrderDAO extends DBContext {
                 List<OrderItem> items = new ArrayList<>();
 
                 while (rs2.next()) {
+
                     Book b = new Book();
                     b.setBookId(rs2.getInt("book_id"));
                     b.setTitle(rs2.getString("title"));

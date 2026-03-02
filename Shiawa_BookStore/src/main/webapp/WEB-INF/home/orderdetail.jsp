@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -50,6 +51,68 @@
                 font-weight:bold;
                 color:red;
             }
+            .product-card{
+                display:flex;
+                justify-content:space-between;
+                padding:15px 0;
+                border-bottom:1px solid #eee;
+            }
+
+            .product-left{
+                display:flex;
+                gap:15px;
+            }
+
+            .product-left img{
+                width:85px;
+                height:110px;
+                object-fit:cover;
+                border-radius:8px;
+            }
+
+            .product-info{
+                display:flex;
+                flex-direction:column;
+                justify-content:center;
+            }
+
+            .product-title{
+                font-weight:600;
+                margin-bottom:6px;
+            }
+
+            .product-qty{
+                color:#666;
+                font-size:14px;
+            }
+
+            .product-price{
+                font-weight:600;
+                color:#444;
+                align-self:center;
+            }
+
+            .summary{
+                margin-top:15px;
+                padding-top:15px;
+                border-top:2px solid #f0f0f0;
+            }
+
+            .summary-row{
+                display:flex;
+                justify-content:space-between;
+                margin-bottom:8px;
+                font-size:14px;
+            }
+
+            .summary-total{
+                display:flex;
+                justify-content:space-between;
+                font-size:20px;
+                font-weight:bold;
+                color:#d32f2f;
+                margin-top:10px;
+            }
         </style>
     </head>
     <body>
@@ -57,7 +120,28 @@
         <div class="detail-container">
 
             <div class="detail-header">
-                Đơn hàng ${order.status}
+                Đơn hàng 
+                <c:choose>
+                    <c:when test="${order.status == 'Pending'}">
+                        chờ xác nhận
+                    </c:when>
+
+                    <c:when test="${order.status == 'Shipping'}">
+                       đang giao 
+                    </c:when>
+
+                    <c:when test="${order.status == 'Completed'}">
+                        đã giao
+                    </c:when>
+
+                    <c:when test="${order.status == 'Cancelled'}">
+                        đã hủy
+                    </c:when>
+
+                    <c:otherwise>
+                        ${order.status}
+                    </c:otherwise>
+                </c:choose>
             </div>
 
             <div class="section">
@@ -73,24 +157,69 @@
                 <p><b>Địa chỉ:</b> ${order.shippingAddress}</p>
             </div>
 
+
+
             <div class="section">
                 <h4>Sản phẩm</h4>
 
                 <c:forEach var="item" items="${order.items}">
-                    <div class="product-item">
-                        <img src="${item.book.urlImg}" width="80">
-                        <div>
-                            <div>${item.book.title}</div>
-                            <div>Số lượng: ${item.quantity}</div>
+                    <div class="product-card">
+
+                        <div class="product-left">
+                            <img src="${pageContext.request.contextPath}/${item.url_img}" />
+
+                            <div class="product-info">
+                                <div class="product-title">
+                                    ${item.title}
+                                </div>
+                                <div class="product-qty">
+                                    Số lượng: ${item.quantity}
+                                </div>
+                            </div>
                         </div>
+
+                        <div class="product-price">
+                            ${item.price * item.quantity} VND
+                        </div>
+
                     </div>
                 </c:forEach>
 
+                <c:set var="subtotal" value="0" />
+
+                <c:forEach var="item" items="${order.items}">
+                    <c:set var="subtotal"
+                           value="${subtotal + (item.price * item.quantity)}" />
+                </c:forEach>
+
+                <div class="summary">
+
+                    <div class="summary-row">
+                        <span>Tổng tiền hàng</span>
+                        <span>${subtotal} VND</span>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Phí vận chuyển</span>
+                        <span>+ ${order.shippingFee} VND</span>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Voucher</span>
+                        <span>- ${order.discount} VND</span>
+                    </div>
+
+                    <div class="summary-total">
+                        <span>Thành tiền</span>
+                        <span>${subtotal + order.shippingFee - order.discount} VND</span>
+                    </div>
+
+                </div>
             </div>
 
-            <div class="section total">
-                Thành tiền: ${order.totalAmount} VNĐ
-            </div>
+
+
+
 
         </div>
     </body>
