@@ -30,7 +30,7 @@ import util.FileUpload;
  *
  * @author BA LIEM
  */
-@WebServlet(name = "BookController", urlPatterns = {"/book"})
+@WebServlet(name = "BookController", urlPatterns = {"/book-admin"})
 @MultipartConfig(
         fileSizeThreshold = 1024 * 1024 * 2,
         maxFileSize = 1024 * 1024 * 10,
@@ -41,6 +41,7 @@ public class BookAdminController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setAttribute("currentPage", "book-admin");
         String view = request.getParameter("view");
 
         if ("add".equals(view)) {
@@ -180,7 +181,7 @@ public class BookAdminController extends HttpServlet {
                 session.setAttribute("msgType", "danger");
             }
 
-            response.sendRedirect(request.getContextPath() + "/book");
+            response.sendRedirect(request.getContextPath() + "/book-admin");
             return;
         } else if ("edit".equals(view)) {
             HttpSession session = request.getSession();
@@ -276,7 +277,7 @@ public class BookAdminController extends HttpServlet {
                 session.setAttribute("msg", "Update book failed");
                 session.setAttribute("msgType", "danger");
             }
-            response.sendRedirect(request.getContextPath() + "/book");
+            response.sendRedirect(request.getContextPath() + "/book-admin");
             return;
         } else if ("delete".equals(view)) {
             HttpSession session = request.getSession();
@@ -300,10 +301,10 @@ public class BookAdminController extends HttpServlet {
                 session.setAttribute("msg", "Delete book failed");
                 session.setAttribute("msgType", "danger");
             }
-            response.sendRedirect(request.getContextPath() + "/book");
+            response.sendRedirect(request.getContextPath() + "/book-admin");
             return;
         } else {
-            response.sendRedirect(request.getContextPath() + "/book");
+            response.sendRedirect(request.getContextPath() + "/book-admin");
         }
     }
 

@@ -19,12 +19,13 @@ import model.OrderDetail;
  *
  * @author BA LIEM
  */
-@WebServlet(name = "OrderAdminController", urlPatterns = {"/OrderAdmin"})
+@WebServlet(name = "OrderAdminController", urlPatterns = {"/order-admin"})
 public class OrderAdminController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setAttribute("currentPage", "order-admin");
         String action = request.getParameter("action");
         OrderDAO dao = new OrderDAO();
         if (action == null || action.equals("list")) {
@@ -78,7 +79,7 @@ public class OrderAdminController extends HttpServlet {
                 dao.updateStatus(id, newStatus);
             }
 
-            response.sendRedirect("OrderAdmin?action=list");
+            response.sendRedirect("order-admin?action=list");
         }
     }
 

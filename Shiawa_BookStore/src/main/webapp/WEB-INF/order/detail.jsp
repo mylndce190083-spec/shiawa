@@ -6,7 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ include file="../include/header.jsp" %>
+<%@ include file="../include/headerAdmin.jsp" %>
 
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light rounded p-4">
@@ -123,7 +123,7 @@
             </table>
         </div>
 
-        <a href="${pageContext.request.contextPath}/OrderAdmin?action=list"
+        <a href="${pageContext.request.contextPath}/order-admin?action=list"
            class="btn btn-secondary mt-3">
             Back to List
         </a>
@@ -131,4 +131,4 @@
     </div>
 </div>
 
-<%@include file="../include/footer.jsp" %>
+        <%@include file="../include/footerAdmin.jsp" %>

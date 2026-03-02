@@ -24,6 +24,7 @@ public class AccountController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setAttribute("currentPage", "account");
         AccountDAO dao = new AccountDAO();
         List<Account> list = dao.getAllUsers();
 

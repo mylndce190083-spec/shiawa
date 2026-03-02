@@ -97,6 +97,74 @@
                 color: #dc3545;
                 font-weight: bold;
             }
+            /* user name */
+            .custom-sidebar h6 {
+                color: #ffffff !important;
+                font-weight: 600;
+                font-size: 16px;
+            }
+
+            /* Role */
+            .custom-sidebar span {
+                color: #d1fae5 !important;
+                font-size: 14px;
+            }
+
+            .custom-topbar {
+                background: linear-gradient(90deg, #1e7e34, #28a745, #20c997);
+            }
+            .custom-sidebar .nav-link i {
+                background: none !important;
+                width: auto !important;
+                height: auto !important;
+                border-radius: 0 !important;
+            }
+            .custom-sidebar {
+                background: linear-gradient(180deg, #1e7e34, #28a745, #20c997);
+                min-height: 100vh;
+            }
+
+            .custom-sidebar .navbar {
+                background: transparent !important;
+            }
+
+            .custom-sidebar .nav-link {
+                color: #000000 !important;
+                padding: 12px 20px;
+                border-radius: 12px;
+                margin: 6px 10px;
+                transition: all 0.3s ease;
+            }
+
+            .custom-sidebar .nav-link:hover {
+                background: rgba(0, 0, 0, 0.2);
+                color: #000000 !important;
+                transform: translateX(5px);
+            }
+
+            .custom-sidebar .nav-link:hover i {
+                color: #000000 !important;
+            }
+
+            .custom-sidebar .navbar-nav .nav-link.active {
+                background: rgba(0, 0, 0, 0.2) !important;
+                color: #000000 !important;
+                font-weight: 600;
+            }
+
+            .custom-sidebar .navbar-nav .nav-link.active i {
+                color: #000000 !important;
+            }
+
+            .custom-sidebar .nav-link.active i {
+                color: #000000 !important;
+            }
+            .custom-sidebar .nav-link.active:hover {
+                background: rgba(0, 0, 0, 0.35);
+            }
+            .custom-sidebar h3 {
+                color: #ffffff !important;
+            }
         </style>
     </head>
 
@@ -113,8 +181,8 @@
 
 
             <!-- Sidebar Start -->
-            <div class="sidebar pe-4 pb-3">
-                <nav class="navbar bg-light navbar-light">
+            <div class="sidebar pe-4 pb-3 custom-sidebar">
+                <nav class="navbar navbar-dark">
                     <a href="index.jsp" class="navbar-brand mx-4 mb-3">
                         <h3 class="text-primary"><img class="rounded-circle" src="assets/img/logo.jpg" alt="" style="width: 40px; height: 40px;">  SHIAWA</h3>
                     </a>
@@ -132,17 +200,17 @@
                     </div>
                     <div class="navbar-nav w-100">
                         <a href="${pageContext.request.contextPath}/account" 
-                           class="nav-item nav-link ${pageContext.request.requestURI.contains('/account') ? 'active' : ''}">
+                           class="nav-item nav-link ${'account'.equals(currentPage) ? 'active' : ''}">
                             <i class="fa fa-users me-2">
                             </i>Account</a>
 
-                        <a href="${pageContext.request.contextPath}/book" 
-                           class="nav-item nav-link ${pageContext.request.requestURI.contains('/book') ? 'active' : ''}">
+                        <a href="${pageContext.request.contextPath}/book-admin" 
+                           class="nav-item nav-link ${'book-admin'.equals(currentPage) ? 'active' : ''}">
                             <i class="fa fa-book me-2">
                             </i>Book</a>
                         <a href="category.jsp" class="nav-item nav-link"><i class="fa fa-tags me-2"></i>Category</a>
-                        <a href="${pageContext.request.contextPath}/OrderAdmin" 
-                           class="nav-item nav-link ${pageContext.request.requestURI.contains('/OrderAdmin') ? 'active' : ''}">
+                        <a href="${pageContext.request.contextPath}/order-admin" 
+                           class="nav-item nav-link ${'order-admin'.equals(currentPage) ? 'active' : ''}">
                             <i class="fa fa-book me-2">
                             </i>Order</a>
                         <a href="table.jsp" class="nav-item nav-link"><i class="fa fa-headset me-2"></i>Customer
@@ -158,7 +226,7 @@
             <!-- Content Start -->
             <div class="content">
                 <!-- Navbar Start -->
-                <nav class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
+                <nav class="navbar navbar-expand sticky-top px-4 py-0 custom-topbar">
                     <a href="index.jsp" class="navbar-brand d-flex d-lg-none me-4">
                         <h2 class="text-primary mb-0"><i class="fa fa-hashtag"></i></h2>
                     </a>

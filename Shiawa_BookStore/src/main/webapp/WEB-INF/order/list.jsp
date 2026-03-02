@@ -6,7 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@include file="../include/header.jsp" %>
+<%@include file="../include/headerAdmin.jsp" %>
 <!-- Recent Sales Start -->
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light rounded p-4">
@@ -76,11 +76,11 @@
                                             </c:choose>
                                         </td>
                                         <td class="text-center">
-                                            <a href="${pageContext.request.contextPath}/OrderAdmin?action=detail&id=${o.orderId}"
+                                            <a href="${pageContext.request.contextPath}/order-admin?action=detail&id=${o.orderId}"
                                                class="btn btn-sm" style="background-color:#6366f1; color:white;">
                                                 Detail
                                             </a>
-                                            <a href="${pageContext.request.contextPath}/OrderAdmin?action=updateStatus&id=${o.orderId}"
+                                            <a href="${pageContext.request.contextPath}/order-admin?action=updateStatus&id=${o.orderId}"
                                                class="btn btn-sm" style="background-color:#fd7e14; color:white;">
                                                 Change Status
                                             </a>
@@ -96,5 +96,5 @@
         </div>
     </div>
     <!-- Recent Sales End -->
-    <%@include file="../include/footer.jsp" %>
+    <%@include file="../include/footerAdmin.jsp" %>
 

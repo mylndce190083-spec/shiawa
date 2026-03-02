@@ -6,7 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ include file="../include/header.jsp" %>
+<%@ include file="../include/headerAdmin.jsp" %>
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light rounded p-4">
 
@@ -56,51 +56,68 @@
                     <!-- Current Status Badge -->
                     <div class="mb-3">
                         <span class="badge fs-6 
-                            bg-${order.status == 'PENDING' ? 'warning' :
-                                 order.status == 'CONFIRMED' ? 'info' :
-                                 order.status == 'SHIPPING' ? 'primary' :
-                                 order.status == 'DELIVERED' ? 'success' :
-                                 order.status == 'FAILED' ? 'danger' : 'secondary'}">
-                            ${order.status}
-                        </span>
+                              bg-${order.status == 'PENDING' ? 'warning' :
+                                   order.status == 'CONFIRMED' ? 'info' :
+                                   order.status == 'SHIPPING' ? 'primary' :
+                                   order.status == 'DELIVERED' ? 'success' :
+                                   order.status == 'FAILED' ? 'danger' : 'secondary'}">
+                                  ${order.status}
+                              </span>
+                        </div>
+
+                        <form action="${pageContext.request.contextPath}/order-admin" method="post">
+                            <input type="hidden" name="action" value="updateStatus">
+                            <input type="hidden" name="id" value="${order.orderId}">
+
+                            <c:choose>
+
+
+                                <c:when test="${order.status == 'PENDING'}">
+                                    <input type="hidden" name="status" value="CONFIRMED">
+                                    <button type="submit" class="btn btn-success w-100">
+                                        Xác nhận đơn hàng
+                                    </button>
+                                </c:when>
+
+
+                                <c:when test="${order.status == 'CONFIRMED'}">
+                                    <input type="hidden" name="status" value="SHIPPING">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        Chuyển sang vận chuyển
+                                    </button>
+                                </c:when>
+
+
+                                <c:when test="${order.status == 'SHIPPING'}">
+                                    <select name="status" class="form-select mb-3" required>
+                                        <option value="DELIVERED">Giao thành công</option>
+                                        <option value="FAILED">Giao thất bại</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-success w-100">
+                                        Cập nhật trạng thái
+                                    </button>
+                                </c:when>
+
+
+                                <c:otherwise>
+                                    <div class="alert alert-success">
+                                        Đơn hàng đã hoàn tất. Không thể thay đổi trạng thái.
+                                    </div>
+                                </c:otherwise>
+
+                            </c:choose>
+
+                            <a href="${pageContext.request.contextPath}/order-admin?action=list"
+                               class="btn btn-secondary w-100 mt-2">
+                                Cancel
+                            </a>
+                        </form>
+
                     </div>
-
-                    <form action="${pageContext.request.contextPath}/OrderAdmin" method="post">
-                        <input type="hidden" name="action" value="updateStatus">
-                        <input type="hidden" name="id" value="${order.orderId}">
-
-                        <select name="status" class="form-select mb-3" required>
-
-                            <c:if test="${order.status == 'PENDING'}">
-                                <option value="CONFIRMED">Đã xác nhận</option>
-                            </c:if>
-
-                            <c:if test="${order.status == 'CONFIRMED'}">
-                                <option value="SHIPPING">Đang vận chuyển</option>
-                            </c:if>
-
-                            <c:if test="${order.status == 'SHIPPING'}">
-                                <option value="DELIVERED">Giao thành công</option>
-                                <option value="FAILED">Giao thất bại</option>
-                            </c:if>
-
-                        </select>
-
-                        <button type="submit" class="btn btn-success w-100">
-                            Update Status
-                        </button>
-
-                        <a href="${pageContext.request.contextPath}/OrderAdmin?action=list"
-                           class="btn btn-secondary w-100 mt-2">
-                            Cancel
-                        </a>
-                    </form>
-
                 </div>
+
             </div>
 
         </div>
-
     </div>
-</div>
-<%@include file="../include/footer.jsp" %>
+    <%@include file="../include/footerAdmin.jsp" %>
