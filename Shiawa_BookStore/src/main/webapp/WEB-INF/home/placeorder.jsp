@@ -129,7 +129,67 @@
                 font-size: 13px;
                 margin-top: 4px;
             }
+            /* ===== VOUCHER BOX ===== */
+            .voucher-section{
+                margin:15px 0;
+                padding:15px;
+                background:#f9f9f9;
+                border-radius:10px;
+                border:1px solid #eee;
+            }
 
+            .voucher-title{
+                font-weight:600;
+                margin-bottom:10px;
+                font-size:15px;
+            }
+
+            .voucher-box{
+                display:flex;
+                gap:10px;
+            }
+
+            .voucher-box input{
+                flex:1;
+                padding:10px;
+                border:1px solid #ddd;
+                border-radius:8px;
+                font-size:14px;
+                transition:0.2s;
+            }
+
+            .voucher-box input:focus{
+                border-color:#4CAF50;
+                outline:none;
+                box-shadow:0 0 0 2px rgba(76,175,80,0.15);
+            }
+
+            .voucher-box button{
+                background:#4CAF50;
+                color:white;
+                border:none;
+                padding:10px 18px;
+                border-radius:8px;
+                font-weight:500;
+                cursor:pointer;
+                transition:0.2s;
+            }
+
+            .voucher-box button:hover{
+                background:#43a047;
+            }
+
+            .voucher-success{
+                margin-top:8px;
+                color:#2e7d32;
+                font-size:14px;
+            }
+
+            .voucher-error{
+                margin-top:8px;
+                color:#e53935;
+                font-size:14px;
+            }
         </style>
     </head>
 
@@ -249,10 +309,54 @@
                         <span>Phí vận chuyển:</span>
                         <span>20.000 đ</span>
                     </div>
+                    <div class="voucher-section">
 
+                        <div class="voucher-title">
+                            🎟 Mã giảm giá
+                        </div>
+
+                        <div class="voucher-box">
+                            <input type="text"
+                                   name="voucherCode"
+                                   value="${voucherCode}"
+                                   placeholder="Nhập mã giảm giá">
+
+                            <button type="submit"
+                                    name="action"
+                                    value="applyVoucher">
+                                Áp dụng
+                            </button>
+                        </div>
+
+                        <c:if test="${not empty voucherError}">
+                            <div class="voucher-error">
+                                ${voucherError}
+                            </div>
+                        </c:if>
+
+                        <c:if test="${not empty discount}">
+                            <div class="voucher-success">
+                                ✔ Đã áp dụng mã (- ${discount} đ)
+                            </div>
+                        </c:if>
+
+                    </div>
+
+                    <c:if test="${not empty voucherError}">
+                        <div class="error-msg">${voucherError}</div>
+                    </c:if>
+
+                    <c:if test="${not empty discount}">
+                        <div class="summary-row">
+                            <span>Giảm giá:</span>
+                            <span style="color:red;">- ${discount} đ</span>
+                        </div>
+                    </c:if>
                     <div class="summary-row total">
                         <span>Tổng thanh toán:</span>
-                        <span id="total">0 đ</span>
+                        <span id="total">
+                            ${subtotal + 20000 - discount} đ
+                        </span>
                     </div>
 
 

@@ -63,8 +63,7 @@ public class OrderDetailController extends HttpServlet {
 
         OrderDAO dao = new OrderDAO();
         Orders order = dao.getOrderById(orderId);
-System.out.println("Order ID: " + orderId);
-System.out.println("Order object: " + order);
+
         request.setAttribute("order", order);
         request.getRequestDispatcher("/WEB-INF/home/orderdetail.jsp").forward(request, response);
     }

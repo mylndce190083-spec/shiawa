@@ -90,7 +90,24 @@ public class CheckoutController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/cart");
             return;
         }
+// 🔥 LẤY ĐỊA CHỈ TỪ SESSION
+        request.setAttribute("province",
+                session.getAttribute("savedProvince"));
 
+        request.setAttribute("district",
+                session.getAttribute("savedDistrict"));
+
+        request.setAttribute("ward",
+                session.getAttribute("savedWard"));
+
+        request.setAttribute("detailAddress",
+                session.getAttribute("savedDetailAddress"));
+
+        request.setAttribute("receiverName",
+                session.getAttribute("savedReceiverName"));
+
+        request.setAttribute("phone",
+                session.getAttribute("savedPhone"));
         request.setAttribute("orderItems", cartList);
 
         request.getRequestDispatcher("/WEB-INF/home/placeorder.jsp")
@@ -304,7 +321,13 @@ public class CheckoutController extends HttpServlet {
                         shippingFee,
                         receiverName, phone
                 );
-
+// 🔥 LƯU ĐỊA CHỈ VÀO SESSION
+                session.setAttribute("savedProvince", province);
+                session.setAttribute("savedDistrict", district);
+                session.setAttribute("savedWard", ward);
+                session.setAttribute("savedDetailAddress", detail);
+                session.setAttribute("savedReceiverName", receiverName);
+                session.setAttribute("savedPhone", phone);
                 // Xóa cart sau khi đặt thành công
                 for (CartItem item : selectedItems) {
 //                cartDAO.deleteCartItem(
