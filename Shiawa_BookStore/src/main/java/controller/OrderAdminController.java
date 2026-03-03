@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import model.Order;
+import model.Orders;
 import model.OrderDetail;
 
 /**
@@ -30,7 +30,7 @@ public class OrderAdminController extends HttpServlet {
         OrderDAO dao = new OrderDAO();
         if (action == null || action.equals("list")) {
 
-            List<Order> list = dao.getAllOrders();
+            List<Orders> list = dao.getAllOrders();
 
             if (list.isEmpty()) {
                 request.setAttribute("msg", "No orders found.");
@@ -43,7 +43,7 @@ public class OrderAdminController extends HttpServlet {
 
             int id = Integer.parseInt(request.getParameter("id"));
 
-            Order order = dao.getOrderById(id);
+            Orders order = dao.getOrderByIdAdmin(id);
             List<OrderDetail> detailList = dao.getOrderDetails(id);
 
             request.setAttribute("order", order);
@@ -54,7 +54,7 @@ public class OrderAdminController extends HttpServlet {
         } else if ("updateStatus".equals(action)) {
 
             int id = Integer.parseInt(request.getParameter("id"));
-            Order order = dao.getOrderById(id);
+            Orders order = dao.getOrderByIdAdmin(id);
 
             request.setAttribute("order", order);
             request.getRequestDispatcher("/WEB-INF/order/status.jsp")
@@ -73,7 +73,7 @@ public class OrderAdminController extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("id"));
             String newStatus = request.getParameter("status");
 
-            Order current = dao.getOrderById(id);
+            Orders current = dao.getOrderByIdAdmin(id);
 
             if (isValidTransition(current.getStatus(), newStatus)) {
                 dao.updateStatus(id, newStatus);

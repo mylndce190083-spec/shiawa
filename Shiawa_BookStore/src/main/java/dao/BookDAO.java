@@ -110,7 +110,19 @@ public class BookDAO extends DBContext {
                 boolean isActive = rs.getBoolean("is_active");
                 LocalDateTime createAte = rs.getTimestamp("created_at").toLocalDateTime();
                 //tao doi tuong product
-                Book b = new Book(id, title, author, price, description, cate, stock, publisher, discount, imgUrl, isActive, createAte);
+                Book b = new Book();
+                b.setBookId(id);
+                b.setTitle(title);
+                b.setAuthor(author);
+                b.setPrice(price);
+                b.setDescription(description);
+                b.setCategory(cate);
+                b.setStock(stock);
+                b.setPublisher(publisher);
+                b.setDiscount(discount);
+                b.setUrlImg(imgUrl);
+                b.setIsActive(isActive);
+                b.setCreatedAt(createAte);
                 list.add(b);
             }
 
@@ -118,6 +130,44 @@ public class BookDAO extends DBContext {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public Book getBookById(int bookId) {
+        String sql = """
+        SELECT *
+        FROM Book
+        WHERE book_id = ?
+    """;
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, bookId);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                CategoryDAO cdao = new CategoryDAO();
+                Category cate = cdao.getCategoryById(rs.getInt("category_id"));
+
+                return new Book(
+                        rs.getInt("book_id"),
+                        rs.getString("title"),
+                        rs.getString("author"),
+                        rs.getDouble("price"),
+                        rs.getString("description"),
+                        cate,
+                        rs.getInt("stock"),
+                        rs.getString("publisher"),
+                        rs.getInt("discount"),
+                        rs.getString("url_img"),
+                        rs.getBoolean("is_active"),
+                        rs.getTimestamp("created_at").toLocalDateTime()
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public BookAdmin getBookAdminById(int id) {
@@ -164,6 +214,55 @@ public class BookDAO extends DBContext {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public int getStock(Connection con, int bookId) throws Exception {
+
+        String sql = "SELECT stock FROM Book WHERE book_id = ?";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, bookId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("stock");
+                }
+            }
+        }
+
+        throw new Exception("Book not found");
+    }
+
+    public void updateStock(Connection con,
+            int bookId,
+            int quantity) throws Exception {
+
+        String sql = """
+            UPDATE Book
+            SET stock = stock - ?
+            WHERE book_id = ?
+        """;
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, quantity);
+            ps.setInt(2, bookId);
+
+            ps.executeUpdate();
+        }
+    }
+
+    public void increaseStock(Connection con, int bookId, int quantity) {
+        String sql = "UPDATE Book SET stock = stock + ? WHERE book_id = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, quantity);
+            ps.setInt(2, bookId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void updateBook(BookAdmin b) {
