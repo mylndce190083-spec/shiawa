@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Book;
 import model.BookAdmin;
+import model.CartItem;
 import model.Category;
 
 /**
@@ -253,7 +254,8 @@ public class BookDAO extends DBContext {
         }
     }
 
-    public void increaseStock(Connection con, int bookId, int quantity) {
+
+    public void increaseStock(Connection con,int bookId, int quantity) {
         String sql = "UPDATE Book SET stock = stock + ? WHERE book_id = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
 

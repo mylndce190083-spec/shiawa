@@ -12,19 +12,50 @@ public class Customer {
 
     private int id;
     private String username;
+    private String password;
     //private String role;
     private String email;
     private String createdAt;
+    private String status;
+    private String verifyToken;
 
     public Customer() {
     }
 
-    public Customer(int id, String username, String email, String createdAt) {
+    public Customer(int id, String username, String password, String email, String createdAt, String status, String verifyToken) {
         this.id = id;
         this.username = username;
+        this.password = password;
         //this.role = role;
         this.email = email;
         this.createdAt = createdAt;
+        this.status = status;
+        this.verifyToken = verifyToken;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getVerifyToken() {
+        return verifyToken;
+    }
+
+    public void setVerifyToken(String verifyToken) {
+        this.verifyToken = verifyToken;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+
     }
 
     public int getId() {
@@ -50,7 +81,6 @@ public class Customer {
     public void setRole(String role) {
         this.role = role;
     }*/
-
     public String getEmail() {
         return email;
     }
@@ -59,7 +89,6 @@ public class Customer {
         this.email = email;
     }
 
-    
     public String getCreatedAt() {
         return createdAt;
     }

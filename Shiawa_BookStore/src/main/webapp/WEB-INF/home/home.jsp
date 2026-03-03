@@ -17,6 +17,90 @@
 
     </head>
 
+    <style>
+        .custom-toast {
+            position: fixed;
+            top: -120px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff1e1e, #b30000);
+            color: white;
+            width: 340px;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(255,0,0,0.4);
+            transition: all 0.5s cubic-bezier(.68,-0.55,.27,1.55);
+            z-index: 9999;
+        }
+
+        .custom-toast.show {
+            top: 20px;
+        }
+
+        .toast-content {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+        }
+
+        .toast-content .icon {
+            font-size: 26px;
+            margin-right: 14px;
+            animation: pop 0.4s ease;
+        }
+
+        .toast-content strong {
+            font-size: 16px;
+        }
+
+        .toast-content .sub {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: #fff;
+            width: 100%;
+            animation: progress 3s linear forwards;
+        }
+
+        /* Thanh chạy */
+        @keyframes progress {
+            from {
+                width: 100%;
+            }
+            to {
+                width: 0%;
+            }
+        }
+
+        /* Icon nhảy nhẹ */
+        @keyframes pop {
+            0% {
+                transform: scale(0.5);
+            }
+            80% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        .cart-icon {
+            position: relative;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -6px;
+            right: 0px;
+            background: red;
+            color: white;
+            font-size: 12px;
+            padding: 3px 6px;
+            border-radius: 50px;
+        }
+    </style>
     <body>
 
         <header class="header">
@@ -36,16 +120,44 @@
 
             <!-- ICONS -->
             <div class="icons">
-                <div class="icon" id="cartIcon">
+
+                <!-- comment  <a href="${pageContext.request.contextPath}/cart" class="icon">
                     <i class="fa-solid fa-cart-shopping"></i>
                     <span>Giỏ hàng</span>
-                </div>
+                </a>-->
 
+                <a href="${pageContext.request.contextPath}/cart" class="icon cart-icon">
+                    <i class="fa-solid fa-cart-shopping"></i>
 
-                <div class="icon" id="accountIcon">
+                    <span id="cartBadge" class="cart-badge"
+                          style="${sessionScope.cartSize > 0 ? '' : 'display:none;'}">
+                        ${sessionScope.cartSize}
+                    </span>
+
+                    <span>Giỏ hàng</span>
+                </a>
+                <c:if test="${not empty sessionScope.user}">
+                    <a href="${pageContext.request.contextPath}/OrderList" 
+                       style="text-decoration:none; color:inherit;">
+                        <div class="icon">
+                            <i class="fa-solid fa-clipboard-list"></i>
+                            <span>Danh sách mua hàng</span>
+                        </div>
+                    </a>
+                </c:if>
+
+                <a href="login" class="icon">
                     <i class="fa-regular fa-user"></i>
                     <span>Tài khoản</span>
-                </div>
+                </a>
+
+                <c:if test="${not empty sessionScope.user}">
+                    <a href="logout" class="icon">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Logout</span>
+                    </a>
+                </c:if>
+
             </div>
 
         </header>
@@ -80,7 +192,18 @@
                         <span class="discount">-${b.discount}%</span>
                     </div>
                     <p class="sold">Đã bán 120</p>
-                    <button class="add-cart">Thêm giỏ hàng</button>
+                    <!-- comment <form action="${pageContext.request.contextPath}/cart" method="post">
+                        <input type="hidden" name="action" value="add">
+                        <input type="hidden" name="book_id" value="${b.bookId}">
+                        <button type="submit" class="add-cart">
+                            Thêm giỏ hàng
+                        </button>
+                    </form> -->
+                    <form onsubmit="addToCart(event, ${b.bookId})">
+                        <button type="submit" class="add-cart">
+                            Thêm giỏ hàng
+                        </button>
+                    </form>
                 </div>
             </c:forEach>
 
@@ -221,8 +344,67 @@
 
     </section>
 
-    <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
+    <script>
+        function addToCart(event, bookId) {
+            event.preventDefault();
+
+            fetch("${pageContext.request.contextPath}/cart", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                body: "action=add&book_id=" + bookId
+            })
+                    .then(res => res.json())   // 🔥 ĐỔI Ở ĐÂY
+                    .then(data => {
+
+                        updateCartBadge(data.totalCartItems);  // 🔥 giờ mới đúng
+
+                        showToast();
+                    })
+                    .catch(error => console.error(error));
+        }
+
+        function showToast() {
+
+            const toast = document.createElement("div");
+            toast.className = "custom-toast";
+            toast.innerHTML = `
+        <div class="toast-content">
+            <span class="icon">🛒</span>
+            <div>
+                <strong>Thêm thành công!</strong>
+                <div class="sub">Sản phẩm đã vào giỏ hàng</div>
+            </div>
+        </div>
+        <div class="progress-bar"></div>
+    `;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add("show");
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.remove("show");
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        function updateCartBadge(count) {
+            const badge = document.getElementById("cartBadge");
+
+            if (count > 0) {
+                badge.style.display = "inline-block";
+                badge.innerText = count > 99 ? "99+" : count;
+            } else {
+                badge.style.display = "none";
+            }
+        }
+    </script>
 </body>
 
 
 </html>
+

@@ -157,5 +157,4 @@ public class Book {
     public void setImages(List images) {
         this.images = images;
     }
-
 }

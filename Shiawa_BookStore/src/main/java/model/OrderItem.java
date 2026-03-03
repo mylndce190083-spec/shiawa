@@ -6,7 +6,11 @@ package model;
 
 /**
  *
- * @author BA LIEM
+ * <<<<<<< HEAD
+ * @a
+ *
+ * uthor BA LIEM =======
+ * @author MY >>>>>>> origin/huynhmy
  */
 public class OrderItem {
 
@@ -96,5 +100,4 @@ public class OrderItem {
     public void setBook(Book book) {
         this.book = book;
     }
-
 }

@@ -9,19 +9,33 @@ package model;
  * @author BA LIEM
  */
 public class Account {
+
     private int id;
     private String username;
     private String role;
     private String email;
+    private String status;
 
     public Account() {
+        this.id = -1;
+        this.role = "customer";
     }
 
-    public Account(int id, String username, String role, String email) {
+    public Account(int id, String username, String role, String email, String status) {
         this.id = id;
         this.username = username;
         this.role = role;
         this.email = email;
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+
     }
 
     public int getId() {
@@ -55,6 +69,10 @@ public class Account {
     public void setEmail(String email) {
         this.email = email;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "Account{" + "id=" + id + ", username=" + username + ", role=" + role + ", email=" + email + ", status=" + status + '}';
+    }
+
 }

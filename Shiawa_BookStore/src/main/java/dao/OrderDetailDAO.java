@@ -10,13 +10,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import model.CartItem;
 import model.OrderItem;
+
 /**
  *
  * @author BA LIEM
  */
 public class OrderDetailDAO extends DBContext {
+
     public void insertOrderDetail(Connection con,
             int orderId,
             int bookId,

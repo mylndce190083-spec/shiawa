@@ -4,13 +4,14 @@
  */
 package model;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 /**
  *
  * @author BA LIEM
  */
 public class CartItem {
+
     private int cartItemId;
     private int customerId;
     private int bookId;
@@ -97,4 +98,5 @@ public class CartItem {
     public void setStock(int stock) {
         this.stock = stock;
     }
+
 }
