@@ -180,24 +180,52 @@ public class CartController extends HttpServlet {
         } else {
             String destination = request.getParameter("redirect");
 
+//            if ("checkout".equals(destination)) {
+//                // --- LOGIC MUA NGAY ---
+//                // 1. Vẫn thêm vào giỏ hàng bình thường (code phía trên của bạn đã làm)
+//
+//                // 2. Lấy lại đúng item vừa thêm/cập nhật
+//                CartItem buyNowItem = dao.findItem(customerId, bookId);
+//                List<CartItem> buyNowList = new ArrayList<>();
+//                if (buyNowItem != null) {
+//                    buyNowList.add(buyNowItem);
+//                }
+//
+//                // 3. Gửi danh sách CHỈ CÓ 1 MÓN này sang trang checkout
+//                request.setAttribute("orderItems", buyNowList);
+//                request.setAttribute("isBuyNow", true); // Đánh dấu đây là mua ngay
+//
+//                request.getRequestDispatcher("/WEB-INF/home/placeorder.jsp").forward(request, response);
+//            } else {
+//                // Thêm vào giỏ bình thường thì quay về cart
+//                response.sendRedirect(request.getContextPath() + "/cart");
+//            }
             if ("checkout".equals(destination)) {
-                // --- LOGIC MUA NGAY ---
-                // 1. Vẫn thêm vào giỏ hàng bình thường (code phía trên của bạn đã làm)
-
-                // 2. Lấy lại đúng item vừa thêm/cập nhật
-                CartItem buyNowItem = dao.findItem(customerId, bookId);
+                // 1. Lấy dữ liệu thật từ Database
+                CartItem realItem = dao.findItem(customerId, bookId);
                 List<CartItem> buyNowList = new ArrayList<>();
-                if (buyNowItem != null) {
-                    buyNowList.add(buyNowItem);
+
+                if (realItem != null) {
+                    // 2. TẠO ĐỐI TƯỢNG HIỂN THỊ (Vẫn là dữ liệu thật nhưng chỉnh lại số lượng)
+                    CartItem displayItem = new CartItem();
+                    displayItem.setBookId(realItem.getBookId());
+                    displayItem.setCustomerId(realItem.getCustomerId());
+                    displayItem.setBook(realItem.getBook());
+                    displayItem.setPrice(realItem.getPrice());
+                    displayItem.setQuantity(1); // Ép số lượng hiển thị là 1 cho Mua Ngay
+
+                    buyNowList.add(displayItem);
                 }
 
-                // 3. Gửi danh sách CHỈ CÓ 1 MÓN này sang trang checkout
+                // 3. Gửi sang trang checkout
                 request.setAttribute("orderItems", buyNowList);
-                request.setAttribute("isBuyNow", true); // Đánh dấu đây là mua ngay
-
+                request.setAttribute("isBuyNow", true);
                 request.getRequestDispatcher("/WEB-INF/home/placeorder.jsp").forward(request, response);
+
             } else {
-                // Thêm vào giỏ bình thường thì quay về cart
+                // --- ĐOẠN CẦN THÊM VÀO ĐÂY ---
+                // Nếu không phải checkout (tức là chỉ bấm "Thêm vào giỏ")
+                // Ta chuyển hướng về trang Cart để chạy phương thức doGet và hiển thị lại giỏ hàng
                 response.sendRedirect(request.getContextPath() + "/cart");
             }
         }
