@@ -264,9 +264,9 @@
 
 
 
-                    <c:forEach var="item" items="${orderItems}">
-                        <input type="hidden" name="selectedItem" value="${item.bookId}" />
-                    </c:forEach>
+                   
+                        
+                        <c:forEach var="item" items="${cartItems != null ? cartItems : orderItems}">  </c:forEach>
 
                     <button type="submit"
                             name="action"

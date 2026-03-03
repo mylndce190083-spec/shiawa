@@ -11,8 +11,8 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
         <link href="${pageContext.request.contextPath}/assets/css/css.css" rel="stylesheet" type="text/css"/>
-        
-        
+
+
         <style>
             body {
                 background-color: #f5f5f5;
@@ -203,26 +203,41 @@
                             </div>
                         </form>-->
 
-                        <div class="d-flex gap-3">
-                            <form action="${pageContext.request.contextPath}/cart" method="post">
-                                <input type="hidden" name="book_id" value="${book.bookId}">
-                                <input type="hidden" name="action" value="buy_now"> 
+                        <!--                        <div class="d-flex gap-3">
+                                                    <form action="${pageContext.request.contextPath}/cart" method="post">
+                                                        <input type="hidden" name="book_id" value="${book.bookId}">
+                                                        <input type="hidden" name="action" value="buy_now"> 
+                        
+                                                        <div class="d-flex gap-3">
+                                                            <button type="submit" class="btn btn-buy px-5 py-2 fw-bold">
+                                                                <i class="bi bi-lightning-fill"></i> Mua ngay
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                        
+                                                    <form action="${pageContext.request.contextPath}/cart" method="post">
+                                                        <input type="hidden" name="book_id" value="${book.bookId}">
+                                                        <input type="hidden" name="action" value="add">
+                                                        <button type="submit" class="btn btn-cart px-4 py-2 fw-bold">
+                                                            <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                                                        </button>
+                                                    </form>
+                                                </div>-->
 
-                                <div class="d-flex gap-3">
-                                    <button type="submit" class="btn btn-buy px-5 py-2 fw-bold">
-                                        <i class="bi bi-lightning-fill"></i> Mua ngay
-                                    </button>
-                                </div>
-                            </form>
+                        <form action="${pageContext.request.contextPath}/cart" method="post">
+                            <input type="hidden" name="book_id" value="${book.bookId}">
+                            <input type="hidden" name="action" value="add">
 
-                            <form action="${pageContext.request.contextPath}/cart" method="post">
-                                <input type="hidden" name="book_id" value="${book.bookId}">
-                                <input type="hidden" name="action" value="add">
-                                <button type="submit" class="btn btn-cart px-4 py-2 fw-bold">
-                                    <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                            <div class="d-flex gap-2">
+                                <button type="submit" name="redirect" value="checkout" class="btn btn-buy px-5 py-3 fw-bold shadow-sm">
+                                    <i class="bi bi-lightning-fill"></i> MUA NGAY
                                 </button>
-                            </form>
-                        </div>
+
+                                <button type="submit" name="redirect" value="cart" class="btn btn-cart px-4 py-3 fw-bold shadow-sm">
+                                    <i class="bi bi-cart-plus"></i> THÊM VÀO GIỎ
+                                </button>
+                            </div>
+                        </form>
                     </div>
 
                 </div>

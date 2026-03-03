@@ -7,6 +7,7 @@ package controller;
 import dao.BookDAO;
 import dao.CartItemDAO;
 import dao.CustomerDAO;
+import jakarta.mail.FetchProfile.Item;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -16,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import model.Account;
 import model.Book;
@@ -40,18 +42,6 @@ public class CartController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-//
-//        // 2. Lấy customer từ account
-//        CustomerDAO customerDAO = new CustomerDAO();
-//        Customer customer = customerDAO.getCustomerByAccountId(user.getId());
-//
-//        if (customer == null) {
-//            request.setAttribute("cartItem", List.of());
-//            request.getRequestDispatcher("/WEB-INF/home/cart.jsp")
-//                    .forward(request, response);
-//            return;
-//        }
-//
         int customerId = user.getId(); //  CHUẨN
 
         // 3. Lấy giỏ hàng
@@ -63,28 +53,6 @@ public class CartController extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/home/cart.jsp")
                 .forward(request, response);
 
-// System.out.println(">>> CartTestController doGet CALLED <<<");
-//
-//        // TEST CỨNG customerId = 1
-//        int customerId = 1;
-//
-//        CartItemDAO dao = new CartItemDAO();
-//        List<CartItem> cartItems = dao.getCartByCustomerId(customerId);
-//
-//        System.out.println(">>> CART SIZE = " + cartItems.size());
-//
-//        for (CartItem item : cartItems) {
-//            System.out.println(
-//                "ITEM: bookId=" + item.getBookId()
-//                + ", title=" + item.getBook().getTitle()
-//                + ", qty=" + item.getQuantity()
-//            );
-//        }
-//
-//        request.setAttribute("cartItem", cartItems);
-//        request.getRequestDispatcher("/WEB-INF/home/cart.jsp")
-//                .forward(request, response);
-//    }
     }
 
     /**
@@ -101,90 +69,6 @@ public class CartController extends HttpServlet {
         System.out.println(">>> CartController doPost CALLED");
         System.out.println("ACTION = " + request.getParameter("action"));
         System.out.println("BOOK_ID = " + request.getParameter("book_id"));
-//        HttpSession session = request.getSession();
-//        Account user = (Account) session.getAttribute("user");
-//
-//        if (user == null || !"customer".equals(user.getRole())) {
-//            response.sendRedirect(request.getContextPath() + "/login");
-//            return;
-//        }
-//
-//        CustomerDAO customerDAO = new CustomerDAO();
-//        Customer customer = customerDAO.getCustomerByAccountId(user.getId());
-//
-//        if (customer == null) {
-//            response.sendRedirect(request.getContextPath() + "/cart");
-//            return;
-//        }
-//
-//        int customerId = user.getId();
-//
-//        String action = request.getParameter("action");
-//        String bookIdRaw = request.getParameter("book_id");
-//
-//        if (action == null || bookIdRaw == null) {
-//            response.sendRedirect(request.getContextPath() + "/cart");
-//            return;
-//        }
-//
-//        int bookId = Integer.parseInt(bookIdRaw);
-//
-//        CartItemDAO dao = new CartItemDAO();
-//        CartItem item = dao.findItem(customerId, bookId);
-//
-//        switch (action) {
-//            case "add":   // ✅ ADD TO CART
-//                if (item != null) {
-//                    // đã có → tăng số lượng
-//                    item.setQuantity(item.getQuantity() + 1);
-//                    dao.update(item);
-//                } else {
-//                    // chưa có → INSERT
-//                    BookDAO bookDAO = new BookDAO();
-//                    Book book = bookDAO.getBookById(bookId);
-//
-//                    if (book != null) {
-//                        CartItem newItem = new CartItem(
-//                                0,
-//                                customerId,
-//                                bookId,
-//                                1,
-//                                book.getPrice(),
-//                                java.time.LocalDateTime.now()
-//                        );
-//                        dao.insert(newItem);
-//                    }
-//                }
-//                break;
-//            case "increase":
-//                if (item != null) {
-//                    item.setQuantity(item.getQuantity() + 1);
-//                    dao.update(item);
-//                }
-//                break;
-//
-//            case "decrease":
-//                if (item != null) {
-//                    int newQty = item.getQuantity() - 1;
-//                    if (newQty <= 0) {
-//                        dao.delete(customerId, bookId);
-//                    } else {
-//                        item.setQuantity(newQty);
-//                        dao.update(item);
-//                    }
-//                }
-//                break;
-//
-//            case "delete":
-//                dao.delete(customerId, bookId);
-//                break;
-//
-//            default:
-//                break;
-//        }
-//
-//        response.sendRedirect(request.getContextPath() + "/cart");
-//    }
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
 
@@ -280,9 +164,42 @@ public class CartController extends HttpServlet {
 
             response.getWriter().print(json);
 
+//        } else {
+//            // ĐÂY LÀ PHẦN THAY ĐỔI
+//            // Lấy tham số 'redirect' từ nút bấm gửi sang
+//            String destination = request.getParameter("redirect");
+//
+//            if ("checkout".equals(destination)) {
+//                // Nếu bấm 'MUA NGAY' -> Nhảy sang trang đơn hàng
+//                response.sendRedirect(request.getContextPath() + "/checkout");
+//            } else {
+//                // Các trường hợp khác (như nút Delete hoặc thêm vào giỏ bằng form) -> Về trang cart
+//                response.sendRedirect(request.getContextPath() + "/cart");
+//            }
+//        }
         } else {
-            // Nếu là submit form bình thường (delete)
-            response.sendRedirect(request.getContextPath() + "/cart");
+            String destination = request.getParameter("redirect");
+
+            if ("checkout".equals(destination)) {
+                // --- LOGIC MUA NGAY ---
+                // 1. Vẫn thêm vào giỏ hàng bình thường (code phía trên của bạn đã làm)
+
+                // 2. Lấy lại đúng item vừa thêm/cập nhật
+                CartItem buyNowItem = dao.findItem(customerId, bookId);
+                List<CartItem> buyNowList = new ArrayList<>();
+                if (buyNowItem != null) {
+                    buyNowList.add(buyNowItem);
+                }
+
+                // 3. Gửi danh sách CHỈ CÓ 1 MÓN này sang trang checkout
+                request.setAttribute("orderItems", buyNowList);
+                request.setAttribute("isBuyNow", true); // Đánh dấu đây là mua ngay
+
+                request.getRequestDispatcher("/WEB-INF/home/placeorder.jsp").forward(request, response);
+            } else {
+                // Thêm vào giỏ bình thường thì quay về cart
+                response.sendRedirect(request.getContextPath() + "/cart");
+            }
         }
     }
 
