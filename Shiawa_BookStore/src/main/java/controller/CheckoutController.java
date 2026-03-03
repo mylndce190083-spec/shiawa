@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import model.Account;
-
+import model.Address;
 import model.CartItem;
 import model.Customer;
 import model.OrderItem;
@@ -245,7 +245,6 @@ public class CheckoutController extends HttpServlet {
                 String phone = request.getParameter("phone");
                 String receiverName = request.getParameter("receiverName");
                 // ===== VALIDATE ĐỊA CHỈ + SỐ ĐIỆN THOẠI =====
-
                 String phoneRegex = "^(03|05|07|08|09)[0-9]{8}$";
                 String addressDetailRegex = "^.{3,100}$";
 
@@ -287,6 +286,7 @@ public class CheckoutController extends HttpServlet {
                     hasError = true;
                 }
 
+
 // ===== NẾU CÓ LỖI =====
                 if (hasError) {
 
@@ -296,6 +296,9 @@ public class CheckoutController extends HttpServlet {
                     request.setAttribute("ward", ward);
                     request.setAttribute("detailAddress", detail);
                     request.setAttribute("phone", phone);
+
+
+
                     request.setAttribute("receiverName", receiverName);
                     request.setAttribute("orderItems", selectedItems);
                     request.setAttribute("totalAmount", total);

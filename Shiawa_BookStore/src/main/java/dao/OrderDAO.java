@@ -31,12 +31,12 @@ public class OrderDAO extends DBContext {
             String phone
     ) throws Exception {
 
+
         String sql = """
         INSERT INTO Orders
         (customer_id, staff_id, order_date, status,
          discount, shipping_address, shipping_fee,receiver_name,phone)
-        VALUES (?, ?, GETDATE(), ?, ?, ?, ?,?,?)
-                    
+        VALUES (?, ?, GETDATE(), ?, ?, ?, ?,?,?)                   
     """;
 
         try (PreparedStatement ps
@@ -68,7 +68,6 @@ public class OrderDAO extends DBContext {
             double shippingFee,
             String receiverName,
             String phone) throws Exception {
-
         Connection con = getConnection();
 
         if (con == null) {
@@ -137,6 +136,7 @@ public class OrderDAO extends DBContext {
             con.close();
         }
     }
+
 
     public List<Orders> getOrdersByCustomer(int customerId) {
         List<Orders> list = new ArrayList<>();
@@ -480,5 +480,4 @@ public class OrderDAO extends DBContext {
         return null;
 
     }
-
 }

@@ -25,7 +25,9 @@
             }
 
             .box {
-                background:white;
+
+                background: white;
+
                 padding: 20px;
                 border-radius: 10px;
             }
@@ -102,7 +104,9 @@
             .btn {
                 width: 100%;
                 padding: 12px ;
-                background: darkslategrey;
+
+                background: #e53935;
+
                 color: white;
                 border: none;
                 border-radius: 6px;
@@ -210,6 +214,7 @@
                     <span>Giá </span>
                 </div>
                 <c:set var="hasOutOfStock" value="false"/>
+
                 <c:forEach var="item" items="${orderItems}">
                     <div class="order-item">
 
@@ -242,6 +247,7 @@
                             <c:set var="hasOutOfStock" value="true"/>
                         </c:if>
                     </div>
+
 
                 </c:forEach>
 
@@ -291,6 +297,7 @@
                     <c:if test="${not empty receiverNameError}">
                         <div class="error-msg">${receiverNameError}</div>
                     </c:if>
+
 
                     <input type="text" name="phone"
                            value="${phone}"
@@ -364,10 +371,12 @@
                     <c:forEach var="item" items="${orderItems}">
                         <input type="hidden" name="selectedItem" value="${item.bookId}" />
                     </c:forEach>
+
                     <button type="submit"
                             name="action"
                             value="confirm"
                             ${hasOutOfStock ? "disabled" : ""}>
+
                         Đặt hàng
                     </button>
 
@@ -389,10 +398,12 @@
 
             let provincesData = [];
 
+
             // 🔥 Giá trị giữ lại từ server
             let selectedProvince = "${province}";
             let selectedDistrict = "${district}";
             let selectedWard = "${ward}";
+
 
             fetch("https://provinces.open-api.vn/api/?depth=3")
                     .then(res => res.json())
@@ -463,13 +474,17 @@
                 }
             }
 
+
             // Event khi người dùng tự chọn
+
             province.addEventListener("change", function () {
                 selectedProvince = this.value;
                 selectedDistrict = "";
                 selectedWard = "";
+
                 district.innerHTML = "<option value=''>Chọn Quận / Huyện</option>";
                 ward.innerHTML = "<option value=''>Chọn Phường / Xã</option>";
+
 
                 autoLoadDistrict();
             });

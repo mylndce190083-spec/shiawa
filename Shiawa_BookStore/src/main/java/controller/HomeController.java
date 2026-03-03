@@ -27,15 +27,22 @@ public class HomeController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        BookDAO dao = new BookDAO();
-        CategoryDAO cdao = new CategoryDAO();
-        List<Book> list = dao.getAllBook();
-        List<Category> clist = cdao.getAllCategory();
-        
-        request.setAttribute("listB", list);
-        request.setAttribute("listC", clist);
-        request.getRequestDispatcher("/WEB-INF/home/home.jsp").forward(request, response);
+    BookDAO dao = new BookDAO();
+    CategoryDAO cdao = new CategoryDAO();
+    String cateIdRaw = request.getParameter("id");
+    List<Book> list;
+
+    if (cateIdRaw != null && !cateIdRaw.isEmpty()) {
+        int cateId = Integer.parseInt(cateIdRaw);
+        list = dao.getBooksByCategoryId(cateId); 
+    } else {
+        list = dao.getAllBook();
     }
+    List<Category> clist = cdao.getAllCategory();
+    request.setAttribute("listB", list);
+    request.setAttribute("listC", clist);
+    request.getRequestDispatcher("/WEB-INF/home/home.jsp").forward(request, response);
+}
 
     
     @Override

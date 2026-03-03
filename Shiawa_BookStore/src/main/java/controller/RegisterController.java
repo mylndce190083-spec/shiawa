@@ -129,7 +129,7 @@ public class RegisterController extends HttpServlet {
                     .forward(request, response);
         } else {
             String hashPassword = adao.hashMD5(password);
-            Customer c = new Customer(1, username, hashPassword, email, "00", "inactive", token);
+            Customer c = new Customer(1, username, hashPassword, email, "00", "inactive", token, "00", "00", "00");
             dao.insert(c);
             HttpSession session = request.getSession();
             session.setAttribute("success", "Đăng kí thành công! Vui lòng xác minh email để đăng nhập");
