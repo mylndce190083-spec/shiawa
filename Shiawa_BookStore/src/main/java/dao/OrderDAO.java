@@ -23,44 +23,88 @@ import model.Orders;
  */
 public class OrderDAO extends DBContext {
 
-    public int insertOrder(Connection con,
-            int customerId,
-            String shippingAddress,
-            double shippingFee,
-            String receiverName,
-            String phone
-    ) throws Exception {
+//    public int insertOrder(Connection con,
+//            int customerId,
+//            String shippingAddress,
+//            double shippingFee,
+//            String receiverName,
+//            String phone
+//    ) throws Exception {
+//
+//
+//        String sql = """
+//        INSERT INTO Orders
+//        (customer_id, staff_id, order_date, status,
+//         discount, shipping_address, shipping_fee,receiver_name,phone)
+//        VALUES (?, ?, GETDATE(), ?, ?, ?, ?,?,?)                   
+//    """;
+//
+//        try (PreparedStatement ps
+//                = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+//
+//            ps.setInt(1, customerId);
+//            ps.setNull(2, java.sql.Types.INTEGER); // staff_id
+//            ps.setString(3, "Pending");
+//            ps.setInt(4, 0);
+//            ps.setString(5, shippingAddress);
+//            ps.setDouble(6, shippingFee);
+//            ps.setString(7, receiverName);
+//            ps.setString(8, phone);
+//            ps.executeUpdate();
+//
+//            try (ResultSet rs = ps.getGeneratedKeys()) {
+//                if (rs.next()) {
+//                    return rs.getInt(1);
+//                }
+//            }
+//        }
+//
+//        throw new Exception("Cannot create order");
+//    }
 
+  public int insertOrder(Connection con, int customerId, String shippingAddress, double shippingFee, String receiverName, String phone, List<CartItem> items) throws Exception {
+    String sqlOrder = "INSERT INTO Orders (customer_id, staff_id, order_date, status, discount, shipping_address, shipping_fee, receiver_name, phone) VALUES (?, ?, GETDATE(), ?, ?, ?, ?, ?, ?)";
+    int orderId = 0;
 
-        String sql = """
-        INSERT INTO Orders
-        (customer_id, staff_id, order_date, status,
-         discount, shipping_address, shipping_fee,receiver_name,phone)
-        VALUES (?, ?, GETDATE(), ?, ?, ?, ?,?,?)                   
-    """;
+    try {
+        // 1. Lưu đơn hàng
+        PreparedStatement ps = con.prepareStatement(sqlOrder, Statement.RETURN_GENERATED_KEYS);
+        ps.setInt(1, customerId);
+        ps.setNull(2, java.sql.Types.INTEGER);
+        ps.setString(3, "Pending");
+        ps.setInt(4, 0);
+        ps.setString(5, shippingAddress);
+        ps.setDouble(6, shippingFee);
+        ps.setString(7, receiverName);
+        ps.setString(8, phone);
+        ps.executeUpdate();
 
-        try (PreparedStatement ps
-                = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        ResultSet rs = ps.getGeneratedKeys();
+        if (rs.next()) orderId = rs.getInt(1);
 
-            ps.setInt(1, customerId);
-            ps.setNull(2, java.sql.Types.INTEGER); // staff_id
-            ps.setString(3, "Pending");
-            ps.setInt(4, 0);
-            ps.setString(5, shippingAddress);
-            ps.setDouble(6, shippingFee);
-            ps.setString(7, receiverName);
-            ps.setString(8, phone);
-            ps.executeUpdate();
-
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
+        // 2. Lưu chi tiết (Hãy kiểm tra lại tên bảng là OrderDetail hay OrderDetails)
+        if (orderId > 0 && items != null) {
+            String sqlDetail = "INSERT INTO OrderDetail (order_id, book_id, quantity, price) VALUES (?, ?, ?, ?)";
+            PreparedStatement psDetail = con.prepareStatement(sqlDetail);
+            for (CartItem item : items) {
+                psDetail.setInt(1, orderId);
+                psDetail.setInt(2, item.getBookId());
+                psDetail.setInt(3, item.getQuantity());
+                psDetail.setDouble(4, item.getPrice());
+                psDetail.addBatch();
             }
+            psDetail.executeBatch();
         }
-
-        throw new Exception("Cannot create order");
+        
+        // CỰC KỲ QUAN TRỌNG: Nếu dùng Transaction thì phải commit
+        // con.commit(); 
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+        throw e;
     }
+    return orderId;
+}
 
     public int createOrder(int customerId,
             List<CartItem> items,
@@ -78,8 +122,7 @@ public class OrderDAO extends DBContext {
             con.setAutoCommit(false);
 
             // 1️⃣ Insert order trước
-            int orderId = insertOrder(con, customerId,
-                    shippingAddress, shippingFee, receiverName, phone);
+            int orderId = insertOrder(con, customerId, shippingAddress, shippingFee, receiverName, phone, items);
 
             BookDAO bookDAO = new BookDAO();
             OrderDetailDAO detailDAO = new OrderDetailDAO();

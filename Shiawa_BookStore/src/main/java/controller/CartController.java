@@ -7,6 +7,7 @@ package controller;
 import dao.BookDAO;
 import dao.CartItemDAO;
 import dao.CustomerDAO;
+import dao.OrderDAO;
 import jakarta.mail.FetchProfile.Item;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,6 +17,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -259,9 +261,59 @@ public class CartController extends HttpServlet {
 
         // 2. XỬ LÝ RIÊNG CHO ACTION "CONFIRM" (Đặt hàng)
         // Case này không cần book_id nên phải check trước để tránh parse lỗi
+//        if ("confirm".equals(action)) {
+//            // Sau này bạn sẽ thêm logic lưu vào bảng Orders/OrderDetails ở đây
+//            request.getRequestDispatcher("/WEB-INF/home/order-success.jsp").forward(request, response);
+//            return;
+//        }
         if ("confirm".equals(action)) {
-            // Sau này bạn sẽ thêm logic lưu vào bảng Orders/OrderDetails ở đây
-            request.getRequestDispatcher("/WEB-INF/home/order-success.jsp").forward(request, response);
+            // 1. Lấy thông tin khách hàng
+            String receiverName = request.getParameter("receiverName");
+            String phone = request.getParameter("phone");
+            String fullAddress = request.getParameter("detailAddress") + ", "
+                    + request.getParameter("ward") + ", "
+                    + request.getParameter("district") + ", "
+                    + request.getParameter("province");
+
+            // 2. LẤY PHÍ SHIP TỪ JSP GỬI SANG (Đoạn này quan trọng nè)
+            double shippingFee = 0;
+            String shipRaw = request.getParameter("shippingFee"); // Tên phải khớp với name="shippingFee" trong <input> bên JSP
+            if (shipRaw != null && !shipRaw.isEmpty()) {
+                shippingFee = Double.parseDouble(shipRaw);
+            }
+
+            List<CartItem> itemsToBuy = dao.getCartByCustomerId(customerId);
+
+            if (itemsToBuy != null && !itemsToBuy.isEmpty()) {
+                try (Connection conn = new db.DBContext().getConnection()) {
+                    OrderDAO orderDao = new OrderDAO();
+
+                    // Truyền biến shippingFee vừa lấy được vào đây
+                    int newOrderId = orderDao.insertOrder(
+                            conn,
+                            customerId,
+                            fullAddress,
+                            shippingFee, // Sử dụng giá trị từ JSP gửi sang
+                            receiverName,
+                            phone,
+                            itemsToBuy
+                    );
+
+                    if (newOrderId > 0) {
+                        // Phải xóa giỏ hàng trong DB sau khi đặt xong
+                        dao.getCartByCustomerId(customerId);
+
+                        // Cập nhật lại cartSize trên session về 0
+                        session.setAttribute("cartSize", 0);
+
+                        request.setAttribute("orderId", newOrderId);
+                        request.getRequestDispatcher("/WEB-INF/home/order-success.jsp").forward(request, response);
+                        return; // NGẮT HÀM Ở ĐÂY, không cho chạy xuống switch-case bên dưới
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
             return;
         }
 
