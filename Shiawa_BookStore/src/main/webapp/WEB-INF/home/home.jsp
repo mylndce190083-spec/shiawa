@@ -400,40 +400,9 @@
             </c:forEach>
         </section>
 
-            <div class="book" data-category="Business" data-name="Bùi Kiến Thành – Người Mở Khóa" data-price="150000">
-                <img src="https://via.placeholder.com/160x220">
-                <p class="title">Bùi Kiến Thành – Người Mở Khóa</p>
-                <div class="price">
-                    <span class="new-price">150.000đ</span>
-                    <span class="discount">-15%</span>
-                </div>
-                <p class="sold">Đã bán 85</p>
-                <button class="add-cart">Thêm giỏ hàng</button>
-            </div>
+            
 
-            <div class="book" data-category="Novel" data-name="Stop Overthinking" data-price="90000">
-                <img src="https://via.placeholder.com/160x220">
-                <p class="title">Stop Overthinking</p>
-                <div class="price">
-                    <span class="new-price">90.000đ</span>
-                    <span class="discount">-5%</span>
-                </div>
-                <p class="sold">Đã bán 200</p>
-                <button class="add-cart">Thêm giỏ hàng</button>
-            </div>
-
-            <div class="book" data-category="Mystery" data-name="Những Mô Hình Tư Duy Vĩ Đại" data-price="180000">
-                <img src="https://via.placeholder.com/160x220">
-                <p class="title">Những Mô Hình Tư Duy Vĩ Đại</p>
-                <div class="price">
-                    <span class="new-price">180.000đ</span>
-                    <span class="discount">-20%</span>
-                </div>
-                <p class="sold">Đã bán 60</p>
-                <button class="add-cart">Thêm giỏ hàng</button>
-            </div>
-
-        </section>
+    
 
         <section class="cart-page" id="cartPage" style="display:none;">
 

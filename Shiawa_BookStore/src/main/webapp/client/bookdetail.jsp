@@ -204,7 +204,7 @@
                         </form>-->
 
                         <div class="d-flex gap-3">
-                            <form action="${pageContext.request.contextPath}/cart" method="post">
+                            <form action="${pageContext.request.contextPath}/checkout" method="post">
                                 <input type="hidden" name="book_id" value="${book.bookId}">
                                 <input type="hidden" name="action" value="buy_now"> 
 

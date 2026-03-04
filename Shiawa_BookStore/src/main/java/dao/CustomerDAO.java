@@ -97,6 +97,7 @@ public class CustomerDAO extends DBContext {
                 c.setAvatar(rs.getString("avatar"));
                 c.setPhone(rs.getString("phone"));
                 c.setAddress(rs.getString("address"));
+                c.setFullname(rs.getString("full_name"));
                 return c;
             }
         } catch (Exception e) {
@@ -208,7 +209,7 @@ public class CustomerDAO extends DBContext {
 //        Customer c = new Customer(4, "thehien", "123", "thehien@gmail.com", "559");
 //        dao.insert(c);
 //        dao.saveOTP("ysabeola.kimchi101@gmail.com", "111111", expiry);
-Customer c = dao.getCustomerByAccountIdUpgraded(24);
+Customer c = dao.getCustomerByAccountIdUpgraded(3);
 System.out.println(c);
         if (dao.checkCustomerExist("abc@gmail.com")) {
             System.out.println("ddddddddddddddddddđ");

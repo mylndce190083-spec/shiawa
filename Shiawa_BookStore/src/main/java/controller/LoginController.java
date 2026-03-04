@@ -116,6 +116,9 @@ public class LoginController extends HttpServlet {
                 }
 
                 session.setAttribute("cartSize", totalQuantity);
+                request.setCharacterEncoding("UTF-8");
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html; charset=UTF-8");
                 response.sendRedirect("home");
             } else if (user.getRole().equals("Admin")) {
                 response.sendRedirect("account");

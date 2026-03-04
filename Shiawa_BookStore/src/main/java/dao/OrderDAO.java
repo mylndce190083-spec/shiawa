@@ -31,7 +31,6 @@ public class OrderDAO extends DBContext {
             String phone
     ) throws Exception {
 
-
         String sql = """
         INSERT INTO Orders
         (customer_id, staff_id, order_date, status,
@@ -136,7 +135,6 @@ public class OrderDAO extends DBContext {
             con.close();
         }
     }
-
 
     public List<Orders> getOrdersByCustomer(int customerId) {
         List<Orders> list = new ArrayList<>();
@@ -479,5 +477,48 @@ public class OrderDAO extends DBContext {
         }
         return null;
 
+    }
+
+    public String getLastShippingAddressByUserId(int userId) {
+        String sql = "SELECT TOP 1 shipping_address FROM Orders WHERE customer_id = ? ORDER BY order_id DESC";
+
+        try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("shipping_address");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public Orders getLastOrderByUserId(int userId) {
+        String sql = "SELECT TOP 1 * FROM Orders WHERE user_id = ? ORDER BY id DESC";
+
+        try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                Orders o = new Orders();
+                o.setOrderId(rs.getInt("id"));
+                o.setReceiverName(rs.getString("receiver_name"));
+                o.setPhone(rs.getString("phone"));
+                o.setShippingAddress(rs.getString("shipping_address"));
+                return o;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }
