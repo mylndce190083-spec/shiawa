@@ -19,23 +19,23 @@
             <input type="hidden" name="id" value="${book.bookId}"/>
 
             <div class="row g-3">
-                <div class="col-md-6">
+                <div class="col-12">
                     <label class="form-label">Title</label>
                     <input class="form-control" name="title" value="${book.title}" required/>
                 </div>
-                <div class="col-md-6">
+                <div class="col-12">
                     <label class="form-label">Author</label>
                     <input class="form-control" name="author" value="${book.author}" required/>
                 </div>
-                <div class="col-md-4">
+                <div class="col-12">
                     <label class="form-label">Price</label>
                     <input class="form-control" type="number" step="0.01" name="price" value="${book.price}" required/>
                 </div>
-                <div class="col-md-4">
+                <div class="col-12">
                     <label class="form-label">Stock</label>
                     <input class="form-control" type="number" name="stock" value="${book.stock}" required/>
                 </div>
-                <div class="col-md-4">
+                <div class="col-12">
                     <label class="form-label">Category</label>
                     <select class="form-select" name="categoryId" required>
                         <c:forEach var="c" items="${categorys}">

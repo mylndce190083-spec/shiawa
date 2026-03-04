@@ -100,9 +100,7 @@
                             <i class="fa fa-bars"></i>
                         </button>
                     </a>
-                    <form class="d-none d-md-flex ms-4">
-                        <input class="form-control border-0" type="search" placeholder="Search">
-                    </form>
+
                     <div class="navbar-nav align-items-center ms-auto">
 
                     </div>
@@ -154,6 +152,7 @@
                                         <th>Price</th>
                                         <th>Discount</th>
                                         <th>Stock</th>
+                                        <th>Status</th>
                                         <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
@@ -180,6 +179,17 @@
                                             <td>${b.price}</td>
                                             <td>${b.discount}%</td>
                                             <td>${b.stock}</td>
+                                            <td>
+                                                <form action="${pageContext.request.contextPath}/book" method="post" class="m-0">
+                                                    <input type="hidden" name="view" value="delete"/>
+                                                    <input type="hidden" name="action" value="saveStatus"/>
+                                                    <input type="hidden" name="id" value="${b.bookId}"/>
+                                                    <input type="hidden" name="isActive" value="${b.isIsActive() ? 'false' : 'true'}"/>
+                                                    <button type="submit" class="btn btn-sm ${b.isIsActive() ? 'btn-success' : 'btn-danger'}">
+                                                        ${b.isIsActive() ? 'Active' : 'Inactive'}
+                                                    </button>
+                                                </form>
+                                            </td>
                                             <td class="text-center">
                                                 <div class="d-flex justify-content-center gap-2">
                                                     <a href="${pageContext.request.contextPath}/book?view=edit&id=${b.bookId}"
@@ -187,8 +197,7 @@
                                                        style="min-width:80px;">Edit</a>
                                                     <a href="${pageContext.request.contextPath}/book?view=delete&id=${b.bookId}"
                                                        class="btn btn-sm btn-danger px-3"
-                                                       style="min-width:80px;"
-                                                       onclick="return confirm('Delete this book?')">Delete</a>
+                                                       style="min-width:80px;">Delete</a>
                                                 </div>
                                             </td>
                                         </tr>
@@ -198,6 +207,26 @@
 
                             </table>
                         </div>
+
+                        <c:if test="${totalPages > 1}">
+                            <nav class="mt-4">
+                                <ul class="pagination justify-content-end mb-0">
+                                    <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                                        <a class="page-link" href="${pageContext.request.contextPath}/book?page=${currentPage - 1}&minStock=${minStock}&maxStock=${maxStock}&sort=${sort}">Previous</a>
+                                    </li>
+
+                                    <c:forEach begin="1" end="${totalPages}" var="p">
+                                        <li class="page-item ${p == currentPage ? 'active' : ''}">
+                                            <a class="page-link" href="${pageContext.request.contextPath}/book?page=${p}&minStock=${minStock}&maxStock=${maxStock}&sort=${sort}">${p}</a>
+                                        </li>
+                                    </c:forEach>
+
+                                    <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                                        <a class="page-link" href="${pageContext.request.contextPath}/book?page=${currentPage + 1}&minStock=${minStock}&maxStock=${maxStock}&sort=${sort}">Next</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </c:if>
 
                     </div>
                 </div>

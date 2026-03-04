@@ -126,7 +126,37 @@ public class BookController extends HttpServlet {
             });
         }
 
-        request.setAttribute("bookList", list);
+        int pageSize = 5;
+        int page = 1;
+        String pageStr = request.getParameter("page");
+        if (pageStr != null && !pageStr.isBlank()) {
+            try {
+                page = Integer.parseInt(pageStr);
+            } catch (NumberFormatException ignored) {
+                page = 1;
+            }
+        }
+
+        int totalItems = list.size();
+        int totalPages = (int) Math.ceil(totalItems / (double) pageSize);
+        if (totalPages == 0) {
+            totalPages = 1;
+        }
+        if (page < 1) {
+            page = 1;
+        }
+        if (page > totalPages) {
+            page = totalPages;
+        }
+
+        int fromIndex = (page - 1) * pageSize;
+        int toIndex = Math.min(fromIndex + pageSize, totalItems);
+        List<Book> pageList = list.subList(fromIndex, toIndex);
+
+        request.setAttribute("bookList", pageList);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("pageSize", pageSize);
         request.setAttribute("minStock", minStock);
         request.setAttribute("maxStock", maxStock);
         request.setAttribute("sort", sort);
@@ -205,7 +235,15 @@ public class BookController extends HttpServlet {
 
        if ("delete".equals(view)) {
            int id = Integer.parseInt(request.getParameter("id"));
-           new BookDAO().deleteBook(id);
+           String action = request.getParameter("action");
+
+           if ("saveStatus".equals(action)) {
+               boolean isActive = Boolean.parseBoolean(request.getParameter("isActive"));
+               new BookDAO().updateBookStatus(id, isActive);
+           } else {
+               new BookDAO().hardDeleteBook(id);
+           }
+
            response.sendRedirect(request.getContextPath() + "/book");
            return;
        }

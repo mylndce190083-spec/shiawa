@@ -20,7 +20,9 @@ public class BookDAO extends DBContext {
 
     public Book getBookById(int id) {
         String sql = """
-            SELECT b.book_id, b.title, b.author, b.price, b.stock, b.category_id, c.name AS category_name
+            SELECT b.book_id, b.title, b.author, b.price, b.stock,
+                   b.publisher, b.discount, b.url_img, b.is_active, b.created_at,
+                   b.category_id, c.name AS category_name
             FROM Book b
             LEFT JOIN Category c ON b.category_id = c.category_id
             WHERE b.book_id = ?
@@ -35,6 +37,11 @@ public class BookDAO extends DBContext {
                     b.setAuthor(rs.getString("author"));
                     b.setPrice(rs.getDouble("price"));
                     b.setStock(rs.getInt("stock"));
+                    b.setPublisher(rs.getString("publisher"));
+                    b.setDiscount(rs.getInt("discount"));
+                    b.setUrlImg(rs.getString("url_img"));
+                    b.setIsActive(rs.getBoolean("is_active"));
+                    b.setCreatedAt(rs.getString("created_at"));
                     b.setCategoryId(rs.getInt("category_id"));
                     b.setCategoryName(rs.getString("category_name"));
                     return b;
@@ -73,8 +80,23 @@ public class BookDAO extends DBContext {
             return;
         } catch (Exception ignored) {
         }
+        hardDeleteBook(id);
+    }
+
+    public void hardDeleteBook(int id) {
         try (PreparedStatement ps = getConnection().prepareStatement("DELETE FROM Book WHERE book_id = ?")) {
             ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateBookStatus(int id, boolean isActive) {
+        String sql = "UPDATE Book SET is_active = ? WHERE book_id = ?";
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setBoolean(1, isActive);
+            ps.setInt(2, id);
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
