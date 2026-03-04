@@ -197,8 +197,8 @@
 
             <!-- RIGHT -->
             <div class="box">
-
-                <form action="${pageContext.request.contextPath}/checkout" method="post">
+                <form action="${pageContext.request.contextPath}/cart" method="post">
+<!--                <form action="${pageContext.request.contextPath}/checkout" method="post">-->
                     <h3>📍 ĐỊA CHỈ NHẬN HÀNG</h3>
 
                     <select name="province" id="province" required>
@@ -270,11 +270,14 @@
 
                     <c:forEach var="item" items="${cartItems != null ? cartItems : orderItems}">  </c:forEach>
 
-                        <button type="submit"
-                                name="action"
-                                value="confirm"
-                        ${hasOutOfStock ? "disabled" : ""}>
+                        <!--                        <button type="submit"
+                                                        name="action"
+                                                        value="confirm"
+                    ${hasOutOfStock ? "disabled" : ""}>
 
+                    Đặt hàng
+                </button>-->
+                    <button type="submit" name="action" value="confirm" class="btn" ${hasOutOfStock ? "disabled" : ""}>
                         Đặt hàng
                     </button>
 
