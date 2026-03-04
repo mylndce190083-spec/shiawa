@@ -132,7 +132,8 @@
     <body>
 
         <div class="container mt-5">
-
+            <jsp:include page="/client/layout/header.jsp" />
+            <br>
             <div class="page-header">
                 Đơn hàng của tôi
             </div>
@@ -185,10 +186,10 @@
                                  font-weight:bold;
                                  color: red;
                                  ">
-                                ${o.status == 'Pending' ? 'Chờ xác nhận' :
-                                  o.status == 'Shipping' ? 'Đang giao' :
-                                  o.status == 'Completed' ? 'Hoàn thành' :
-                                  o.status == 'Cancelled' ? 'Đã hủy' : o.status}
+                                ${o.status == 'PENDING' ? 'Chờ xác nhận' :
+                                  o.status == 'SHIPPING' ? 'Đang giao' :
+                                  o.status == 'COMPLETED' ? 'Hoàn thành' :
+                                  o.status == 'CANCELLED' ? 'Đã hủy' : o.status}
                             </div>
 
                         </div>

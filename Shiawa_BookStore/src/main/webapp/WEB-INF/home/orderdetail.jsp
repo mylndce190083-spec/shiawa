@@ -122,19 +122,19 @@
             <div class="detail-header">
                 Đơn hàng 
                 <c:choose>
-                    <c:when test="${order.status == 'Pending'}">
+                    <c:when test="${order.status == 'PENDING'}">
                         chờ xác nhận
                     </c:when>
 
-                    <c:when test="${order.status == 'Shipping'}">
+                    <c:when test="${order.status == 'SHIPPING'}">
                        đang giao 
                     </c:when>
 
-                    <c:when test="${order.status == 'Completed'}">
+                    <c:when test="${order.status == 'COMPLETED'}">
                         đã giao
                     </c:when>
 
-                    <c:when test="${order.status == 'Cancelled'}">
+                    <c:when test="${order.status == 'CANCELLED'}">
                         đã hủy
                     </c:when>
 

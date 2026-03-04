@@ -343,7 +343,7 @@
                             <input type="hidden" name="phone"
                                    value="${sessionScope.customer.phone}" />
 
-                            <input type="hidden" name="detailAddress"
+                            <input type="hidden" name="oldAddress"
                                    value="${sessionScope.customer.address}" />
                         </div>
 
@@ -463,12 +463,12 @@
                     <c:forEach var="item" items="${orderItems}">
                         <input type="hidden" name="selectedItem" value="${item.bookId}" />
                     </c:forEach>
-                    
+
                     <button type="submit"
                             name="action"
                             value="confirm"
                             ${hasOutOfStock ? "disabled" : ""}>
-                        
+
                         Đặt hàng
                     </button>
 
