@@ -56,6 +56,7 @@ public class CartController extends HttpServlet {
                 .forward(request, response);
 
     }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -74,7 +75,6 @@ public class CartController extends HttpServlet {
         CartItemDAO dao = new CartItemDAO();
 
         // 2. XỬ LÝ RIÊNG CHO ACTION "CONFIRM" (Đặt hàng)
-
         if ("confirm".equals(action)) {
             // 1. Lấy thông tin khách hàng
             String receiverName = request.getParameter("receiverName");
@@ -167,80 +167,36 @@ public class CartController extends HttpServlet {
                 break;
         }
 
-        // 5. CẬP NHẬT LẠI GIỎ HÀNG TRÊN SESSION (cartSize)
-        updateCartSession(session, dao, customerId);
+        // 5. CẬP NHẬT LẠI GIỎ HÀNG (Thay thế updateCartSession)
+        int totalQty = dao.getTotalQuantityByCustomerId(customerId);
+        session.setAttribute("cartSize", totalQty);
 
-        // 6. TRẢ VỀ KẾT QUẢ (AJAX HOẶC REDIRECT)
+
+// 6. TRẢ VỀ KẾT QUẢ (Thay thế sendJsonResponse và handleBuyNow)
         boolean isAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+
         if (isAjax) {
-            sendJsonResponse(response, dao, customerId, bookId, action);
+            // Render JSON trực tiếp
+            CartItem updatedItem = dao.findItem(customerId, bookId);
+            int newQty = (updatedItem != null) ? updatedItem.getQuantity() : 0;
+
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            String json = String.format("{\"quantity\":%d, \"totalCartItems\":%d, \"message\":\"%s\"}",
+                    newQty, totalQty, "add".equals(action) ? "Added to cart successfully!" : "");
+            response.getWriter().print(json);
         } else {
+            // Xử lý chuyển hướng
             String destination = request.getParameter("redirect");
             if ("checkout".equals(destination)) {
-                handleBuyNow(request, response, dao, customerId, bookId);
+                // Xử lý Mua ngay: Gọi DAO lấy data và forward luôn
+                request.setAttribute("orderItems", dao.getBuyNowList(bookId, customerId));
+                request.setAttribute("isBuyNow", true);
+                request.getRequestDispatcher("/WEB-INF/home/placeorder.jsp").forward(request, response);
             } else {
                 response.sendRedirect(request.getContextPath() + "/cart");
             }
         }
-    }
-
-    /**
-     * Cập nhật số lượng hiển thị trên icon giỏ hàng
-     */
-    private void updateCartSession(HttpSession session, CartItemDAO dao, int customerId) {
-        List<CartItem> cartItems = dao.getCartByCustomerId(customerId);
-        int totalQuantity = 0;
-        for (CartItem ci : cartItems) {
-            totalQuantity += ci.getQuantity();
-        }
-        session.setAttribute("cartSize", totalQuantity);
-    }
-
-    /**
-     * Xử lý logic Mua ngay (Redirect sang trang thanh toán với 1 món duy nhất)
-     */
-    private void handleBuyNow(HttpServletRequest request, HttpServletResponse response,
-            CartItemDAO dao, int customerId, int bookId)
-            throws ServletException, IOException {
-        BookDAO bDao = new BookDAO();
-        Book currentBook = bDao.getBookById(bookId);
-
-        List<CartItem> buyNowList = new ArrayList<>();
-        if (currentBook != null) {
-            CartItem displayItem = new CartItem();
-            displayItem.setBookId(bookId);
-            displayItem.setCustomerId(customerId);
-            displayItem.setPrice(currentBook.getPrice());
-            displayItem.setQuantity(1);
-            displayItem.setBook(currentBook);
-            buyNowList.add(displayItem);
-        }
-
-        request.setAttribute("orderItems", buyNowList);
-        request.setAttribute("isBuyNow", true);
-        request.getRequestDispatcher("/WEB-INF/home/placeorder.jsp").forward(request, response);
-    }
-
-    /**
-     * Trả về JSON cho các request Ajax (Cập nhật số lượng tại chỗ)
-     */
-    private void sendJsonResponse(HttpServletResponse response, CartItemDAO dao,
-            int customerId, int bookId, String action)
-            throws IOException {
-        CartItem updatedItem = dao.findItem(customerId, bookId);
-        int newQty = (updatedItem != null) ? updatedItem.getQuantity() : 0;
-
-        List<CartItem> cartItems = dao.getCartByCustomerId(customerId);
-        int totalCartItems = cartItems.stream().mapToInt(CartItem::getQuantity).sum();
-
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-
-        String message = "add".equals(action) ? "Added to cart successfully!" : "";
-        String json = String.format("{\"quantity\":%d, \"totalCartItems\":%d, \"message\":\"%s\"}",
-                newQty, totalCartItems, message);
-
-        response.getWriter().print(json);
     }
 
     /**
