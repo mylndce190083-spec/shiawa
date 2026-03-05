@@ -43,7 +43,7 @@ public class OrderDAO extends DBContext {
 
             ps.setInt(1, customerId);
             ps.setNull(2, java.sql.Types.INTEGER); // staff_id
-            ps.setString(3, "Pending");
+            ps.setString(3, "PENDING");
             ps.setInt(4, 0);
             ps.setString(5, shippingAddress);
             ps.setDouble(6, shippingFee);
@@ -361,7 +361,7 @@ public class OrderDAO extends DBContext {
                     // 4️⃣ Update status
                     String updateOrder = """
                     UPDATE Orders
-                    SET status = 'Cancelled'
+                    SET status = 'CANCELLED'
                     WHERE order_id = ?
                 """;
 

@@ -215,7 +215,7 @@ public class CheckoutController extends HttpServlet {
 
             return;  // 🔥 QUAN TRỌNG
         }
-        
+
         if ("confirm".equals(action)) {
 
             System.out.println("=== CONFIRM CALLED ===");
@@ -355,10 +355,10 @@ public class CheckoutController extends HttpServlet {
                     session.setAttribute("savedDistrict", district);
                     session.setAttribute("savedWard", ward);
                     session.setAttribute("savedDetailAddress", detail);
-                }
+                    session.setAttribute("savedReceiverName", receiverName);
+                    session.setAttribute("savedPhone", phone);
 
-                session.setAttribute("savedReceiverName", receiverName);
-                session.setAttribute("savedPhone", phone);
+                }
 
                 // =====================================================
                 // XÓA CART

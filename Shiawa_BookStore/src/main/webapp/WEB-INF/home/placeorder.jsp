@@ -196,33 +196,72 @@
             }
             /* BOX HIỂN THỊ ĐỊA CHỈ */
             .address-box {
-                background: #f8f9fa;
-                border: 1px solid #ddd;
-                border-radius: 8px;
-                padding: 15px 20px;
+                background: #ffffff;
+                border: 1px solid #e8e8e8;
+                border-radius: 12px;
+                padding: 18px 20px;
                 display: flex;
                 justify-content: space-between;
-                align-items: center;
+                align-items: flex-start;
                 margin-bottom: 15px;
+                position: relative;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+                transition: 0.2s;
             }
 
-            .address-info p {
-                margin: 4px 0;
+            .address-box:hover{
+                box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            }
+
+            /* thông tin */
+            .address-info{
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            /* dòng thông tin */
+            .address-info p{
+                margin: 0;
                 font-size: 14px;
-                color: #333;
+                color: #444;
+                display: flex;
+                align-items: center;
+                gap: 8px;
             }
 
-            .edit-btn {
-                color: #007bff;
+            /* icon */
+            .address-info i{
+                color: #888;
+                font-size: 13px;
+                width: 18px;
+            }
+
+            /* tên */
+            .name{
+                font-size: 15px;
+
+                font-weight: 700;   /* in đậm hơn */
+                color: #222;
+            }
+
+            /* nút chỉnh sửa */
+            .edit-btn{
+                position: absolute;
+                top: 10px;
+                right: 14px;
+                font-size: 12px;
+                color: #e53935;
                 cursor: pointer;
-                font-size: 14px;
+                padding: 4px 8px;
+                border-radius: 5px;
                 font-weight: 500;
+                transition: 0.2s;
             }
 
-            .edit-btn:hover {
-                text-decoration: underline;
+            .edit-btn:hover{
+                background: #ffeaea;
             }
-
 
             /* FORM CHỈNH SỬA */
             .edit-form {
@@ -331,26 +370,34 @@
                         <input type="hidden" name="isEditAddress" value="false" id="isEditAddress">
 
                         <div class="address-info">
-                            <!-- HIỂN THỊ -->
-                            <p>${sessionScope.customer.fullname}</p>
-                            <p>${sessionScope.customer.phone}</p>
-                            <p>${sessionScope.customer.address}</p>
+                            <!-- TÊN -->
+                            <p class="name">
+                                <i class="fa-solid fa-user"></i>
+                                ${sessionScope.customer.fullname}
+                            </p>
 
-                            <!-- GỬI VỀ SERVER -->
-                            <input type="hidden" name="receiverName"
-                                   value="${sessionScope.customer.fullname}" />
+                            <!-- SĐT -->
+                            <p>
+                                <i class="fa-solid fa-phone"></i>
+                                ${sessionScope.customer.phone}
+                            </p>
 
-                            <input type="hidden" name="phone"
-                                   value="${sessionScope.customer.phone}" />
+                            <!-- ĐỊA CHỈ -->
+                            <p>
+                                <i class="fa-solid fa-location-dot"></i>
+                                ${sessionScope.customer.address}
+                            </p>
 
-                            <input type="hidden" name="oldAddress"
-                                   value="${sessionScope.customer.address}" />
                         </div>
 
                         <div class="edit-btn" onclick="showEditForm()">
-                            Chỉnh sửa
+                            <i class="fa-solid fa-pen"></i> Sửa
                         </div>
+                        <!-- GỬI VỀ SERVER -->
+                        
                     </div>
+
+
                     <div class="edit-form" id="editForm">
                         <select name="province" id="province" >
                             <option value="">Chọn Tỉnh / Thành phố</option>
