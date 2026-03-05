@@ -60,7 +60,6 @@ public class CustomerDAO extends DBContext {
 //        }
 //        return 0;
 //    }
-
     public Customer getCustomerByAccountId(int accountId) {
         String sql = "SELECT customer_id FROM Customer WHERE customer_id = ?";
 
@@ -79,7 +78,7 @@ public class CustomerDAO extends DBContext {
         }
         return null;
     }
-    
+
     public boolean checkCustomerExist(String email) {
         String sql = "SELECT customer_id FROM Customer WHERE email = ?";
 
@@ -93,40 +92,48 @@ public class CustomerDAO extends DBContext {
         }
         return false;
     }
-    
+
     public void insert(Customer customer) {
-        String sql = "INSERT INTO Customer(username, password, email, verify_token) VALUES (?, ?, ?, ?)";
+        String sql = """
+    INSERT INTO Customer
+    (username, password, email, full_name, status, verify_token)
+    VALUES (?, ?, ?, ?, ?, ?)
+""";
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, customer.getUsername());
             ps.setString(2, customer.getPassword());
             ps.setString(3, customer.getEmail());
-            ps.setString(4, customer.getVerifyToken());
+            ps.setString(4, customer.getFullName());
+            ps.setString(5, customer.getStatus());
+            ps.setString(6, customer.getVerifyToken());
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
     public boolean verifyUser(String token) {
-    String sql = "UPDATE Customer SET status='active', verify_token=NULL WHERE verify_token=?";
-    try {
-        PreparedStatement ps = getConnection().prepareStatement(sql);
-        ps.setString(1, token);
-        return ps.executeUpdate() > 0;
-    } catch (Exception e) {
-        e.printStackTrace();
+        String sql = "UPDATE Customer SET status='active', verify_token=NULL WHERE verify_token=?";
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setString(1, token);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
-    return false;
-}
-    
+
     public static void main(String[] args) {
         CustomerDAO dao = new CustomerDAO();
 //        Customer c = new Customer(4, "thehien", "123", "thehien@gmail.com", "559");
 //        dao.insert(c);
-        if (dao.checkCustomerExist("abc@gmail.com"))
-        System.out.println("ddddddddddddddddddđ");
-        else System.out.println("ssssssssssssss");
+        if (dao.checkCustomerExist("abc@gmail.com")) {
+            System.out.println("ddddddddddddddddddđ");
+        } else {
+            System.out.println("ssssssssssssss");
+        }
     }
 
 }

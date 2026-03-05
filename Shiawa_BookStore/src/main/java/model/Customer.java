@@ -15,6 +15,7 @@ public class Customer {
     private String password;
     //private String role;
     private String email;
+    private String fullName;
     private String createdAt;
     private String status;
     private String verifyToken;
@@ -22,15 +23,24 @@ public class Customer {
     public Customer() {
     }
 
-    public Customer(int id, String username, String password, String email, String createdAt, String status, String verifyToken) {
+    public Customer(int id, String username, String password, String email, String fullName, String createdAt, String status, String verifyToken) {
         this.id = id;
         this.username = username;
         this.password = password;
         //this.role = role;
         this.email = email;
+        this.fullName = fullName;
         this.createdAt = createdAt;
         this.status = status;
         this.verifyToken = verifyToken;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getStatus() {
