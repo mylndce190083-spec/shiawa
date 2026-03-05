@@ -122,37 +122,77 @@ public class BookDAO extends DBContext {
         return list;
     }
 
+//    public Book getBookById(int bookId) {
+//        String sql = """
+//        SELECT *
+//        FROM Book
+//        WHERE book_id = ?
+//    """;
+//
+//        try {
+//            PreparedStatement ps = getConnection().prepareStatement(sql);
+//            ps.setInt(1, bookId);
+//
+//            ResultSet rs = ps.executeQuery();
+//
+//            if (rs.next()) {
+//                CategoryDAO cdao = new CategoryDAO();
+//                Category cate = cdao.getCategoryById(rs.getInt("category_id"));
+//
+//                return new Book(
+//                        rs.getInt("book_id"),
+//                        rs.getString("title"),
+//                        rs.getString("author"),
+//                        rs.getDouble("price"),
+//                        rs.getString("description"),
+//                        cate,
+//                        rs.getInt("stock"),
+//                        rs.getString("publisher"),
+//                        rs.getInt("discount"),
+//                        rs.getString("url_img"),
+//                        rs.getBoolean("is_active"),
+//                        rs.getTimestamp("created_at").toLocalDateTime()
+//                );
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
     public Book getBookById(int bookId) {
+        // Sử dụng LEFT JOIN để lấy cột 'name' từ bảng Category và đặt tên thay thế là 'category_name'
         String sql = """
-        SELECT *
-        FROM Book
-        WHERE book_id = ?
-    """;
+    SELECT b.*, c.name AS category_name
+    FROM Book b
+    LEFT JOIN Category c ON b.category_id = c.category_id
+    WHERE b.book_id = ?
+                """;
 
-        try {
-            PreparedStatement ps = getConnection().prepareStatement(sql);
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
             ps.setInt(1, bookId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    // Bước quan trọng: Tạo đối tượng Category và gán tên vào
+                    Category cate = new Category();
+                    cate.setCategoryId(rs.getInt("category_id"));
+                    cate.setCategoryName(rs.getString("category_name"));
 
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                CategoryDAO cdao = new CategoryDAO();
-                Category cate = cdao.getCategoryById(rs.getInt("category_id"));
-
-                return new Book(
-                        rs.getInt("book_id"),
-                        rs.getString("title"),
-                        rs.getString("author"),
-                        rs.getDouble("price"),
-                        rs.getString("description"),
-                        cate,
-                        rs.getInt("stock"),
-                        rs.getString("publisher"),
-                        rs.getInt("discount"),
-                        rs.getString("url_img"),
-                        rs.getBoolean("is_active"),
-                        rs.getTimestamp("created_at").toLocalDateTime()
-                );
+                    // Trả về đối tượng Book có chứa đối tượng Category bên trong
+                    return new Book(
+                            rs.getInt("book_id"),
+                            rs.getString("title"),
+                            rs.getString("author"),
+                            rs.getDouble("price"),
+                            rs.getString("description"),
+                            cate, // <--- Đối tượng cate này sẽ giúp JSP hiển thị được tên
+                            rs.getInt("stock"),
+                            rs.getString("publisher"),
+                            rs.getInt("discount"),
+                            rs.getString("url_img"),
+                            rs.getBoolean("is_active"),
+                            rs.getTimestamp("created_at").toLocalDateTime()
+                    );
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -257,10 +297,10 @@ public class BookDAO extends DBContext {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Book b = new Book();
-                b.setBookId(rs.getInt("book_id")); 
-                b.setTitle(rs.getString("title")); 
-                b.setPrice(rs.getDouble("price")); 
-                b.setUrlImg(rs.getString("url_img")); 
+                b.setBookId(rs.getInt("book_id"));
+                b.setTitle(rs.getString("title"));
+                b.setPrice(rs.getDouble("price"));
+                b.setUrlImg(rs.getString("url_img"));
                 list.add(b);
             }
         } catch (Exception e) {
@@ -268,10 +308,10 @@ public class BookDAO extends DBContext {
         }
         return list;
     }
-    public void increaseStock(Connection con,int bookId, int quantity) {
+
+    public void increaseStock(Connection con, int bookId, int quantity) {
         String sql = "UPDATE Book SET stock = stock + ? WHERE book_id = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
-
 
             ps.setInt(1, quantity);
             ps.setInt(2, bookId);
