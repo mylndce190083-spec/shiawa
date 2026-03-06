@@ -197,7 +197,7 @@
 
             <!-- RIGHT -->
             <div class="box">
-                <form action="${pageContext.request.contextPath}/cart" method="post">
+                <form action="${pageContext.request.contextPath}/checkout" method="post">
 <!--                <form action="${pageContext.request.contextPath}/checkout" method="post">-->
                     <h3>📍 ĐỊA CHỈ NHẬN HÀNG</h3>
 
@@ -263,11 +263,13 @@
                     </div>
 
 
+                    <!--                    <c:forEach var="item" items="${orderItems}">
+                                            <input type="hidden" name="bookId" value="${item.bookId}">
+                                            <input type="hidden" name="quantity" value="${item.quantity}"> </c:forEach>
+                        -->
                     <c:forEach var="item" items="${orderItems}">
-                        <input type="hidden" name="bookId" value="${item.bookId}">
-                        <input type="hidden" name="quantity" value="${item.quantity}"> </c:forEach>
-
-
+                        <input type="hidden" name="selectedItem" value="${item.bookId}">
+                    </c:forEach>
                     <c:forEach var="item" items="${cartItems != null ? cartItems : orderItems}">  </c:forEach>
 
                         <!--                        <button type="submit"

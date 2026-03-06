@@ -565,6 +565,7 @@ public class OrderDAO extends DBContext {
                     item.setPrice(rs2.getDouble("price"));
                     items.add(item);
                 }
+                o.setItems(items);
 
                 int totalQty = 0;
                 for (OrderItem item : items) {

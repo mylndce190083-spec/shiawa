@@ -205,6 +205,7 @@ public class CheckoutController extends HttpServlet {
                     }
                 }
             }
+           
 
             if (selectedItems.isEmpty()) {
                 response.sendRedirect(request.getContextPath() + "/cart");
