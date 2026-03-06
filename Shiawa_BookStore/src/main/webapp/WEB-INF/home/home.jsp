@@ -103,64 +103,7 @@
     </style>
     <body>
 
-        <header class="header">
-
-            <!-- LOGO -->
-            <div class="logo" id="backToShop">
-                <img src="${pageContext.request.contextPath}/assets/img/logo.jpg" class="rounded-img">
-            </div>
-
-            <!-- SEARCH (GIỮA) -->
-            <div class="search-box">
-                <input type="text">
-                <button>
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
-            </div>
-
-            <!-- ICONS -->
-            <div class="icons">
-
-                <!-- comment  <a href="${pageContext.request.contextPath}/cart" class="icon">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    <span>Giỏ hàng</span>
-                </a>-->
-
-                <a href="${pageContext.request.contextPath}/cart" class="icon cart-icon">
-                    <i class="fa-solid fa-cart-shopping"></i>
-
-                    <span id="cartBadge" class="cart-badge"
-                          style="${sessionScope.cartSize > 0 ? '' : 'display:none;'}">
-                        ${sessionScope.cartSize}
-                    </span>
-
-                    <span>Giỏ hàng</span>
-                </a>
-                <c:if test="${not empty sessionScope.user}">
-                    <a href="${pageContext.request.contextPath}/OrderList" 
-                       style="text-decoration:none; color:inherit;">
-                        <div class="icon">
-                            <i class="fa-solid fa-clipboard-list"></i>
-                            <span>Danh sách mua hàng</span>
-                        </div>
-                    </a>
-                </c:if>
-
-                <a href="login" class="icon">
-                    <i class="fa-regular fa-user"></i>
-                    <span>Tài khoản</span>
-                </a>
-
-                <c:if test="${not empty sessionScope.user}">
-                    <a href="logout" class="icon">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                        <span>Logout</span>
-                    </a>
-                </c:if>
-
-            </div>
-
-        </header>
+        <jsp:include page="/client/layout/header.jsp"/>
         <nav class="breadcrumb">
             <a href="#">Trang chủ</a>
             <span>›</span>

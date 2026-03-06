@@ -16,6 +16,13 @@ public class Account {
     private String email;
     private String status;
 
+    private String fullName;
+    private String gender;
+    private String phone;
+    private String address;
+    private String avatar;
+    private boolean mustChangePassword;
+
     public Account() {
         this.id = -1;
         this.role = "customer";
@@ -29,15 +36,7 @@ public class Account {
         this.status = status;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-
-    }
-
+    // ===== GETTER SETTER =====
     public int getId() {
         return id;
     }
@@ -70,9 +69,75 @@ public class Account {
         this.email = email;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public boolean isMustChangePassword() {
+        return mustChangePassword;
+    }
+
+    public void setMustChangePassword(boolean mustChangePassword) {
+        this.mustChangePassword = mustChangePassword;
+    }
+
     @Override
     public String toString() {
-        return "Account{" + "id=" + id + ", username=" + username + ", role=" + role + ", email=" + email + ", status=" + status + '}';
+        return "Account{"
+                + "id=" + id
+                + ", username=" + username
+                + ", role=" + role
+                + ", email=" + email
+                + ", status=" + status
+                + ", fullName=" + fullName
+                + ", gender=" + gender
+                + ", phone=" + phone
+                + ", address=" + address
+                + '}';
     }
 
 }

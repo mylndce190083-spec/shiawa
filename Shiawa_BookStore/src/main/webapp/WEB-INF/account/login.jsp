@@ -8,36 +8,7 @@
         <link href="${pageContext.request.contextPath}/assets/css/css.css" rel="stylesheet" type="text/css"/>
     </head>
     <body>
-        <header class="header">
-
-            <!-- LOGO -->
-            <div class="logo" id="backToShop">
-                <img src="${pageContext.request.contextPath}/assets/img/logo.jpg" class="rounded-img">
-            </div>
-
-            <!-- SEARCH (GIỮA) -->
-            <div class="search-box">
-                <input type="text">
-                <button>
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
-            </div>
-
-            <!-- ICONS -->
-            <div class="icons">
-                <div class="icon" id="cartIcon">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    <span>Giỏ hàng</span>
-                </div>
-
-
-                <div class="icon" id="accountIcon">
-                    <i class="fa-regular fa-user"></i>
-                    <span>Tài khoản</span>
-                </div>
-            </div>
-
-        </header>
+        <jsp:include page="/client/layout/header.jsp"/>
         <section class="account-page">
 
             <h2>Tài khoản</h2>

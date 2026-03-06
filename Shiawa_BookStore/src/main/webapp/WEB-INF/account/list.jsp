@@ -14,9 +14,41 @@
             <div class="d-flex justify-content-between align-items-center">
                 <h6 class="mb-0">User List</h6>
             </div>
+
             <div class="d-flex gap-4">
-                <a class="btn btn-sm btn-success" href="">Add user</a>
-                <a href="" class="text-primary">Show All</a>
+                <form action="${pageContext.request.contextPath}/account"
+                      method="get">
+
+                    <select name="role"
+                            class="form-select form-select-sm"
+                            onchange="this.form.submit()">
+
+                        <option value="">All Roles</option>
+
+                        <option value="Customer"
+                                ${selectedRole == 'Customer' ? 'selected' : ''}>
+                            Customer
+                        </option>
+
+                        <option value="Admin"
+                                ${selectedRole == 'Admin' ? 'selected' : ''}>
+                            Admin
+                        </option>
+
+                        <option value="Inventory"
+                                ${selectedRole == 'Inventory' ? 'selected' : ''}>
+                            Inventory
+                        </option>
+
+                        <option value="Sales"
+                                ${selectedRole == 'Customer' ? 'selected' : ''}>
+                            Customer
+                        </option>
+
+                    </select>
+                </form>
+                <a class="btn btn-sm btn-success" href="${pageContext.request.contextPath}/account?view=add">
+                    Add user</a>
             </div>
         </div>
         <div class="table-responsive">
@@ -27,7 +59,7 @@
                         <th scope="col">Username</th>
                         <th scope="col">Role</th>
                         <th scope="col">Email</th>
-                        <th scope="col" class="text-center">Action</th>
+                        <th scope="col" class="text-center">Manage</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,11 +70,31 @@
                             <td>${a.role}</td>
                             <td>${a.email}</td>
                             <td class="text-center">
+
                                 <div class="d-flex justify-content-center gap-2">
-                                    <a href="customer?view=detail&id=${a.id}" class="btn btn-sm btn-primary">Detail</a>
-                                    <a href="customer?view=edit&id=${a.id}" class="btn btn-sm btn-warning">Edit</a>
-                                    <a href="customer?view=delete&id=${a.id}" class="btn btn-sm btn-danger"
-                                       onclick="return confirm('Are you sure?')">Delete</a>
+
+                                    <!-- View Detail -->
+                                    <a href="account?view=detail&id=${a.id}&role=${a.role}"
+                                       class="btn btn-sm btn-primary">
+                                        Detail
+                                    </a>
+
+                                    <!-- Toggle Status -->
+                                    <c:choose>
+                                        <c:when test="${a.status == 'active'}">
+                                            <a href="account?view=deactivate&id=${a.id}&role=${a.role}"
+                                               class="btn btn-sm btn-danger">
+                                                Deactivate
+                                            </a>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <a href="account?view=activate&id=${a.id}&role=${a.role}"
+                                               class="btn btn-sm btn-success">
+                                                Activate
+                                            </a>
+                                        </c:otherwise>
+                                    </c:choose>
+
                                 </div>
                             </td>
                         </tr>

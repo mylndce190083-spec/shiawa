@@ -25,7 +25,7 @@ import model.Account;
 import model.BookAdmin;
 import model.BookImage;
 import model.Category;
-import util.FileUpload;
+import utils.FileUpload;
 
 /**
  *
@@ -42,7 +42,7 @@ public class BookAdminController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
 
@@ -51,15 +51,15 @@ public class BookAdminController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-        
+
         request.setAttribute("currentPage", "book-admin");
         String view = request.getParameter("view");
 
-        if ("add".equals(view)) {
+        if ("post".equals(view)) {
             CategoryDAO cateDAO = new CategoryDAO();
             List<Category> cateList = cateDAO.getIdNameCategory();
             request.setAttribute("categoryList", cateList);
-            request.getRequestDispatcher("/WEB-INF/book/create.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/book/post-book.jsp").forward(request, response);
             return;
         } else if ("detail".equals(view)) {
             int id = Integer.parseInt(request.getParameter("id"));
@@ -162,7 +162,7 @@ public class BookAdminController extends HttpServlet {
             throws ServletException, IOException {
         String view = request.getParameter("view");
 
-        if ("add".equals(view)) {
+        if ("post".equals(view)) {
             HttpSession session = request.getSession();
 
             try {
@@ -176,9 +176,12 @@ public class BookAdminController extends HttpServlet {
                 b.setTitle(title);
                 b.setAuthor(author);
                 b.setPrice(price);
-                b.setStock(stock);
                 b.setCategoryId(categoryId);
 
+                // sách mới chưa có stock
+                b.setStock(0);
+                // active luôn vì admin đăng
+                b.setIsActive(true);
                 BookDAO bdao = new BookDAO();
                 bdao.insertBook(b);
 

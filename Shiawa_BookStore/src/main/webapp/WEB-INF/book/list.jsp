@@ -64,10 +64,17 @@
                     </a>
                 </c:if>
 
-                <a class="btn btn-sm btn-success" 
-                   href="${pageContext.request.contextPath}/book-admin?view=add">
-                    Add Book
-                </a>
+                <div class="d-flex gap-4">
+                    <a class="btn btn-sm btn-warning"
+                       href="${pageContext.request.contextPath}/book-request?action=list">
+                        Accept Book Request
+                    </a>
+
+                    <a class="btn btn-sm btn-success"
+                       href="${pageContext.request.contextPath}/book-admin?view=post">
+                        Post New Book
+                    </a>
+                </div>
             </div>
 
         </div>

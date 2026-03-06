@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import java.io.File;
 import model.BookImage;
-import util.FileUpload;
+import utils.FileUpload;
 
 /**
  *
