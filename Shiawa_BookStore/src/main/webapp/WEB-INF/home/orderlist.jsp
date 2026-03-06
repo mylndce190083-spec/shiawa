@@ -154,8 +154,8 @@
                     Đang giao
                 </a>
 
-                <a href="${pageContext.request.contextPath}/OrderList/completed"
-                   class="tab-link ${currentStatus == 'COMPLETED' ? 'active' : ''}">
+                <a href="${pageContext.request.contextPath}/OrderList/delivered"
+                   class="tab-link ${currentStatus == 'DELIVERED' ? 'active' : ''}">
                     Hoàn thành
                 </a>
 
@@ -187,7 +187,7 @@
                                  ">
                                 ${o.status == 'Pending' ? 'Chờ xác nhận' :
                                   o.status == 'Shipping' ? 'Đang giao' :
-                                  o.status == 'Completed' ? 'Hoàn thành' :
+                                  o.status == 'DELIVERED' ? 'Hoàn thành' :
                                   o.status == 'Cancelled' ? 'Đã hủy' : o.status}
                             </div>
 
@@ -249,6 +249,23 @@
                     </div>
 
                 </c:forEach>
+
+                <%-- Kiểm tra nếu trạng thái là Hoàn thành thì mới hiện vùng nút đánh giá --%>
+                <c:if test="${o.status == 'DELIVERED'}">
+                    <div style="text-align:right; margin-top:15px; padding:10px; background:#f9f9f9; border-radius:8px;">
+                        <p style="font-size:13px; color:#666; margin-bottom:10px;">Đơn hàng đã giao thành công. Hãy chia sẻ cảm nhận của bạn nhé!</p>
+
+                        <c:forEach var="item" items="${o.items}">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px dashed #eee; padding-bottom:5px;">
+                                <span style="font-size:14px;">${item.title}</span>
+                                <a href="${pageContext.request.contextPath}/feedback?book_id=${item.bookId}" 
+                                   style="background:#4CAF50; color:white; text-decoration:none; padding:5px 12px; border-radius:4px; font-size:13px;">
+                                    Viết đánh giá
+                                </a>
+                            </div>
+                        </c:forEach>
+                    </div>
+                </c:if>
         </div>
     </body>
 </html>

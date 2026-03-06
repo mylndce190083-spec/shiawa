@@ -97,6 +97,7 @@ public class OrderListController extends HttpServlet {
 
         request.setAttribute(
                 "orders", orders);
+        request.setAttribute("currentStatus", status);
         request.getRequestDispatcher(
                 "/WEB-INF/home/orderlist.jsp")
                 .forward(request, response);

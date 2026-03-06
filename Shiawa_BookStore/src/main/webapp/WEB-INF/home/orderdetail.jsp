@@ -130,7 +130,7 @@
                        đang giao 
                     </c:when>
 
-                    <c:when test="${order.status == 'Completed'}">
+                    <c:when test="${order.status == 'DELIVERED'}">
                         đã giao
                     </c:when>
 
