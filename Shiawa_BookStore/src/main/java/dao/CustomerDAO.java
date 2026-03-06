@@ -96,6 +96,7 @@ public class CustomerDAO extends DBContext {
                 c.setAvatar(rs.getString("avatar"));
                 c.setPhone(rs.getString("phone"));
                 c.setAddress(rs.getString("address"));
+                c.setFullname(rs.getString("full_name"));
                 return c;
             }
         } catch (Exception e) {
@@ -118,6 +119,7 @@ public class CustomerDAO extends DBContext {
         return false;
     }
 
+
     public void insert(Customer customer) {
         String sql = "INSERT INTO Customer(username, password, email, verify_token, avatar) VALUES (?, ?, ?, ?, ?)";
         try {
@@ -133,17 +135,19 @@ public class CustomerDAO extends DBContext {
         }
     }
 
+    
     public boolean verifyUser(String token) {
-        String sql = "UPDATE Customer SET status='active', verify_token=NULL WHERE verify_token=?";
-        try {
-            PreparedStatement ps = getConnection().prepareStatement(sql);
-            ps.setString(1, token);
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
+    String sql = "UPDATE Customer SET status='active', verify_token=NULL WHERE verify_token=?";
+    try {
+        PreparedStatement ps = getConnection().prepareStatement(sql);
+        ps.setString(1, token);
+        return ps.executeUpdate() > 0;
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+    return false;
+}
+    
 
     public boolean checkEmailExist(String email) {
         String sql = "SELECT 1 FROM Customer WHERE email = ?";

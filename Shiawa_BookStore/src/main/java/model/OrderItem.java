@@ -9,7 +9,6 @@ package model;
  * @author MY
  */
 public class OrderItem {
-
     private int orderDetailId;
     private int orderId;
     private int bookId;
@@ -55,7 +54,6 @@ public class OrderItem {
     public void setBookId(int bookId) {
         this.bookId = bookId;
     }
-
     public String getTitle() {
         return title;
     }
@@ -96,5 +94,4 @@ public class OrderItem {
         this.book = book;
     }
 
-   
 }

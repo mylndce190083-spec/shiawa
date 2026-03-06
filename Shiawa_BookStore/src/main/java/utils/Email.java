@@ -28,12 +28,14 @@ public class Email {
         props.put("mail.smtp.port", "587");
 
         Session session = Session.getInstance(props,
+
                 new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(fromEmail, password);
             }
         });
+
 
         try {
             String link = "http://localhost:8080/Shiawa_BookStore/verify?token=" + token;
@@ -53,6 +55,7 @@ public class Email {
             e.printStackTrace();
         }
     }
+
 
     public static void sendOTP(String toEmail, String otp) {
         final String fromEmail = "hienpdt.ce190957@gmail.com";
@@ -98,5 +101,6 @@ public class Email {
 //        System.out.println("done");
         Email.sendOTP("phamduongthehien.9a2@gmail.com", "123456");
         System.out.println("done");
+
     }
 }

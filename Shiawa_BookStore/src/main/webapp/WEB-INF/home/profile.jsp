@@ -32,7 +32,12 @@
                 <ul class="profile-menu">
                     <li class="active">Thông tin cá nhân</li>
                     <li>Đổi mật khẩu</li>
-                    <li>Lịch sử đơn hàng</li>
+                    <li>
+                        <a href="${pageContext.request.contextPath}/OrderList">
+                            Lịch sử mua hàng
+                        </a>
+                           
+                    </li>
                     <li>Đăng xuất</li>
                 </ul>
             </div>

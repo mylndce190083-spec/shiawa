@@ -8,6 +8,7 @@ import db.DBContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -196,6 +197,77 @@ public class BookDAO extends DBContext {
         }
     }
 
+    public List<Book> getSimilarBook(int categoryId) {
+        List<Book> list = new ArrayList<>();
+        String sql = "SELECT TOP 6 b.*, c.name AS category_name "
+                + "FROM Book b "
+                + "LEFT JOIN Category c ON b.category_id = c.category_id"
+                + " Where c.category_id = ? ";
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, categoryId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Book b = new Book();
+                b.setBookId(rs.getInt("book_id"));
+                b.setTitle(rs.getString("title"));
+                b.setPrice(rs.getDouble("price"));
+                b.setUrlImg(rs.getString("url_img"));
+
+                Category c = new Category();
+                c.setCategoryName(rs.getString("category_name"));
+                b.setCategory(c);
+
+                list.add(b);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<Book> searchBookByName(String keyword) {
+        List<Book> list = new ArrayList<>();
+
+        String sql = "SELECT * FROM Book WHERE title LIKE ?";
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setString(1, "%" + keyword + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Book b = new Book();
+                b.setBookId(rs.getInt("book_id"));
+                b.setTitle(rs.getString("title"));
+                b.setPrice(rs.getDouble("price"));
+                b.setUrlImg(rs.getString("url_img"));
+                list.add(b);
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public List<Book> getBooksByCategoryId(int cateId) {
+        List<Book> list = new ArrayList<>();
+        String sql = "SELECT * FROM Book WHERE category_id = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, cateId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Book b = new Book();
+                b.setBookId(rs.getInt("book_id")); 
+                b.setTitle(rs.getString("title")); 
+                b.setPrice(rs.getDouble("price")); 
+                b.setUrlImg(rs.getString("url_img")); 
+                list.add(b);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
     public void increaseStock(Connection con,int bookId, int quantity) {
         String sql = "UPDATE Book SET stock = stock + ? WHERE book_id = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {

@@ -6,6 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -131,9 +132,9 @@
     </head>
     <body>
         <jsp:include page="/client/layout/header.jsp"/>
+        <br>
 
         <div class="container mt-5">
-
             <div class="page-header">
                 Đơn hàng của tôi
             </div>
@@ -155,8 +156,8 @@
                     Đang giao
                 </a>
 
-                <a href="${pageContext.request.contextPath}/OrderList/completed"
-                   class="tab-link ${currentStatus == 'COMPLETED' ? 'active' : ''}">
+                <a href="${pageContext.request.contextPath}/OrderList/delivered"
+                   class="tab-link ${currentStatus == 'DELIVERED' ? 'active' : ''}">
                     Hoàn thành
                 </a>
 
@@ -186,10 +187,10 @@
                                  font-weight:bold;
                                  color: red;
                                  ">
-                                ${o.status == 'Pending' ? 'Chờ xác nhận' :
-                                  o.status == 'Shipping' ? 'Đang giao' :
-                                  o.status == 'Completed' ? 'Hoàn thành' :
-                                  o.status == 'Cancelled' ? 'Đã hủy' : o.status}
+                                ${o.status == 'PENDING' ? 'Chờ xác nhận' :
+                                  o.status == 'SHIPPING' ? 'Đang giao' :
+                                  o.status == 'DELIVERED' ? 'Hoàn thành' :
+                                  o.status == 'CANCELLED' ? 'Đã hủy' : o.status}
                             </div>
 
                         </div>
@@ -216,7 +217,7 @@
 
                                     <!-- Đơn giá nhỏ -->
                                     <div style="font-size:13px; color:#888;">
-                                        Tổng tiền : ${item.price * item.quantity} VND
+                                        Tổng tiền :  <fmt:formatNumber value="${item.price * item.quantity}" type="number" groupingUsed="true" maxFractionDigits="0"/> VND
                                     </div>
 
 
@@ -229,9 +230,26 @@
                         <hr>
 
                         <div style="text-align:right; font-size:18px; font-weight:bold; color:black;">
-                            Tổng số tiền( ${o.quantity} sản phẩm): ${o.totalAmount} VND
+                            Tổng số tiền( ${o.quantity} sản phẩm):
+                            <fmt:formatNumber value="${o.totalAmount}" type="number" groupingUsed="true" maxFractionDigits="0"/> VND
                         </div>
-                        <c:if test="${o.status == 'Pending'}">
+                        <c:if test="${o.status == 'PENDING'}">
+                            <form action="${pageContext.request.contextPath}/OrderList" 
+                                  method="post" 
+                                  style="text-align:right; margin-top:10px;"
+                                  onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?');">
+
+                                <input type="hidden" name="action" value="cancel">
+                                <input type="hidden" name="orderId" value="${o.orderId}">
+
+                                <button type="submit" 
+                                        style="background:#ff4d4f; color:white; border:none;
+                                        padding:8px 16px; border-radius:6px; cursor:pointer;">
+                                    Hủy đơn
+                                </button>
+                            </form>
+                        </c:if>
+                        <c:if test="${o.status == 'DELIVERED'}">
                             <form action="${pageContext.request.contextPath}/OrderList" 
                                   method="post" 
                                   style="text-align:right; margin-top:10px;"
@@ -250,6 +268,7 @@
                     </div>
 
                 </c:forEach>
+                    
         </div>
     </body>
 </html>

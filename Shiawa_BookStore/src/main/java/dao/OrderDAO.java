@@ -35,8 +35,7 @@ public class OrderDAO extends DBContext {
         INSERT INTO Orders
         (customer_id, staff_id, order_date, status,
          discount, shipping_address, shipping_fee,receiver_name,phone)
-        VALUES (?, ?, GETDATE(), ?, ?, ?, ?,?,?)
-                    
+        VALUES (?, ?, GETDATE(), ?, ?, ?, ?,?,?)                   
     """;
 
         try (PreparedStatement ps
@@ -44,7 +43,7 @@ public class OrderDAO extends DBContext {
 
             ps.setInt(1, customerId);
             ps.setNull(2, java.sql.Types.INTEGER); // staff_id
-            ps.setString(3, "Pending");
+            ps.setString(3, "PENDING");
             ps.setInt(4, 0);
             ps.setString(5, shippingAddress);
             ps.setDouble(6, shippingFee);
@@ -68,7 +67,6 @@ public class OrderDAO extends DBContext {
             double shippingFee,
             String receiverName,
             String phone) throws Exception {
-
         Connection con = getConnection();
 
         if (con == null) {
@@ -363,7 +361,7 @@ public class OrderDAO extends DBContext {
                     // 4️⃣ Update status
                     String updateOrder = """
                     UPDATE Orders
-                    SET status = 'Cancelled'
+                    SET status = 'CANCELLED'
                     WHERE order_id = ?
                 """;
 
@@ -481,4 +479,46 @@ public class OrderDAO extends DBContext {
 
     }
 
+    public String getLastShippingAddressByUserId(int userId) {
+        String sql = "SELECT TOP 1 shipping_address FROM Orders WHERE customer_id = ? ORDER BY order_id DESC";
+
+        try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("shipping_address");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public Orders getLastOrderByUserId(int userId) {
+        String sql = "SELECT TOP 1 * FROM Orders WHERE user_id = ? ORDER BY id DESC";
+
+        try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                Orders o = new Orders();
+                o.setOrderId(rs.getInt("id"));
+                o.setReceiverName(rs.getString("receiver_name"));
+                o.setPhone(rs.getString("phone"));
+                o.setShippingAddress(rs.getString("shipping_address"));
+                return o;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

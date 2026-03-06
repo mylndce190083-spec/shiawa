@@ -84,7 +84,7 @@ public class OrderListController extends HttpServlet {
         OrderDetailDAO detailDAO = new OrderDetailDAO();
         List<Orders> orders;
 
-        if (status== null || status.equals( "ALL")) {
+        if (status == null || status.equals("ALL")) {
             orders = dao.getOrdersByCustomer(user.getId());
         } else {
             orders = dao.getOrdersByStatus(user.getId(), status);
@@ -97,6 +97,8 @@ public class OrderListController extends HttpServlet {
 
         request.setAttribute(
                 "orders", orders);
+        request.setAttribute("currentStatus", status);   // ⭐ THÊM DÒNG NÀY
+
         request.getRequestDispatcher(
                 "/WEB-INF/home/orderlist.jsp")
                 .forward(request, response);
