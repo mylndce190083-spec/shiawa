@@ -49,21 +49,33 @@
             <h2>Đặt lại mật khẩu</h2>
 
             <!-- LOGIN -->
-            <div>
-                <form action="reset-password" method="post">
-                    <div>
-                        <label>Mật khẩu mới</label>
-                        <input type="password" name="password" placeholder="New password" required>
-                    </div>
-                    <div>
-                        <label>Xác nhận mật khẩu</label>
-                        <input type="password" name="confirmPassword" placeholder="Confirm password" required>
-                    </div>
-                    <p style="color:red;">${error}</p>
-                    <p style="color:green;">${message}</p>
+            <div class="modal-overlay">
+                <div class="modal-box">
+                    <h2>Đặt lại mật khẩu</h2>
 
-                    <button type="submit" class="submit-btn">Đặt lại</button>
-                </form>
+                    <form action="reset-password" method="post" class="modal-form">
+
+                        <div class="form-group">
+                            <label>Mật khẩu mới</label>
+                            <input type="password" name="password" placeholder="Nhập mật khẩu mới" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Xác nhận mật khẩu</label>
+                            <input type="password" name="confirmPassword" placeholder="Nhập lại mật khẩu" required>
+                        </div>
+
+                        <p class="error">${error}</p>
+                        <p class="success">${message}</p>
+
+                        <button type="submit" class="modal-btn">Đặt lại mật khẩu</button>
+
+                        <div class="modal-link">
+                            <a href="login">Quay lại đăng nhập</a>
+                        </div>
+
+                    </form>
+                </div>
             </div>
 
         </section>

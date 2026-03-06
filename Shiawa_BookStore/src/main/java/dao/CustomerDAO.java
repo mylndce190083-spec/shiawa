@@ -61,7 +61,6 @@ public class CustomerDAO extends DBContext {
 //        }
 //        return 0;
 //    }
-    
     public Customer getCustomerByAccountId(int accountId) {
         String sql = "SELECT customer_id FROM Customer WHERE customer_id = ?";
 
@@ -80,7 +79,7 @@ public class CustomerDAO extends DBContext {
         }
         return null;
     }
-    
+
     public Customer getCustomerByAccountIdUpgraded(int accountId) {
         String sql = "SELECT * FROM Customer WHERE customer_id = ?";
 
@@ -120,13 +119,14 @@ public class CustomerDAO extends DBContext {
     }
 
     public void insert(Customer customer) {
-        String sql = "INSERT INTO Customer(username, password, email, verify_token) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Customer(username, password, email, verify_token, avatar) VALUES (?, ?, ?, ?, ?)";
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, customer.getUsername());
             ps.setString(2, customer.getPassword());
             ps.setString(3, customer.getEmail());
             ps.setString(4, customer.getVerifyToken());
+            ps.setString(5, customer.getAvatar());
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -199,19 +199,54 @@ public class CustomerDAO extends DBContext {
         }
     }
 
+    public boolean updateProfile(int id, String username, String phone, String address) {
+        String sql = "UPDATE Customer SET username = ?, phone = ?, address = ? WHERE customer_id = ?";
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setString(1, username);
+            ps.setString(2, phone);
+            ps.setString(3, address);
+            ps.setInt(4, id);
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public void updateAvatar(int id, String avatarPath) {
+        String sql = "UPDATE Customer SET avatar = ? WHERE customer_id = ?";
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setString(1, avatarPath);
+            ps.setInt(2, id);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         CustomerDAO dao = new CustomerDAO();
         Timestamp expiry = new Timestamp(System.currentTimeMillis() + 5 * 60 * 1000);
 //        Customer c = new Customer(4, "thehien", "123", "thehien@gmail.com", "559");
 //        dao.insert(c);
 //        dao.saveOTP("ysabeola.kimchi101@gmail.com", "111111", expiry);
-Customer c = dao.getCustomerByAccountIdUpgraded(24);
-System.out.println(c);
+        Customer c = dao.getCustomerByAccountIdUpgraded(24);
+        System.out.println(c);
         if (dao.checkCustomerExist("abc@gmail.com")) {
             System.out.println("ddddddddddddddddddđ");
         } else {
             System.out.println("ssssssssssssss");
         }
+        boolean check = dao.updateProfile(24, "Đức mẹ", "0987654321", "ấp 3, Phường Phúc Xá, Quận Ba Đình, Thành phố Hà Nội");
+        System.out.println(check);
     }
 
 }

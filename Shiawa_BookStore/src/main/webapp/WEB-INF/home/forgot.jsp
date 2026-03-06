@@ -49,15 +49,24 @@
             <h2>Nhập email</h2>
 
             <!-- LOGIN -->
-            <div>
-                <form action="forgot-password" method="post">
-                    <label>Email</label>
-                    <input type="email" name="email" placeholder="Email" required>
-                    <p style="color:red;">${error}</p>
-                    <p style="color:green;">${message}</p>
+            <div class="modal-overlay">
+                <div class="modal-box">
+                    <h2>Quên mật khẩu</h2>
 
-                    <button type="submit" class="submit-btn">Gửi OTP</button>
-                </form>
+                    <form action="forgot-password" method="post" class="modal-form">
+
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="email" placeholder="Nhập email của bạn" required>
+                        </div>
+
+                        <p class="error">${error}</p>
+                        <p class="success">${message}</p>
+
+                        <button type="submit" class="modal-btn">Gửi OTP</button>
+
+                    </form>
+                </div>
             </div>
 
         </section>

@@ -17,10 +17,16 @@
 
             <!-- Sidebar -->
             <div class="profile-sidebar">
-                <div class="avatar-section">
-                    <img src="${customer.avatar}" alt="Avatar">
+                <div class="avatar-box">
+                    <img src="/uploads/${customer.avatar}" 
+                         alt="Avatar"
+                         class="avatar-img">
                     <h3>${customer.username}</h3>
-                    <p class="email">${customer.email}</p>
+
+                    <form action="update-avatar" method="post" enctype="multipart/form-data">
+                        <input type="file" name="avatarFile" accept="image/*" required>
+                        <button type="submit" class="avatar-btn">Đổi avatar</button>
+                    </form>
                 </div>
 
                 <ul class="profile-menu">
@@ -39,7 +45,7 @@
 
                     <div class="form-group">
                         <label>Họ và tên</label>
-                        <input type="text" name="fullName" value="${customer.username}">
+                        <input type="text" name="username" value="${customer.username}">
                     </div>
 
                     <div class="form-group">
