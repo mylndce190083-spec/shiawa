@@ -300,6 +300,39 @@
             .edit-form button:hover {
                 background: #c82333;
             }
+            .payment-box{
+                margin:12px 0;
+                font-family: Arial, sans-serif;
+            }
+
+            .payment-box label{
+                display:block;
+                font-size:14px;
+                font-weight:500;
+                margin-bottom:6px;
+                color:#333;
+            }
+
+            .payment-box select{
+                width:240px;
+                padding:8px 10px;
+                border:1px solid #ddd;
+                border-radius:6px;
+                font-size:14px;
+                background:#fff;
+                cursor:pointer;
+                transition:all 0.2s ease;
+            }
+
+            .payment-box select:hover{
+                border-color:#ff6b00;
+            }
+
+            .payment-box select:focus{
+                outline:none;
+                border-color:#ff6b00;
+                box-shadow:0 0 4px rgba(255,107,0,0.3);
+            }
         </style>
     </head>
 
@@ -394,7 +427,7 @@
                             <i class="fa-solid fa-pen"></i> Sửa
                         </div>
                         <!-- GỬI VỀ SERVER -->
-                        
+
                     </div>
 
 
@@ -498,6 +531,16 @@
                             <span style="color:red;">- ${discount} đ</span>
                         </div>
                     </c:if>
+                    <div class="payment-box">
+                        <label for="paymentMethod">Phương thức thanh toán:</label>
+
+                        <select name="paymentMethod" id="paymentMethod" required>
+                            <option value="">Chọn phương thức</option>
+                            <option value="COD">Thanh toán khi nhận hàng</option>
+                            <option value="ONLINE">Thanh toán online</option>
+                        </select>
+                    </div>
+
                     <div class="summary-row total">
                         <span>Tổng thanh toán:</span>
                         <span id="total">
