@@ -4,12 +4,11 @@
  */
 package model;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
  *
- * @author MY
+ * @author BA LIEM
  */
 public class CartItem {
 

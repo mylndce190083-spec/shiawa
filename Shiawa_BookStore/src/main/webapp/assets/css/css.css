@@ -305,6 +305,7 @@ body {
     display: flex;
     gap: 25px;
 }
+
 .icon a {
     text-decoration: none;
     color: white;
@@ -487,7 +488,6 @@ body {
 }
 /* giỏ hàng */
 .cart-page {
-    
     margin-top: 40px;
 }
 
@@ -504,12 +504,12 @@ body {
 /* HEADER */
 .cart-header {
    display: grid;
-    grid-template-columns: 120px 2fr 1fr 1fr 1fr;
-    
+    grid-template-columns: 120px 2fr 1fr 1fr 1fr; 
     font-weight: bold;
     border-bottom: 2px solid black;
     padding-bottom: 10px;
 }
+
 /* đẩy form xóa sang phải */
 .delete-form {
     margin-left: auto;   /* chìa khóa */
@@ -524,7 +524,6 @@ body {
     color: #FF5722;
     padding: 5px;
 }
-
 
 /* ITEM */
 .cart-item {

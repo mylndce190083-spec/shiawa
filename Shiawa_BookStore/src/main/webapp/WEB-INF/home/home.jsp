@@ -1,4 +1,3 @@
-
 <%-- 
     Document   : home
     Created on : Feb 2, 2026, 5:00:04 PM
@@ -100,6 +99,7 @@
             }
         </style>
     </head>
+
     <style>
         .custom-toast {
             position: fixed;
@@ -186,72 +186,7 @@
     </style>
     <body>
 
-        <jsp:include page="/client/layout/header.jsp" />
-<!--             LOGO 
-            <div class="logo" id="backToShop">
-                <img src="${pageContext.request.contextPath}/assets/img/logo.jpg" class="rounded-img">
-            </div>
-
-             SEARCH (GIỮA) 
-            <div class="search-box">
-                <input type="text">
-                <button>
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
-            </div>
-
-             ICONS 
-            <div class="icons">
-                 comment  <a href="${pageContext.request.contextPath}/cart" class="icon">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    <span>Giỏ hàng</span>
-                </a>
-
-                <a href="${pageContext.request.contextPath}/cart" class="icon cart-icon">
-                    <i class="fa-solid fa-cart-shopping"></i>
-
-                    <span id="cartBadge" class="cart-badge"
-                          style="${sessionScope.cartSize > 0 ? '' : 'display:none;'}">
-                        ${sessionScope.cartSize}
-                    </span>
-
-                    <span>Giỏ hàng</span>
-                </a>
-                <c:if test="${not empty sessionScope.user}">
-                    <a href="${pageContext.request.contextPath}/OrderList" 
-                       style="text-decoration:none; color:inherit;">
-                        <div class="icon">
-                            <i class="fa-solid fa-clipboard-list"></i>
-                            <span>Danh sách mua hàng</span>
-                        </div>
-                    </a>
-                </c:if>
-
-                <c:if test="${empty sessionScope.user}">
-                    <a href="login" class="icon">
-                        <i class="fa-regular fa-user"></i>
-                        <span>Tài khoản</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${not empty sessionScope.user}">
-                    <a href="profile" class="icon">
-                        <i class="fa-regular fa-user"></i>
-                        <span>Tài khoản</span>
-                    </a>
-                </c:if>
-
-
-                <c:if test="${not empty sessionScope.user}">
-                    <a href="logout" class="icon">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                        <span>Logout</span>
-                    </a>
-                </c:if>
-
-            </div>-->
-
-       
+        <jsp:include page="/client/layout/header.jsp"/>
         <nav class="breadcrumb">
             <a href="#">Trang chủ</a>
             <span>›</span>
@@ -389,7 +324,7 @@
                         <span class="discount">-${b.discount}%</span>
                     </div>
                     <p class="sold">Đã bán 120</p>
-
+                    
                     <form onsubmit="addToCart(event, ${b.bookId})">
                         <button type="submit" class="add-cart">
                             Thêm giỏ hàng
@@ -505,6 +440,7 @@
         </div>
 
     </section>
+
     <script>
         function addToCart(event, bookId) {
             event.preventDefault();

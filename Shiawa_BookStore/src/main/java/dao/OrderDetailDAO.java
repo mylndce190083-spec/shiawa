@@ -9,12 +9,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import model.CartItem;
 import model.OrderItem;
 
 /**
  *
- * @author MY
+ * @author BA LIEM
  */
 
 public class OrderDetailDAO extends DBContext {

@@ -31,10 +31,66 @@ public class AccountController extends HttpServlet {
             response.sendRedirect("home");
             return;
         }
-
+        String view = request.getParameter("view");
         AccountDAO dao = new AccountDAO();
-        List<Account> list = dao.getAllUsers();
+
+        if ("activate".equals(view)) {
+
+            int id = Integer.parseInt(request.getParameter("id"));
+            String role = request.getParameter("role");
+            Account acc = dao.getAccountById(id, role);
+            dao.updateStatus(id, role, "active");
+
+            response.sendRedirect("account");
+            return;
+
+        } else if ("deactivate".equals(view)) {
+
+            int id = Integer.parseInt(request.getParameter("id"));
+            String role = request.getParameter("role");
+            dao.updateStatus(id, role, "inactive");
+
+            response.sendRedirect("account");
+            return;
+        } else if ("detail".equals(view)) {
+
+            int id = Integer.parseInt(request.getParameter("id"));
+            String role = request.getParameter("role");
+            Account acc = dao.getAccountById(id, role);
+
+            // DEBUG
+            if (acc == null) {
+                System.out.println("Account not found!");
+            } else {
+                System.out.println("Account found: " + acc.getUsername());
+            }
+            request.setAttribute("account", acc);
+            request.setAttribute("currentPage", "account");
+
+            request.getRequestDispatcher("/WEB-INF/account/detail.jsp")
+                    .forward(request, response);
+            return;
+
+        } else if ("add".equals(view)) {
+            request.setAttribute("currentPage", "account");
+            request.getRequestDispatcher("/WEB-INF/account/add.jsp")
+                    .forward(request, response);
+            return;
+        }
+        request.setAttribute("currentPage", "account");
+
+        String role = request.getParameter("role");
+
+        List<Account> list;
+
+        if (role != null && !role.isEmpty()) {
+            list = dao.getUsersByRole(role);
+        } else {
+            list = dao.getAllUsers();
+        }
+
         request.setAttribute("accounts", list);
+        request.setAttribute("selectedRole", role);
         //chặn cache
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
@@ -45,7 +101,36 @@ public class AccountController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String action = request.getParameter("action");
 
+        if ("add".equals(action)) {
+
+            String role = request.getParameter("role");
+            String username = request.getParameter("username");
+            String email = request.getParameter("email");
+            String fullName = request.getParameter("fullName");
+            String phone = request.getParameter("phone");
+
+            AccountDAO dao = new AccountDAO();
+
+            if (dao.usernameExists(username)) {
+                request.setAttribute("error", "Username already exists!");
+                request.getRequestDispatcher("/WEB-INF/account/add.jsp")
+                        .forward(request, response);
+                return;
+            }
+            // tạo password tạm
+            String tempPassword = java.util.UUID.randomUUID()
+                    .toString().substring(0, 8);
+
+            // tạo account
+            dao.addUser(username, email, fullName, phone, role, tempPassword);
+
+            // gửi mail
+            utils.Email.sendTempPasswordEmail(email, username, tempPassword);
+
+            response.sendRedirect("account");
+        }
     }
 
     /**

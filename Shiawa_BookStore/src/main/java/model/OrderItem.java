@@ -16,7 +16,8 @@ public class OrderItem {
     private String url_img;
     private int quantity;
     private double price;
-  private Book book;
+    private Book book;
+
     public OrderItem() {
     }
 

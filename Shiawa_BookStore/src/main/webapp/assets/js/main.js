@@ -11,7 +11,6 @@
     };
     spinner();
 
-
     // Back to top button
     $(window).scroll(function () {
         if ($(this).scrollTop() > 300) {
@@ -56,6 +55,7 @@
         dots: true,
         loop: true,
         nav: false
+
     });
 
 
@@ -82,6 +82,7 @@
                 }
             ]
         },
+
         options: {
             responsive: true
         }
@@ -108,6 +109,7 @@
                 }
             ]
         },
+
         options: {
             responsive: true
         }
@@ -122,6 +124,7 @@
         data: {
             labels: [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150],
             datasets: [{
+
                     label: "Salse",
                     fill: false,
                     backgroundColor: "rgba(0, 156, 255, .3)",
@@ -150,6 +153,7 @@
                     ],
                     data: [55, 49, 44, 24, 15]
                 }]
+
         },
         options: {
             responsive: true
@@ -164,6 +168,7 @@
         data: {
             labels: ["Italy", "France", "Spain", "USA", "Argentina"],
             datasets: [{
+
                     backgroundColor: [
                         "rgba(0, 156, 255, .7)",
                         "rgba(0, 156, 255, .6)",
@@ -173,6 +178,7 @@
                     ],
                     data: [55, 49, 44, 24, 15]
                 }]
+
         },
         options: {
             responsive: true
@@ -187,6 +193,7 @@
         data: {
             labels: ["Italy", "France", "Spain", "USA", "Argentina"],
             datasets: [{
+
                     backgroundColor: [
                         "rgba(0, 156, 255, .7)",
                         "rgba(0, 156, 255, .6)",
@@ -196,6 +203,7 @@
                     ],
                     data: [55, 49, 44, 24, 15]
                 }]
+
         },
         options: {
             responsive: true

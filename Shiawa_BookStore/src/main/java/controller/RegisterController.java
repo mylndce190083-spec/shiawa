@@ -81,6 +81,7 @@ public class RegisterController extends HttpServlet {
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
         String email = request.getParameter("email").trim();
+        String fullName = request.getParameter("fullName").trim();
         String token = UUID.randomUUID().toString();
 
         // biểu thức chính quy để kiểm tra input
@@ -127,6 +128,13 @@ public class RegisterController extends HttpServlet {
             request.setAttribute("error", "Email đã được sử dụng!");
             request.getRequestDispatcher("/WEB-INF/home/register.jsp")
                     .forward(request, response);
+            return;
+        }
+        if (fullName.isEmpty()) {
+            request.setAttribute("error", "Vui lòng nhập họ tên!");
+            request.getRequestDispatcher("/WEB-INF/home/register.jsp")
+                    .forward(request, response);
+            return;
         } else {
             String hashPassword = adao.hashMD5(password);
             Customer c = new Customer();
@@ -136,6 +144,7 @@ public class RegisterController extends HttpServlet {
             c.setStatus("inactive");
             c.setVerifyToken(token);
             c.setAvatar("images/avatar/macdinh.jpg");
+            c.setFullName(fullName);
             dao.insert(c);
             HttpSession session = request.getSession();
             session.setAttribute("success", "Đăng kí thành công! Vui lòng xác minh email để đăng nhập");
