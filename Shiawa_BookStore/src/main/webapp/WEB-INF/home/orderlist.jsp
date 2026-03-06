@@ -230,8 +230,22 @@
                         <div style="text-align:right; font-size:18px; font-weight:bold; color:black;">
                             Tổng số tiền( ${o.quantity} sản phẩm): ${o.totalAmount} VND
                         </div>
+
+
+                        <c:if test="${o.status == 'DELIVERED'}">
+                            <div style="text-align:right; margin-top:10px;">
+                                <%-- Nút đánh giá được thiết kế cùng kích thước và kiểu dáng với nút Hủy đơn --%>
+                                <a href="${pageContext.request.contextPath}/feedback?order_id=${o.orderId}" 
+                                   style="background:#4CAF50; color:white; text-decoration:none;
+                                   padding:8px 16px; border-radius:6px; cursor:pointer;
+                                   display:inline-block; font-size: 14px; font-family: Arial, sans-serif;
+                                   border: none; transition: background 0.2s;">
+                                    Đánh giá đơn hàng
+                                </a>
+                            </div>
+                        </c:if>
                         <c:if test="${o.status == 'Pending'}">
-                            <form action="${pageContext.request.contextPath}/OrderList" 
+                            <form action="${pageContext.request.contextPath}/orderlist" 
                                   method="post" 
                                   style="text-align:right; margin-top:10px;"
                                   onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?');">
@@ -249,23 +263,6 @@
                     </div>
 
                 </c:forEach>
-
-                <%-- Kiểm tra nếu trạng thái là Hoàn thành thì mới hiện vùng nút đánh giá --%>
-                <c:if test="${o.status == 'DELIVERED'}">
-                    <div style="text-align:right; margin-top:15px; padding:10px; background:#f9f9f9; border-radius:8px;">
-                        <p style="font-size:13px; color:#666; margin-bottom:10px;">Đơn hàng đã giao thành công. Hãy chia sẻ cảm nhận của bạn nhé!</p>
-
-                        <c:forEach var="item" items="${o.items}">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px dashed #eee; padding-bottom:5px;">
-                                <span style="font-size:14px;">${item.title}</span>
-                                <a href="${pageContext.request.contextPath}/feedback?book_id=${item.bookId}" 
-                                   style="background:#4CAF50; color:white; text-decoration:none; padding:5px 12px; border-radius:4px; font-size:13px;">
-                                    Viết đánh giá
-                                </a>
-                            </div>
-                        </c:forEach>
-                    </div>
-                </c:if>
         </div>
     </body>
 </html>

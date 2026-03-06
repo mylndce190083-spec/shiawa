@@ -61,59 +61,154 @@ public class OrderDAO extends DBContext {
 //
 //        throw new Exception("Cannot create order");
 //    }
+//  public int insertOrder(Connection con, int customerId, String shippingAddress, double shippingFee, String receiverName, String phone, List<CartItem> items) throws Exception {
+//    String sqlOrder = "INSERT INTO Orders (customer_id, staff_id, order_date, status, discount, shipping_address, shipping_fee, receiver_name, phone) VALUES (?, ?, GETDATE(), ?, ?, ?, ?, ?, ?)";
+//    int orderId = 0;
+//
+//    try {
+//        // 1. Lưu đơn hàng
+//        PreparedStatement ps = con.prepareStatement(sqlOrder, Statement.RETURN_GENERATED_KEYS);
+//        ps.setInt(1, customerId);
+//        ps.setNull(2, java.sql.Types.INTEGER);
+//        ps.setString(3, "Pending");
+//        ps.setInt(4, 0);
+//        ps.setString(5, shippingAddress);
+//        ps.setDouble(6, shippingFee);
+//        ps.setString(7, receiverName);
+//        ps.setString(8, phone);
+//        ps.executeUpdate();
+//
+//        ResultSet rs = ps.getGeneratedKeys();
+//        if (rs.next()) orderId = rs.getInt(1);
+//
+//        // 2. Lưu chi tiết (Hãy kiểm tra lại tên bảng là OrderDetail hay OrderDetails)
+//        if (orderId > 0 && items != null) {
+//            String sqlDetail = "INSERT INTO OrderDetail (order_id, book_id, quantity, price) VALUES (?, ?, ?, ?)";
+//            PreparedStatement psDetail = con.prepareStatement(sqlDetail);
+//            for (CartItem item : items) {
+//                psDetail.setInt(1, orderId);
+//                psDetail.setInt(2, item.getBookId());
+//                psDetail.setInt(3, item.getQuantity());
+//                psDetail.setDouble(4, item.getPrice());
+//                psDetail.addBatch();
+//            }
+//            psDetail.executeBatch();
+//        }
+//        
+//        // CỰC KỲ QUAN TRỌNG: Nếu dùng Transaction thì phải commit
+//        // con.commit(); 
+//        
+//    } catch (Exception e) {
+//        e.printStackTrace();
+//        throw e;
+//    }
+//    return orderId;
+//}
+//
+//    public int createOrder(int customerId,
+//            List<CartItem> items,
+//            String shippingAddress,
+//            double shippingFee,
+//            String receiverName,
+//            String phone) throws Exception {
+//        Connection con = getConnection();
+//
+//        if (con == null) {
+//            throw new Exception("Cannot connect database");
+//        }
+//
+//        try {
+//            con.setAutoCommit(false);
+//
+//            // 1️⃣ Insert order trước
+//            int orderId = insertOrder(con, customerId, shippingAddress, shippingFee, receiverName, phone, items);
+//
+//            BookDAO bookDAO = new BookDAO();
+//            OrderDetailDAO detailDAO = new OrderDetailDAO();
+//
+//            // 2️⃣ Loop từng sản phẩm
+//            for (CartItem item : items) {
+//
+//                // Lấy stock hiện tại
+//                int stock = bookDAO.getStock(con, item.getBookId());
+//
+//                // Kiểm tra quantity hợp lệ
+//                if (item.getQuantity() <= 0) {
+//                    throw new Exception("Invalid quantity for product ID "
+//                            + item.getBookId());
+//                }
+//
+//                // Kiểm tra đủ hàng không
+//                if (stock < item.getQuantity()) {
+//                    throw new Exception("Product ID "
+//                            + item.getBookId()
+//                            + " only has "
+//                            + stock
+//                            + " items left");
+//                }
+//
+//                // Insert OrderDetail
+//                detailDAO.insertOrderDetail(
+//                        con,
+//                        orderId,
+//                        item.getBookId(),
+//                        item.getQuantity(),
+//                        item.getPrice()
+//                );
+//
+//                // Update stock
+//                bookDAO.updateStock(
+//                        con,
+//                        item.getBookId(),
+//                        item.getQuantity()
+//                );
+//            }
+//
+//            // 3️⃣ Commit nếu mọi thứ OK
+//            con.commit();
+//            return orderId;
+//
+//        } catch (Exception e) {
+//
+//            // 4️⃣ Rollback nếu lỗi
+//            con.rollback();
+//            throw e;
+//
+//        } finally {
+//            con.close();
+//        }
+//    }
+    public int insertOrder(Connection con, int customerId, String shippingAddress, double shippingFee, String receiverName, String phone, List<CartItem> items) throws Exception {
+        String sqlOrder = "INSERT INTO Orders (customer_id, staff_id, order_date, status, discount, shipping_address, shipping_fee, receiver_name, phone) VALUES (?, ?, GETDATE(), ?, ?, ?, ?, ?, ?)";
+        int orderId = 0;
 
-  public int insertOrder(Connection con, int customerId, String shippingAddress, double shippingFee, String receiverName, String phone, List<CartItem> items) throws Exception {
-    String sqlOrder = "INSERT INTO Orders (customer_id, staff_id, order_date, status, discount, shipping_address, shipping_fee, receiver_name, phone) VALUES (?, ?, GETDATE(), ?, ?, ?, ?, ?, ?)";
-    int orderId = 0;
+        try (PreparedStatement ps = con.prepareStatement(sqlOrder, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, customerId);
+            ps.setNull(2, java.sql.Types.INTEGER);
+            ps.setString(3, "Pending");
+            ps.setInt(4, 0);
+            ps.setString(5, shippingAddress);
+            ps.setDouble(6, shippingFee);
+            ps.setString(7, receiverName);
+            ps.setString(8, phone);
+            ps.executeUpdate();
 
-    try {
-        // 1. Lưu đơn hàng
-        PreparedStatement ps = con.prepareStatement(sqlOrder, Statement.RETURN_GENERATED_KEYS);
-        ps.setInt(1, customerId);
-        ps.setNull(2, java.sql.Types.INTEGER);
-        ps.setString(3, "Pending");
-        ps.setInt(4, 0);
-        ps.setString(5, shippingAddress);
-        ps.setDouble(6, shippingFee);
-        ps.setString(7, receiverName);
-        ps.setString(8, phone);
-        ps.executeUpdate();
-
-        ResultSet rs = ps.getGeneratedKeys();
-        if (rs.next()) orderId = rs.getInt(1);
-
-        // 2. Lưu chi tiết (Hãy kiểm tra lại tên bảng là OrderDetail hay OrderDetails)
-        if (orderId > 0 && items != null) {
-            String sqlDetail = "INSERT INTO OrderDetail (order_id, book_id, quantity, price) VALUES (?, ?, ?, ?)";
-            PreparedStatement psDetail = con.prepareStatement(sqlDetail);
-            for (CartItem item : items) {
-                psDetail.setInt(1, orderId);
-                psDetail.setInt(2, item.getBookId());
-                psDetail.setInt(3, item.getQuantity());
-                psDetail.setDouble(4, item.getPrice());
-                psDetail.addBatch();
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                orderId = rs.getInt(1);
             }
-            psDetail.executeBatch();
+
+            // KHÔNG lặp qua items ở đây nữa, việc này để createOrder lo
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
-        
-        // CỰC KỲ QUAN TRỌNG: Nếu dùng Transaction thì phải commit
-        // con.commit(); 
-        
-    } catch (Exception e) {
-        e.printStackTrace();
-        throw e;
+        return orderId;
     }
-    return orderId;
-}
 
-    public int createOrder(int customerId,
-            List<CartItem> items,
-            String shippingAddress,
-            double shippingFee,
-            String receiverName,
-            String phone) throws Exception {
+    // 2. Sửa hàm createOrder: Điều phối việc lưu Order, Detail và Update Stock
+    public int createOrder(int customerId, List<CartItem> items, String shippingAddress, double shippingFee, String receiverName, String phone) throws Exception {
         Connection con = getConnection();
-
         if (con == null) {
             throw new Exception("Cannot connect database");
         }
@@ -121,96 +216,54 @@ public class OrderDAO extends DBContext {
         try {
             con.setAutoCommit(false);
 
-            // 1️⃣ Insert order trước
+            // 1. Chỉ gọi insertOrder 1 lần để lấy ID đơn hàng
             int orderId = insertOrder(con, customerId, shippingAddress, shippingFee, receiverName, phone, items);
 
-            BookDAO bookDAO = new BookDAO();
-            OrderDetailDAO detailDAO = new OrderDetailDAO();
+            if (orderId > 0) {
+                BookDAO bookDAO = new BookDAO();
+                OrderDetailDAO detailDAO = new OrderDetailDAO();
 
-            // 2️⃣ Loop từng sản phẩm
-            for (CartItem item : items) {
+                for (CartItem item : items) {
+                    // 2. Kiểm tra kho và update stock
+                    int stock = bookDAO.getStock(con, item.getBookId());
+                    if (stock < item.getQuantity()) {
+                        throw new Exception("Sách ID " + item.getBookId() + " không đủ hàng!");
+                    }
 
-                // Lấy stock hiện tại
-                int stock = bookDAO.getStock(con, item.getBookId());
+                    // 3. LƯU CHI TIẾT - Đây là nơi duy nhất lưu vào bảng OrderDetail
+                    detailDAO.insertOrderDetail(con, orderId, item.getBookId(), item.getQuantity(), item.getPrice());
 
-                // Kiểm tra quantity hợp lệ
-                if (item.getQuantity() <= 0) {
-                    throw new Exception("Invalid quantity for product ID "
-                            + item.getBookId());
+                    bookDAO.updateStock(con, item.getBookId(), item.getQuantity());
                 }
-
-                // Kiểm tra đủ hàng không
-                if (stock < item.getQuantity()) {
-                    throw new Exception("Product ID "
-                            + item.getBookId()
-                            + " only has "
-                            + stock
-                            + " items left");
-                }
-
-                // Insert OrderDetail
-                detailDAO.insertOrderDetail(
-                        con,
-                        orderId,
-                        item.getBookId(),
-                        item.getQuantity(),
-                        item.getPrice()
-                );
-
-                // Update stock
-                bookDAO.updateStock(
-                        con,
-                        item.getBookId(),
-                        item.getQuantity()
-                );
             }
 
-            // 3️⃣ Commit nếu mọi thứ OK
             con.commit();
             return orderId;
-
         } catch (Exception e) {
-
-            // 4️⃣ Rollback nếu lỗi
             con.rollback();
             throw e;
-
         } finally {
             con.close();
         }
     }
 
-
     public List<Orders> getOrdersByCustomer(int customerId) {
         List<Orders> list = new ArrayList<>();
 
         String sql = """
-        SELECT 
-            o.order_id,
-            o.customer_id,
-            o.staff_id,
-            o.order_date,
-            o.status,
-            o.shipping_address,
-            o.shipping_fee,
-            o.discount,
-            SUM(od.quantity * od.price) 
-                + ISNULL(o.shipping_fee,0)
-                - ISNULL(o.discount,0) AS total_amount
-        FROM Orders o
-        JOIN OrderDetail od ON o.order_id = od.order_id
-        WHERE o.customer_id = ?
-        GROUP BY 
-            o.order_id,
-            o.customer_id,
-            o.staff_id,
-            o.order_date,
-            o.status,
-            o.shipping_address,
-            o.shipping_fee,
-            o.discount
-        ORDER BY o.order_date DESC
-    """;
+    SELECT 
+        o.order_id, o.customer_id, o.staff_id, o.order_date, o.status, 
+        o.shipping_address, o.shipping_fee, o.discount,
+        SUM(ISNULL(od.quantity, 0) * ISNULL(od.price, 0)) 
+            + ISNULL(o.shipping_fee, 0) - ISNULL(o.discount, 0) AS total_amount
+    FROM Orders o
+    LEFT JOIN OrderDetail od ON o.order_id = od.order_id
+    WHERE o.customer_id = ?
+    GROUP BY 
+        o.order_id, o.customer_id, o.staff_id, o.order_date, o.status, 
+        o.shipping_address, o.shipping_fee, o.discount
+    ORDER BY o.order_id DESC
+""";
         try {
             Connection con = getConnection();
             PreparedStatement ps = con.prepareStatement(sql);
@@ -268,7 +321,8 @@ public class OrderDAO extends DBContext {
                     items.add(item);
                 }
 
-                o.setItems(items);   // 🔥 CÁI QUAN TRỌNG NHẤT
+                o.setItems(items);
+// Thêm đoạn này để web hiện số lượng sản phẩm
                 int totalQuantity = 0;
                 for (OrderItem item : items) {
                     totalQuantity += item.getQuantity();
@@ -512,7 +566,11 @@ public class OrderDAO extends DBContext {
                     items.add(item);
                 }
 
-                o.setItems(items);   // 🔥 CÁI QUAN TRỌNG NHẤT
+                int totalQty = 0;
+                for (OrderItem item : items) {
+                    totalQty += item.getQuantity();
+                }
+                o.setQuantity(totalQty);
 
                 return o;
             }
