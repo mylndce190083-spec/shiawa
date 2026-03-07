@@ -103,39 +103,70 @@ public class FeedbackController extends HttpServlet {
             return;
         }
 
+//        try {
+//            // 1. Lấy order_id từ form/request
+//            int orderId = Integer.parseInt(request.getParameter("order_id"));
+//            int rating = Integer.parseInt(request.getParameter("rating"));
+//            String content = request.getParameter("content");
+//
+//            // 2. Gọi DAO để lấy danh sách các mặt hàng trong đơn hàng này
+//            // Giả sử bạn đã có hàm getOrderItemsByOrderId trong OrderDAO
+//            OrderDAO orderDao = new OrderDAO();
+//            Orders order = orderDao.getOrderById(orderId);
+//            List<OrderItem> items = order.getItems();
+//
+//            FeedbackDAO fbDao = new FeedbackDAO();
+//
+//            // 3. Vòng lặp để lưu đánh giá cho TẤT CẢ các sách trong đơn
+//            for (OrderItem item : items) {
+//                Feedback fb = new Feedback();
+//                fb.setUserId(user.getId());
+//                fb.setBookId(item.getBookId()); // Lấy bookId từ từng item
+//                fb.setRating(rating);
+//                fb.setContent(content);
+//
+//                fbDao.insertFeedback(fb);
+//            }
+//
+//            // 4. Sau khi xong, chuyển hướng về trang danh sách đơn hàng đã hoàn thành
+//            response.sendRedirect(request.getContextPath() + "/OrderList/delivered");
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response.sendRedirect(request.getContextPath() + "/home");
+//        }
+//    }
+
         try {
-            // 1. Lấy order_id từ form/request
-            int orderId = Integer.parseInt(request.getParameter("order_id"));
-            int rating = Integer.parseInt(request.getParameter("rating"));
-            String content = request.getParameter("content");
+        int orderId = Integer.parseInt(request.getParameter("order_id"));
+        int rating = Integer.parseInt(request.getParameter("rating"));
+        String content = request.getParameter("content");
+        
+        // Cần lấy thêm book_id để biết sau khi gửi xong thì quay về trang nào
+        String redirectBookId = request.getParameter("book_id"); 
 
-            // 2. Gọi DAO để lấy danh sách các mặt hàng trong đơn hàng này
-            // Giả sử bạn đã có hàm getOrderItemsByOrderId trong OrderDAO
-            OrderDAO orderDao = new OrderDAO();
-            Orders order = orderDao.getOrderById(orderId);
-            List<OrderItem> items = order.getItems();
+        OrderDAO orderDao = new OrderDAO();
+        Orders order = orderDao.getOrderById(orderId);
+        List<OrderItem> items = order.getItems();
+        FeedbackDAO fbDao = new FeedbackDAO();
 
-            FeedbackDAO fbDao = new FeedbackDAO();
-
-            // 3. Vòng lặp để lưu đánh giá cho TẤT CẢ các sách trong đơn
-            for (OrderItem item : items) {
-                Feedback fb = new Feedback();
-                fb.setUserId(user.getId());
-                fb.setBookId(item.getBookId()); // Lấy bookId từ từng item
-                fb.setRating(rating);
-                fb.setContent(content);
-
-                fbDao.insertFeedback(fb);
-            }
-
-            // 4. Sau khi xong, chuyển hướng về trang danh sách đơn hàng đã hoàn thành
-            response.sendRedirect(request.getContextPath() + "/OrderList/delivered");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.sendRedirect(request.getContextPath() + "/home");
+        for (OrderItem item : items) {
+            Feedback fb = new Feedback();
+            fb.setUserId(user.getId());
+            fb.setBookId(item.getBookId());
+            fb.setRating(rating);
+            fb.setContent(content);
+            fbDao.insertFeedback(fb);
         }
+
+        // QUAN TRỌNG: Redirect về trang chi tiết sách
+        response.sendRedirect(request.getContextPath() + "/bookdetail?id=" + redirectBookId);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        response.sendRedirect(request.getContextPath() + "/home");
     }
+}
 
     /**
      * Returns a short description of the servlet.

@@ -195,8 +195,10 @@
                     <i class="bi bi-chat-left-heart-fill me-2"></i>Đánh giá sản phẩm
                 </div>
 
-                <form action="feedback" method="post" class="p-4">
+                <form action="feedback" method="post">
                     <input type="hidden" name="book_id" value="${book.bookId}">
+                    <input type="hidden" name="order_id" value="${param.order_id}"> 
+
 
                     <table class="product-table">
                         <thead>

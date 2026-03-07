@@ -248,7 +248,26 @@
                 <p class="text-secondary">${book.description}</p>
             </div>
         </div>
+        <div class="container mt-5">
+            <h4 class="fw-bold mb-4">Đánh giá từ khách hàng</h4>
+            <c:forEach items="${feedbackList}" var="fb">
+                <div class="card mb-3 border-0 shadow-sm bg-light">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">User ID: ${fb.userId}</span>
+                            <span class="text-warning">
+                                <c:forEach begin="1" end="${fb.rating}">★</c:forEach>
+                                </span>
+                            </div>
+                            <p class="mt-2 mb-0">${fb.content}</p>
+                    </div>
+                </div>
+            </c:forEach>
 
+            <c:if test="${empty feedbackList}">
+                <p class="text-muted italic">Sách này chưa có đánh giá nào. Hãy là người đầu tiên!</p>
+            </c:if>
+        </div>
 
         <div class="mt-5">
             <h5 class="section-title mb-4">Có thể bạn cũng thích</h5>
@@ -284,6 +303,7 @@
             <a href="#" class="btn-ok">OK</a>
         </div>
     </div>
+
 
     <jsp:include page="./layout/footer.jsp" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
