@@ -4,27 +4,28 @@
  */
 package controller;
 
-import dao.OrderDAO;
-import dao.OrderDetailDAO;
+import dao.CustomerDAO;
+import java.io.File;
+import java.nio.file.Paths;
+import jakarta.servlet.http.Part;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.List;
-import model.Account;
-import model.OrderItem;
-import model.Orders;
+import model.Customer;
 
 /**
  *
- * @author MY
+ * @author Lenovo
  */
-@WebServlet(name = "OrderListController", urlPatterns = {"/OrderList/*"})
-public class OrderListController extends HttpServlet {
+@WebServlet(name = "UpdateAvatarController", urlPatterns = {"/update-avatar"})
+@MultipartConfig
+public class UpdateAvatarController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +44,10 @@ public class OrderListController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet OrderListController</title>");
+            out.println("<title>Servlet UpdateAvatarController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet OrderListController at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UpdateAvatarController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -64,44 +65,7 @@ public class OrderListController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        Account user = (Account) session.getAttribute("user");
-
-        if (user == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
-
-        // 🔥 ĐẶT ĐOẠN MỚI Ở ĐÂY
-        String pathInfo = request.getPathInfo();
-        String status = "ALL";
-
-        if (pathInfo != null) {
-            status = pathInfo.substring(1).toUpperCase();
-        }
-
-        OrderDAO dao = new OrderDAO();
-        OrderDetailDAO detailDAO = new OrderDetailDAO();
-        List<Orders> orders;
-
-        if (status == null || status.equals("ALL")) {
-            orders = dao.getOrdersByCustomer(user.getId());
-        } else {
-            orders = dao.getOrdersByStatus(user.getId(), status);
-        }
-        for (Orders o : orders) {
-            List<OrderItem> items = detailDAO.getItemsByOrderId(o.getOrderId());
-            System.out.println("OrderID: " + o.getOrderId() + " | Items: " + items.size());
-            o.setItems(items);
-        }
-
-        request.setAttribute(
-                "orders", orders);
-        request.setAttribute("currentStatus", status);   // ⭐ THÊM DÒNG NÀY
-
-        request.getRequestDispatcher(
-                "/WEB-INF/home/orderlist.jsp")
-                .forward(request, response);
+        processRequest(request, response);
     }
 
     /**
@@ -116,27 +80,64 @@ public class OrderListController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        Account user = (Account) session.getAttribute("user");
+        Customer customer = (Customer) session.getAttribute("customer");
 
-        if (user == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+        if (customer == null) {
+            response.sendRedirect("login");
             return;
         }
 
-        String action = request.getParameter("action");
+        // ===== lấy file
+        Part filePart = request.getPart("avatarFile");
 
-        if ("cancel".equals(action)) {
-
-            int orderId = Integer.parseInt(request.getParameter("orderId"));
-
-            OrderDAO dao = new OrderDAO();
-
-            // Chỉ hủy nếu đơn thuộc về user đó
-            dao.cancelOrderIfPending(orderId, user.getId());
+        // ===== validate file
+        // Kiểm tra có chọn file không
+        if (filePart == null || filePart.getSize() == 0) {
+            request.setAttribute("error", "Vui lòng chọn ảnh!");
+            request.getRequestDispatcher("/WEB-INF/home/profile.jsp").forward(request, response);
+            return;
         }
 
-        // Redirect lại để load danh sách mới
-        response.sendRedirect(request.getContextPath() + "/OrderList");
+        // Kiểm tra dung lượng (ví dụ: tối đa 2MB)
+        if (filePart.getSize() > 2 * 1024 * 1024) {
+            request.setAttribute("error", "Ảnh không được vượt quá 2MB!");
+            request.getRequestDispatcher("/WEB-INF/home/profile.jsp").forward(request, response);
+            return;
+        }
+
+        // Kiểm tra loại file
+        String contentType = filePart.getContentType();
+        if (!contentType.startsWith("image/")) {
+            request.setAttribute("error", "Chỉ được upload file ảnh!");
+            request.getRequestDispatcher("/WEB-INF/home/profile.jsp").forward(request, response);
+            return;
+        }
+
+        // ===== lưu file
+        String uploadPath = "D:/ShiawaUploads/avatar";
+        File uploadDir = new File(uploadPath);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdirs();
+        }
+
+        String fileName = Paths.get(filePart.getSubmittedFileName())
+                .getFileName()
+                .toString();
+
+        String newFileName = System.currentTimeMillis() + "_" + fileName;
+
+        filePart.write(uploadPath + File.separator + newFileName);
+
+        String avatarPath = "avatar/" + newFileName;
+
+        // ===== update db
+        CustomerDAO dao = new CustomerDAO();
+        dao.updateAvatar(customer.getId(), avatarPath);
+
+        customer.setAvatar(avatarPath);
+        session.setAttribute("customer", customer);
+
+        response.sendRedirect("profile");
     }
 
     /**

@@ -6,6 +6,7 @@
 package controller;
 
 import dao.AccountDAO;
+import dao.CustomerDAO;
 import dao.CartItemDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,6 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.Account;
+import model.Customer;
 import model.CartItem;
 
 /**
@@ -38,8 +40,10 @@ public class LoginController extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         AccountDAO dao = new AccountDAO();
+        CustomerDAO cdao = new CustomerDAO();
         String hashPassword = dao.hashMD5(password);
         Account user = dao.login(email, hashPassword);
+        Customer customer = cdao.getCustomerByAccountIdUpgraded(user.getId());
         HttpSession session = request.getSession();
 
         if (user.getId() == -1) {
@@ -58,6 +62,7 @@ public class LoginController extends HttpServlet {
             }
 
             if ("Customer".equalsIgnoreCase(user.getRole())) {
+                session.setAttribute("customer", customer);
 
                 CartItemDAO cartDAO = new CartItemDAO();
 
@@ -71,6 +76,9 @@ public class LoginController extends HttpServlet {
                 }
 
                 session.setAttribute("cartSize", totalQuantity);
+                request.setCharacterEncoding("UTF-8");
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html; charset=UTF-8");
                 response.sendRedirect("home");
             } else if (user.getRole().equals("Admin")) {
                 response.sendRedirect("account");

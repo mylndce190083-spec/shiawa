@@ -7,10 +7,13 @@ package model;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/*
- * @author BA LIEM
-*/
+
+/**
+ *
+ * @author MY
+ */
 public class Orders {
+
 
     private int orderId;
     private int customerId;
@@ -30,6 +33,7 @@ public class Orders {
 
     public Orders() {
     }
+
 
     public Orders(int orderId, int customerId, int staffId, double totalAmount, LocalDateTime orderDate, String status, int discount, String shippingAddress, double shippingFee, List<OrderItem> items, String customerName, String phone, String voucherName, String receiverName, int quantity) {
         this.orderId = orderId;
@@ -72,7 +76,6 @@ public class Orders {
     public void setStaffId(int staffId) {
         this.staffId = staffId;
     }
-
     public double getTotalAmount() {
         return totalAmount;
     }
@@ -80,6 +83,7 @@ public class Orders {
     public void setTotalAmount(double totalAmount) {
         this.totalAmount = totalAmount;
     }
+
 
     public LocalDateTime getOrderDate() {
         return orderDate;
@@ -120,6 +124,7 @@ public class Orders {
     public void setShippingFee(double shippingFee) {
         this.shippingFee = shippingFee;
     }
+
 
     public List<OrderItem> getItems() {
         return items;
@@ -168,5 +173,12 @@ public class Orders {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
+    @Override
+    public String toString() {
+        return "Orders{" + "orderId=" + orderId + ", customerId=" + customerId + ", staffId=" + staffId + ", totalAmount=" + totalAmount + ", orderDate=" + orderDate + ", status=" + status + ", discount=" + discount + ", shippingAddress=" + shippingAddress + ", shippingFee=" + shippingFee + ", items=" + items + ", customerName=" + customerName + ", phone=" + phone + ", voucherName=" + voucherName + ", receiverName=" + receiverName + ", quantity=" + quantity + '}';
+    }
+    
+    
 
 }

@@ -19,53 +19,27 @@ public class Customer {
     private String createdAt;
     private String status;
     private String verifyToken;
+    private String avatar;
+    private String phone;
+    private String address;
+    private String fullname;
 
     public Customer() {
     }
 
-    public Customer(int id, String username, String password, String email, String fullName, String createdAt, String status, String verifyToken) {
+    public Customer(int id, String username, String password, String email, String fullName, String createdAt, String status, String verifyToken, String avatar, String phone, String address, String fullname) {
         this.id = id;
         this.username = username;
         this.password = password;
-        //this.role = role;
         this.email = email;
         this.fullName = fullName;
         this.createdAt = createdAt;
         this.status = status;
         this.verifyToken = verifyToken;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getVerifyToken() {
-        return verifyToken;
-    }
-
-    public void setVerifyToken(String verifyToken) {
-        this.verifyToken = verifyToken;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-
+        this.avatar = avatar;
+        this.phone = phone;
+        this.address = address;
+        this.fullname = fullname;
     }
 
     public int getId() {
@@ -84,19 +58,28 @@ public class Customer {
         this.username = username;
     }
 
-    /*public String getRole() {
-        return role;
+    public String getPassword() {
+        return password;
     }
 
-    public void setRole(String role) {
-        this.role = role;
-    }*/
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getCreatedAt() {
@@ -106,5 +89,60 @@ public class Customer {
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getVerifyToken() {
+        return verifyToken;
+    }
+
+    public void setVerifyToken(String verifyToken) {
+        this.verifyToken = verifyToken;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getFullname() {
+        return fullname;
+    }
+
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" + "id=" + id + ", username=" + username + ", password=" + password + ", email=" + email + ", fullName=" + fullName + ", createdAt=" + createdAt + ", status=" + status + ", verifyToken=" + verifyToken + ", avatar=" + avatar + ", phone=" + phone + ", address=" + address + ", fullname=" + fullname + '}';
+    }
+
+
 
 }

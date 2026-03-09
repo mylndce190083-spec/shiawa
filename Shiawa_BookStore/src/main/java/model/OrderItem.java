@@ -6,14 +6,9 @@ package model;
 
 /**
  *
- * <<<<<<< HEAD
- * @a
- *
- * uthor BA LIEM =======
- * @author MY >>>>>>> origin/huynhmy
+ * @author MY
  */
 public class OrderItem {
-
     private int orderDetailId;
     private int orderId;
     private int bookId;
@@ -60,7 +55,6 @@ public class OrderItem {
     public void setBookId(int bookId) {
         this.bookId = bookId;
     }
-
     public String getTitle() {
         return title;
     }
@@ -100,4 +94,5 @@ public class OrderItem {
     public void setBook(Book book) {
         this.book = book;
     }
+
 }

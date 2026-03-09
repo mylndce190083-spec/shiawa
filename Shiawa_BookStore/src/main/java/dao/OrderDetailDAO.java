@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package dao;
-
 import db.DBContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,7 +15,9 @@ import model.OrderItem;
  *
  * @author BA LIEM
  */
+
 public class OrderDetailDAO extends DBContext {
+
 
     public void insertOrderDetail(Connection con,
             int orderId,

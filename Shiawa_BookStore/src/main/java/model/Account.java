@@ -36,7 +36,14 @@ public class Account {
         this.status = status;
     }
 
-    // ===== GETTER SETTER =====
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public int getId() {
         return id;
     }
@@ -67,14 +74,6 @@ public class Account {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public String getFullName() {
@@ -127,17 +126,8 @@ public class Account {
 
     @Override
     public String toString() {
-        return "Account{"
-                + "id=" + id
-                + ", username=" + username
-                + ", role=" + role
-                + ", email=" + email
-                + ", status=" + status
-                + ", fullName=" + fullName
-                + ", gender=" + gender
-                + ", phone=" + phone
-                + ", address=" + address
-                + '}';
+        return "Account{" + "id=" + id + ", username=" + username + ", role=" + role + ", email=" + email + ", status=" + status + ", fullName=" + fullName + ", gender=" + gender + ", phone=" + phone + ", address=" + address + ", avatar=" + avatar + ", mustChangePassword=" + mustChangePassword + '}';
     }
 
+    
 }

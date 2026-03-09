@@ -4,8 +4,8 @@
  */
 package controller;
 
-import dao.OrderDAO;
-import dao.OrderDetailDAO;
+import dao.AccountDAO;
+import dao.CustomerDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,17 +14,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.List;
 import model.Account;
-import model.OrderItem;
-import model.Orders;
 
 /**
  *
- * @author MY
+ * @author Lenovo
  */
-@WebServlet(name = "OrderListController", urlPatterns = {"/OrderList/*"})
-public class OrderListController extends HttpServlet {
+@WebServlet(name = "ResetPasswordController", urlPatterns = {"/reset-password"})
+public class ResetPasswordController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +40,10 @@ public class OrderListController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet OrderListController</title>");
+            out.println("<title>Servlet ResetPasswordController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet OrderListController at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ResetPasswordController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -64,44 +61,7 @@ public class OrderListController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        Account user = (Account) session.getAttribute("user");
-
-        if (user == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
-
-        // 🔥 ĐẶT ĐOẠN MỚI Ở ĐÂY
-        String pathInfo = request.getPathInfo();
-        String status = "ALL";
-
-        if (pathInfo != null) {
-            status = pathInfo.substring(1).toUpperCase();
-        }
-
-        OrderDAO dao = new OrderDAO();
-        OrderDetailDAO detailDAO = new OrderDetailDAO();
-        List<Orders> orders;
-
-        if (status == null || status.equals("ALL")) {
-            orders = dao.getOrdersByCustomer(user.getId());
-        } else {
-            orders = dao.getOrdersByStatus(user.getId(), status);
-        }
-        for (Orders o : orders) {
-            List<OrderItem> items = detailDAO.getItemsByOrderId(o.getOrderId());
-            System.out.println("OrderID: " + o.getOrderId() + " | Items: " + items.size());
-            o.setItems(items);
-        }
-
-        request.setAttribute(
-                "orders", orders);
-        request.setAttribute("currentStatus", status);   // ⭐ THÊM DÒNG NÀY
-
-        request.getRequestDispatcher(
-                "/WEB-INF/home/orderlist.jsp")
-                .forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/home/reset-password.jsp").forward(request, response);
     }
 
     /**
@@ -115,28 +75,30 @@ public class OrderListController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String password = request.getParameter("password");
+        String confirm = request.getParameter("confirmPassword");
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
 
-        if (user == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+        if (!password.equals(confirm)) {
+            request.setAttribute("error", "Passwords do not match!");
+            request.getRequestDispatcher("/WEB-INF/home/reset-password.jsp").forward(request, response);
             return;
         }
 
-        String action = request.getParameter("action");
-
-        if ("cancel".equals(action)) {
-
-            int orderId = Integer.parseInt(request.getParameter("orderId"));
-
-            OrderDAO dao = new OrderDAO();
-
-            // Chỉ hủy nếu đơn thuộc về user đó
-            dao.cancelOrderIfPending(orderId, user.getId());
+        AccountDAO adao = new AccountDAO();
+        String hashed = adao.hashMD5(password);
+        CustomerDAO dao = new CustomerDAO();
+        //reset pass voi otp
+        if (user == null) {
+            dao.updatePassword(hashed);
+            response.sendRedirect("login");
+            return;
         }
 
-        // Redirect lại để load danh sách mới
-        response.sendRedirect(request.getContextPath() + "/OrderList");
+        //reset pass trong profile
+        dao.updatePasswordCustomer(hashed, user.getId());
+        response.sendRedirect("profile");
     }
 
     /**

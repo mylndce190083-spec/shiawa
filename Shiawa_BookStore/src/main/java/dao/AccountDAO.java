@@ -5,7 +5,6 @@
 package dao;
 
 import db.DBContext;
-
 import java.security.MessageDigest;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -418,5 +417,4 @@ public class AccountDAO extends DBContext {
         //System.out.println(dao.hashMD5("123456"));
         System.out.println(dao.login("admin@gmail.com", "admin123"));
     }
-
 }

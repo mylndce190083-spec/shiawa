@@ -36,12 +36,14 @@
         }
     </style>
     <body>
+
         <c:if test="${not empty success}">
             <div style="color: green; font-weight: bold;">
                 ${success}
             </div>
             <c:remove var="success" scope="session"/>
         </c:if>
+        
         <jsp:include page="/client/layout/header.jsp"/>
 
 
@@ -105,6 +107,7 @@
                                     </div>
                                 </div>
 
+
                                 <span class="subtotal" id="subtotal-${item.bookId}">
                                     $${item.price * item.quantity}
                                 </span>
@@ -119,6 +122,7 @@
 
                         <div class="cart-footer">
                             <strong>
+
                                 Tổng: $<span id="totalPrice">0</span>
                             </strong>
                         </div>
@@ -211,12 +215,15 @@
                     method: "POST",
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded",
+
                         "X-Requested-With": "XMLHttpRequest"
+
                     },
                     body: "action=" + action + "&book_id=" + bookId
                 })
                         .then(response => response.json())
                         .then(data => {
+
 
                             // ✅ 1. Cập nhật số lượng hiển thị
                             document.getElementById("qty-" + bookId).innerText = data.quantity;
@@ -267,6 +274,7 @@
 
                             // xóa dòng khỏi giao diện
                             document.getElementById("row-" + bookId).remove();
+
                             updateCartBadge(data.totalCartItems);
                          
                         })

@@ -116,6 +116,7 @@
     });
 
 
+
     // Single Line Chart
     var ctx3 = $("#line-chart").get(0).getContext("2d");
     var myChart3 = new Chart(ctx3, {

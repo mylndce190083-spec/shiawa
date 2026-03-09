@@ -53,6 +53,45 @@ public class Email {
             e.printStackTrace();
         }
     }
+    
+    public static void sendOTP(String toEmail, String otp) {
+        final String fromEmail = "hienpdt.ce190957@gmail.com";
+        final String password = "uudpwqxrdjnudksp";
+
+        String host = "smtp.gmail.com";
+
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", host);
+        props.put("mail.smtp.port", "587");
+
+        Session session = Session.getInstance(props,
+                new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(fromEmail, password);
+            }
+        });
+
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(fromEmail));
+            message.setRecipients(
+                    Message.RecipientType.TO,
+                    InternetAddress.parse(toEmail)
+            );
+            message.setSubject("Password Reset OTP");
+
+            message.setText("Your OTP to reset password is: " + otp
+                    + "\n\nThis OTP is valid for 5 minutes.");
+
+            Transport.send(message);
+
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void sendTempPasswordEmail(String toEmail, String username, String tempPassword) {
 
@@ -104,10 +143,5 @@ public class Email {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-//        Email.sendVerificationEmail("phamduongthehien.9a2@gmail.com", "123");
-//        System.out.println("done");
     }
 }
