@@ -66,6 +66,7 @@ public class AccountDAO extends DBContext {
                 u.setStatus(rs.getString("status"));
                 // FIX QUAN TRỌNG
                 u.setRole("Customer");
+                u.setMustChangePassword(rs.getBoolean("must_change_password"));
 
                 return u;
             }
@@ -88,6 +89,7 @@ public class AccountDAO extends DBContext {
                     u.setRole(rs.getString("name"));//name là role
                     u.setEmail(rs.getString("email"));
                     u.setStatus(rs.getString("status"));
+                    u.setMustChangePassword(rs.getBoolean("must_change_password"));
                     return u;
                 }
             } catch (Exception e) {
@@ -229,10 +231,10 @@ public class AccountDAO extends DBContext {
             String password, String role) {
 
         String sql = """
-        INSERT INTO Staff(username, full_name, email, phone, password, role_id, status)
+        INSERT INTO Staff(username, full_name, email, phone, password, role_id, status, must_change_password)
         VALUES (?, ?, ?, ?, ?, 
             (SELECT role_id FROM Role WHERE name = ?),
-            'active')
+            'active', 1)
     """;
 
         try {
@@ -257,8 +259,8 @@ public class AccountDAO extends DBContext {
             String password) {
 
         String sql = """
-        INSERT INTO Customer(username, full_name, email, phone, password, status)
-        VALUES (?, ?, ?, ?, ?, 'active')
+        INSERT INTO Customer(username, full_name, email, phone, password, status, must_change_password)
+        VALUES (?, ?, ?, ?, ?, 'active', 1)
     """;
 
         try {
