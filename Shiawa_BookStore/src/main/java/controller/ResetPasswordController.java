@@ -13,6 +13,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import model.Account;
 
 /**
  *
@@ -59,7 +61,7 @@ public class ResetPasswordController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        request.getRequestDispatcher("/WEB-INF/home/reset-password.jsp").forward(request, response);
     }
 
     /**
@@ -75,6 +77,8 @@ public class ResetPasswordController extends HttpServlet {
             throws ServletException, IOException {
         String password = request.getParameter("password");
         String confirm = request.getParameter("confirmPassword");
+        HttpSession session = request.getSession();
+        Account user = (Account) session.getAttribute("user");
 
         if (!password.equals(confirm)) {
             request.setAttribute("error", "Passwords do not match!");
@@ -84,11 +88,17 @@ public class ResetPasswordController extends HttpServlet {
 
         AccountDAO adao = new AccountDAO();
         String hashed = adao.hashMD5(password);
-
         CustomerDAO dao = new CustomerDAO();
-        dao.updatePassword(hashed);
+        //reset pass voi otp
+        if (user == null) {
+            dao.updatePassword(hashed);
+            response.sendRedirect("login");
+            return;
+        }
 
-        response.sendRedirect("login");
+        //reset pass trong profile
+        dao.updatePasswordCustomer(hashed, user.getId());
+        response.sendRedirect("profile");
     }
 
     /**

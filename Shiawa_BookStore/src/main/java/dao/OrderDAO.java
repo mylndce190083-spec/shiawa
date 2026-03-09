@@ -689,4 +689,12 @@ public class OrderDAO extends DBContext {
 
         return null;
     }
+    
+    public static void main(String[] args) {
+        OrderDAO dao= new OrderDAO();
+        List<Orders> list = dao.getAllOrders();
+        for(Orders o : list) {
+            System.out.println(o);
+        }
+    }
 }

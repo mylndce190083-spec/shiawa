@@ -80,6 +80,7 @@ public class UpdateProfileController extends HttpServlet {
         String username = request.getParameter("username");
         String phone = request.getParameter("phone");
         String address = request.getParameter("address");
+        String fullname = request.getParameter("fullname");
 
         // ================= VALIDATION =================
         String phoneRegex = "^0[35789][0-9]{8}$";
@@ -100,13 +101,14 @@ public class UpdateProfileController extends HttpServlet {
 
         // ================= UPDATE =================
         CustomerDAO dao = new CustomerDAO();
-        boolean updated = dao.updateProfile(customer.getId(), username, phone, address);
+        boolean updated = dao.updateProfile(customer.getId(), username, phone, address, fullname);
 
         if (updated) {
 
             customer.setUsername(username);
             customer.setPhone(phone);
             customer.setAddress(address);
+            customer.setFullName(fullname);
 
             session.setAttribute("customer", customer);
             request.setAttribute("message", "Cập nhật thành công!");

@@ -31,14 +31,22 @@
 
                 <ul class="profile-menu">
                     <li class="active">Thông tin cá nhân</li>
-                    <li>Đổi mật khẩu</li>
+                    <li>
+                        <a href="${pageContext.request.contextPath}/reset-password">
+                            <span>Đổi mật khẩu</span>
+                        </a>
+                    </li>
                     <li>
                         <a href="${pageContext.request.contextPath}/OrderList">
                             Lịch sử mua hàng
                         </a>
-                           
+
                     </li>
-                    <li>Đăng xuất</li>
+                    <li>
+                        <a href="${pageContext.request.contextPath}/logout">
+                            <span>Đăng xuất</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
 
@@ -49,8 +57,13 @@
                 <form action="update-profile" method="post" class="profile-form">
 
                     <div class="form-group">
-                        <label>Họ và tên</label>
+                        <label>Tên tài khoản</label>
                         <input type="text" name="username" value="${customer.username}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Họ và tên</label>
+                        <input type="text" name="fullname" value="${customer.fullname}">
                     </div>
 
                     <div class="form-group">

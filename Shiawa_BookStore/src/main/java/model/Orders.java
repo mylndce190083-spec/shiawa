@@ -174,4 +174,11 @@ public class Orders {
         this.quantity = quantity;
     }
 
+    @Override
+    public String toString() {
+        return "Orders{" + "orderId=" + orderId + ", customerId=" + customerId + ", staffId=" + staffId + ", totalAmount=" + totalAmount + ", orderDate=" + orderDate + ", status=" + status + ", discount=" + discount + ", shippingAddress=" + shippingAddress + ", shippingFee=" + shippingFee + ", items=" + items + ", customerName=" + customerName + ", phone=" + phone + ", voucherName=" + voucherName + ", receiverName=" + receiverName + ", quantity=" + quantity + '}';
+    }
+    
+    
+
 }

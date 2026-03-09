@@ -1,3 +1,7 @@
+/*bỏ gạch dưới cho tất cả thẻ a*/
+a {
+    text-decoration: none;
+}
 /*css cho forget pass*/
 /* Overlay nền mờ */
 .modal-overlay {
@@ -181,6 +185,10 @@ body {
 
 .profile-menu .active {
     background: #588157;
+}
+
+.profile-menu a {
+    color: white;           /* đổi màu chữ thành trắng */
 }
 
 /* Content */

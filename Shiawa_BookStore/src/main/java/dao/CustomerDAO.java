@@ -206,15 +206,16 @@ public class CustomerDAO extends DBContext {
         }
     }
 
-    public boolean updateProfile(int id, String username, String phone, String address) {
-        String sql = "UPDATE Customer SET username = ?, phone = ?, address = ? WHERE customer_id = ?";
+    public boolean updateProfile(int id, String username, String phone, String address, String fullname) {
+        String sql = "UPDATE Customer SET username = ?, phone = ?, address = ?, full_name = ? WHERE customer_id = ?";
 
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, username);
             ps.setString(2, phone);
             ps.setString(3, address);
-            ps.setInt(4, id);
+            ps.setString(4, fullname);
+            ps.setInt(5, id);
 
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
@@ -238,6 +239,18 @@ public class CustomerDAO extends DBContext {
             e.printStackTrace();
         }
     }
+    
+    public void updatePasswordCustomer(String password, int id) {
+        String sql = "UPDATE Customer SET password=? WHERE customer_id =?";
+        try {
+            PreparedStatement st = getConnection().prepareStatement(sql);
+            st.setString(1, password);
+            st.setInt(2, id);
+            st.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) {
         CustomerDAO dao = new CustomerDAO();
@@ -252,8 +265,8 @@ public class CustomerDAO extends DBContext {
         } else {
             System.out.println("ssssssssssssss");
         }
-        boolean check = dao.updateProfile(24, "Đức mẹ", "0987654321", "ấp 3, Phường Phúc Xá, Quận Ba Đình, Thành phố Hà Nội");
-        System.out.println(check);
+//        boolean check = dao.updateProfile(24, "Đức mẹ", "0987654321", "ấp 3, Phường Phúc Xá, Quận Ba Đình, Thành phố Hà Nội", "chaewon");
+//        System.out.println(check);
     }
 
 }
