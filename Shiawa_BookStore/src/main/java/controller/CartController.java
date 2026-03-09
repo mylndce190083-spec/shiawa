@@ -52,6 +52,12 @@ public class CartController extends HttpServlet {
 //            return;
 //        }
 //
+        CustomerDAO customerDAO = new CustomerDAO();
+        Customer customer = customerDAO.getCustomerByAccountId(user.getId());
+        if (customer == null) {
+            response.sendRedirect(request.getContextPath() + "/cart");
+            return;
+        }
         int customerId = user.getId(); //  CHUẨN
 
         // 3. Lấy giỏ hàng
@@ -188,7 +194,7 @@ public class CartController extends HttpServlet {
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
 
-        if (user == null || !"customer".equals(user.getRole())) {
+        if (user == null || !"Customer".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }

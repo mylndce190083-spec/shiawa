@@ -237,8 +237,7 @@ public class BookAdminController extends HttpServlet {
                         String fileName = Paths.get(part.getSubmittedFileName())
                                 .getFileName().toString();
 
-                        String uploadPath = getServletContext()
-                                .getRealPath("/uploads");
+                        String uploadPath = "D:/ShiawaUploads/book";//sua duong dan
 
                         File uploadDir = new File(uploadPath);
                         if (!uploadDir.exists()) {
@@ -249,7 +248,7 @@ public class BookAdminController extends HttpServlet {
 
                         BookImage img = new BookImage();
                         img.setBookId(bookId);
-                        img.setImageUrl("uploads/" + fileName);
+                        img.setImageUrl("book/" + fileName);//sua duong dan
                         img.setPrimary(false);
                         img.setDisplayOrder(0);
 

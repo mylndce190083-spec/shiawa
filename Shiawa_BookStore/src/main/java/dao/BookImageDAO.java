@@ -42,18 +42,15 @@ public class BookImageDAO extends DBContext {
 
     public List<BookImage> getByBookId(int bookId) {
         List<BookImage> list = new ArrayList<>();
-
         String sql = """
         SELECT * FROM BookImages
         WHERE book_id = ? AND is_active = 1
         ORDER BY is_primary DESC, display_order ASC
     """;
-
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setInt(1, bookId);
             ResultSet rs = ps.executeQuery();
-
             while (rs.next()) {
                 BookImage img = new BookImage();
                 img.setImageId(rs.getInt("image_id"));
@@ -62,15 +59,13 @@ public class BookImageDAO extends DBContext {
                 img.setPrimary(rs.getBoolean("is_primary"));
                 img.setDisplayOrder(rs.getInt("display_order"));
                 img.setActive(rs.getBoolean("is_active"));
-
                 list.add(img);
             }
         } catch (Exception e) {
         }
-
         return list;
     }
-
+    
     public boolean setPrimary(int imageId, int bookId) {
         String resetSql = "UPDATE BookImages SET is_primary = 0 WHERE book_id = ?";
         String setSql = "UPDATE BookImages SET is_primary = 1 WHERE image_id = ?";

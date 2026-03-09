@@ -108,7 +108,7 @@ public class BookDAO extends DBContext {
                 int stock = rs.getInt("stock");
                 String publisher = rs.getString("publisher");
                 int discount = rs.getInt("discount");
-                String imgUrl = rs.getString("url_img");
+                String imgUrl = this.getImgURLbyBookId(id);
                 boolean isActive = rs.getBoolean("is_active");
                 LocalDateTime createAte = rs.getTimestamp("created_at").toLocalDateTime();
                 //tao doi tuong product
@@ -132,6 +132,25 @@ public class BookDAO extends DBContext {
             e.printStackTrace();
         }
         return list;
+    }
+    
+    public String getImgURLbyBookId(int bookId) {
+        String url = "";
+        String sql = """
+        SELECT * FROM BookImages
+        WHERE book_id = ? AND is_active = 1
+        ORDER BY is_primary DESC, display_order ASC
+    """;
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, bookId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                url = rs.getString("image_url");
+            }
+        } catch (Exception e) {
+        }
+        return url;
     }
 
     public Book getBookById(int bookId) {
@@ -540,5 +559,12 @@ public class BookDAO extends DBContext {
 
         return list;
     }
-
+    
+    public static void main(String[] args) {
+        BookDAO dao = new BookDAO();
+        List <Book> list = dao.getAllBook();
+        for (Book b : list) {
+            System.out.println(b);
+        }
+    }
 }

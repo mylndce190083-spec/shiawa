@@ -25,9 +25,9 @@
 
                 <c:forEach var="img" items="${bookImages}">
                     <c:if test="${img.primary}">
-                        <img src="${pageContext.request.contextPath}/${img.imageUrl}"
+                        <img src="/uploads/${img.imageUrl}" 
                              class="img-fluid rounded border"
-                             style="max-height: 300px;">
+                             style="max-height: 300px;"> <!--sua duong dan-->
                         <c:set var="primaryFound" value="true"/>
                     </c:if>
                 </c:forEach>
