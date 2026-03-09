@@ -121,44 +121,6 @@ public class BookDAO extends DBContext {
         }
         return list;
     }
-
-//    public Book getBookById(int bookId) {
-//        String sql = """
-//        SELECT *
-//        FROM Book
-//        WHERE book_id = ?
-//    """;
-//
-//        try {
-//            PreparedStatement ps = getConnection().prepareStatement(sql);
-//            ps.setInt(1, bookId);
-//
-//            ResultSet rs = ps.executeQuery();
-//
-//            if (rs.next()) {
-//                CategoryDAO cdao = new CategoryDAO();
-//                Category cate = cdao.getCategoryById(rs.getInt("category_id"));
-//
-//                return new Book(
-//                        rs.getInt("book_id"),
-//                        rs.getString("title"),
-//                        rs.getString("author"),
-//                        rs.getDouble("price"),
-//                        rs.getString("description"),
-//                        cate,
-//                        rs.getInt("stock"),
-//                        rs.getString("publisher"),
-//                        rs.getInt("discount"),
-//                        rs.getString("url_img"),
-//                        rs.getBoolean("is_active"),
-//                        rs.getTimestamp("created_at").toLocalDateTime()
-//                );
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
     public Book getBookById(int bookId) {
         // Sử dụng LEFT JOIN để lấy cột 'name' từ bảng Category và đặt tên thay thế là 'category_name'
         String sql = """

@@ -190,10 +190,7 @@
                                   o.status == 'DELIVERED' ? 'Hoàn thành' :
                                   o.status == 'Cancelled' ? 'Đã hủy' : o.status}
                             </div>
-
                         </div>
-
-
                         <c:forEach var="item" items="${o.items}">
                             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:15px;">
 
@@ -210,40 +207,28 @@
 
                                 </div>
 
-                                <!-- BÊN PHẢI: Giá -->
                                 <div style="display:flex; flex-direction:column; align-items:flex-end; margin-top:50px">
 
-                                    <!-- Đơn giá nhỏ -->
                                     <div style="font-size:13px; color:#888;">
                                         Tổng tiền : ${item.price * item.quantity} VND
                                     </div>
 
-
-
+                                    <c:if test="${o.status == 'DELIVERED'}">
+                                        <a href="${pageContext.request.contextPath}/feedback?order_id=${o.orderId}" 
+                                           style="background: #00a651; color: white; text-decoration: none;
+                                           padding: 6px 15px; border-radius: 8px; cursor: pointer;
+                                           display: inline-block; font-size: 13px; font-weight: 600;
+                                           border: none; transition: all 0.2s; margin-top: 5px;">
+                                            Đánh giá sản phẩm
+                                        </a>
+                                    </c:if>
                                 </div>
-
                             </div>
                         </c:forEach>
-
                         <hr>
-
                         <div style="text-align:right; font-size:18px; font-weight:bold; color:black;">
                             Tổng số tiền( ${o.quantity} sản phẩm): ${o.totalAmount} VND
                         </div>
-
-
-                        <c:if test="${o.status == 'DELIVERED'}">
-                            <div style="text-align:right; margin-top:10px;">
-                                <%-- Nút đánh giá được thiết kế cùng kích thước và kiểu dáng với nút Hủy đơn --%>
-                                <a href="${pageContext.request.contextPath}/feedback?order_id=${o.orderId}" 
-                                   style="background:#4CAF50; color:white; text-decoration:none;
-                                   padding:8px 16px; border-radius:6px; cursor:pointer;
-                                   display:inline-block; font-size: 14px; font-family: Arial, sans-serif;
-                                   border: none; transition: background 0.2s;">
-                                    Đánh giá đơn hàng
-                                </a>
-                            </div>
-                        </c:if>
                         <c:if test="${o.status == 'Pending'}">
                             <form action="${pageContext.request.contextPath}/orderlist" 
                                   method="post" 
