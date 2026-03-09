@@ -41,12 +41,20 @@ public class CartController extends HttpServlet {
             return;
         }
 
-        int customerId = user.getId(); //  CHUẨN
+        CustomerDAO customerDAO = new CustomerDAO();
+        Customer customer = customerDAO.getCustomerByAccountId(user.getId());
 
-        // 3. Lấy giỏ hàng
+        int customerId = customer.getId();
+
+// 3. Lấy giỏ hàng
         CartItemDAO dao = new CartItemDAO();
         List<CartItem> cartItems = dao.getCartByCustomerId(customerId);
+        int totalQuantity = 0;
+        for (CartItem ci : cartItems) {
+            totalQuantity += ci.getQuantity();
+        }
 
+        session.setAttribute("cartSize", totalQuantity);
         request.setAttribute("cartItem", cartItems);
 
         request.getRequestDispatcher("/WEB-INF/home/cart.jsp")

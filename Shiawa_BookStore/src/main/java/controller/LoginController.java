@@ -107,13 +107,14 @@ public class LoginController extends HttpServlet {
                 CartItemDAO cartDAO = new CartItemDAO();
 
                 List<CartItem> cartItems
-                        = cartDAO.getCartByCustomerId(user.getId());
+                        = cartDAO.getCartByCustomerId(customer.getId());
                 // 👈 dùng user.getId() nếu id = customerId
 
                 int totalQuantity = 0;
                 for (CartItem ci : cartItems) {
                     totalQuantity += ci.getQuantity();
                 }
+                
 
                 session.setAttribute("cartSize", totalQuantity);
                 request.setCharacterEncoding("UTF-8");
