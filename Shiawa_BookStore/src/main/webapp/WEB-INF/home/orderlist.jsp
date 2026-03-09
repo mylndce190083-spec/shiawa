@@ -128,6 +128,68 @@
                 text-decoration:none;
                 color:inherit;
             }
+            .order-item{
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                padding:15px;
+                margin-bottom:15px;
+                
+            }
+
+            .book-info{
+                display:flex;
+                align-items:center;
+            }
+
+            .book-img{
+                width:75px;
+                height:100px;
+                object-fit:cover;
+                border-radius:8px;
+                margin-right:15px;
+            }
+
+            .book-title{
+                font-weight:600;
+                font-size:15px;
+                margin-bottom:6px;
+            }
+
+            .book-quantity{
+                font-size:13px;
+                color:#666;
+            }
+
+            .price-area{
+                display:flex;
+                justify-content:flex-end;
+                margin-top: 40px;
+            }
+
+            .item-total{
+                display:flex;
+                align-items:center;
+                gap:12px;
+                font-size:14px;
+            }
+
+            .label{
+                color:#555;
+            }
+
+            .formula{
+                color:#444;
+            }
+
+            .equal{
+                font-weight:bold;
+            }
+
+            .price{
+                color:#e53935;
+                font-weight:600;
+            }
         </style>
     </head>
     <body>
@@ -196,34 +258,46 @@
 
 
                         <c:forEach var="item" items="${o.items}">
-                            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:15px;">
 
-                                <!-- BÊN TRÁI: Ảnh + thông tin -->
-                                <div style="display:flex; align-items:flex-start;">
+                            <div class="order-item">
 
-                                    <img src="${pageContext.request.contextPath}/${item.url_img}"
-                                         style="width:80px; height:105px; object-fit:cover; border-radius:8px; margin-right:15px;"/>
+                                <!-- LEFT -->
+                                <div class="book-info">
 
-                                    <div style="margin-top:22px;">
-                                        <div style="font-weight:500; margin-bottom: 7px">${item.title}</div>
-                                        <div>Số lượng: ${item.quantity}</div>
+                                    <img src="${pageContext.request.contextPath}/${item.url_img}" class="book-img"/>
+
+                                    <div class="book-detail">
+                                        <div class="book-title">${item.title}</div>
+                                        <div class="book-quantity">Số lượng: ${item.quantity}</div>
                                     </div>
 
                                 </div>
 
-                                <!-- BÊN PHẢI: Giá -->
-                                <div style="display:flex; flex-direction:column; align-items:flex-end; margin-top:50px">
+                                <!-- RIGHT -->
+                                <div class="price-area">
 
-                                    <!-- Đơn giá nhỏ -->
-                                    <div style="font-size:13px; color:#888;">
-                                        Tổng tiền :  <fmt:formatNumber value="${item.price * item.quantity}" type="number" groupingUsed="true" maxFractionDigits="0"/> VND
+                                    <div class="item-total">
+                                        <span class="label">Thành tiền:</span>
+
+                                        <span class="formula">
+                                            ${item.quantity} × 
+                                            <fmt:formatNumber value="${item.price}" type="number"
+                                                              groupingUsed="true" maxFractionDigits="0"/>
+                                        </span>
+
+                                        <span class="equal">=</span>
+
+                                        <span class="price">
+                                            <fmt:formatNumber value="${item.price * item.quantity}"
+                                                              type="number" groupingUsed="true"
+                                                              maxFractionDigits="0"/> VND
+                                        </span>
                                     </div>
-
-
 
                                 </div>
 
                             </div>
+
                         </c:forEach>
 
                         <hr>
@@ -248,26 +322,11 @@
                                 </button>
                             </form>
                         </c:if>
-                        <c:if test="${o.status == 'DELIVERED'}">
-                            <form action="${pageContext.request.contextPath}/OrderList" 
-                                  method="post" 
-                                  style="text-align:right; margin-top:10px;"
-                                  onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?');">
 
-                                <input type="hidden" name="action" value="cancel">
-                                <input type="hidden" name="orderId" value="${o.orderId}">
-
-                                <button type="submit" 
-                                        style="background:#ff4d4f; color:white; border:none;
-                                        padding:8px 16px; border-radius:6px; cursor:pointer;">
-                                    Hủy đơn
-                                </button>
-                            </form>
-                        </c:if>
                     </div>
 
                 </c:forEach>
-                    
+
         </div>
     </body>
 </html>
