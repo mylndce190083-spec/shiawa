@@ -63,6 +63,8 @@ public class AccountDAO extends DBContext {
                 u.setUsername(rs.getString("username"));
                 u.setEmail(rs.getString("email"));
                 u.setStatus(rs.getString("status"));
+                u.setFullName(rs.getString("full_name"));
+                u.setPassword(rs.getString("password"));
                 // FIX QUAN TRỌNG
                 u.setRole("Customer");
                 u.setMustChangePassword(rs.getBoolean("must_change_password"));
@@ -88,6 +90,8 @@ public class AccountDAO extends DBContext {
                     u.setRole(rs.getString("name"));//name là role
                     u.setEmail(rs.getString("email"));
                     u.setStatus(rs.getString("status"));
+                    u.setFullName(rs.getString("full_name"));
+                    u.setPassword(rs.getString("password"));
                     u.setMustChangePassword(rs.getBoolean("must_change_password"));
                     return u;
                 }
@@ -410,6 +414,21 @@ public class AccountDAO extends DBContext {
         }
 
         return false;
+    }
+
+    // update profile (Admin only)
+    public void updateProfile(Account acc) {
+        String sql = "UPDATE Staff SET username=?, full_name=?, email=? WHERE staff_id=?";
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setString(1, acc.getUsername());
+            ps.setString(1, acc.getFullName());
+            ps.setString(2, acc.getEmail());
+            ps.setInt(3, acc.getId());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
