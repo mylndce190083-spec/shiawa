@@ -95,4 +95,9 @@ public class OrderItem {
         this.book = book;
     }
 
+    @Override
+    public String toString() {
+        return "OrderItem{" + "orderDetailId=" + orderDetailId + ", orderId=" + orderId + ", bookId=" + bookId + ", title=" + title + ", url_img=" + url_img + ", quantity=" + quantity + ", price=" + price + ", book=" + book + '}';
+    }
+
 }

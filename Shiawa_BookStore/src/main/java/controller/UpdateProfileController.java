@@ -108,7 +108,7 @@ public class UpdateProfileController extends HttpServlet {
             customer.setUsername(username);
             customer.setPhone(phone);
             customer.setAddress(address);
-            customer.setFullName(fullname);
+            customer.setFullname(fullname);
 
             session.setAttribute("customer", customer);
             request.setAttribute("message", "Cập nhật thành công!");

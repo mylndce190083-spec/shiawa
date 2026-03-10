@@ -4,8 +4,7 @@
  */
 package controller;
 
-import dao.BookDAO;
-import dao.CategoryDAO;
+import dao.AccountDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,39 +12,37 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import model.Book;
-import model.Category;
+import jakarta.servlet.http.HttpSession;
+import model.Account;
 
 /**
  *
  * @author BA LIEM
  */
-@WebServlet(name = "HomeController", urlPatterns = {"/home"})
-public class HomeController extends HttpServlet {
+@WebServlet(name = "AdminProfileController", urlPatterns = {"/admin-profile"})
+public class AdminProfileController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    BookDAO dao = new BookDAO();
-    CategoryDAO cdao = new CategoryDAO();
-    String cateIdRaw = request.getParameter("id");
-    List<Book> list;
+        
+        HttpSession session = request.getSession();
+        Account user = (Account) session.getAttribute("user");
 
-    if (cateIdRaw != null && !cateIdRaw.isEmpty()) {
-        int cateId = Integer.parseInt(cateIdRaw);
-        list = dao.getBooksByCategoryId(cateId); 
-    } else {
-        list = dao.getAllBook();
-    }
-    List<Category> clist = cdao.getAllCategory();
-    request.setAttribute("listB", list);
-    request.setAttribute("listC", clist);
-    request.getRequestDispatcher("/WEB-INF/home/home.jsp").forward(request, response);
-    for (Book b : list) {
-            System.out.println(b);
+        // check login + role
+        if (user == null || !"Admin".equalsIgnoreCase(user.getRole())) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
         }
-}
+
+        AccountDAO dao = new AccountDAO();
+        Account admin = dao.getAccountById(user.getId(), user.getRole());
+
+        request.setAttribute("admin", admin);
+        request.getRequestDispatcher("/WEB-INF/profile/admin-profile.jsp")
+                .forward(request, response);
+        
+    }
 
     
     @Override

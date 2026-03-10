@@ -90,11 +90,16 @@ public class OrderListController extends HttpServlet {
             orders = dao.getOrdersByStatus(user.getId(), status);
         }
         for (Orders o : orders) {
-            List<OrderItem> items = detailDAO.getItemsByOrderId(o.getOrderId());
-            System.out.println("OrderID: " + o.getOrderId() + " | Items: " + items.size());
-            o.setItems(items);
+            List<OrderItem> items = detailDAO.getItemsByOrderId(o.getOrderId());            
+            o.setItems(items); //chổ này chưa biết tác dụng nên cmt lại
         }
-
+//test        
+        for (Orders o : orders) {
+            for (OrderItem oi : o.getItems()) {
+            System.out.println("ORDER 11: "+oi);
+            }
+        }
+        
         request.setAttribute(
                 "orders", orders);
         request.setAttribute("currentStatus", status);   // ⭐ THÊM DÒNG NÀY

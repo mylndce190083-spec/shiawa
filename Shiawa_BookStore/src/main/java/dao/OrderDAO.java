@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 package dao;
 
 import db.DBContext;
@@ -22,7 +21,6 @@ import model.OrderDetail;
 import model.OrderItem;
 
 import java.util.ArrayList;
-
 
 /**
  *
@@ -359,14 +357,16 @@ public class OrderDAO extends DBContext {
 
                 // 🔥 LOAD ITEMS CHO TỪNG ORDER
                 String itemSql = """
-            SELECT oi.quantity,
-                   b.book_id,
-                   b.title,
-                   b.url_img,
-                   oi.price
-            FROM OrderDetail oi
-            JOIN Book b ON oi.book_id = b.book_id
-            WHERE oi.order_id = ?
+            SELECT 
+                    oi.quantity,
+                    b.book_id,
+                    b.title,
+                    bi.image_url,
+                    oi.price
+                FROM OrderDetail oi
+                JOIN Book b ON oi.book_id = b.book_id
+                LEFT JOIN BookImages bi ON b.book_id = bi.book_id
+                WHERE oi.order_id = ?
         """;
 
                 PreparedStatement ps2 = con.prepareStatement(itemSql);
@@ -374,18 +374,19 @@ public class OrderDAO extends DBContext {
                 ResultSet rs2 = ps2.executeQuery();
 
                 List<OrderItem> items = new ArrayList<>();
-
+                BookDAO bookDAO = new BookDAO();
                 while (rs2.next()) {
                     Book b = new Book();
                     b.setBookId(rs2.getInt("book_id"));
                     b.setTitle(rs2.getString("title"));
-                    b.setUrlImg(rs2.getString("url_img"));
 
+                    String img = bookDAO.getImgURLbyBookId(rs2.getInt("book_id"));
+                    b.setUrlImg(img);
+                    System.out.println("ORDER IMG = " + img);   // 👈 thêm dòng này
                     OrderItem item = new OrderItem();
                     item.setQuantity(rs2.getInt("quantity"));
                     item.setBook(b);
                     item.setTitle(rs2.getString("title"));
-                    item.setUrl_img(rs2.getString("url_img"));
                     item.setPrice(rs2.getDouble("price"));
 
                     items.add(item);
@@ -602,14 +603,15 @@ public class OrderDAO extends DBContext {
 
                 // 🔥 LOAD ORDER ITEMS
                 String itemSql = """
-                SELECT oi.quantity,
-                       b.book_id,
-                       b.title,
-                       b.url_img,
-                       oi.price
-                FROM OrderDetail oi
-                JOIN Book b ON oi.book_id = b.book_id
-                WHERE oi.order_id = ?
+                 SELECT oi.quantity,
+                           b.book_id,
+                           b.title,
+                           bi.image_url,
+                           oi.price
+                    FROM OrderDetail oi
+                    JOIN Book b ON oi.book_id = b.book_id
+                    LEFT JOIN BookImages bi ON b.book_id = bi.book_id
+                    WHERE oi.order_id = ?
             """;
 
                 PreparedStatement ps2 = con.prepareStatement(itemSql);
@@ -623,14 +625,14 @@ public class OrderDAO extends DBContext {
                     Book b = new Book();
                     b.setBookId(rs2.getInt("book_id"));
                     b.setTitle(rs2.getString("title"));
-                    b.setUrlImg(rs2.getString("url_img"));
+                    b.setUrlImg(rs2.getString("image_url"));
 
                     OrderItem item = new OrderItem();
                     item.setQuantity(rs2.getInt("quantity"));
                     item.setBook(b);
 // 🔥 thêm 2 dòng này
                     item.setTitle(rs2.getString("title"));
-                    item.setUrl_img(rs2.getString("url_img"));
+                    item.setUrl_img(rs2.getString("image_url"));
                     item.setPrice(rs2.getDouble("price"));
                     items.add(item);
                 }
@@ -689,11 +691,11 @@ public class OrderDAO extends DBContext {
 
         return null;
     }
-    
+
     public static void main(String[] args) {
-        OrderDAO dao= new OrderDAO();
+        OrderDAO dao = new OrderDAO();
         List<Orders> list = dao.getAllOrders();
-        for(Orders o : list) {
+        for (Orders o : list) {
             System.out.println(o);
         }
     }

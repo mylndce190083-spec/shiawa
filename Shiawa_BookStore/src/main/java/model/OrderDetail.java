@@ -54,4 +54,10 @@ public class OrderDetail {
     public double getSubtotal() {
         return quantity * price;
     }
+
+    @Override
+    public String toString() {
+        return "OrderDetail{" + "orderDetailId=" + orderDetailId + ", bookTitle=" + bookTitle + ", quantity=" + quantity + ", price=" + price + '}';
+    }
+    
 }

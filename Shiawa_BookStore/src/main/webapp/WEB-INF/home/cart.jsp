@@ -34,6 +34,14 @@
             padding: 3px 6px;
             border-radius: 50px;
         }
+        .book-title-link{
+            text-decoration:none;
+            color:inherit;
+        }
+
+        .book-title-link:hover{
+            color:#e53935;
+        }
     </style>
     <body>
 
@@ -43,7 +51,7 @@
             </div>
             <c:remove var="success" scope="session"/>
         </c:if>
-        
+
         <jsp:include page="/client/layout/header.jsp"/>
 
 
@@ -78,7 +86,7 @@
 
                         <c:forEach var="item" items="${cartItem}">
                             <div id="row-${item.bookId}" class="cart-item">
-
+                               
                                 <input type="checkbox"
                                        class="select-item"
                                        name="selectedItem"
@@ -87,8 +95,15 @@
                                        data-qty="${item.quantity}">
 
                                 <div class="product">
-                                    <img src="${pageContext.request.contextPath}/${item.book.urlImg}">
-                                    <p class="book-title">${item.book.title}</p>
+                                    <a href="${pageContext.request.contextPath}/bookdetail?id=${item.bookId}">
+                                  
+                                       <img src="/uploads/${item.book.urlImg}" >
+                                    </a>
+
+                                    <a href="${pageContext.request.contextPath}/bookdetail?id=${item.bookId}" 
+                                       class="book-title-link">
+                                        <p class="book-title">${item.book.title}</p>
+                                    </a>
                                 </div>
 
                                 <span class="price">$${item.price}</span>
@@ -276,7 +291,7 @@
                             document.getElementById("row-" + bookId).remove();
 
                             updateCartBadge(data.totalCartItems);
-                         
+
                         })
                         .catch(error => console.error("Error:", error));
             }

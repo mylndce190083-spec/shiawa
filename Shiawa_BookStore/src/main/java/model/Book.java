@@ -157,4 +157,11 @@ public class Book {
     public void setImages(List images) {
         this.images = images;
     }
+
+    @Override
+    public String toString() {
+        return "Book{" + "bookId=" + bookId + ", title=" + title + ", author=" + author + ", price=" + price + ", description=" + description + ", category=" + category + ", stock=" + stock + ", publisher=" + publisher + ", discount=" + discount + ", urlImg=" + urlImg + ", isActive=" + isActive + ", createdAt=" + createdAt + ", primaryImage=" + primaryImage + ", images=" + images + '}';
+    }
+    
+    
 }

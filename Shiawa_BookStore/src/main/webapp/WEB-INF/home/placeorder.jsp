@@ -34,12 +34,14 @@
 
             .order-header {
                 display: grid;
-                grid-template-columns: 3.25fr 1fr 1.5fr;
+                grid-template-columns: 3fr 1fr 1fr 1.2fr;
                 font-weight: bold;
                 padding: 12px 0;
                 border-bottom: 2px solid #ddd;
                 align-items: center;
             }
+
+
 
             .order-header span {
                 text-align: center;
@@ -51,7 +53,7 @@
 
             .order-item {
                 display: grid;
-                grid-template-columns: 4fr 1fr 1.5fr;
+                grid-template-columns: 3fr 1fr 1fr 1.2fr;
                 align-items: center;   /* 🔥 CĂN GIỮA THEO CHIỀU DỌC */
                 padding: 15px 0;
                 border-bottom: 1px solid #eee;
@@ -349,8 +351,9 @@
                 <!-- HEADER -->
                 <div class="order-header">
                     <span>Tên sách</span>
-                    <span>Số lượng </span>
-                    <span>Giá </span>
+                    <span>Số lượng</span>
+                    <span>Đơn giá</span>
+                    <span>Thành tiền</span>
                 </div>
                 <c:set var="hasOutOfStock" value="false"/>
 
@@ -366,18 +369,29 @@
                                data-qty="${item.quantity}"/>-->
 
                         <div class="product-info">
-                            <img src="${pageContext.request.contextPath}/${item.book.urlImg}">
+                           <img src="/uploads/${item.book.urlImg}">
                             ${item.book.title}
                         </div>
 
-                        <div>x ${item.quantity}</div>
+                        <div class="qty">
+                            ${item.quantity} x
+                        </div>
 
                         <div class="price">
                             <fmt:formatNumber 
+                                value="${item.price}" 
+                                type="number"
+                                groupingUsed="true"
+                                maxFractionDigits="0"/> đ
+                        </div>
+                        <!-- THÀNH TIỀN -->
+                        <div class="price">
+                           
+                            <fmt:formatNumber 
                                 value="${item.price * item.quantity}" 
-                                type="number" 
-                                groupingUsed="true" 
-                                maxFractionDigits="0" /> đ
+                                type="number"
+                                groupingUsed="true"
+                                maxFractionDigits="0"/> đ
                         </div>
                         <c:if test="${item.book.stock == 0}">
                             <div style="color:red; font-weight:bold;">

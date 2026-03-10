@@ -144,7 +144,7 @@ public class RegisterController extends HttpServlet {
             c.setStatus("inactive");
             c.setVerifyToken(token);
             c.setAvatar("images/avatar/macdinh.jpg");
-            c.setFullName(fullName);
+            c.setFullname(fullName);
             dao.insert(c);
             HttpSession session = request.getSession();
             session.setAttribute("success", "Đăng kí thành công! Vui lòng xác minh email để đăng nhập");

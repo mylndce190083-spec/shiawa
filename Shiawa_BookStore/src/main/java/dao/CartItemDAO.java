@@ -65,9 +65,12 @@ public class CartItemDAO extends DBContext {
     public CartItem findItem(int customerId, int bookId) {
         String sql = """
             SELECT c.cart_item_id, c.quantity, c.price, c.created_at,
-                   b.book_id, b.title, b.url_img
+                   b.book_id, b.title,
+                   bi.image_url
             FROM CartItem c
             JOIN Book b ON c.book_id = b.book_id
+            LEFT JOIN BookImages bi 
+                ON b.book_id = bi.book_id AND bi.is_primary = 1
             WHERE c.customer_id = ? AND c.book_id = ?
         """;
 
@@ -89,7 +92,7 @@ public class CartItemDAO extends DBContext {
                 Book book = new Book();
                 book.setBookId(bookId);
                 book.setTitle(rs.getString("title"));
-                book.setUrlImg(rs.getString("url_img"));
+                book.setUrlImg(rs.getString("image_url"));
 
                 item.setBook(book);
                 return item;
@@ -178,10 +181,12 @@ public class CartItemDAO extends DBContext {
            c.price,
            c.created_at,
            b.title,
-           b.url_img,
+           bi.image_url,
            b.stock
     FROM CartItem c
     JOIN Book b ON c.book_id = b.book_id
+    LEFT JOIN BookImages bi
+           ON b.book_id = bi.book_id AND bi.is_primary = 1
     WHERE c.customer_id = ?
 """;
 
@@ -203,7 +208,7 @@ public class CartItemDAO extends DBContext {
                 Book book = new Book();
                 book.setBookId(bookId);
                 book.setTitle(rs.getString("title"));
-                book.setUrlImg(rs.getString("url_img"));
+                book.setUrlImg(rs.getString("image_url"));
                 book.setStock(stock);
                 // tạo CartItem bằng constructor
                 CartItem item = new CartItem(
