@@ -147,7 +147,7 @@
             <div class="book-card shadow-sm">
                 <div class="row g-4">
                     <div class="col-md-3 text-center">
-                        <img src="${book.urlImg}" class="img-fluid rounded shadow-sm" alt="${book.title}">
+                        <img src="/uploads/${book.urlImg}" class="img-fluid rounded shadow-sm" alt="${book.title}">
                     </div>
 
                     <div class="col-md-9">
@@ -247,7 +247,7 @@
                                style="text-decoration: none; color: inherit;">
 
                                 <div class="book-item shadow-sm">
-                                    <img src="${b.urlImg}" class="img-fluid mb-2" style="height: 150px; object-fit: cover;">
+                                    <img src="/uploads/${b.urlImg}" class="img-fluid mb-2" style="height: 150px; object-fit: cover;">
                                     <p class="mb-1 text-truncate fw-bold">${b.title}</p>
                                     <p class="small text-muted mb-1">${b.category.categoryName}</p>
                                     <p class="text-success fw-bold">$${b.price}</p>

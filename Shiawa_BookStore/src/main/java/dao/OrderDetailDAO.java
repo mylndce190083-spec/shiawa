@@ -44,13 +44,15 @@ public class OrderDetailDAO extends DBContext {
 
     public List<OrderItem> getItemsByOrderId(int orderId) {
         List<OrderItem> list = new ArrayList<>();
+        BookDAO dao = new BookDAO();
 
         String sql = """
         SELECT 
             od.quantity,
             od.price,
             b.title,
-            b.url_img
+            b.url_img,
+            b.book_id
         FROM OrderDetail od
         JOIN Book b ON od.book_id = b.book_id
         WHERE od.order_id = ?
@@ -66,6 +68,7 @@ public class OrderDetailDAO extends DBContext {
                 item.setUrl_img(rs.getString("url_img"));
                 item.setQuantity(rs.getInt("quantity"));
                 item.setPrice(rs.getDouble("price"));
+                item.setBook(dao.getBookById(rs.getInt("book_id")));
 
                 list.add(item);
             }
@@ -75,4 +78,10 @@ public class OrderDetailDAO extends DBContext {
 
         return list;
     }
+    
+//    public static void main(String[] args) {
+//        OrderDetailDAO dao = new OrderDetailDAO();
+//        System.out.println("mmmmmmmmmmmmmmmmmm");
+//        dao.getItemsByOrderId(53);
+//    }
 }

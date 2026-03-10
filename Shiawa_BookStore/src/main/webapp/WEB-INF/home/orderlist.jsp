@@ -134,7 +134,7 @@
                 align-items:center;
                 padding:15px;
                 margin-bottom:15px;
-                
+
             }
 
             .book-info{
@@ -231,7 +231,7 @@
             <c:if test="${empty orders}">
                 <div class="alert alert-info">Không có đơn hàng nào.</div>
             </c:if>
-
+                
             <c:forEach var="o" items="${orders}">
 
                 <a href="${pageContext.request.contextPath}/OrderDetail?id=${o.orderId}"
@@ -256,16 +256,14 @@
 
                         </div>
 
-
+                            
                         <c:forEach var="item" items="${o.items}">
 
                             <div class="order-item">
 
                                 <!-- LEFT -->
                                 <div class="book-info">
-
-                                    <img src="${pageContext.request.contextPath}/${item.url_img}" class="book-img"/>
-
+                                    <img src="/uploads/${item.book.urlImg.replace(' ', '%20')}" class="book-img">
                                     <div class="book-detail">
                                         <div class="book-title">${item.title}</div>
                                         <div class="book-quantity">Số lượng: ${item.quantity}</div>

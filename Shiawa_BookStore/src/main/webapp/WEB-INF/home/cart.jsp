@@ -86,7 +86,7 @@
 
                         <c:forEach var="item" items="${cartItem}">
                             <div id="row-${item.bookId}" class="cart-item">
-
+                               
                                 <input type="checkbox"
                                        class="select-item"
                                        name="selectedItem"
@@ -96,7 +96,8 @@
 
                                 <div class="product">
                                     <a href="${pageContext.request.contextPath}/bookdetail?id=${item.bookId}">
-                                        <img src="${pageContext.request.contextPath}/${item.book.urlImg}">
+                                  
+                                       <img src="/uploads/${item.book.urlImg}" >
                                     </a>
 
                                     <a href="${pageContext.request.contextPath}/bookdetail?id=${item.bookId}" 

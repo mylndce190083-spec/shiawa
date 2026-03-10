@@ -369,7 +369,7 @@
                                data-qty="${item.quantity}"/>-->
 
                         <div class="product-info">
-                            <img src="${pageContext.request.contextPath}/${item.book.urlImg}">
+                           <img src="/uploads/${item.book.urlImg}">
                             ${item.book.title}
                         </div>
 

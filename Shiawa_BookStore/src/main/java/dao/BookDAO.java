@@ -180,7 +180,7 @@ public class BookDAO extends DBContext {
                         rs.getInt("stock"),
                         rs.getString("publisher"),
                         rs.getInt("discount"),
-                        rs.getString("url_img"),
+                       getImgURLbyBookId(rs.getInt("book_id")),
                         rs.getBoolean("is_active"),
                         rs.getTimestamp("created_at").toLocalDateTime()
                 );
@@ -288,7 +288,8 @@ public class BookDAO extends DBContext {
                 b.setBookId(rs.getInt("book_id"));
                 b.setTitle(rs.getString("title"));
                 b.setPrice(rs.getDouble("price"));
-                b.setUrlImg(rs.getString("url_img"));
+                b.setUrlImg(this.getImgURLbyBookId(rs.getInt("book_id")));
+                //b.setUrlImg(rs.getString("url_img"));
 
                 Category c = new Category();
                 c.setCategoryName(rs.getString("category_name"));
