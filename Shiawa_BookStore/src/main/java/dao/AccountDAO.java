@@ -431,6 +431,87 @@ public class AccountDAO extends DBContext {
         }
     }
 
+    public int countAccounts(String role) {
+        int total = 0;
+        String sql = """
+        SELECT COUNT(*) FROM (
+            SELECT customer_id
+            FROM Customer
+            WHERE (? IS NULL OR ? = 'Customer')
+
+            UNION ALL
+
+            SELECT s.staff_id
+            FROM Staff s
+            JOIN Role r ON s.role_id = r.role_id
+            WHERE (? IS NULL OR r.name = ?)
+        ) t
+    """;
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setString(1, role);
+            ps.setString(2, role);
+            ps.setString(3, role);
+            ps.setString(4, role);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                total = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return total;
+    }
+
+    public List<Account> getAccountsByPage(int page, int pageSize, String role) {
+        List<Account> list = new ArrayList<>();
+        int offset = (page - 1) * pageSize;
+
+        String sql = """
+        SELECT * FROM (
+            SELECT customer_id AS id, username, 'Customer' AS role, email, status
+            FROM Customer
+            WHERE (? IS NULL OR ? = 'Customer')
+
+            UNION ALL
+
+            SELECT s.staff_id AS id, s.username, r.name AS role, s.email, s.status
+            FROM Staff s
+            JOIN Role r ON s.role_id = r.role_id
+            WHERE (? IS NULL OR r.name = ?)
+        ) t
+        ORDER BY username
+        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+    """;
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setString(1, role);
+            ps.setString(2, role);
+            ps.setString(3, role);
+            ps.setString(4, role);
+            ps.setInt(5, offset);
+            ps.setInt(6, pageSize);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                list.add(new Account(
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("role"),
+                        rs.getString("email"),
+                        rs.getString("status")
+                ));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
     public static void main(String[] args) {
         AccountDAO dao = new AccountDAO();
         //System.out.println(dao.hashMD5("123456"));

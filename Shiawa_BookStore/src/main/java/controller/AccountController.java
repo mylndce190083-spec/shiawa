@@ -79,16 +79,25 @@ public class AccountController extends HttpServlet {
         }
         request.setAttribute("currentPage", "account");
 
-        String role = request.getParameter("role");
+        String role = request.getParameter("role");;
 
-        List<Account> list;
+        int page = 1;
+        int pageSize = 10;
 
-        if (role != null && !role.isEmpty()) {
-            list = dao.getUsersByRole(role);
-        } else {
-            list = dao.getAllUsers();
+        try {
+            page = Integer.parseInt(request.getParameter("page"));
+        } catch (Exception e) {
         }
 
+        int totalAccounts = dao.countAccounts(role);
+        int totalPage = (int) Math.ceil((double) totalAccounts / pageSize);
+
+        List<Account> list = dao.getAccountsByPage(page, pageSize, role);
+
+        request.setAttribute("accounts", list);
+        request.setAttribute("selectedRole", role);
+        request.setAttribute("currentPageNum", page);
+        request.setAttribute("totalPage", totalPage);
         request.setAttribute("accounts", list);
         request.setAttribute("selectedRole", role);
         //chặn cache

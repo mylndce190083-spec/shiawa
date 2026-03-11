@@ -40,13 +40,27 @@ public class OrderAdminController extends HttpServlet {
         OrderDAO dao = new OrderDAO();
         if (action == null || action.equals("list")) {
 
-            List<Orders> list = dao.getAllOrders();
+            int page = 1;
+            int pageSize = 10;
+
+            String pageParam = request.getParameter("page");
+
+            if (pageParam != null) {
+                page = Integer.parseInt(pageParam);
+            }
+
+            List<Orders> list = dao.getOrdersByPage(page, pageSize);
 
             if (list.isEmpty()) {
                 request.setAttribute("msg", "No orders found.");
             }
 
+            int totalOrders = dao.getTotalOrders();
+            int totalPage = (int) Math.ceil((double) totalOrders / pageSize);
+
             request.setAttribute("orderList", list);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPage", totalPage);
             request.getRequestDispatcher("/WEB-INF/order/list.jsp")
                     .forward(request, response);
         } else if ("detail".equals(action)) {

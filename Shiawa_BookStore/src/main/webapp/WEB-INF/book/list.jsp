@@ -133,6 +133,33 @@
                         </tbody>
 
                     </table>
+                    <div class="d-flex justify-content-center mt-4">
+
+                        <!-- Previous -->
+                        <c:if test="${currentPageNum > 1}">
+                            <a class="btn btn-sm btn-outline-secondary me-2"
+                               href="book-admin?page=${currentPageNum-1}&keyword=${keyword}&categoryId=${selectedCategoryId}">
+                                <<
+                            </a>
+                        </c:if>
+
+                        <!-- Page number -->
+                        <c:forEach begin="1" end="${totalPage}" var="i">
+                            <a class="btn btn-sm ${i == currentPageNum ? 'btn-primary' : 'btn-outline-primary'} me-1"
+                               href="book-admin?page=${i}&keyword=${keyword}&categoryId=${selectedCategoryId}">
+                                ${i}
+                            </a>
+                        </c:forEach>
+
+                        <!-- Next -->
+                        <c:if test="${currentPageNum < totalPage}">
+                            <a class="btn btn-sm btn-outline-secondary ms-2"
+                               href="book-admin?page=${currentPageNum+1}&keyword=${keyword}&categoryId=${selectedCategoryId}">
+                                >>
+                            </a>
+                        </c:if>
+
+                    </div>
                 </c:otherwise>
             </c:choose>
         </div>
