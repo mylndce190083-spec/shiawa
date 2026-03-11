@@ -47,7 +47,7 @@ public class BookAdminController extends HttpServlet {
         Account user = (Account) session.getAttribute("user");
 
         // 1. Check đăng nhập + role
-        if (user == null || !"admin".equalsIgnoreCase(user.getRole())) {
+        if (user == null || !"Admin".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
