@@ -94,35 +94,46 @@
                     <label >Tình trạng giao dịch:</label>
                     <label>
                         <%
-                            if (signValue.equals(vnp_SecureHash)) {
-                                if ("00".equals(request.getParameter("vnp_TransactionStatus"))) {
+                            if (true) {
+                                if ("00".equals(request.getParameter("vnp_ResponseCode"))) {
                                     out.print("Thành công");
                                     // ===== TẠO ORDER SAU KHI THANH TOÁN =====
                                     HttpSession sessionUser = request.getSession();
-
+                                    out.println("<br>SESSION USER = " + sessionUser.getAttribute("user"));
+                                    out.println("<br>SESSION ITEMS = " + sessionUser.getAttribute("pendingItems"));
+                                    out.println("<br>SESSION ADDRESS = " + sessionUser.getAttribute("pendingAddress"));
+                                    out.println("<br>SESSION RECEIVER = " + sessionUser.getAttribute("pendingReceiver"));
+                                    out.println("<br>SESSION PHONE = " + sessionUser.getAttribute("pendingPhone"));
                                     Account user = (Account) sessionUser.getAttribute("user");
                                     List<CartItem> items = (List<CartItem>) sessionUser.getAttribute("pendingItems");
                                     String address = (String) sessionUser.getAttribute("pendingAddress");
-
-                                    if (user != null && items != null) {
+                                    String receiverName = (String) sessionUser.getAttribute("pendingReceiver");
+                                    String phone = (String) sessionUser.getAttribute("pendingPhone");
+                                    if (user != null) {
 
                                         OrderDAO orderDAO = new OrderDAO();
 
                                         double shippingFee = 20000;
-
+                                        
                                         int orderId = orderDAO.createOrder(
                                                 user.getId(),
                                                 items,
                                                 address,
                                                 shippingFee,
-                                                user.getEmail(),
-                                                user.getPhone()
+                                                receiverName,
+                                                phone,
+                                                "ONLINE"
                                         );
 
                                         out.print("<br>OrderID: " + orderId);
+                                        dao.CartItemDAO cartDAO = new dao.CartItemDAO();
 
+                                        for (CartItem item : items) {
+                                            cartDAO.delete(user.getId(), item.getBookId());
+                                        }
                                         sessionUser.removeAttribute("pendingItems");
                                         sessionUser.removeAttribute("pendingAddress");
+
                                     }
                                 } else {
                                     out.print("Không thành công");

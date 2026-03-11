@@ -59,7 +59,8 @@ public class OrderDAO extends DBContext {
                 COALESCE(SUM(od.quantity * od.price), 0) AS total_amount,
                 o.discount,
                 o.shipping_fee,
-                v.name AS voucher_name
+                v.name AS voucher_name,
+              o.payment_method
             FROM Orders o
             LEFT JOIN Customer c ON o.customer_id = c.customer_id
             LEFT JOIN OrderDetail od ON o.order_id = od.order_id
@@ -88,6 +89,7 @@ public class OrderDAO extends DBContext {
                 o.setDiscount((int) rs.getDouble("discount"));
                 o.setShippingFee(rs.getDouble("shipping_fee"));
                 o.setVoucherName(rs.getString("voucher_name"));
+                o.setPaymentMethod(rs.getString("payment_method"));
                 list.add(o);
             }
 
@@ -194,14 +196,15 @@ public class OrderDAO extends DBContext {
             String shippingAddress,
             double shippingFee,
             String receiverName,
-            String phone
+            String phone,
+            String paymentMethod
     ) throws Exception {
 
         String sql = """
         INSERT INTO Orders
         (customer_id, staff_id, order_date, status,
-         discount, shipping_address, shipping_fee,receiver_name,phone)
-        VALUES (?, ?, GETDATE(), ?, ?, ?, ?,?,?)                   
+         discount, shipping_address, shipping_fee,receiver_name,phone,payment_method)
+        VALUES (?, ?, GETDATE(), ?, ?, ?, ?,?,?,?)                   
     """;
 
         try (PreparedStatement ps
@@ -215,6 +218,7 @@ public class OrderDAO extends DBContext {
             ps.setDouble(6, shippingFee);
             ps.setString(7, receiverName);
             ps.setString(8, phone);
+            ps.setString(9, paymentMethod);
             ps.executeUpdate();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -232,7 +236,9 @@ public class OrderDAO extends DBContext {
             String shippingAddress,
             double shippingFee,
             String receiverName,
-            String phone) throws Exception {
+            String phone,
+            String paymentMethod
+    ) throws Exception {
         Connection con = getConnection();
 
         if (con == null) {
@@ -244,7 +250,7 @@ public class OrderDAO extends DBContext {
 
             // 1️⃣ Insert order trước
             int orderId = insertOrder(con, customerId,
-                    shippingAddress, shippingFee, receiverName, phone);
+                    shippingAddress, shippingFee, receiverName, phone, paymentMethod);
 
             BookDAO bookDAO = new BookDAO();
             OrderDetailDAO detailDAO = new OrderDetailDAO();
@@ -669,7 +675,7 @@ public class OrderDAO extends DBContext {
     }
 
     public Orders getLastOrderByUserId(int userId) {
-         String sql = "SELECT TOP 1 * FROM Orders WHERE customer_id = ? ORDER BY order_id DESC";
+        String sql = "SELECT TOP 1 * FROM Orders WHERE customer_id = ? ORDER BY order_id DESC";
 
         try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
