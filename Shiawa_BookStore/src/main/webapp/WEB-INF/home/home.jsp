@@ -316,7 +316,7 @@
             <c:forEach items="${listB}" var="b">
                 <div class="book" data-category="${b.category.categoryName}" data-name="${b.title}" data-price="${b.price}">
                     <a href="${pageContext.request.contextPath}/bookdetail?id=${b.bookId}" style="text-decoration: none; color: inherit;">
-                        <img src="/uploads/${b.urlImg}">
+                        <img src="${pageContext.request.contextPath}/image?file=${b.urlImg}">
                         <p class="title">${b.title}</p>
                     </a>
                     <div class="price">

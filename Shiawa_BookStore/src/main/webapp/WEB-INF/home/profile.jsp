@@ -18,7 +18,7 @@
             <!-- Sidebar -->
             <div class="profile-sidebar">
                 <div class="avatar-box">
-                    <img src="/uploads/${customer.avatar}" 
+                    <img src="${pageContext.request.contextPath}/image?file=${customer.avatar}" 
                          alt="Avatar"
                          class="avatar-img">
                     <h3>${customer.username}</h3>

@@ -114,7 +114,16 @@ public class UpdateAvatarController extends HttpServlet {
         }
 
         // ===== lưu file
-        String uploadPath = "D:/ShiawaUploads/avatar";
+//        String uploadPath = "D:/ShiawaUploads/avatar";
+        String webappPath = getServletContext().getRealPath("/");
+        File webappDir = new File(webappPath);
+
+// đi lên 2 cấp
+        File projectRoot = webappDir.getParentFile().getParentFile();
+        String uploadPath = projectRoot.getAbsolutePath()
+                + File.separator + "ShiawaUploads"
+                + File.separator + "avatar";
+
         File uploadDir = new File(uploadPath);
         if (!uploadDir.exists()) {
             uploadDir.mkdirs();
@@ -136,6 +145,7 @@ public class UpdateAvatarController extends HttpServlet {
 
         customer.setAvatar(avatarPath);
         session.setAttribute("customer", customer);
+        System.out.println("Upload path: " + uploadPath);
 
         response.sendRedirect("profile");
     }

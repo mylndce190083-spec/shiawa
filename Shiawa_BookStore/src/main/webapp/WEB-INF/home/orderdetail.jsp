@@ -167,7 +167,7 @@
                     <div class="product-card">
 
                         <div class="product-left">
-                            <img src="/uploads/${item.url_img}" />
+                            <img src="${pageContext.request.contextPath}/image?file=${item.url_img}" />
 
                             <div class="product-info">
                                 <div class="product-title">

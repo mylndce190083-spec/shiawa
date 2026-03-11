@@ -263,7 +263,7 @@
 
                                 <!-- LEFT -->
                                 <div class="book-info">
-                                    <img src="/uploads/${item.book.urlImg.replace(' ', '%20')}" class="book-img">
+                                    <img src="${pageContext.request.contextPath}/image?file=${item.book.urlImg.replace(' ', '%20')}" class="book-img">
                                     <div class="book-detail">
                                         <div class="book-title">${item.title}</div>
                                         <div class="book-quantity">Số lượng: ${item.quantity}</div>
