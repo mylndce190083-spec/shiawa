@@ -168,6 +168,26 @@
             <c:if test="${empty orders}">
                 <div class="alert alert-info">Không có đơn hàng nào.</div>
             </c:if>
+            <%
+                java.util.Enumeration<String> attrs = request.getAttributeNames();
+
+                while (attrs.hasMoreElements()) {
+                    String name = attrs.nextElement();
+                    Object value = request.getAttribute(name);
+
+                    out.println("<h3>Attribute: " + name + "</h3>");
+
+                    if (value instanceof java.util.List) {
+                        java.util.List list = (java.util.List) value;
+
+                        for (Object item : list) {
+                            out.println(item + "<br>");
+                        }
+                    } else {
+                        out.println(value + "<br>");
+                    }
+                }
+            %>
 
             <c:forEach var="o" items="${orders}">
 
@@ -213,15 +233,47 @@
                                         Tổng tiền : ${item.price * item.quantity} VND
                                     </div>
 
+
+
+
+                                    <c:if test="${o.status == 'DELIVERED'}">
+                                        <%-- Giả sử bạn đã xử lý việc check feedback ở Servlet và gán vào item --%>
+                                        <%-- Nếu chưa, đây là logic hiển thị: --%>
+                                        <c:if test="${item.isRated == 'unrated'}">     
+                                            <a href="${pageContext.request.contextPath}/feedback?book_id=${item.book.bookId}&order_detail_id=${item.orderDetailId}" 
+                                               style="background: ${item.isRated ? '#888' : '#00a651'};
+                                               color: white; text-decoration: none; padding: 6px 15px;
+                                               border-radius: 8px; display: inline-block; font-size: 13px; font-weight: 600;">
+                                               Đánh giá sản phẩm
+                                            </a>
+                                        </c:if>
+                                        <c:if test="${item.isRated == 'rated'}">     
+                                            <a href="${pageContext.request.contextPath}/feedback?book_id=${item.book.bookId}&order_detail_id=${item.orderDetailId}" 
+                                               style="background: ${item.isRated ? '#888' : '#00a651'};
+                                               color: white; text-decoration: none; padding: 6px 15px;
+                                               border-radius: 8px; display: inline-block; font-size: 13px; font-weight: 600;">
+                                               Đã đánh giá sản phẩm
+                                            </a>
+                                        </c:if>
+                                        
+                                    </c:if>
+
+
+                                    <!--
                                     <c:if test="${o.status == 'DELIVERED'}">
                                         <a href="${pageContext.request.contextPath}/feedback?order_id=${o.orderId}" 
-                                           style="background: #00a651; color: white; text-decoration: none;
-                                           padding: 6px 15px; border-radius: 8px; cursor: pointer;
-                                           display: inline-block; font-size: 13px; font-weight: 600;
-                                           border: none; transition: all 0.2s; margin-top: 5px;">
-                                            Đánh giá sản phẩm
-                                        </a>
+                                           style="background: ${item.isRated ? '#888' : '#00a651'};
+                                           color: white;
+                                           text-decoration: none;
+                                           padding: 6px 15px;
+                                           border-radius: 8px;
+                                           display: inline-block;
+                                           font-size: 13px;
+                                           font-weight: 600;">
+                                        ${item.isRated ? "Đã đánh giá" : "Đánh giá sản phẩm"}
+                                    </a>
                                     </c:if>
+                                    -->
                                 </div>
                             </div>
                         </c:forEach>

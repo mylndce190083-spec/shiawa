@@ -152,17 +152,37 @@
         </style>
     </head>
     <body>
-
+        
         <div class="feedback-card">
             <div class="feedback-header">
                 <i class="bi bi-chat-left-heart-fill"></i> ĐÁNH GIÁ SẢN PHẨM
             </div>
+            <%
+    java.util.Enumeration<String> attrs = request.getAttributeNames();
+
+    while(attrs.hasMoreElements()) {
+        String name = attrs.nextElement();
+        Object value = request.getAttribute(name);
+
+        out.println("<h3>Attribute: " + name + "</h3>");
+
+        if(value instanceof java.util.List){
+            java.util.List list = (java.util.List) value;
+
+            for(Object item : list){
+                out.println(item + "<br>");
+            }
+        }else{
+            out.println(value + "<br>");
+        }
+    }
+%>
 
             <div class="product-info-section">
                 <img src="${pageContext.request.contextPath}/${book.urlImg}" alt="${book.title}">
                 <div class="book-detail-text">
                     <h6>${book.title}</h6>
-                    <small class="text-secondary">Số lượng: x1</small>
+                    <small class="text-secondary">Số lượng: </small>
                     <div class="fw-bold text-success mt-1">${book.price} đ</div>
                 </div>
             </div>
@@ -170,6 +190,9 @@
             <form action="feedback" method="post" class="form-content">
                 <input type="hidden" name="book_id" value="${book.bookId}">
                 <input type="hidden" name="order_id" value="${param.order_id}">
+                <input type="hidden" name="isRated" value="${item.isRated}">
+                <input type="hidden" name="orderDetailId" value="${item.orderDetailId}">
+                
 
                 <p class="text-center fw-bold text-secondary mb-2">Bạn thấy sản phẩm này thế nào?</p>
                 <div class="rating-wrapper">

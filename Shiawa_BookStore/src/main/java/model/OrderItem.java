@@ -16,11 +16,12 @@ public class OrderItem {
     private String url_img;
     private int quantity;
     private double price;
+    private String isRated;
   private Book book;
     public OrderItem() {
     }
 
-    public OrderItem(int orderDetailId, int orderId, int bookId, String title, String url_img, int quantity, double price, Book book) {
+    public OrderItem(int orderDetailId, int orderId, int bookId, String title, String url_img, int quantity, double price, String isRated, Book book) {
         this.orderDetailId = orderDetailId;
         this.orderId = orderId;
         this.bookId = bookId;
@@ -28,8 +29,18 @@ public class OrderItem {
         this.url_img = url_img;
         this.quantity = quantity;
         this.price = price;
+        this.isRated = isRated;
         this.book = book;
     }
+
+    public String getIsRated() {
+        return isRated;
+    }
+
+    public void setIsRated(String isRated) {
+        this.isRated = isRated;
+    }
+
 
     public int getOrderDetailId() {
         return orderDetailId;
@@ -93,5 +104,11 @@ public class OrderItem {
     public void setBook(Book book) {
         this.book = book;
     }
+
+    @Override
+    public String toString() {
+        return "OrderItem{" + "orderDetailId=" + orderDetailId + ", orderId=" + orderId + ", bookId=" + bookId + ", title=" + title + ", url_img=" + url_img + ", quantity=" + quantity + ", price=" + price + ", isRated=" + isRated + ", book=" + book + '}';
+    }
+    
 
 }

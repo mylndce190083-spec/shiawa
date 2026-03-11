@@ -184,46 +184,6 @@
                             <i class="bi bi-check-circle-fill"></i>
                             ${book.stock} sản phẩm có sẵn
                         </div>
-
-
-
-<!--                        <form action="${pageContext.request.contextPath}/cart" method="post">
-                            <input type="hidden" name="book_id" value="${book.bookId}">
-                            <input type="hidden" name="action" value="add">
-
-                            <div class="d-flex gap-3">
-                                <button type="button" class="btn btn-buy px-5 py-2 fw-bold">
-                                    <i class="bi bi-lightning-fill"></i> Mua ngay
-                                </button>
-                                
-
-                                <button type="submit" class="btn btn-cart px-4 py-2 fw-bold">
-                                    <i class="bi bi-cart-plus"></i> Thêm vào giỏ
-                                </button>
-                            </div>
-                        </form>-->
-
-                        <!--                        <div class="d-flex gap-3">
-                                                    <form action="${pageContext.request.contextPath}/cart" method="post">
-                                                        <input type="hidden" name="book_id" value="${book.bookId}">
-                                                        <input type="hidden" name="action" value="buy_now"> 
-                        
-                                                        <div class="d-flex gap-3">
-                                                            <button type="submit" class="btn btn-buy px-5 py-2 fw-bold">
-                                                                <i class="bi bi-lightning-fill"></i> Mua ngay
-                                                            </button>
-                                                        </div>
-                                                    </form>
-                        
-                                                    <form action="${pageContext.request.contextPath}/cart" method="post">
-                                                        <input type="hidden" name="book_id" value="${book.bookId}">
-                                                        <input type="hidden" name="action" value="add">
-                                                        <button type="submit" class="btn btn-cart px-4 py-2 fw-bold">
-                                                            <i class="bi bi-cart-plus"></i> Thêm vào giỏ
-                                                        </button>
-                                                    </form>
-                                                </div>-->
-
                         <form action="${pageContext.request.contextPath}/cart" method="post">
                             <input type="hidden" name="book_id" value="${book.bookId}">
                             <input type="hidden" name="action" value="add">
@@ -248,25 +208,30 @@
                 <p class="text-secondary">${book.description}</p>
             </div>
         </div>
-        <div class="container mt-5">
-            <h4 class="fw-bold mb-4">Đánh giá từ khách hàng</h4>
-            <c:forEach items="${feedbackList}" var="fb">
-                <div class="card mb-3 border-0 shadow-sm bg-light">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="fw-bold">User ID: ${fb.userId}</span>
-                            <span class="text-warning">
-                                <c:forEach begin="1" end="${fb.rating}">★</c:forEach>
-                                </span>
-                            </div>
-                            <p class="mt-2 mb-0">${fb.content}</p>
-                    </div>
-                </div>
-            </c:forEach>
+       
+            <div class="mt-5">
+                <h4 class="mb-4">Đánh giá từ khách hàng</h4>
 
-            <c:if test="${empty feedbackList}">
-                <p class="text-muted italic">Sách này chưa có đánh giá nào. Hãy là người đầu tiên!</p>
-            </c:if>
+                <c:if test="${empty feedbackList}">
+                    <p class="text-muted">Chưa có đánh giá nào cho cuốn sách này.</p>
+                </c:if>
+
+                <c:forEach items="${feedbackList}" var="fb">
+                    <div class="card mb-3 border-0 border-bottom">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="text-warning me-2">
+                                    <c:forEach begin="1" end="${fb.rating}">★</c:forEach>
+                                    </div>
+                                    <small class="text-muted">| Người dùng: ${fb.username}</small>
+                            </div>
+                            <p class="card-text">${fb.content}</p>
+                        </div>
+                    </div>
+                </c:forEach>
+            </div>
+
+
         </div>
 
         <div class="mt-5">
