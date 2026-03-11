@@ -369,7 +369,7 @@
                                data-qty="${item.quantity}"/>-->
 
                         <div class="product-info">
-                           <img src="/uploads/${item.book.urlImg}">
+                            <img src="/uploads/${item.book.urlImg}">
                             ${item.book.title}
                         </div>
 
@@ -386,7 +386,7 @@
                         </div>
                         <!-- THÀNH TIỀN -->
                         <div class="price">
-                           
+
                             <fmt:formatNumber 
                                 value="${item.price * item.quantity}" 
                                 type="number"
@@ -411,7 +411,7 @@
             <!-- RIGHT -->
             <div class="box">
 
-                <form action="${pageContext.request.contextPath}/checkout" method="post">
+                <form id="checkoutForm" action="${pageContext.request.contextPath}/checkout" method="post">
                     <h3>📍 ĐỊA CHỈ NHẬN HÀNG</h3>
                     <div class="address-box" id="viewAddress">
                         <input type="hidden" name="isEditAddress" value="false" id="isEditAddress">
@@ -551,8 +551,10 @@
                         <select name="paymentMethod" id="paymentMethod" required>
                             <option value="">Chọn phương thức</option>
                             <option value="COD">Thanh toán khi nhận hàng</option>
-                            <option value="ONLINE">Thanh toán online</option>
+                            <option value="ONLINE">Thanh toán online (VNPAY)</option>
                         </select>
+
+
                     </div>
 
                     <div class="summary-row total">
@@ -701,6 +703,33 @@
             }
 
             window.onload = calculateSummary;
+
+            document.getElementById("checkoutForm").addEventListener("submit", function (e) {
+
+                const paymentMethod = document.getElementById("paymentMethod").value;
+
+                if (paymentMethod === "ONLINE") {
+
+                    e.preventDefault(); // chặn submit form
+
+                    let totalText = document.getElementById("total").innerText;
+                    let amount = totalText.replace(/\D/g, "");
+
+                    fetch("ajaxServlet", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body: "amount=" + amount
+                    })
+                            .then(res => res.json())
+                            .then(data => {
+                                window.location.href = data.data;
+                            });
+
+                }
+
+            });
             function showEditForm() {
                 document.getElementById("viewAddress").style.display = "none";
                 document.getElementById("editForm").style.display = "block";

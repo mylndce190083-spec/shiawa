@@ -222,8 +222,8 @@
                     Hoàn thành
                 </a>
 
-                <a href="${pageContext.request.contextPath}/OrderList/cancelled"
-                   class="tab-link ${currentStatus == 'CANCELLED' ? 'active' : ''}">
+                <a href="${pageContext.request.contextPath}/OrderList/failed"
+                   class="tab-link ${currentStatus == 'FAILED' ? 'active' : ''}">
                     Đã hủy
                 </a>
             </div>
@@ -251,7 +251,7 @@
                                 ${o.status == 'PENDING' ? 'Chờ xác nhận' :
                                   o.status == 'SHIPPING' ? 'Đang giao' :
                                   o.status == 'DELIVERED' ? 'Hoàn thành' :
-                                  o.status == 'CANCELLED' ? 'Đã hủy' : o.status}
+                                  o.status == 'FAILED' ? 'Đã hủy' : o.status}
                             </div>
 
                         </div>

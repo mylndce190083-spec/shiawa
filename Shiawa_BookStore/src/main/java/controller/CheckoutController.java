@@ -263,7 +263,9 @@ public class CheckoutController extends HttpServlet {
                 String phone = request.getParameter("phone");
                 String receiverName = request.getParameter("receiverName");
                 String isEditAddress = request.getParameter("isEditAddress");
-
+// ===== PAYMENT METHOD =====
+                String paymentMethod = request.getParameter("paymentMethod");
+                System.out.println("Payment Method: " + paymentMethod);
                 String phoneRegex = "^(03|05|07|08|09)[0-9]{8}$";
                 String addressDetailRegex = "^.{3,100}$";
 
@@ -338,14 +340,14 @@ public class CheckoutController extends HttpServlet {
                 // =====================================================
                 double shippingFee = 20000;
 
-                int orderId = orderDAO.createOrder(
-                        user.getId(),
-                        selectedItems,
-                        shippingAddress,
-                        shippingFee,
-                        receiverName,
-                        phone
-                );
+//                int orderId = orderDAO.createOrder(
+//                        user.getId(),
+//                        selectedItems,
+//                        shippingAddress,
+//                        shippingFee,
+//                        receiverName,
+//                        phone
+//                );
 
                 // =====================================================
                 // LƯU SESSION (chỉ khi có chỉnh sửa địa chỉ)
@@ -368,11 +370,35 @@ public class CheckoutController extends HttpServlet {
                 }
 
                 request.setAttribute("selectedItems", selectedItems);
-                request.setAttribute("orderId", orderId);
+//                request.setAttribute("orderId", orderId);
 
-                request.getRequestDispatcher("/WEB-INF/home/order-success.jsp")
-                        .forward(request, response);
+                // =====================================================
+// PAYMENT FLOW
+// =====================================================
+                
+                if ("COD".equals(paymentMethod)) {
 
+                    int orderId = orderDAO.createOrder(
+                            user.getId(),
+                            selectedItems,
+                            shippingAddress,
+                            shippingFee,
+                            receiverName,
+                            phone
+                    );
+
+                    request.setAttribute("orderId", orderId);
+
+                    request.getRequestDispatcher("/WEB-INF/home/order-success.jsp")
+                            .forward(request, response);
+
+                } else if ("ONLINE".equals(paymentMethod)) {
+
+                    session.setAttribute("pendingItems", selectedItems);
+                    session.setAttribute("pendingAddress", shippingAddress);
+
+                    response.sendRedirect("ajaxServlet?amount=" + (int) total);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 request.setAttribute("orderItems", fullCart);

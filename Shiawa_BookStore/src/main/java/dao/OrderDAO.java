@@ -530,7 +530,7 @@ public class OrderDAO extends DBContext {
                     // 4️⃣ Update status
                     String updateOrder = """
                     UPDATE Orders
-                    SET status = 'CANCELLED'
+                    SET status = 'FAILED'
                     WHERE order_id = ?
                 """;
 
@@ -669,7 +669,7 @@ public class OrderDAO extends DBContext {
     }
 
     public Orders getLastOrderByUserId(int userId) {
-        String sql = "SELECT TOP 1 * FROM Orders WHERE user_id = ? ORDER BY id DESC";
+         String sql = "SELECT TOP 1 * FROM Orders WHERE customer_id = ? ORDER BY order_id DESC";
 
         try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -678,7 +678,7 @@ public class OrderDAO extends DBContext {
 
             if (rs.next()) {
                 Orders o = new Orders();
-                o.setOrderId(rs.getInt("id"));
+                o.setOrderId(rs.getInt("order_id"));
                 o.setReceiverName(rs.getString("receiver_name"));
                 o.setPhone(rs.getString("phone"));
                 o.setShippingAddress(rs.getString("shipping_address"));
