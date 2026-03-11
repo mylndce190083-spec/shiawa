@@ -99,7 +99,9 @@ public class ajaxServlet extends HttpServlet {
 
             if (fieldValue != null && fieldValue.length() > 0) {
 
-                hashData.append(fieldName).append('=').append(fieldValue);
+                hashData.append(fieldName);
+                hashData.append('=');
+                hashData.append(URLEncoder.encode(fieldValue, "UTF-8"));
 
                 query.append(URLEncoder.encode(fieldName, StandardCharsets.UTF_8.toString()));
                 query.append('=');
