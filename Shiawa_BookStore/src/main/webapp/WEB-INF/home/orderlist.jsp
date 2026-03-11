@@ -222,8 +222,8 @@
                     Hoàn thành
                 </a>
 
-                <a href="${pageContext.request.contextPath}/OrderList/cancelled"
-                   class="tab-link ${currentStatus == 'CANCELLED' ? 'active' : ''}">
+                <a href="${pageContext.request.contextPath}/OrderList/failed"
+                   class="tab-link ${currentStatus == 'FAILED' ? 'active' : ''}">
                     Đã hủy
                 </a>
             </div>
@@ -251,7 +251,7 @@
                                 ${o.status == 'PENDING' ? 'Chờ xác nhận' :
                                   o.status == 'SHIPPING' ? 'Đang giao' :
                                   o.status == 'DELIVERED' ? 'Hoàn thành' :
-                                  o.status == 'CANCELLED' ? 'Đã hủy' : o.status}
+                                  o.status == 'FAILED' ? 'Đã hủy' : o.status}
                             </div>
 
                         </div>
@@ -263,7 +263,7 @@
 
                                 <!-- LEFT -->
                                 <div class="book-info">
-                                    <img src="/uploads/${item.book.urlImg.replace(' ', '%20')}" class="book-img">
+                                    <img src="${pageContext.request.contextPath}/image?file=${item.book.urlImg.replace(' ', '%20')}" class="book-img">
                                     <div class="book-detail">
                                         <div class="book-title">${item.title}</div>
                                         <div class="book-quantity">Số lượng: ${item.quantity}</div>

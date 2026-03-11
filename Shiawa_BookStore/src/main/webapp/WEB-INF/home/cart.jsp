@@ -97,7 +97,7 @@
                                 <div class="product">
                                     <a href="${pageContext.request.contextPath}/bookdetail?id=${item.bookId}">
                                   
-                                       <img src="/uploads/${item.book.urlImg}" >
+                                       <img src="${pageContext.request.contextPath}/image?file=${item.book.urlImg}" >
                                     </a>
 
                                     <a href="${pageContext.request.contextPath}/bookdetail?id=${item.bookId}" 

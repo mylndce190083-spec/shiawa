@@ -237,7 +237,16 @@ public class BookAdminController extends HttpServlet {
                         String fileName = Paths.get(part.getSubmittedFileName())
                                 .getFileName().toString();
 
-                        String uploadPath = "D:/ShiawaUploads/book";//sua duong dan
+//                        String uploadPath = "D:/ShiawaUploads/book";//sua duong dan
+//uploadpath
+                        String webappPath = getServletContext().getRealPath("/");
+                        File webappDir = new File(webappPath);
+
+// đi lên 2 cấp
+                        File projectRoot = webappDir.getParentFile().getParentFile();
+                        String uploadPath = projectRoot.getAbsolutePath()
+                                + File.separator + "ShiawaUploads"
+                                + File.separator + "book";
 
                         File uploadDir = new File(uploadPath);
                         if (!uploadDir.exists()) {

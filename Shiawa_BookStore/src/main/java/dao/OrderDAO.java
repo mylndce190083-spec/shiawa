@@ -530,7 +530,7 @@ public class OrderDAO extends DBContext {
                     // 4️⃣ Update status
                     String updateOrder = """
                     UPDATE Orders
-                    SET status = 'CANCELLED'
+                    SET status = 'FAILED'
                     WHERE order_id = ?
                 """;
 

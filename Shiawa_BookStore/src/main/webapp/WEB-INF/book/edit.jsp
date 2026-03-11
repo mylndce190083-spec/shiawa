@@ -45,7 +45,7 @@
                         <c:if test="${not empty img.imageUrl}">
                             <div class="border rounded p-2 mb-3 text-center">
 
-                                <img src="${pageContext.request.contextPath}/${img.imageUrl}"
+                                <img src="${pageContext.request.contextPath}/image?file=${img.imageUrl}"
                                      class="img-fluid rounded mb-2"
                                      style="max-height:150px"
                                      onerror="this.src='assets/img/no-image.png'">
