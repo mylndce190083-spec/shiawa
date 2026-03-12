@@ -120,3 +120,16 @@ body {
 	text-align: center;
 	text-decoration: none;
 }
+.btn-home {
+                background: #007bff;
+                color: white;
+            }
+
+            .btn-order {
+                background: #28a745;
+                color: white;
+            }
+
+            .btn:hover {
+                opacity: 0.85;
+            }
