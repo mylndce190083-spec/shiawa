@@ -41,7 +41,7 @@
                 </c:if>
                 <div class="form-group">
                     <label>Username</label>
-                    <input type="text" value="${sessionScope.user.username}" required>
+                    <input type="text" name="username" value="${sessionScope.user.username}" required>
                 </div>
 
                 <div class="form-group">

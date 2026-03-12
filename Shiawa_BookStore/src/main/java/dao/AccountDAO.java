@@ -422,9 +422,9 @@ public class AccountDAO extends DBContext {
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, acc.getUsername());
-            ps.setString(1, acc.getFullName());
-            ps.setString(2, acc.getEmail());
-            ps.setInt(3, acc.getId());
+            ps.setString(2, acc.getFullName());
+            ps.setString(3, acc.getEmail());
+            ps.setInt(4, acc.getId());
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
