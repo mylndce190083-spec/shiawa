@@ -55,17 +55,13 @@ public class CartController extends HttpServlet {
 //
         CustomerDAO customerDAO = new CustomerDAO();
         Customer customer = customerDAO.getCustomerByAccountId(user.getId());
+
         if (customer == null) {
             response.sendRedirect(request.getContextPath() + "/cart");
             return;
         }
           int customerId = customer.getId(); //  CHUẨN
 
-
-
-      
-
-// 3. Lấy giỏ hàng
         CartItemDAO dao = new CartItemDAO();
         List<CartItem> cartItems = dao.getCartByCustomerId(customerId);
         int totalQuantity = 0;
@@ -92,9 +88,11 @@ public class CartController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         System.out.println(">>> CartController doPost CALLED");
         System.out.println("ACTION = " + request.getParameter("action"));
         System.out.println("BOOK_ID = " + request.getParameter("book_id"));
+
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
 
@@ -115,7 +113,7 @@ public class CartController extends HttpServlet {
             return;
         }
 
-        int customerId = user.getId();
+        int customerId = customer.getId();
         int bookId = Integer.parseInt(request.getParameter("book_id"));
         String action = request.getParameter("action");
 

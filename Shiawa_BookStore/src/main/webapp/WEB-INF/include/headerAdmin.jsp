@@ -194,8 +194,8 @@
                             </div>
                         </div>
                         <div class="ms-3">
-                            <h6 class="mb-0">Jhon Doe</h6>
-                            <span>Admin</span>
+                            <h6 class="mb-0">${sessionScope.user.username}</h6>
+                            <span>${sessionScope.user.role}</span>
                         </div>
                     </div>
                     <div class="navbar-nav w-100">
@@ -211,11 +211,17 @@
                         <a href="category.jsp" class="nav-item nav-link"><i class="fa fa-tags me-2"></i>Category</a>
                         <a href="${pageContext.request.contextPath}/order-admin" 
                            class="nav-item nav-link ${'order-admin'.equals(currentPage) ? 'active' : ''}">
-                            <i class="fa fa-book me-2">
+                            <i class="fa fa-shopping-cart me-2">
                             </i>Order</a>
+                        <a href="${pageContext.request.contextPath}/voucher-admin" 
+                           class="nav-item nav-link ${'voucher-admin'.equals(currentPage) ? 'active' : ''}">
+                            <i class="fa fa-ticket-alt me-2">
+                            </i>Voucher</a>
                         <a href="table.jsp" class="nav-item nav-link"><i class="fa fa-headset me-2"></i>Customer
                             Support</a>
-                        <a href="chart.html" class="nav-item nav-link"><i class="fa fa-user-edit me-2"></i>Edit Profile</a>
+                        <a href="${pageContext.request.contextPath}/admin-profile" 
+                           class="nav-item nav-link"><i class="fa fa-user-edit me-2">
+                            </i>Edit Profile</a>
                         <a href="logout" class="nav-item nav-link"><i class="fa fa-sign-out-alt me-2"></i>Logout</a>
                     </div>
                 </nav>

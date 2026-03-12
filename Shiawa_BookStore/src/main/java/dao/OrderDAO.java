@@ -702,6 +702,83 @@ public class OrderDAO extends DBContext {
         return null;
     }
 
+    public List<Orders> getOrdersByPage(int page, int pageSize) {
+        List<Orders> list = new ArrayList<>();
+
+        int offset = (page - 1) * pageSize;
+
+        String sql = """
+        SELECT 
+            o.order_id,
+            c.full_name,
+            o.order_date,
+            o.status,
+            COALESCE(SUM(od.quantity * od.price),0) AS total_amount,
+            o.discount,
+            o.shipping_fee,
+            v.name AS voucher_name
+        FROM Orders o
+        LEFT JOIN Customer c ON o.customer_id = c.customer_id
+        LEFT JOIN OrderDetail od ON o.order_id = od.order_id
+        LEFT JOIN Voucher v ON o.voucher_id = v.voucher_id
+        GROUP BY 
+            o.order_id,
+            c.full_name,
+            o.order_date,
+            o.status,
+            o.discount,
+            o.shipping_fee,
+            v.name
+        ORDER BY o.order_id DESC
+        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+    """;
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, offset);
+            ps.setInt(2, pageSize);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Orders o = new Orders();
+                o.setOrderId(rs.getInt("order_id"));
+                o.setCustomerName(rs.getString("full_name"));
+                o.setOrderDate(rs.getTimestamp("order_date").toLocalDateTime());
+                o.setStatus(rs.getString("status"));
+                o.setTotalAmount(rs.getDouble("total_amount"));
+                o.setDiscount(rs.getInt("discount"));
+                o.setShippingFee(rs.getDouble("shipping_fee"));
+                o.setVoucherName(rs.getString("voucher_name"));
+
+                list.add(o);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public int getTotalOrders() {
+        String sql = "SELECT COUNT(*) FROM Orders";
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
     public static void main(String[] args) {
         OrderDAO dao = new OrderDAO();
         List<Orders> list = dao.getAllOrders();
