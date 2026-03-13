@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -559,6 +560,58 @@ public class BookDAO extends DBContext {
         }
 
         return list;
+    }
+
+    public List<Book> getLowStockBooks(int threshold) {
+        List<Book> list = new ArrayList<>();
+        String sql = "SELECT * FROM Book WHERE is_active = 1 AND stock <= ? ORDER BY stock ASC";
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, threshold);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Book b = new Book();
+                    b.setBookId(rs.getInt("book_id"));
+                    b.setTitle(rs.getString("title"));
+                    b.setAuthor(rs.getString("author"));
+                    b.setPrice(rs.getDouble("price"));
+                    b.setStock(rs.getInt("stock"));
+                    b.setUrlImg(getImgURLbyBookId(rs.getInt("book_id")));
+                    list.add(b);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public int insertBookReturnId(Book b) throws Exception {
+        String sql = """
+            INSERT INTO Book(title, author, price, stock, category_id, is_active, publisher)
+            VALUES(?, ?, ?, ?, ?, 1, ?)
+        """;
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, b.getTitle());
+            ps.setString(2, b.getAuthor());
+            ps.setDouble(3, b.getPrice());
+            ps.setInt(4, b.getStock());
+            if (b.getCategory() == null) {
+                ps.setNull(5, java.sql.Types.INTEGER);
+            } else {
+                ps.setInt(5, b.getCategory().getCategoryId());
+            }
+            ps.setString(6, b.getPublisher());
+
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        throw new Exception("Cannot insert book (no generated key).");
     }
     
     public static void main(String[] args) {
