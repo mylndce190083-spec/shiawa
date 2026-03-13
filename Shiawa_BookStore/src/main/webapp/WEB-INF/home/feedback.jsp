@@ -136,7 +136,7 @@
                 <input type="hidden" name="book_id" value="${book.bookId}">
 
                 <div class="product-box mb-4">
-                    <img src="${pageContext.request.contextPath}/${book.urlImg}" alt="${book.title}">
+                    <img src="${pageContext.request.contextPath}/image?file=${book.urlImg}" alt="${book.title}">
                     <div>
                         <h6 class="mb-1 fw-bold text-dark">${book.title}</h6>
                         <span class="badge bg-light text-success border border-success-subtle">

@@ -369,7 +369,7 @@
                                data-qty="${item.quantity}"/>-->
 
                         <div class="product-info">
-                           <img src="/uploads/${item.book.urlImg}">
+                            <img src="/uploads/${item.book.urlImg}">
                             ${item.book.title}
                         </div>
 
@@ -377,21 +377,20 @@
                             ${item.quantity} x
                         </div>
 
-                        <div class="price">
+                        <div class="price unit-price">
                             <fmt:formatNumber 
                                 value="${item.price}" 
                                 type="number"
                                 groupingUsed="true"
-                                maxFractionDigits="0"/> đ
+                                maxFractionDigits="0"/> VND
                         </div>
                         <!-- THÀNH TIỀN -->
-                        <div class="price">
-                           
+                        <div class="price item-total">
                             <fmt:formatNumber 
                                 value="${item.price * item.quantity}" 
                                 type="number"
                                 groupingUsed="true"
-                                maxFractionDigits="0"/> đ
+                                maxFractionDigits="0"/> VND
                         </div>
                         <c:if test="${item.book.stock == 0}">
                             <div style="color:red; font-weight:bold;">
@@ -411,7 +410,7 @@
             <!-- RIGHT -->
             <div class="box">
 
-                <form action="${pageContext.request.contextPath}/checkout" method="post">
+                <form id="checkoutForm" action="${pageContext.request.contextPath}/checkout" method="post">
                     <h3>📍 ĐỊA CHỈ NHẬN HÀNG</h3>
                     <div class="address-box" id="viewAddress">
                         <input type="hidden" name="isEditAddress" value="false" id="isEditAddress">
@@ -495,12 +494,12 @@
 
                     <div class="summary-row">
                         <span>Thành tiền:</span>
-                        <span id="subtotal">0 đ</span>
+                        <span id="subtotal">0 VND</span>
                     </div>
 
                     <div class="summary-row">
                         <span>Phí vận chuyển:</span>
-                        <span>20.000 đ</span>
+                        <span>20.000 VND</span>
                     </div>
                     <div class="voucher-section">
 
@@ -529,7 +528,7 @@
 
                         <c:if test="${not empty discount}">
                             <div class="voucher-success">
-                                ✔ Đã áp dụng mã (- ${discount} đ)
+                                ✔ Đã áp dụng mã (- ${discount} VND)
                             </div>
                         </c:if>
 
@@ -542,7 +541,7 @@
                     <c:if test="${not empty discount}">
                         <div class="summary-row">
                             <span>Giảm giá:</span>
-                            <span style="color:red;">- ${discount} đ</span>
+                            <span style="color:red;">- ${discount} VND</span>
                         </div>
                     </c:if>
                     <div class="payment-box">
@@ -551,14 +550,16 @@
                         <select name="paymentMethod" id="paymentMethod" required>
                             <option value="">Chọn phương thức</option>
                             <option value="COD">Thanh toán khi nhận hàng</option>
-                            <option value="ONLINE">Thanh toán online</option>
+                            <option value="ONLINE">Thanh toán online (VNPAY)</option>
                         </select>
+
+
                     </div>
 
                     <div class="summary-row total">
                         <span>Tổng thanh toán:</span>
                         <span id="total">
-                            ${subtotal + 20000 - discount} đ
+                            ${subtotal + 20000 - discount} VND
                         </span>
                     </div>
 
@@ -681,13 +682,13 @@
             // ===== TÍNH TỔNG TIỀN THEO CHECKBOX =====
 
             function formatCurrency(number) {
-                return number.toLocaleString('vi-VN') + " đ";
+                return number.toLocaleString('vi-VN') + " VND";
             }
 
             function calculateSummary() {
                 let subtotal = 0;
                 const shipping = 20000;
-                document.querySelectorAll(".price").forEach(item => {
+                document.querySelectorAll(".item-total").forEach(item => {
 
                     // Lấy text ví dụ: "78.000 đ"
                     let priceText = item.innerText;
@@ -701,6 +702,8 @@
             }
 
             window.onload = calculateSummary;
+
+            
             function showEditForm() {
                 document.getElementById("viewAddress").style.display = "none";
                 document.getElementById("editForm").style.display = "block";

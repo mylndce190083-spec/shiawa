@@ -147,7 +147,7 @@
             <div class="book-card shadow-sm">
                 <div class="row g-4">
                     <div class="col-md-3 text-center">
-                        <img src="/uploads/${book.urlImg}" class="img-fluid rounded shadow-sm" alt="${book.title}">
+                        <img src="${pageContext.request.contextPath}/image?file=${book.urlImg}" class="img-fluid rounded shadow-sm" alt="${book.title}">
                     </div>
 
                     <div class="col-md-9">
