@@ -23,7 +23,7 @@ import model.Category;
  */
 public class BookDAO extends DBContext {
 
-    public List<BookAdmin> getAllBooksInfo() {
+   public List<BookAdmin> getAllBooksInfo() {
         List<BookAdmin> list = new ArrayList<>();
 
         String sql = """
@@ -121,7 +121,27 @@ public class BookDAO extends DBContext {
         }
         return list;
     }
-    public Book getBookById(int bookId) {
+
+    public String getImgURLbyBookId(int bookId) {
+        String url = "";
+        String sql = """
+        SELECT * FROM BookImages
+        WHERE book_id = ? AND is_active = 1
+        ORDER BY is_primary DESC, display_order ASC
+    """;
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, bookId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                url = rs.getString("image_url");
+            }
+        } catch (Exception e) {
+        }
+        return url;
+    }
+
+ public Book getBookById(int bookId) {
         // Sử dụng LEFT JOIN để lấy cột 'name' từ bảng Category và đặt tên thay thế là 'category_name'
         String sql = """
     SELECT b.*, c.name AS category_name
@@ -161,8 +181,53 @@ public class BookDAO extends DBContext {
         }
         return null;
     }
+    public BookAdmin getBookAdminById(int id) {
+        String sql = """
+        SELECT b.book_id,
+               b.title,
+               b.author,
+               b.description,
+               b.price,
+               b.stock,
+               b.publisher,
+               b.discount,
+               b.url_img,
+               b.is_active,
+               b.created_at,
+               c.name AS category_name,
+               c.category_id
+        FROM Book b
+        LEFT JOIN Category c ON b.category_id = c.category_id
+        WHERE b.book_id = ?
+    """;
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
 
-    public int getStock(Connection con, int bookId) throws Exception {
+            if (rs.next()) {
+                BookAdmin b = new BookAdmin();
+                b.setBookId(rs.getInt("book_id"));
+                b.setTitle(rs.getString("title"));
+                b.setAuthor(rs.getString("author"));
+                b.setDescription(rs.getString("description"));
+                b.setPrice(rs.getDouble("price"));
+                b.setStock(rs.getInt("stock"));
+                b.setPublisher(rs.getString("publisher"));
+                b.setDiscount(rs.getInt("discount"));
+                b.setUrlImg(rs.getString("url_img"));
+                b.setIsActive(rs.getBoolean("is_active"));
+                b.setCreatedAt(rs.getString("created_at"));
+                b.setCategoryName(rs.getString("category_name"));
+                b.setCategoryId(rs.getInt("category_id"));
+                return b;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+  public int getStock(Connection con, int bookId) throws Exception {
 
         String sql = "SELECT stock FROM Book WHERE book_id = ?";
 
@@ -199,7 +264,8 @@ public class BookDAO extends DBContext {
         }
     }
 
-    public List<Book> getSimilarBook(int categoryId) {
+
+     public List<Book> getSimilarBook(int categoryId) {
         List<Book> list = new ArrayList<>();
         String sql = "SELECT TOP 6 b.*, c.name AS category_name "
                 + "FROM Book b "
@@ -271,7 +337,7 @@ public class BookDAO extends DBContext {
         return list;
     }
 
-    public void increaseStock(Connection con, int bookId, int quantity) {
+     public void increaseStock(Connection con, int bookId, int quantity) {
         String sql = "UPDATE Book SET stock = stock + ? WHERE book_id = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -280,6 +346,317 @@ public class BookDAO extends DBContext {
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void updateBook(BookAdmin b) {
+        String sql = """
+        UPDATE Book
+        SET title = ?, author = ?, category_id = ?, price = ?,
+            stock = ?, is_active = ?, description = ?, url_img = ?
+        WHERE book_id = ?
+    """;
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setString(1, b.getTitle());
+            ps.setString(2, b.getAuthor());
+            ps.setInt(3, b.getCategoryId());
+            ps.setDouble(4, b.getPrice());
+            ps.setInt(5, b.getStock());
+            ps.setBoolean(6, b.isIsActive());
+            ps.setString(7, b.getDescription());
+            ps.setString(8, b.getUrlImg());
+            ps.setInt(9, b.getBookId());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isBookUsedInOrder(int bookId) {
+        String sql = """
+        SELECT COUNT(*) 
+        FROM OrderDetail
+        WHERE book_id = ?
+    """;
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, bookId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void hardDeleteBook(int bookId) {
+
+        String deleteImages = "DELETE FROM BookImages WHERE book_id = ?";
+        String deleteBook = "DELETE FROM Book WHERE book_id = ?";
+
+        try (Connection conn = getConnection()) {
+
+            conn.setAutoCommit(false); // transaction
+
+            try (
+                    PreparedStatement psImg = conn.prepareStatement(deleteImages); PreparedStatement psBook = conn.prepareStatement(deleteBook)) {
+
+                // 1. Xóa ảnh trước
+                psImg.setInt(1, bookId);
+                psImg.executeUpdate();
+
+                // 2. Xóa book
+                psBook.setInt(1, bookId);
+                psBook.executeUpdate();
+
+                conn.commit();
+
+            } catch (Exception e) {
+                conn.rollback();
+                e.printStackTrace();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void softDeleteBook(int bookId) {
+        String sql = "UPDATE Book SET is_active = 0 WHERE book_id = ?";
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, bookId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<BookAdmin> searchByTitle(String keyword) {
+        List<BookAdmin> list = new ArrayList<>();
+        String sql = """
+        SELECT b.book_id, b.title, b.author, b.price, b.stock,
+               b.publisher, b.discount, b.url_img, b.is_active,
+               b.created_at, c.name AS category_name
+        FROM Book b
+        LEFT JOIN Category c ON b.category_id = c.category_id
+        WHERE b.is_active = 1
+          AND b.title LIKE ?
+        ORDER BY b.book_id
+    """;
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setString(1, "%" + keyword + "%");
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                BookAdmin b = new BookAdmin();
+                b.setBookId(rs.getInt("book_id"));
+                b.setTitle(rs.getString("title"));
+                b.setAuthor(rs.getString("author"));
+                b.setPrice(rs.getDouble("price"));
+                b.setStock(rs.getInt("stock"));
+                b.setCategoryName(rs.getString("category_name"));
+                b.setIsActive(rs.getBoolean("is_active"));
+                list.add(b);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<BookAdmin> getBooksByCategory(int categoryId) { // filter
+        List<BookAdmin> list = new ArrayList<>();
+
+        String sql = """
+        SELECT b.book_id, b.title, b.author, b.price, b.stock,
+               b.publisher, b.discount, b.url_img, b.is_active,
+               b.created_at, c.name AS category_name
+        FROM Book b
+        LEFT JOIN Category c ON b.category_id = c.category_id
+        WHERE b.category_id = ?
+        ORDER BY b.book_id
+    """;
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, categoryId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                BookAdmin b = new BookAdmin();
+                b.setBookId(rs.getInt("book_id"));
+                b.setTitle(rs.getString("title"));
+                b.setAuthor(rs.getString("author"));
+                b.setPrice(rs.getDouble("price"));
+                b.setStock(rs.getInt("stock"));
+                b.setPublisher(rs.getString("publisher"));
+                b.setDiscount(rs.getInt("discount"));
+                b.setUrlImg(rs.getString("url_img"));
+                b.setIsActive(rs.getBoolean("is_active"));
+                b.setCreatedAt(rs.getString("created_at"));
+                b.setCategoryName(rs.getString("category_name"));
+                list.add(b);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public List<BookAdmin> searchByTitleAndCategory(String keyword, int categoryId) { // filter
+        List<BookAdmin> list = new ArrayList<>();
+
+        String sql = """
+        SELECT b.book_id, b.title, b.author, b.price, b.stock,
+               b.publisher, b.discount, b.url_img, b.is_active,
+               b.created_at, c.name AS category_name
+        FROM Book b
+        LEFT JOIN Category c ON b.category_id = c.category_id
+        WHERE b.title LIKE ?
+          AND b.category_id = ?
+        ORDER BY b.book_id
+    """;
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setString(1, "%" + keyword + "%");
+            ps.setInt(2, categoryId);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                BookAdmin b = new BookAdmin();
+                b.setBookId(rs.getInt("book_id"));
+                b.setTitle(rs.getString("title"));
+                b.setAuthor(rs.getString("author"));
+                b.setPrice(rs.getDouble("price"));
+                b.setStock(rs.getInt("stock"));
+                b.setPublisher(rs.getString("publisher"));
+                b.setDiscount(rs.getInt("discount"));
+                b.setUrlImg(rs.getString("url_img"));
+                b.setIsActive(rs.getBoolean("is_active"));
+                b.setCreatedAt(rs.getString("created_at"));
+                b.setCategoryName(rs.getString("category_name"));
+                list.add(b);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public int countBooks(String keyword, Integer categoryId) {
+        int total = 0;
+
+        String sql = """
+        SELECT COUNT(*)
+        FROM Book
+        WHERE (? IS NULL OR title LIKE ?)
+        AND (? IS NULL OR category_id = ?)
+    """;
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+
+            if (keyword == null || keyword.isEmpty()) {
+                ps.setNull(1, java.sql.Types.VARCHAR);
+                ps.setNull(2, java.sql.Types.VARCHAR);
+            } else {
+                ps.setString(1, keyword);
+                ps.setString(2, "%" + keyword + "%");
+            }
+
+            if (categoryId == null) {
+                ps.setNull(3, java.sql.Types.INTEGER);
+                ps.setNull(4, java.sql.Types.INTEGER);
+            } else {
+                ps.setInt(3, categoryId);
+                ps.setInt(4, categoryId);
+            }
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                total = rs.getInt(1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return total;
+    }
+
+    public List<BookAdmin> getBooksByPage(int page, int pageSize,
+            String keyword, Integer categoryId) {
+
+        List<BookAdmin> list = new ArrayList<>();
+        int offset = (page - 1) * pageSize;
+
+        String sql = """
+        SELECT b.book_id, b.title, b.author, b.price, b.stock,
+               b.publisher, b.discount, b.url_img, b.is_active,
+               b.created_at, c.name AS category_name
+        FROM Book b
+        LEFT JOIN Category c ON b.category_id = c.category_id
+        WHERE (? IS NULL OR b.title LIKE ?)
+        AND (? IS NULL OR b.category_id = ?)
+        ORDER BY b.book_id
+        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+    """;
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+
+            if (keyword == null || keyword.isEmpty()) {
+                ps.setNull(1, java.sql.Types.VARCHAR);
+                ps.setNull(2, java.sql.Types.VARCHAR);
+            } else {
+                ps.setString(1, keyword);
+                ps.setString(2, "%" + keyword + "%");
+            }
+
+            if (categoryId == null) {
+                ps.setNull(3, java.sql.Types.INTEGER);
+                ps.setNull(4, java.sql.Types.INTEGER);
+            } else {
+                ps.setInt(3, categoryId);
+                ps.setInt(4, categoryId);
+            }
+
+            ps.setInt(5, offset);
+            ps.setInt(6, pageSize);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                BookAdmin b = new BookAdmin();
+                b.setBookId(rs.getInt("book_id"));
+                b.setTitle(rs.getString("title"));
+                b.setAuthor(rs.getString("author"));
+                b.setPrice(rs.getDouble("price"));
+                b.setStock(rs.getInt("stock"));
+                b.setCategoryName(rs.getString("category_name"));
+                list.add(b);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public static void main(String[] args) {
+        BookDAO dao = new BookDAO();
+        List<Book> list = dao.getAllBook();
+        for (Book b : list) {
+            System.out.println(b);
         }
     }
 }

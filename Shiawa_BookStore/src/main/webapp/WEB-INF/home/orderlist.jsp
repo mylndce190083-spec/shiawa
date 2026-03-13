@@ -6,6 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -127,12 +128,74 @@
                 text-decoration:none;
                 color:inherit;
             }
+            .order-item{
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                padding:15px;
+                margin-bottom:15px;
+
+            }
+
+            .book-info{
+                display:flex;
+                align-items:center;
+            }
+
+            .book-img{
+                width:75px;
+                height:100px;
+                object-fit:cover;
+                border-radius:8px;
+                margin-right:15px;
+            }
+
+            .book-title{
+                font-weight:600;
+                font-size:15px;
+                margin-bottom:6px;
+            }
+
+            .book-quantity{
+                font-size:13px;
+                color:#666;
+            }
+
+            .price-area{
+                display:flex;
+                justify-content:flex-end;
+                margin-top: 40px;
+            }
+
+            .item-total{
+                display:flex;
+                align-items:center;
+                gap:12px;
+                font-size:14px;
+            }
+
+            .label{
+                color:#555;
+            }
+
+            .formula{
+                color:#444;
+            }
+
+            .equal{
+                font-weight:bold;
+            }
+
+            .price{
+                color:#e53935;
+                font-weight:600;
+            }
         </style>
     </head>
     <body>
-
+        <jsp:include page="/client/layout/header.jsp"/>
+        <br>
         <div class="container mt-5">
-
             <div class="page-header">
                 Đơn hàng của tôi
             </div>
@@ -159,8 +222,8 @@
                     Hoàn thành
                 </a>
 
-                <a href="${pageContext.request.contextPath}/OrderList/cancelled"
-                   class="tab-link ${currentStatus == 'CANCELLED' ? 'active' : ''}">
+                <a href="${pageContext.request.contextPath}/OrderList/failed"
+                   class="tab-link ${currentStatus == 'FAILED' ? 'active' : ''}">
                     Đã hủy
                 </a>
             </div>
@@ -168,27 +231,7 @@
             <c:if test="${empty orders}">
                 <div class="alert alert-info">Không có đơn hàng nào.</div>
             </c:if>
-            <%
-                java.util.Enumeration<String> attrs = request.getAttributeNames();
-
-                while (attrs.hasMoreElements()) {
-                    String name = attrs.nextElement();
-                    Object value = request.getAttribute(name);
-
-                    out.println("<h3>Attribute: " + name + "</h3>");
-
-                    if (value instanceof java.util.List) {
-                        java.util.List list = (java.util.List) value;
-
-                        for (Object item : list) {
-                            out.println(item + "<br>");
-                        }
-                    } else {
-                        out.println(value + "<br>");
-                    }
-                }
-            %>
-
+                
             <c:forEach var="o" items="${orders}">
 
                 <a href="${pageContext.request.contextPath}/OrderDetail?id=${o.orderId}"
@@ -205,84 +248,64 @@
                                  font-weight:bold;
                                  color: red;
                                  ">
-                                ${o.status == 'Pending' ? 'Chờ xác nhận' :
-                                  o.status == 'Shipping' ? 'Đang giao' :
+                                ${o.status == 'PENDING' ? 'Chờ xác nhận' :
+                                  o.status == 'SHIPPING' ? 'Đang giao' :
                                   o.status == 'DELIVERED' ? 'Hoàn thành' :
-                                  o.status == 'Cancelled' ? 'Đã hủy' : o.status}
+                                  o.status == 'FAILED' ? 'Đã hủy' : o.status}
                             </div>
+
                         </div>
+
+                            
                         <c:forEach var="item" items="${o.items}">
-                            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:15px;">
 
-                                <!-- BÊN TRÁI: Ảnh + thông tin -->
-                                <div style="display:flex; align-items:flex-start;">
+                            <div class="order-item">
 
-                                    <img src="${pageContext.request.contextPath}/${item.url_img}"
-                                         style="width:80px; height:105px; object-fit:cover; border-radius:8px; margin-right:15px;"/>
-
-                                    <div style="margin-top:22px;">
-                                        <div style="font-weight:500; margin-bottom: 7px">${item.title}</div>
-                                        <div>Số lượng: ${item.quantity}</div>
+                                <!-- LEFT -->
+                                <div class="book-info">
+                                    <img src="${pageContext.request.contextPath}/image?file=${item.book.urlImg.replace(' ', '%20')}" class="book-img">
+                                    <div class="book-detail">
+                                        <div class="book-title">${item.title}</div>
+                                        <div class="book-quantity">Số lượng: ${item.quantity}</div>
                                     </div>
 
                                 </div>
 
-                                <div style="display:flex; flex-direction:column; align-items:flex-end; margin-top:50px">
+                                <!-- RIGHT -->
+                                <div class="price-area">
 
-                                    <div style="font-size:13px; color:#888;">
-                                        Tổng tiền : ${item.price * item.quantity} VND
+                                    <div class="item-total">
+                                        <span class="label">Thành tiền:</span>
+
+                                        <span class="formula">
+                                            ${item.quantity} × 
+                                            <fmt:formatNumber value="${item.price}" type="number"
+                                                              groupingUsed="true" maxFractionDigits="0"/>
+                                        </span>
+
+                                        <span class="equal">=</span>
+
+                                        <span class="price">
+                                            <fmt:formatNumber value="${item.price * item.quantity}"
+                                                              type="number" groupingUsed="true"
+                                                              maxFractionDigits="0"/> VND
+                                        </span>
                                     </div>
 
-
-
-
-                                    <c:if test="${o.status == 'DELIVERED'}">
-                                        <%-- Giả sử bạn đã xử lý việc check feedback ở Servlet và gán vào item --%>
-                                        <%-- Nếu chưa, đây là logic hiển thị: --%>
-                                        <c:if test="${item.isRated == 'unrated'}">     
-                                            <a href="${pageContext.request.contextPath}/feedback?book_id=${item.book.bookId}&order_detail_id=${item.orderDetailId}" 
-                                               style="background: ${item.isRated ? '#888' : '#00a651'};
-                                               color: white; text-decoration: none; padding: 6px 15px;
-                                               border-radius: 8px; display: inline-block; font-size: 13px; font-weight: 600;">
-                                               Đánh giá sản phẩm
-                                            </a>
-                                        </c:if>
-                                        <c:if test="${item.isRated == 'rated'}">     
-                                            <a href="${pageContext.request.contextPath}/feedback?book_id=${item.book.bookId}&order_detail_id=${item.orderDetailId}" 
-                                               style="background: ${item.isRated ? '#888' : '#00a651'};
-                                               color: white; text-decoration: none; padding: 6px 15px;
-                                               border-radius: 8px; display: inline-block; font-size: 13px; font-weight: 600;">
-                                               Đã đánh giá sản phẩm
-                                            </a>
-                                        </c:if>
-                                        
-                                    </c:if>
-
-
-                                    <!--
-                                    <c:if test="${o.status == 'DELIVERED'}">
-                                        <a href="${pageContext.request.contextPath}/feedback?order_id=${o.orderId}" 
-                                           style="background: ${item.isRated ? '#888' : '#00a651'};
-                                           color: white;
-                                           text-decoration: none;
-                                           padding: 6px 15px;
-                                           border-radius: 8px;
-                                           display: inline-block;
-                                           font-size: 13px;
-                                           font-weight: 600;">
-                                        ${item.isRated ? "Đã đánh giá" : "Đánh giá sản phẩm"}
-                                    </a>
-                                    </c:if>
-                                    -->
                                 </div>
+
                             </div>
+
                         </c:forEach>
+
                         <hr>
+
                         <div style="text-align:right; font-size:18px; font-weight:bold; color:black;">
-                            Tổng số tiền( ${o.quantity} sản phẩm): ${o.totalAmount} VND
+                            Tổng số tiền( ${o.quantity} sản phẩm):
+                            <fmt:formatNumber value="${o.totalAmount}" type="number" groupingUsed="true" maxFractionDigits="0"/> VND
                         </div>
-                        <c:if test="${o.status == 'Pending'}">
-                            <form action="${pageContext.request.contextPath}/orderlist" 
+                        <c:if test="${o.status == 'PENDING'}">
+                            <form action="${pageContext.request.contextPath}/OrderList" 
                                   method="post" 
                                   style="text-align:right; margin-top:10px;"
                                   onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?');">
@@ -297,9 +320,11 @@
                                 </button>
                             </form>
                         </c:if>
+
                     </div>
 
                 </c:forEach>
+
         </div>
     </body>
 </html>

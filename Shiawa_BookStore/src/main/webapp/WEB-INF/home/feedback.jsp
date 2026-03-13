@@ -16,194 +16,147 @@
             :root {
                 --shiawa-green: #00a651;
                 --shiawa-hover: #008f45;
-                --bg-light: #f4f7f6;
                 --star-color: #ffc107;
-                --border-color: #e9ecef;
             }
-
-            body {
-                background-color: var(--bg-light);
+            body { 
+                background-color: #f0f2f5; 
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                min-height: 100vh;
-                margin: 0;
-                padding: 20px;
             }
 
-            /* Khung Card chính giữa màn hình */
             .feedback-card {
-                width: 100%;
-                max-width: 600px; /* Độ rộng vừa phải như trong ảnh mẫu */
-                background: #ffffff;
-                border-radius: 15px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-                overflow: hidden;
-                border: 1px solid var(--border-color);
+                max-width: 550px;
+                margin: 50px auto;
+                background: white;
+                border-radius: 20px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+                border: none;
             }
 
-            /* Header xanh lá nằm gọn trong khung */
             .feedback-header {
                 background-color: var(--shiawa-green);
                 color: white;
-                padding: 20px;
-                font-size: 1.2rem;
+                padding: 25px;
                 font-weight: 700;
                 text-transform: uppercase;
-                text-align: center;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 10px;
+                letter-spacing: 1px;
+                border-radius: 20px 20px 0 0;
             }
 
-            /* Phần thông tin sách trong khung */
-            .product-info-section {
+            .product-box {
+                display: flex;
+                align-items: center;
                 padding: 20px;
-                border-bottom: 1px solid var(--border-color);
-                display: flex;
-                align-items: center;
-                gap: 15px;
+                margin: 0 20px;
+                background-color: #f8faf9;
+                border-radius: 12px;
+                border: 1px solid #edf2f0;
             }
-
-            .product-info-section img {
-                width: 70px;
-                height: 100px;
+            .product-box img {
+                width: 65px;
+                height: 85px;
                 object-fit: cover;
                 border-radius: 8px;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                margin-right: 15px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             }
 
-            .book-detail-text h6 {
-                margin: 0;
-                font-weight: 700;
-                color: #333;
-            }
-
-            /* Rating & Textarea */
-            .form-content {
-                padding: 30px;
-            }
-
+            /* Hệ thống chọn sao thông minh */
             .rating-wrapper {
                 display: flex;
                 flex-direction: row-reverse;
                 justify-content: center;
-                gap: 10px;
-                margin-bottom: 25px;
+                gap: 5px;
             }
-
-            .rating-wrapper input { display: none; }
+            .rating-wrapper input {
+                display: none;
+            }
             .rating-wrapper label {
-                font-size: 40px;
-                color: #ddd;
+                font-size: 45px;
+                color: #e9ecef;
                 cursor: pointer;
-                transition: 0.2s;
+                transition: all 0.2s ease-in-out;
             }
-
+            /* Hiệu ứng khi hover hoặc check */
             .rating-wrapper label:hover,
             .rating-wrapper label:hover ~ label,
             .rating-wrapper input:checked ~ label {
                 color: var(--star-color);
+                transform: scale(1.1);
+                text-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+            }
+            /* Hiệu ứng đặc biệt khi đang click */
+            .rating-wrapper label:active {
+                transform: scale(0.9);
             }
 
-            .comment-box textarea {
-                border-radius: 10px;
-                border: 1px solid #ced4da;
-                padding: 15px;
-                resize: none;
-                font-size: 0.95rem;
-            }
-
-            .comment-box textarea:focus {
+            .form-control:focus {
                 border-color: var(--shiawa-green);
                 box-shadow: 0 0 0 0.25rem rgba(0, 166, 81, 0.1);
             }
 
-            /* Nút Gửi */
             .btn-submit {
                 background-color: var(--shiawa-green);
                 color: white;
                 border: none;
                 width: 100%;
-                padding: 12px;
-                border-radius: 30px;
+                padding: 14px;
+                border-radius: 12px;
                 font-weight: 700;
-                text-transform: uppercase;
-                margin-top: 20px;
-                transition: 0.3s;
+                font-size: 1rem;
+                transition: all 0.3s;
+                margin-top: 10px;
             }
-
             .btn-submit:hover {
                 background-color: var(--shiawa-hover);
+                color: white;
                 transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(0, 166, 81, 0.2);
+                box-shadow: 0 5px 15px rgba(0, 166, 81, 0.3);
             }
 
             .btn-back {
-                display: block;
-                text-align: center;
-                margin-top: 15px;
                 color: #6c757d;
                 text-decoration: none;
                 font-size: 0.9rem;
+                transition: 0.2s;
+            }
+            .btn-back:hover {
+                color: var(--shiawa-green);
             }
         </style>
     </head>
     <body>
-        
+
+    <div class="container">
         <div class="feedback-card">
-            <div class="feedback-header">
-                <i class="bi bi-chat-left-heart-fill"></i> ĐÁNH GIÁ SẢN PHẨM
+            <div class="feedback-header text-center">
+                <i class="bi bi-chat-left-heart-fill me-2"></i>Đánh giá sản phẩm
             </div>
-            <%
-    java.util.Enumeration<String> attrs = request.getAttributeNames();
-
-    while(attrs.hasMoreElements()) {
-        String name = attrs.nextElement();
-        Object value = request.getAttribute(name);
-
-        out.println("<h3>Attribute: " + name + "</h3>");
-
-        if(value instanceof java.util.List){
-            java.util.List list = (java.util.List) value;
-
-            for(Object item : list){
-                out.println(item + "<br>");
-            }
-        }else{
-            out.println(value + "<br>");
-        }
-    }
-%>
-
-            <div class="product-info-section">
-                <img src="${pageContext.request.contextPath}/${book.urlImg}" alt="${book.title}">
-                <div class="book-detail-text">
-                    <h6>${book.title}</h6>
-                    <small class="text-secondary">Số lượng: </small>
-                    <div class="fw-bold text-success mt-1">${book.price} đ</div>
-                </div>
-            </div>
-
-            <form action="feedback" method="post" class="form-content">
+            
+            <form action="feedback" method="post" class="p-4">
                 <input type="hidden" name="book_id" value="${book.bookId}">
-                <input type="hidden" name="order_id" value="${param.order_id}">
-                <input type="hidden" name="isRated" value="${item.isRated}">
-                <input type="hidden" name="orderDetailId" value="${item.orderDetailId}">
-                
 
-                <p class="text-center fw-bold text-secondary mb-2">Bạn thấy sản phẩm này thế nào?</p>
-                <div class="rating-wrapper">
-                    <input type="radio" name="rating" value="5" id="star5" required><label for="star5">★</label>
-                    <input type="radio" name="rating" value="4" id="star4"><label for="star4">★</label>
-                    <input type="radio" name="rating" value="3" id="star3"><label for="star3">★</label>
-                    <input type="radio" name="rating" value="2" id="star2"><label for="star2">★</label>
-                    <input type="radio" name="rating" value="1" id="star1"><label for="star1">★</label>
+                <div class="product-box mb-4">
+                    <img src="${pageContext.request.contextPath}/image?file=${book.urlImg}" alt="${book.title}">
+                    <div>
+                        <h6 class="mb-1 fw-bold text-dark">${book.title}</h6>
+                        <span class="badge bg-light text-success border border-success-subtle">
+                            Thể loại: ${book.categoryName}
+                        </span>
+                    </div>
                 </div>
 
-                <div class="comment-box mb-3">
+                <div class="text-center mb-4">
+                    <p class="mb-1 fw-bold text-secondary">Bạn thấy sản phẩm này thế nào?</p>
+                    <div class="rating-wrapper">
+                        <input type="radio" name="rating" value="5" id="star5" required><label for="star5">★</label>
+                        <input type="radio" name="rating" value="4" id="star4"><label for="star4">★</label>
+                        <input type="radio" name="rating" value="3" id="star3"><label for="star3">★</label>
+                        <input type="radio" name="rating" value="2" id="star2"><label for="star2">★</label>
+                        <input type="radio" name="rating" value="1" id="star1"><label for="star1">★</label>
+                    </div>
+                </div>
+
+                <div class="mb-4">
                     <label class="form-label fw-bold text-secondary">Nhận xét của bạn</label>
                     <textarea name="content" class="form-control" rows="4" 
                               placeholder="Hãy chia sẻ những điều bạn thích về cuốn sách này nhé..." required></textarea>
@@ -212,13 +165,16 @@
                 <button type="submit" class="btn btn-submit">
                     GỬI ĐÁNH GIÁ NGAY
                 </button>
-
-                <a href="bookdetail?id=${book.bookId}" class="btn-back">
-                    <i class="bi bi-arrow-left"></i> Quay lại
-                </a>
+                
+                <div class="text-center mt-3">
+                    <a href="bookdetail?id=${book.bookId}" class="btn-back">
+                        <i class="bi bi-arrow-left me-1"></i> Quay lại chi tiết sản phẩm
+                    </a>
+                </div>
             </form>
         </div>
+    </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

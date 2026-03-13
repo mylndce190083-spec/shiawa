@@ -4,7 +4,6 @@
  */
 package controller;
 
-import dao.FeedbackDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -13,7 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import model.Book;
-import model.Feedback;
 
 /**
  *
@@ -22,7 +20,7 @@ import model.Feedback;
 @WebServlet(name = "BookDetailController", urlPatterns = {"/bookdetail"})
 public class BookDetailController extends HttpServlet {
 
-    @Override
+   @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 //        String idString = request.getParameter("id");

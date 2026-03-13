@@ -49,14 +49,27 @@
             <h2>Nhập OTP</h2>
 
             <!-- LOGIN -->
-            <div>
-                <form action="verify-otp" method="post">
-                    <label>OTP</label>
-                    <input type="text" name="otp" placeholder="OTP" required>
-                    <p style="color:red;">${error}</p>
+            <div class="modal-overlay">
+                <div class="modal-box">
+                    <h2>Xác nhận OTP</h2>
 
-                    <button type="submit" class="submit-btn">Xác nhận OTP</button>
-                </form>
+                    <form action="verify-otp" method="post" class="modal-form">
+
+                        <div class="form-group">
+                            <label>Mã OTP</label>
+                            <input type="text" name="otp" placeholder="Nhập mã OTP" required>
+                        </div>
+
+                        <p class="error">${error}</p>
+
+                        <button type="submit" class="modal-btn">Xác nhận</button>
+
+                        <div class="modal-link">
+                            <a href="forgot-password">Gửi lại OTP</a>
+                        </div>
+
+                    </form>
+                </div>
             </div>
 
         </section>

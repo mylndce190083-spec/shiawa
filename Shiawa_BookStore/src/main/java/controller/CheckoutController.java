@@ -9,6 +9,7 @@ import dao.CartItemDAO;
 import dao.OrderDAO;
 import dao.OrderDetailDAO;
 import db.DBContext;
+import jakarta.persistence.criteria.Order;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,11 +20,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.Connection;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import model.Account;
 import model.Address;
+import model.Book;
 import model.CartItem;
 import model.Customer;
 import model.OrderItem;
@@ -89,12 +92,38 @@ public class CheckoutController extends HttpServlet {
         if (cartList == null || cartList.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/cart");
             return;
+        } else {
+
+            // 👉 Không có session → lấy từ đơn hàng gần nhất trong DB
+            OrderDAO orderDAO = new OrderDAO();
+            Orders lastOrder = orderDAO.getLastOrderByUserId(user.getId());
+
+            if (lastOrder != null) {
+                session.setAttribute("lastOrder", lastOrder);
+                String lastAddress = lastOrder.getShippingAddress();
+
+                if (lastAddress != null && !lastAddress.trim().isEmpty()) {
+
+                    String[] parts = lastAddress.split(",");
+
+                    if (parts.length >= 4) {
+                        request.setAttribute("detailAddress", parts[0].trim());
+                        request.setAttribute("ward", parts[1].trim());
+                        request.setAttribute("district", parts[2].trim());
+                        request.setAttribute("province", parts[3].trim());
+                    }
+                }
+
+                // 👇 Thêm 3 dòng này
+                request.setAttribute("receiverName", lastOrder.getReceiverName());
+                request.setAttribute("phone", lastOrder.getPhone());
+                request.setAttribute("lastOrder", lastOrder);
+            }
+            request.setAttribute("orderItems", cartList);
+
+            request.getRequestDispatcher("/WEB-INF/home/placeorder.jsp")
+                    .forward(request, response);
         }
-
-        request.setAttribute("orderItems", cartList);
-
-        request.getRequestDispatcher("/WEB-INF/home/placeorder.jsp")
-                .forward(request, response);
     }
 
     /**
@@ -115,6 +144,12 @@ public class CheckoutController extends HttpServlet {
         if (user == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
+        }
+        OrderDAO orderDAO = new OrderDAO();
+        Orders lastOrder = orderDAO.getLastOrderByUserId(user.getId());
+
+        if (lastOrder != null) {
+            session.setAttribute("lastOrder", lastOrder);
         }
         if ("preview".equals(action)) {
 
@@ -182,7 +217,9 @@ public class CheckoutController extends HttpServlet {
         }
 
         if ("confirm".equals(action)) {
+
             System.out.println("=== CONFIRM CALLED ===");
+
             String[] selectedIds = request.getParameterValues("selectedItem");
 
             if (selectedIds == null) {
@@ -191,148 +228,191 @@ public class CheckoutController extends HttpServlet {
             }
 
             CartItemDAO cartDAO = new CartItemDAO();
-            List<CartItem> fullCart
-                    = cartDAO.getCartByCustomerId(user.getId());
-
+            List<CartItem> fullCart = cartDAO.getCartByCustomerId(user.getId());
             List<CartItem> selectedItems = new ArrayList<>();
 
             for (String id : selectedIds) {
                 int bookId = Integer.parseInt(id);
-
                 for (CartItem item : fullCart) {
                     if (item.getBookId() == bookId) {
                         selectedItems.add(item);
                     }
                 }
             }
-           
 
             if (selectedItems.isEmpty()) {
                 response.sendRedirect(request.getContextPath() + "/cart");
                 return;
             }
-            double total = 0;
 
+            double total = 0;
             for (CartItem item : selectedItems) {
                 total += item.getPrice() * item.getQuantity();
             }
+            double shippingFee = 20000;
+            double discount = 0;
 
+            double amount = total + shippingFee - discount;
             request.setAttribute("orderItems", selectedItems);
             request.setAttribute("totalAmount", total);
+
             try {
 
-                // Lấy từng phần địa chỉ
+                // ===== LẤY PARAM =====
                 String province = request.getParameter("province");
                 String district = request.getParameter("district");
                 String ward = request.getParameter("ward");
                 String detail = request.getParameter("detailAddress");
                 String phone = request.getParameter("phone");
                 String receiverName = request.getParameter("receiverName");
-                // ===== VALIDATE ĐỊA CHỈ + SỐ ĐIỆN THOẠI =====
+                String isEditAddress = request.getParameter("isEditAddress");
+// ===== PAYMENT METHOD =====
+                String paymentMethod = request.getParameter("paymentMethod");
+                System.out.println("Payment Method: " + paymentMethod);
                 String phoneRegex = "^(03|05|07|08|09)[0-9]{8}$";
                 String addressDetailRegex = "^.{3,100}$";
 
                 boolean hasError = false;
+                String shippingAddress;
 
-// ===== VALIDATE PROVINCE =====
-                if (province == null || province.trim().isEmpty()) {
-                    request.setAttribute("provinceError", "Vui lòng chọn Tỉnh / Thành phố!");
-                    hasError = true;
+                // =====================================================
+                // TRƯỜNG HỢP 1: NGƯỜI DÙNG CÓ CHỈNH SỬA ĐỊA CHỈ
+                // =====================================================
+                if ("true".equals(isEditAddress)) {
+
+                    if (province == null || province.trim().isEmpty()) {
+                        request.setAttribute("provinceError", "Vui lòng chọn Tỉnh / Thành phố!");
+                        hasError = true;
+                    }
+
+                    if (district == null || district.trim().isEmpty()) {
+                        request.setAttribute("districtError", "Vui lòng chọn Quận / Huyện!");
+                        hasError = true;
+                    }
+
+                    if (ward == null || ward.trim().isEmpty()) {
+                        request.setAttribute("wardError", "Vui lòng chọn Phường / Xã!");
+                        hasError = true;
+                    }
+
+                    if (detail == null || !detail.matches(addressDetailRegex)) {
+                        request.setAttribute("detailError",
+                                "Địa chỉ chi tiết phải từ 3 đến 100 ký tự!");
+                        hasError = true;
+                    }
+
+                    if (phone == null || !phone.matches(phoneRegex)) {
+                        request.setAttribute("phoneError",
+                                "Số điện thoại không hợp lệ!");
+                        hasError = true;
+                    }
+
+                    if (receiverName == null || receiverName.trim().isEmpty()) {
+                        request.setAttribute("receiverNameError",
+                                "Vui lòng nhập tên người nhận!");
+                        hasError = true;
+                    }
+
+                    if (hasError) {
+                        request.setAttribute("orderItems", selectedItems);
+                        request.setAttribute("totalAmount", total);
+                        request.getRequestDispatcher("/WEB-INF/home/placeorder.jsp")
+                                .forward(request, response);
+                        return;
+                    }
+
+                    shippingAddress = detail + ", "
+                            + ward + ", "
+                            + district + ", "
+                            + province;
+
+                } else {
+
+                    // =====================================================
+                    // TRƯỜNG HỢP 2: KHÔNG CHỈNH SỬA → DÙNG SESSION
+                    // =====================================================
+                    Customer customer = (Customer) session.getAttribute("customer");
+
+                    receiverName = customer.getFullname();
+                    phone = customer.getPhone();
+                    shippingAddress = customer.getAddress();
                 }
 
-// ===== VALIDATE DISTRICT =====
-                if (district == null || district.trim().isEmpty()) {
-                    request.setAttribute("districtError", "Vui lòng chọn Quận / Huyện!");
-                    hasError = true;
-                }
-
-// ===== VALIDATE WARD =====
-                if (ward == null || ward.trim().isEmpty()) {
-                    request.setAttribute("wardError", "Vui lòng chọn Phường / Xã!");
-                    hasError = true;
-                }
-
-// ===== VALIDATE DETAIL ADDRESS =====
-                if (detail == null || !detail.matches(addressDetailRegex)) {
-                    request.setAttribute("detailError",
-                            "Địa chỉ chi tiết phải từ 3 đến 100 ký tự!");
-                    hasError = true;
-                }
-
-// ===== VALIDATE PHONE =====
-                if (phone == null || !phone.matches(phoneRegex)) {
-                    request.setAttribute("phoneError",
-                            "Số điện thoại phải đủ 10 số và bắt đầu bằng 03,05,07,08,09!");
-                    hasError = true;
-                }
-                if (receiverName == null || receiverName.trim().isEmpty()) {
-                    request.setAttribute("receiverNameError", "Vui lòng nhập tên người nhận");
-                    hasError = true;
-                }
-
-
-// ===== NẾU CÓ LỖI =====
-                if (hasError) {
-
-                    // giữ lại dữ liệu người dùng đã nhập
-                    request.setAttribute("province", province);
-                    request.setAttribute("district", district);
-                    request.setAttribute("ward", ward);
-                    request.setAttribute("detailAddress", detail);
-                    request.setAttribute("phone", phone);
-
-
-
-                    request.setAttribute("receiverName", receiverName);
-                    request.setAttribute("orderItems", selectedItems);
-                    request.setAttribute("totalAmount", total);
-
-                    request.getRequestDispatcher("/WEB-INF/home/placeorder.jsp")
-                            .forward(request, response);
-                    return;
-                }
-// Gộp lại thành 1 chuỗi
-                String shippingAddress = detail + ", "
-                        + ward + ", "
-                        + district + ", "
-                        + province;
-
-                double shippingFee = 20000;
-                OrderDAO orderDAO = new OrderDAO();
-
-                // 🔥 Gọi 1 lần duy nhất
-                int orderId = orderDAO.createOrder(
-                        user.getId(),
-                        selectedItems,
-                        shippingAddress,
-                        shippingFee,
-                        receiverName, phone
-                );
-
-                // Xóa cart sau khi đặt thành công
-                for (CartItem item : selectedItems) {
-//                cartDAO.deleteCartItem(
+                // =====================================================
+                // TẠO ORDER
+                // =====================================================
+//                int orderId = orderDAO.createOrder(
 //                        user.getId(),
-//                        item.getBookId()
+//                        selectedItems,
+//                        shippingAddress,
+//                        shippingFee,
+//                        receiverName,
+//                        phone
 //                );
-                    cartDAO.delete(user.getId(), item.getBookId());
+                // =====================================================
+                // LƯU SESSION (chỉ khi có chỉnh sửa địa chỉ)
+                // =====================================================
+                if ("true".equals(isEditAddress)) {
+                    session.setAttribute("savedProvince", province);
+                    session.setAttribute("savedDistrict", district);
+                    session.setAttribute("savedWard", ward);
+                    session.setAttribute("savedDetailAddress", detail);
+                    session.setAttribute("savedReceiverName", receiverName);
+                    session.setAttribute("savedPhone", phone);
+
                 }
 
+                // =====================================================
+                // XÓA CART
+                // =====================================================
+//                for (CartItem item : selectedItems) {
+//                    cartDAO.delete(user.getId(), item.getBookId());
+//                }
                 request.setAttribute("selectedItems", selectedItems);
-                request.setAttribute("orderId", orderId);
+//                request.setAttribute("orderId", orderId);
 
-                request.getRequestDispatcher("/WEB-INF/home/order-success.jsp")
-                        .forward(request, response);
+                // =====================================================
+// PAYMENT FLOW
+// =====================================================
+                if ("COD".equals(paymentMethod)) {
 
+                    int orderId = orderDAO.createOrder(
+                            user.getId(),
+                            selectedItems,
+                            shippingAddress,
+                            shippingFee,
+                            receiverName,
+                            phone,
+                            paymentMethod
+                    );
+                    for (CartItem item : selectedItems) {
+                        cartDAO.delete(user.getId(), item.getBookId());
+                    }
+                    request.setAttribute("orderId", orderId);
+
+                    request.getRequestDispatcher("/WEB-INF/home/order-success.jsp")
+                            .forward(request, response);
+
+                } else if ("ONLINE".equals(paymentMethod)) {
+                    System.out.println("DEBUG RECEIVER = " + receiverName);
+                    System.out.println("DEBUG PHONE = " + phone);
+                    System.out.println("DEBUG ADDRESS = " + shippingAddress);
+                    System.out.println("DEBUG ITEMS = " + selectedItems.size());
+                   
+
+                    session.setAttribute("pendingItems", selectedItems);
+                    session.setAttribute("pendingAddress", shippingAddress);
+                    session.setAttribute("pendingReceiver", receiverName);
+                    session.setAttribute("pendingPhone", phone);
+                    session.setAttribute("pendingAmount", amount);
+
+                    response.sendRedirect("ajaxServlet?amount=" + (int) amount);
+                }
             } catch (Exception e) {
-
                 e.printStackTrace();
                 request.setAttribute("orderItems", fullCart);
-
-                request.getRequestDispatcher(
-                        "/WEB-INF/home/cart.jsp")
+                request.getRequestDispatcher("/WEB-INF/home/cart.jsp")
                         .forward(request, response);
-                return;
             }
         }
     }

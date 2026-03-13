@@ -6,6 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -122,19 +123,19 @@
             <div class="detail-header">
                 Đơn hàng 
                 <c:choose>
-                    <c:when test="${order.status == 'Pending'}">
+                    <c:when test="${order.status == 'PENDING'}">
                         chờ xác nhận
                     </c:when>
 
-                    <c:when test="${order.status == 'Shipping'}">
-                       đang giao 
+                    <c:when test="${order.status == 'SHIPPING'}">
+                        đang giao 
                     </c:when>
 
                     <c:when test="${order.status == 'DELIVERED'}">
                         đã giao
                     </c:when>
 
-                    <c:when test="${order.status == 'Cancelled'}">
+                    <c:when test="${order.status == 'FAILED'}">
                         đã hủy
                     </c:when>
 
@@ -166,7 +167,7 @@
                     <div class="product-card">
 
                         <div class="product-left">
-                            <img src="${pageContext.request.contextPath}/${item.url_img}" />
+                            <img src="${pageContext.request.contextPath}/image?file=${item.url_img}" />
 
                             <div class="product-info">
                                 <div class="product-title">
@@ -179,12 +180,31 @@
                         </div>
 
                         <div class="product-price">
-                            ${item.price * item.quantity} VND
+                            <fmt:formatNumber value="${item.price * item.quantity}" type="number"/> VND
                         </div>
 
                     </div>
-                </c:forEach>
 
+                </c:forEach>
+                <div class="payment-method">
+                    <b>Phương thức thanh toán:</b>
+
+                    <c:choose>
+                        <c:when test="${order.paymentMethod== 'ONLINE'}">
+                            💳 Thanh toán qua VNPAY
+                        </c:when>
+                        <c:when test="${order.paymentMethod == 'COD'}">
+                            🚚  Thanh toán khi nhận hàng
+                        </c:when>
+
+                    </c:choose>
+
+                </div>
+                <c:if test="${order.status == 'FAILED' && order.paymentMethod == 'ONLINE'}">
+                    <div style="color:red; margin-top:10px;">
+                        Đơn hàng đã hủy. Tiền sẽ được hoàn lại trong 3-5 ngày làm việc.
+                    </div>
+                </c:if>
                 <c:set var="subtotal" value="0" />
 
                 <c:forEach var="item" items="${order.items}">
@@ -196,22 +216,32 @@
 
                     <div class="summary-row">
                         <span>Tổng tiền hàng</span>
-                        <span>${subtotal} VND</span>
+                        <span>
+                            <fmt:formatNumber value="${subtotal}" type="number"/> VND
+                        </span>
                     </div>
 
                     <div class="summary-row">
                         <span>Phí vận chuyển</span>
-                        <span>+ ${order.shippingFee} VND</span>
+                        <span>
+                            + <fmt:formatNumber value="${order.shippingFee}" type="number"/> VND
+                        </span>
                     </div>
 
                     <div class="summary-row">
                         <span>Voucher</span>
-                        <span>- ${order.discount} VND</span>
+                        <span>
+                            - <fmt:formatNumber value="${order.discount}" type="number"/> VND
+                        </span>
                     </div>
 
                     <div class="summary-total">
                         <span>Thành tiền</span>
-                        <span>${subtotal + order.shippingFee - order.discount} VND</span>
+                        <span>
+                            <fmt:formatNumber 
+                                value="${subtotal + order.shippingFee - order.discount}" 
+                                type="number"/> VND
+                        </span>
                     </div>
 
                 </div>

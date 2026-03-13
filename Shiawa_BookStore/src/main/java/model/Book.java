@@ -5,12 +5,14 @@
 package model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  *
  * @author BA LIEM
  */
 public class Book {
+
     private int bookId;
     private String title;
     private String author;
@@ -23,6 +25,8 @@ public class Book {
     private String urlImg;
     private boolean isActive;
     private LocalDateTime createdAt;
+    private BookImage primaryImage;
+    private List<BookImage> images;
 
     public Book() {
     }
@@ -137,5 +141,27 @@ public class Book {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    public BookImage getPrimaryImage() {
+        return primaryImage;
+    }
+
+    public void setPrimaryImage(BookImage primaryImage) {
+        this.primaryImage = primaryImage;
+    }
+
+    public List getImages() {
+        return images;
+    }
+
+    public void setImages(List images) {
+        this.images = images;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" + "bookId=" + bookId + ", title=" + title + ", author=" + author + ", price=" + price + ", description=" + description + ", category=" + category + ", stock=" + stock + ", publisher=" + publisher + ", discount=" + discount + ", urlImg=" + urlImg + ", isActive=" + isActive + ", createdAt=" + createdAt + ", primaryImage=" + primaryImage + ", images=" + images + '}';
+    }
+    
     
 }

@@ -136,10 +136,10 @@
 
             <c:choose>
                 <c:when test="${not empty sessionScope.user}">
-                    <div class="icon">
+                    <a href="profile" class="icon">
                         <i class="fa-solid fa-user-check"></i>
                         <span>Hi, ${sessionScope.user.username}</span>
-                    </div>
+                    </a>
                     <a href="${pageContext.request.contextPath}/logout" class="icon">
                         <i class="fa-solid fa-right-from-bracket"></i>
                         <span>Đăng xuất</span>

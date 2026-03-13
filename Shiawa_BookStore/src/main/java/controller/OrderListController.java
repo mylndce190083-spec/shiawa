@@ -61,95 +61,53 @@ public class OrderListController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-//    @Override
-//    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-//            throws ServletException, IOException {
-//        HttpSession session = request.getSession();
-//        Account user = (Account) session.getAttribute("user");
-//
-//        if (user == null) {
-//            response.sendRedirect(request.getContextPath() + "/login");
-//            return;
-//        }
-//
-//        // 🔥 ĐẶT ĐOẠN MỚI Ở ĐÂY
-//        String pathInfo = request.getPathInfo();
-//        String status = "ALL";
-//
-//        if (pathInfo != null) {
-//            status = pathInfo.substring(1).toUpperCase();
-//        }
-//
-//        OrderDAO dao = new OrderDAO();
-//        OrderDetailDAO detailDAO = new OrderDetailDAO();
-//        List<Orders> orders;
-//
-//        if (status== null || status.equals( "ALL")) {
-//            orders = dao.getOrdersByCustomer(user.getId());
-//        } else {
-//            orders = dao.getOrdersByStatus(user.getId(), status);
-//        }
-//        for (Orders o : orders) {
-//            List<OrderItem> items = detailDAO.getItemsByOrderId(o.getOrderId());
-//            System.out.println("OrderID: " + o.getOrderId() + " | Items: " + items.size());
-//            o.setItems(items);
-//        }
-//
-//        request.setAttribute(
-//                "orders", orders);
-//        request.setAttribute("currentStatus", status);
-//        request.getRequestDispatcher(
-//                "/WEB-INF/home/orderlist.jsp")
-//                .forward(request, response);
-//    }
     @Override
-protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    HttpSession session = request.getSession();
-    Account user = (Account) session.getAttribute("user");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        Account user = (Account) session.getAttribute("user");
 
-    if (user == null) {
-        response.sendRedirect(request.getContextPath() + "/login");
-        return;
-    }
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
 
-    String pathInfo = request.getPathInfo();
-    String status = "ALL";
+        // 🔥 ĐẶT ĐOẠN MỚI Ở ĐÂY
+        String pathInfo = request.getPathInfo();
+        String status = "ALL";
 
-    if (pathInfo != null && pathInfo.length() > 1) {
-        status = pathInfo.substring(1).toUpperCase();
-    }
+        if (pathInfo != null) {
+            status = pathInfo.substring(1).toUpperCase();
+        }
 
-    OrderDAO dao = new OrderDAO();
-    OrderDetailDAO detailDAO = new OrderDetailDAO();
-    dao.FeedbackDAO fbDao = new dao.FeedbackDAO(); // Khởi tạo FeedbackDAO
-    List<Orders> orders;
+        OrderDAO dao = new OrderDAO();
+        OrderDetailDAO detailDAO = new OrderDetailDAO();
+        List<Orders> orders;
 
-    if (status == null || status.equals("ALL")) {
-        orders = dao.getOrdersByCustomer(user.getId());
-    } else {
-        orders = dao.getOrdersByStatus(user.getId(), status);
-    }
-
-    // Duyệt qua từng đơn hàng
-    for (Orders o : orders) {
-        List<OrderItem> items = detailDAO.getItemsByOrderId(o.getOrderId());//sua lai dao
-        
-        // 🔥 QUAN TRỌNG: Duyệt qua từng sản phẩm trong đơn để check feedback
-        for (OrderItem item : items) {
-            boolean rated = fbDao.hasFeedback(user.getId(), item.getBookId());
-            if (rated) {
-                item.setIsRated("rated");
+        if (status == null || status.equals("ALL")) {
+            orders = dao.getOrdersByCustomer(user.getId());
+        } else {
+            orders = dao.getOrdersByStatus(user.getId(), status);
+        }
+        for (Orders o : orders) {
+            List<OrderItem> items = detailDAO.getItemsByOrderId(o.getOrderId());            
+            o.setItems(items); //chổ này chưa biết tác dụng nên cmt lại
+        }
+//test        
+        for (Orders o : orders) {
+            for (OrderItem oi : o.getItems()) {
+            System.out.println("ORDER 11: "+oi);
             }
         }
         
-        o.setItems(items);
-    }
+        request.setAttribute(
+                "orders", orders);
+        request.setAttribute("currentStatus", status);   // ⭐ THÊM DÒNG NÀY
 
-    request.setAttribute("orders", orders);
-    request.setAttribute("currentStatus", status);
-    request.getRequestDispatcher("/WEB-INF/home/orderlist.jsp").forward(request, response);
-}
+        request.getRequestDispatcher(
+                "/WEB-INF/home/orderlist.jsp")
+                .forward(request, response);
+    }
 
     /**
      * Handles the HTTP <code>POST</code> method.
