@@ -122,8 +122,8 @@ public class CustomerDAO extends DBContext {
     public void insert(Customer customer) {
         String sql = """
     INSERT INTO Customer
-    (username, password, email, full_name, status, verify_token)
-    VALUES (?, ?, ?, ?, ?, ?)
+    (username, password, email, full_name, status, verify_token, must_change_password)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
 """;
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
@@ -133,6 +133,7 @@ public class CustomerDAO extends DBContext {
             ps.setString(4, customer.getFullname());
             ps.setString(5, customer.getStatus());
             ps.setString(6, customer.getVerifyToken());
+            ps.setBoolean(7, customer.isMustChangePassword());
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

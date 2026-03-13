@@ -138,6 +138,7 @@ public class RegisterController extends HttpServlet {
         } else {
             String hashPassword = adao.hashMD5(password);
             Customer c = new Customer();
+            c.setMustChangePassword(false);
             c.setUsername(username);
             c.setPassword(hashPassword);
             c.setEmail(email);

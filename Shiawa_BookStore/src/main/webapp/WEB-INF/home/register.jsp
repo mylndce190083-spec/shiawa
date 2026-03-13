@@ -53,6 +53,8 @@
                 <form action="register" method="post">
                     <label>Tên tài khoản</label>
                     <input type="text" name="username" placeholder="Name">
+                    <label>Họ và Tên</label>
+                    <input type="text" name="fullName" placeholder="Full Name">
                     <label>Email</label>
                     <input type="email" name="email" placeholder="Email">
                     <label>Mật khẩu</label>

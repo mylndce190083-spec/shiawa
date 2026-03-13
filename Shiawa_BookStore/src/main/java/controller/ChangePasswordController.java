@@ -61,6 +61,10 @@ public class ChangePasswordController extends HttpServlet {
         // cập nhật trạng thái đổi password
         dao.updateMustChangePassword(user.getId(), user.getRole(), false);
 
+        //mới thêm
+        // update session
+        user.setMustChangePassword(false);
+        session.setAttribute("user", user);
         response.sendRedirect("home");
     }
 
