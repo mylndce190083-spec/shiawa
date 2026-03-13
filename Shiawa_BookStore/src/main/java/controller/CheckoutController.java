@@ -249,7 +249,10 @@ public class CheckoutController extends HttpServlet {
             for (CartItem item : selectedItems) {
                 total += item.getPrice() * item.getQuantity();
             }
+            double shippingFee = 20000;
+            double discount = 0;
 
+            double amount = total + shippingFee - discount;
             request.setAttribute("orderItems", selectedItems);
             request.setAttribute("totalAmount", total);
 
@@ -338,8 +341,6 @@ public class CheckoutController extends HttpServlet {
                 // =====================================================
                 // TẠO ORDER
                 // =====================================================
-                double shippingFee = 20000;
-
 //                int orderId = orderDAO.createOrder(
 //                        user.getId(),
 //                        selectedItems,
@@ -348,7 +349,6 @@ public class CheckoutController extends HttpServlet {
 //                        receiverName,
 //                        phone
 //                );
-
                 // =====================================================
                 // LƯU SESSION (chỉ khi có chỉnh sửa địa chỉ)
                 // =====================================================
@@ -365,17 +365,15 @@ public class CheckoutController extends HttpServlet {
                 // =====================================================
                 // XÓA CART
                 // =====================================================
-                for (CartItem item : selectedItems) {
-                    cartDAO.delete(user.getId(), item.getBookId());
-                }
-
+//                for (CartItem item : selectedItems) {
+//                    cartDAO.delete(user.getId(), item.getBookId());
+//                }
                 request.setAttribute("selectedItems", selectedItems);
 //                request.setAttribute("orderId", orderId);
 
                 // =====================================================
 // PAYMENT FLOW
 // =====================================================
-                
                 if ("COD".equals(paymentMethod)) {
 
                     int orderId = orderDAO.createOrder(
@@ -384,20 +382,31 @@ public class CheckoutController extends HttpServlet {
                             shippingAddress,
                             shippingFee,
                             receiverName,
-                            phone
+                            phone,
+                            paymentMethod
                     );
-
+                    for (CartItem item : selectedItems) {
+                        cartDAO.delete(user.getId(), item.getBookId());
+                    }
                     request.setAttribute("orderId", orderId);
 
                     request.getRequestDispatcher("/WEB-INF/home/order-success.jsp")
                             .forward(request, response);
 
                 } else if ("ONLINE".equals(paymentMethod)) {
+                    System.out.println("DEBUG RECEIVER = " + receiverName);
+                    System.out.println("DEBUG PHONE = " + phone);
+                    System.out.println("DEBUG ADDRESS = " + shippingAddress);
+                    System.out.println("DEBUG ITEMS = " + selectedItems.size());
+                   
 
                     session.setAttribute("pendingItems", selectedItems);
                     session.setAttribute("pendingAddress", shippingAddress);
+                    session.setAttribute("pendingReceiver", receiverName);
+                    session.setAttribute("pendingPhone", phone);
+                    session.setAttribute("pendingAmount", amount);
 
-                    response.sendRedirect("ajaxServlet?amount=" + (int) total);
+                    response.sendRedirect("ajaxServlet?amount=" + (int) amount);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

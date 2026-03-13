@@ -703,32 +703,7 @@
 
             window.onload = calculateSummary;
 
-            document.getElementById("checkoutForm").addEventListener("submit", function (e) {
-
-                const paymentMethod = document.getElementById("paymentMethod").value;
-
-                if (paymentMethod === "ONLINE") {
-
-                    e.preventDefault(); // chặn submit form
-
-                    let totalText = document.getElementById("total").innerText;
-                    let amount = totalText.replace(/\D/g, "");
-
-                    fetch("ajaxServlet", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
-                        body: "amount=" + amount
-                    })
-                            .then(res => res.json())
-                            .then(data => {
-                                window.location.href = data.data;
-                            });
-
-                }
-
-            });
+            
             function showEditForm() {
                 document.getElementById("viewAddress").style.display = "none";
                 document.getElementById("editForm").style.display = "block";

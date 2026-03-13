@@ -89,13 +89,17 @@
 
 
                                 <c:when test="${order.status == 'SHIPPING'}">
-                                    <select name="status" class="form-select mb-3" required>
-                                        <option value="DELIVERED">Giao thành công</option>
-                                        <option value="FAILED">Giao thất bại</option>
-                                    </select>
-                                    <button type="submit" class="btn btn-success w-100">
-                                        Cập nhật trạng thái
-                                    </button>
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" name="status" value="DELIVERED" 
+                                                class="btn btn-success">
+                                            Giao thành công
+                                        </button>
+
+                                        <button type="submit" name="status" value="FAILED" 
+                                                class="btn btn-danger">
+                                            Giao thất bại
+                                        </button>
+                                    </div>
                                 </c:when>
 
 

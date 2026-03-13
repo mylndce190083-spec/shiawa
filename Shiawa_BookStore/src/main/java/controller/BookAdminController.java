@@ -106,52 +106,68 @@ public class BookAdminController extends HttpServlet {
 
             BookDAO dao = new BookDAO();
             CategoryDAO cateDAO = new CategoryDAO();
-            List<BookAdmin> list;
-
+//            List<BookAdmin> list;
+//
             Integer categoryId = null;
             if (categoryParam != null && !categoryParam.trim().isEmpty()) {
                 categoryId = Integer.parseInt(categoryParam);
             }
+//
+//            boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+//            boolean hasCategory = categoryId != null;
+//
+//            // ===== SEARCH ƯU TIÊN =====
+//            if (hasKeyword) {
+//
+//                list = dao.searchByTitle(keyword);
+//
+//            } // ===== FILTER =====
+//            else if (hasCategory) {
+//
+//                list = dao.getBooksByCategory(categoryId);
+//
+//            } // ===== LOAD ALL =====
+//            else {
+//
+//                list = dao.getAllBooksInfo();
+//            }
 
-            boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
-            boolean hasCategory = categoryId != null;
+            int page = 1;
+            int pageSize = 10;
 
-            // ===== SEARCH ƯU TIÊN =====
-            if (hasKeyword) {
-
-                list = dao.searchByTitle(keyword);
-
-            } // ===== FILTER =====
-            else if (hasCategory) {
-
-                list = dao.getBooksByCategory(categoryId);
-
-            } // ===== LOAD ALL =====
-            else {
-
-                list = dao.getAllBooksInfo();
+            try {
+                page = Integer.parseInt(request.getParameter("page"));
+            } catch (Exception e) {
             }
 
+            int totalBooks = dao.countBooks(keyword, categoryId);
+            int totalPage = (int) Math.ceil((double) totalBooks / pageSize);
+
+            List<BookAdmin> list = dao.getBooksByPage(page, pageSize, keyword, categoryId);
             // ===== THÔNG BÁO KHI RỖNG =====
-            if (list.isEmpty()) {
+//            if (list.isEmpty()) {
+//
+//                if (hasKeyword) {
+//                    request.setAttribute("searchMsg",
+//                            "No book found with name \"" + keyword + "\"");
+//                } else if (hasCategory) {
+//                    request.setAttribute("searchMsg",
+//                            "No book found in selected category.");
+//                } else {
+//                    request.setAttribute("searchMsg",
+//                            "No books available.");
+//                }
+//            }
 
-                if (hasKeyword) {
-                    request.setAttribute("searchMsg",
-                            "No book found with name \"" + keyword + "\"");
-                } else if (hasCategory) {
-                    request.setAttribute("searchMsg",
-                            "No book found in selected category.");
-                } else {
-                    request.setAttribute("searchMsg",
-                            "No books available.");
-                }
-            }
 
             request.setAttribute("keyword", keyword);
             request.setAttribute("selectedCategoryId", categoryId);
             request.setAttribute("categoryList", cateDAO.getIdNameCategory());
+            
             request.setAttribute("bookList", list);
-
+            request.setAttribute("currentPageNum", page);
+            request.setAttribute("totalPage", totalPage);
+            
             request.getRequestDispatcher("/WEB-INF/book/list.jsp")
                     .forward(request, response);
         }
@@ -268,15 +284,6 @@ public class BookAdminController extends HttpServlet {
                 // Set Primary
                 String primaryImageId = request.getParameter("primaryImageId");
 
-//                if (primaryImageId != null && !primaryImageId.isEmpty()) {
-//                    BookImageDAO imgDao = new BookImageDAO();
-//
-//                    // reset tất cả về 0
-//                    imgDao.clearPrimaryByBookId(bookId);
-//
-//                    // set cái mới thành 1
-//                    imgDao.setPrimaryId(Integer.parseInt(primaryImageId));
-//                }
                 // Admin chọn primary
                 if (primaryImageId != null && !primaryImageId.isEmpty()) {
                     bookImageDAO.clearPrimaryByBookId(bookId);

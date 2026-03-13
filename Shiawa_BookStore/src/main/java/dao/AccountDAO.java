@@ -63,8 +63,11 @@ public class AccountDAO extends DBContext {
                 u.setUsername(rs.getString("username"));
                 u.setEmail(rs.getString("email"));
                 u.setStatus(rs.getString("status"));
+                u.setFullName(rs.getString("full_name"));
+                u.setPassword(rs.getString("password"));
                 // FIX QUAN TRỌNG
                 u.setRole("Customer");
+                u.setMustChangePassword(rs.getBoolean("must_change_password"));
 
                 return u;
             }
@@ -87,6 +90,9 @@ public class AccountDAO extends DBContext {
                     u.setRole(rs.getString("name"));//name là role
                     u.setEmail(rs.getString("email"));
                     u.setStatus(rs.getString("status"));
+                    u.setFullName(rs.getString("full_name"));
+                    u.setPassword(rs.getString("password"));
+                    u.setMustChangePassword(rs.getBoolean("must_change_password"));
                     return u;
                 }
             } catch (Exception e) {
@@ -228,10 +234,10 @@ public class AccountDAO extends DBContext {
             String password, String role) {
 
         String sql = """
-        INSERT INTO Staff(username, full_name, email, phone, password, role_id, status)
+        INSERT INTO Staff(username, full_name, email, phone, password, role_id, status, must_change_password)
         VALUES (?, ?, ?, ?, ?, 
             (SELECT role_id FROM Role WHERE name = ?),
-            'active')
+            'active', 1)
     """;
 
         try {
@@ -256,8 +262,8 @@ public class AccountDAO extends DBContext {
             String password) {
 
         String sql = """
-        INSERT INTO Customer(username, full_name, email, phone, password, status)
-        VALUES (?, ?, ?, ?, ?, 'active')
+        INSERT INTO Customer(username, full_name, email, phone, password, status, must_change_password)
+        VALUES (?, ?, ?, ?, ?, 'active', 1)
     """;
 
         try {
@@ -408,6 +414,102 @@ public class AccountDAO extends DBContext {
         }
 
         return false;
+    }
+
+    // update profile (Admin only)
+    public void updateProfile(Account acc) {
+        String sql = "UPDATE Staff SET username=?, full_name=?, email=? WHERE staff_id=?";
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setString(1, acc.getUsername());
+            ps.setString(2, acc.getFullName());
+            ps.setString(3, acc.getEmail());
+            ps.setInt(4, acc.getId());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int countAccounts(String role) {
+        int total = 0;
+        String sql = """
+        SELECT COUNT(*) FROM (
+            SELECT customer_id
+            FROM Customer
+            WHERE (? IS NULL OR ? = 'Customer')
+
+            UNION ALL
+
+            SELECT s.staff_id
+            FROM Staff s
+            JOIN Role r ON s.role_id = r.role_id
+            WHERE (? IS NULL OR r.name = ?)
+        ) t
+    """;
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setString(1, role);
+            ps.setString(2, role);
+            ps.setString(3, role);
+            ps.setString(4, role);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                total = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return total;
+    }
+
+    public List<Account> getAccountsByPage(int page, int pageSize, String role) {
+        List<Account> list = new ArrayList<>();
+        int offset = (page - 1) * pageSize;
+
+        String sql = """
+        SELECT * FROM (
+            SELECT customer_id AS id, username, 'Customer' AS role, email, status
+            FROM Customer
+            WHERE (? IS NULL OR ? = 'Customer')
+
+            UNION ALL
+
+            SELECT s.staff_id AS id, s.username, r.name AS role, s.email, s.status
+            FROM Staff s
+            JOIN Role r ON s.role_id = r.role_id
+            WHERE (? IS NULL OR r.name = ?)
+        ) t
+        ORDER BY username
+        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+    """;
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setString(1, role);
+            ps.setString(2, role);
+            ps.setString(3, role);
+            ps.setString(4, role);
+            ps.setInt(5, offset);
+            ps.setInt(6, pageSize);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                list.add(new Account(
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("role"),
+                        rs.getString("email"),
+                        rs.getString("status")
+                ));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
     }
 
     public static void main(String[] args) {

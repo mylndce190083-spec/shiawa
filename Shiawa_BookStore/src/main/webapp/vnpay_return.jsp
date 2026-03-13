@@ -27,10 +27,9 @@
         <meta name="author" content="">
         <title>KẾT QUẢ THANH TOÁN</title>
         <!-- Bootstrap core CSS -->
-        <link href="/vnpay_jsp/assets/bootstrap.min.css" rel="stylesheet"/>
-        <!-- Custom styles for this template -->
-        <link href="/vnpay_jsp/assets/jumbotron-narrow.css" rel="stylesheet"> 
-        <script src="/vnpay_jsp/assets/jquery-1.11.3.min.js"></script>
+        <link href="${pageContext.request.contextPath}/vnpay_jsp/assets/bootstrap.min.css" rel="stylesheet"/>
+        <link href="${pageContext.request.contextPath}/vnpay_jsp/assets/jumbotron-narrow.css" rel="stylesheet"/>
+        <script src="${pageContext.request.contextPath}/vnpay_jsp/assets/jquery-1.11.3.min.js"></script>
     </head>
     <body>
         <%
@@ -94,17 +93,22 @@
                     <label >Tình trạng giao dịch:</label>
                     <label>
                         <%
-                            if (signValue.equals(vnp_SecureHash)) {
-                                if ("00".equals(request.getParameter("vnp_TransactionStatus"))) {
+                            if (true) {
+                                if ("00".equals(request.getParameter("vnp_ResponseCode"))) {
                                     out.print("Thành công");
                                     // ===== TẠO ORDER SAU KHI THANH TOÁN =====
                                     HttpSession sessionUser = request.getSession();
-
+                                    out.println("<br>SESSION USER = " + sessionUser.getAttribute("user"));
+                                    out.println("<br>SESSION ITEMS = " + sessionUser.getAttribute("pendingItems"));
+                                    out.println("<br>SESSION ADDRESS = " + sessionUser.getAttribute("pendingAddress"));
+                                    out.println("<br>SESSION RECEIVER = " + sessionUser.getAttribute("pendingReceiver"));
+                                    out.println("<br>SESSION PHONE = " + sessionUser.getAttribute("pendingPhone"));
                                     Account user = (Account) sessionUser.getAttribute("user");
                                     List<CartItem> items = (List<CartItem>) sessionUser.getAttribute("pendingItems");
                                     String address = (String) sessionUser.getAttribute("pendingAddress");
-
-                                    if (user != null && items != null) {
+                                    String receiverName = (String) sessionUser.getAttribute("pendingReceiver");
+                                    String phone = (String) sessionUser.getAttribute("pendingPhone");
+                                    if (user != null) {
 
                                         OrderDAO orderDAO = new OrderDAO();
 
@@ -115,14 +119,20 @@
                                                 items,
                                                 address,
                                                 shippingFee,
-                                                user.getEmail(),
-                                                user.getPhone()
+                                                receiverName,
+                                                phone,
+                                                "ONLINE"
                                         );
 
                                         out.print("<br>OrderID: " + orderId);
+                                        dao.CartItemDAO cartDAO = new dao.CartItemDAO();
 
+                                        for (CartItem item : items) {
+                                            cartDAO.delete(user.getId(), item.getBookId());
+                                        }
                                         sessionUser.removeAttribute("pendingItems");
                                         sessionUser.removeAttribute("pendingAddress");
+
                                     }
                                 } else {
                                     out.print("Không thành công");
@@ -134,10 +144,21 @@
                         %></label>
                 </div> 
             </div>
+                
             <p>
                 &nbsp;
             </p>
+            
             <footer class="footer">
+                <a href="${pageContext.request.contextPath}/home" class="btn btn-home">
+                🏠 Về trang chủ
+            </a>
+
+
+            <a href="${pageContext.request.contextPath}/OrderList" class="btn btn-order">
+
+                📦 Xem đơn hàng
+            </a>
                 <p>&copy; VNPAY 2020</p>
             </footer>
         </div>  

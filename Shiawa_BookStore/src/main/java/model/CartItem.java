@@ -31,8 +31,7 @@ public class CartItem {
         this.quantity = quantity;
         this.price = price;
         this.createAt = createAt;
-        this.book = book;
-        this.stock = stock;
+
     }
 
     public int getCartItemId() {
