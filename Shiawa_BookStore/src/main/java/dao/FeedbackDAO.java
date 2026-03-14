@@ -8,8 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Feedback;
@@ -18,11 +16,10 @@ import model.Feedback;
  *
  * @author admin
  */
-public class FeedbackDAO extends db.DBContext {
-
+public class FeedbackDAO extends db.DBContext{
     public void insertFeedback(Feedback fb) {
         try {
-            String sql = "INSERT INTO Feedback (customer_id, book_id, rating, comment, created_at) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Feedback (user_id, book_id, rating, content, created_at) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement st = getConnection().prepareStatement(sql);
             st.setInt(1, fb.getUserId());
             st.setInt(2, fb.getBookId());
@@ -33,82 +30,18 @@ public class FeedbackDAO extends db.DBContext {
         } catch (SQLException ex) {
             Logger.getLogger(FeedbackDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
     }
-
     public boolean hasFeedback(int userId, int bookId) {
-        String sql = "SELECT feedback_id FROM Feedback WHERE customer_id = ? AND book_id = ?";
         try {
+            String sql = "SELECT id FROM Feedback WHERE user_id = ? AND book_id = ?";
             PreparedStatement st = getConnection().prepareStatement(sql);
-            // PHẢI SET TRƯỚC
+            ResultSet rs = st.executeQuery();
             st.setInt(1, userId);
             st.setInt(2, bookId);
-            // RỒI MỚI EXECUTE
-            ResultSet rs = st.executeQuery();
-            return rs.next();
         } catch (SQLException ex) {
             Logger.getLogger(FeedbackDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
-    }
-
-    public List<Feedback> getFeedbacksByBookId(int bookId) {
-        List<Feedback> list = new ArrayList<>();
-        String sql = "SELECT f.*, c.username FROM Feedback f "
-                + "JOIN Customer c ON f.customer_id = c.customer_id "
-                + "WHERE f.book_id = ? ORDER BY f.created_at DESC";
-        try {
-            PreparedStatement st = getConnection().prepareStatement(sql);
-            st.setInt(1, bookId);
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                Feedback fb = new Feedback();
-                fb.setId(rs.getInt("feedback_id"));
-                fb.setUserId(rs.getInt("customer_id"));
-                fb.setBookId(rs.getInt("book_id"));
-                fb.setRating(rs.getInt("rating"));
-                fb.setContent(rs.getString("comment"));
-                // Nếu model Feedback có trường username, hãy set vào để hiển thị tên người dùng
-                fb.setUsername(rs.getString("username"));
-                list.add(fb);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(FeedbackDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return list;
-    }
-
-    public void updateFeedback(Feedback fb) {
-        try {
-            String sql = "UPDATE Feedback SET rating = ?, comment = ?, created_at = ? \n"
-                    + "\n"
-                    + "    WHERE customer_id = ? AND book_id = ?";
-            PreparedStatement st = getConnection().prepareStatement(sql);
-            st.setInt(1, fb.getRating());
-            st.setString(2, fb.getContent());
-            st.setObject(3, fb.getCreatedAt());
-            st.setInt(4, fb.getUserId());
-            st.setInt(5, fb.getBookId());
-            st.executeUpdate();
-        } catch (SQLException ex) {
-            Logger.getLogger(FeedbackDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-
-    }
-
-    public static void main(String[] args) {
-        FeedbackDAO dao = new FeedbackDAO();
-        List<Feedback> list = dao.getFeedbacksByBookId(6);
-        for (Feedback f : list) {
-            System.out.println(f);
-        }
-        Feedback fb = new Feedback();
-        fb.setContent("comment ffbfbgf");
-        fb.setBookId(6);
-        fb.setUserId(3);
-        fb.setRating(2);
-        dao.updateFeedback(fb);
-
     }
 }

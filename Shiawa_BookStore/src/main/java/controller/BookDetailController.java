@@ -20,61 +20,27 @@ import model.Book;
 @WebServlet(name = "BookDetailController", urlPatterns = {"/bookdetail"})
 public class BookDetailController extends HttpServlet {
 
-   @Override
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        String idString = request.getParameter("id");
-//        if (idString != null) {
-//            int id = Integer.parseInt(idString);
-//            dao.BookDAO bookDAO = new dao.BookDAO();
-//            var foundBook = bookDAO.getBookById(id);
-//            if (foundBook != null) {
-//                dao.FeedbackDAO fbDAO = new dao.FeedbackDAO();
-//                List<model.Feedback> feedbackList = fbDAO.getFeedbacksByBookId(id);
-//                request.setAttribute("feedbackList", feedbackList);
-//                int categoryId = foundBook.getCategory().getCategoryId();
-//                List<model.Book> similarBooks = bookDAO.getSimilarBook(categoryId);
-//
-//                request.setAttribute("similarBooks", similarBooks);
-//                request.setAttribute("book", foundBook);
-//
-//                request.getRequestDispatcher("/client/bookdetail.jsp").forward(request, response);
-//            } else {
-//                response.sendRedirect("index.jsp");
-//            }
-//        }
-//        FeedbackDAO fbDao = new FeedbackDAO();
-//        List<Feedback> feedbackList = fbDao.getFeedbacksByBookId(0);
-//        request.setAttribute("feedbacks", feedbackList);
-//    }
-
         String idString = request.getParameter("id");
         if (idString != null) {
-
             int id = Integer.parseInt(idString);
-
             dao.BookDAO bookDAO = new dao.BookDAO();
             var foundBook = bookDAO.getBookById(id);
-
             if (foundBook != null) {
-
-                dao.FeedbackDAO fbDAO = new dao.FeedbackDAO();
-                List<model.Feedback> feedbackList = fbDAO.getFeedbacksByBookId(id);
-
-                request.setAttribute("feedbackList", feedbackList); // sửa ở đây
-
                 int categoryId = foundBook.getCategory().getCategoryId();
-                List<model.Book> similarBooks = bookDAO.getSimilarBook(categoryId);
+                List<Book> similarBooks = bookDAO.getSimilarBook(categoryId);
 
                 request.setAttribute("similarBooks", similarBooks);
                 request.setAttribute("book", foundBook);
-
                 request.getRequestDispatcher("/client/bookdetail.jsp").forward(request, response);
-
             } else {
                 response.sendRedirect("index.jsp");
             }
+            
         }
+
     }
 
     @Override

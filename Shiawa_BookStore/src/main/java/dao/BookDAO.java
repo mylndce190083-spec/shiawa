@@ -23,7 +23,7 @@ import model.Category;
  */
 public class BookDAO extends DBContext {
 
-   public List<BookAdmin> getAllBooksInfo() {
+    public List<BookAdmin> getAllBooksInfo() {
         List<BookAdmin> list = new ArrayList<>();
 
         String sql = """
@@ -108,11 +108,23 @@ public class BookDAO extends DBContext {
                 int stock = rs.getInt("stock");
                 String publisher = rs.getString("publisher");
                 int discount = rs.getInt("discount");
-                String imgUrl = rs.getString("url_img");
+                String imgUrl = this.getImgURLbyBookId(id);
                 boolean isActive = rs.getBoolean("is_active");
                 LocalDateTime createAte = rs.getTimestamp("created_at").toLocalDateTime();
                 //tao doi tuong product
-                Book b = new Book(id, title, author, price, description, cate, stock, publisher, discount, imgUrl, isActive, createAte);
+                Book b = new Book();
+                b.setBookId(id);
+                b.setTitle(title);
+                b.setAuthor(author);
+                b.setPrice(price);
+                b.setDescription(description);
+                b.setCategory(cate);
+                b.setStock(stock);
+                b.setPublisher(publisher);
+                b.setDiscount(discount);
+                b.setUrlImg(imgUrl);
+                b.setIsActive(isActive);
+                b.setCreatedAt(createAte);
                 list.add(b);
             }
 
@@ -141,46 +153,44 @@ public class BookDAO extends DBContext {
         return url;
     }
 
- public Book getBookById(int bookId) {
-        // Sử dụng LEFT JOIN để lấy cột 'name' từ bảng Category và đặt tên thay thế là 'category_name'
+    public Book getBookById(int bookId) {
         String sql = """
-    SELECT b.*, c.name AS category_name
-    FROM Book b
-    LEFT JOIN Category c ON b.category_id = c.category_id
-    WHERE b.book_id = ?
-                """;
+        SELECT *
+        FROM Book
+        WHERE book_id = ?
+    """;
 
-        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setInt(1, bookId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    // Bước quan trọng: Tạo đối tượng Category và gán tên vào
-                    Category cate = new Category();
-                    cate.setCategoryId(rs.getInt("category_id"));
-                    cate.setCategoryName(rs.getString("category_name"));
 
-                    // Trả về đối tượng Book có chứa đối tượng Category bên trong
-                    return new Book(
-                            rs.getInt("book_id"),
-                            rs.getString("title"),
-                            rs.getString("author"),
-                            rs.getDouble("price"),
-                            rs.getString("description"),
-                            cate, // <--- Đối tượng cate này sẽ giúp JSP hiển thị được tên
-                            rs.getInt("stock"),
-                            rs.getString("publisher"),
-                            rs.getInt("discount"),
-                            rs.getString("url_img"),
-                            rs.getBoolean("is_active"),
-                            rs.getTimestamp("created_at").toLocalDateTime()
-                    );
-                }
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                CategoryDAO cdao = new CategoryDAO();
+                Category cate = cdao.getCategoryById(rs.getInt("category_id"));
+
+                return new Book(
+                        rs.getInt("book_id"),
+                        rs.getString("title"),
+                        rs.getString("author"),
+                        rs.getDouble("price"),
+                        rs.getString("description"),
+                        cate,
+                        rs.getInt("stock"),
+                        rs.getString("publisher"),
+                        rs.getInt("discount"),
+                        getImgURLbyBookId(rs.getInt("book_id")),
+                        rs.getBoolean("is_active"),
+                        rs.getTimestamp("created_at").toLocalDateTime()
+                );
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
+
     public BookAdmin getBookAdminById(int id) {
         String sql = """
         SELECT b.book_id,
@@ -227,7 +237,7 @@ public class BookDAO extends DBContext {
         return null;
     }
 
-  public int getStock(Connection con, int bookId) throws Exception {
+    public int getStock(Connection con, int bookId) throws Exception {
 
         String sql = "SELECT stock FROM Book WHERE book_id = ?";
 
@@ -264,8 +274,7 @@ public class BookDAO extends DBContext {
         }
     }
 
-
-     public List<Book> getSimilarBook(int categoryId) {
+    public List<Book> getSimilarBook(int categoryId) {
         List<Book> list = new ArrayList<>();
         String sql = "SELECT TOP 6 b.*, c.name AS category_name "
                 + "FROM Book b "
@@ -279,7 +288,8 @@ public class BookDAO extends DBContext {
                 b.setBookId(rs.getInt("book_id"));
                 b.setTitle(rs.getString("title"));
                 b.setPrice(rs.getDouble("price"));
-                b.setUrlImg(rs.getString("url_img"));
+                b.setUrlImg(this.getImgURLbyBookId(rs.getInt("book_id")));
+                //b.setUrlImg(rs.getString("url_img"));
 
                 Category c = new Category();
                 c.setCategoryName(rs.getString("category_name"));
@@ -337,7 +347,7 @@ public class BookDAO extends DBContext {
         return list;
     }
 
-     public void increaseStock(Connection con, int bookId, int quantity) {
+    public void increaseStock(Connection con, int bookId, int quantity) {
         String sql = "UPDATE Book SET stock = stock + ? WHERE book_id = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
 
