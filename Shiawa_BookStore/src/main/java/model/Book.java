@@ -27,6 +27,7 @@ public class Book {
     private LocalDateTime createdAt;
     private BookImage primaryImage;
     private List<BookImage> images;
+    private int sold;
 
     public Book() {
     }
@@ -156,6 +157,14 @@ public class Book {
 
     public void setImages(List images) {
         this.images = images;
+    }
+
+    public int getSold() {
+        return sold;
+    }
+
+    public void setSold(int sold) {
+        this.sold = sold;
     }
 
     @Override

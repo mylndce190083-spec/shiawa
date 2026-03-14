@@ -53,6 +53,11 @@ public class HomeController extends HttpServlet {
         } else {
             list = dao.getAllBook();
         }
+        for (Book b : list) {// lấy số lượng đã bán
+            int sold = dao.getSoldQuantity(b.getBookId());
+            b.setSold(sold);
+        }
+
         List<Category> clist = cdao.getAllCategory();
         request.setAttribute("listB", list);
         request.setAttribute("listC", clist);

@@ -9,8 +9,14 @@ package model;
  * @author BA LIEM
  */
 public class Category {
+
     private int categoryId;
     private String categoryName;
+    private Category parent;
+
+    public Category(Category parent) {
+        this.parent = parent;
+    }
 
     public Category() {
     }
@@ -35,6 +41,13 @@ public class Category {
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
-    
-    
+
+    public Category getParent() {
+        return parent;
+    }
+
+    public void setParent(Category parent) {
+        this.parent = parent;
+    }
+
 }

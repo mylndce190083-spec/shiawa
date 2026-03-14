@@ -125,6 +125,7 @@ public class BookDAO extends DBContext {
                 b.setUrlImg(imgUrl);
                 b.setIsActive(isActive);
                 b.setCreatedAt(createAte);
+                b.setSold(getSoldQuantity(id));   // 🔥 thêm dòng này
                 list.add(b);
             }
 
@@ -284,6 +285,7 @@ public class BookDAO extends DBContext {
             ps.setInt(1, categoryId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
+                int id = rs.getInt("book_id");
                 Book b = new Book();
                 b.setBookId(rs.getInt("book_id"));
                 b.setTitle(rs.getString("title"));
@@ -294,7 +296,7 @@ public class BookDAO extends DBContext {
                 Category c = new Category();
                 c.setCategoryName(rs.getString("category_name"));
                 b.setCategory(c);
-
+                b.setSold(getSoldQuantity(id));   // 🔥 thêm dòng này
                 list.add(b);
             }
 
@@ -306,22 +308,55 @@ public class BookDAO extends DBContext {
 
     public List<Book> searchBookByName(String keyword) {
         List<Book> list = new ArrayList<>();
+        CategoryDAO dao = new CategoryDAO();
 
         String sql = "SELECT * FROM Book WHERE title LIKE ?";
-        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, "%" + keyword + "%");
             ResultSet rs = ps.executeQuery();
+
             while (rs.next()) {
+
+                int id = rs.getInt("book_id");
+                String title = rs.getString("title");
+                String author = rs.getString("author");
+                double price = rs.getDouble("price");
+                String description = rs.getString("description");
+
+                int cateId = rs.getInt("category_id");
+                Category cate = dao.getCategoryById(cateId);
+
+                int stock = rs.getInt("stock");
+                String publisher = rs.getString("publisher");
+                int discount = rs.getInt("discount");
+
+                String imgUrl = this.getImgURLbyBookId(id);
+
+                boolean isActive = rs.getBoolean("is_active");
+                LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
+
                 Book b = new Book();
-                b.setBookId(rs.getInt("book_id"));
-                b.setTitle(rs.getString("title"));
-                b.setPrice(rs.getDouble("price"));
-                b.setUrlImg(rs.getString("url_img"));
+                b.setBookId(id);
+                b.setTitle(title);
+                b.setAuthor(author);
+                b.setPrice(price);
+                b.setDescription(description);
+                b.setCategory(cate);
+                b.setStock(stock);
+                b.setPublisher(publisher);
+                b.setDiscount(discount);
+                b.setUrlImg(imgUrl);
+                b.setIsActive(isActive);
+                b.setCreatedAt(createdAt);
+                b.setSold(getSoldQuantity(id));
+
                 list.add(b);
             }
 
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return list;
@@ -329,21 +364,56 @@ public class BookDAO extends DBContext {
 
     public List<Book> getBooksByCategoryId(int cateId) {
         List<Book> list = new ArrayList<>();
+        CategoryDAO dao = new CategoryDAO();
+
         String sql = "SELECT * FROM Book WHERE category_id = ?";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setInt(1, cateId);
             ResultSet rs = ps.executeQuery();
+
             while (rs.next()) {
+
+                int id = rs.getInt("book_id");
+                String title = rs.getString("title");
+                String author = rs.getString("author");
+                double price = rs.getDouble("price");
+                String description = rs.getString("description");
+
+                int categoryId = rs.getInt("category_id");
+                Category cate = dao.getCategoryById(categoryId);
+
+                int stock = rs.getInt("stock");
+                String publisher = rs.getString("publisher");
+                int discount = rs.getInt("discount");
+
+                String imgUrl = this.getImgURLbyBookId(id);
+
+                boolean isActive = rs.getBoolean("is_active");
+                LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
+
                 Book b = new Book();
-                b.setBookId(rs.getInt("book_id"));
-                b.setTitle(rs.getString("title"));
-                b.setPrice(rs.getDouble("price"));
-                b.setUrlImg(rs.getString("url_img"));
+                b.setBookId(id);
+                b.setTitle(title);
+                b.setAuthor(author);
+                b.setPrice(price);
+                b.setDescription(description);
+                b.setCategory(cate);
+                b.setStock(stock);
+                b.setPublisher(publisher);
+                b.setDiscount(discount);
+                b.setUrlImg(imgUrl);
+                b.setIsActive(isActive);
+                b.setCreatedAt(createdAt);
+                b.setSold(getSoldQuantity(id));   // 🔥 thêm dòng này
                 list.add(b);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return list;
     }
 
@@ -660,6 +730,26 @@ public class BookDAO extends DBContext {
         }
 
         return list;
+    }
+
+    public int getSoldQuantity(int bookId) {
+        String sql = "SELECT ISNULL(SUM(od.quantity),0) AS sold "
+                + "FROM OrderDetail od "
+                + "JOIN Orders o ON od.order_id = o.order_id "
+                + "WHERE o.status = 'DELIVERED' AND od.book_id = ?";
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, bookId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("sold");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     public static void main(String[] args) {

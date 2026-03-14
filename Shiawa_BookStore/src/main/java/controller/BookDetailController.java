@@ -34,6 +34,7 @@ public class BookDetailController extends HttpServlet {
 
                 request.setAttribute("similarBooks", similarBooks);
                 request.setAttribute("book", foundBook);
+               request.setAttribute("book", foundBook);   // gửi sách qua JSP
                 request.getRequestDispatcher("/client/bookdetail.jsp").forward(request, response);
             } else {
                 response.sendRedirect("index.jsp");

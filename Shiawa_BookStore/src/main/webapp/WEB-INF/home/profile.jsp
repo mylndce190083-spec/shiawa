@@ -53,14 +53,7 @@
             <!-- Main Content -->
             <div class="profile-content">
                 <h2>Thông tin cá nhân</h2>
-                <%
-    java.util.Enumeration<String> names = session.getAttributeNames();
-    while (names.hasMoreElements()) {
-        String name = names.nextElement();
-        Object value = session.getAttribute(name);
-        out.println(name + " = " + value + "<br>");
-    }
-%>
+                
 
                 <form action="update-profile" method="post" class="profile-form">
 
