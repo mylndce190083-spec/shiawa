@@ -64,6 +64,7 @@
                     <p style="color:red;">
                         ${error}
                     </p>
+                    <input type="text" name="fullName">
 
                     <button type="submit" class="submit-btn">Create Account</button>
                 </form>

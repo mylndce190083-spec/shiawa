@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -15,12 +16,11 @@ import java.util.logging.Logger;
  * @author BA LIEM
  */
 public class DBContext {
-
     private Connection conn;
-//    private final String DB_URL = "jdbc:sqlserver://127.0.0.1:1433;databaseName=DB_DESIGN;encrypt=false";
-    private final String DB_URL = "jdbc:sqlserver://LAPTOP-A94KG959\\SQL2022;databaseName=DB_DESIGN;encrypt=false";
+    private final String DB_URL = "jdbc:sqlserver://127.0.0.1:1433;databaseName=DB_DESIGN;encrypt=false";
     private final String DB_USER = "sa";
-    private final String DB_PWD = "020105";
+    private final String DB_PWD = "12345";
+
 
     public DBContext() {
         try {

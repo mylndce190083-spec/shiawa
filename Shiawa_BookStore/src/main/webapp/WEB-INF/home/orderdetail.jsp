@@ -135,7 +135,7 @@
                         đã giao
                     </c:when>
 
-                    <c:when test="${order.status == 'CANCELLED'}">
+                    <c:when test="${order.status == 'FAILED'}">
                         đã hủy
                     </c:when>
 
@@ -184,8 +184,27 @@
                         </div>
 
                     </div>
-                </c:forEach>
 
+                </c:forEach>
+                <div class="payment-method">
+                    <b>Phương thức thanh toán:</b>
+
+                    <c:choose>
+                        <c:when test="${order.paymentMethod== 'ONLINE'}">
+                            💳 Thanh toán qua VNPAY
+                        </c:when>
+                        <c:when test="${order.paymentMethod == 'COD'}">
+                            🚚  Thanh toán khi nhận hàng
+                        </c:when>
+
+                    </c:choose>
+
+                </div>
+                <c:if test="${order.status == 'FAILED' && order.paymentMethod == 'ONLINE'}">
+                    <div style="color:red; margin-top:10px;">
+                        Đơn hàng đã hủy. Tiền sẽ được hoàn lại trong 3-5 ngày làm việc.
+                    </div>
+                </c:if>
                 <c:set var="subtotal" value="0" />
 
                 <c:forEach var="item" items="${order.items}">

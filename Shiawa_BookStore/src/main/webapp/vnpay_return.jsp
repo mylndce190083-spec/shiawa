@@ -27,10 +27,9 @@
         <meta name="author" content="">
         <title>KẾT QUẢ THANH TOÁN</title>
         <!-- Bootstrap core CSS -->
-        <link href="/vnpay_jsp/assets/bootstrap.min.css" rel="stylesheet"/>
-        <!-- Custom styles for this template -->
-        <link href="/vnpay_jsp/assets/jumbotron-narrow.css" rel="stylesheet"> 
-        <script src="/vnpay_jsp/assets/jquery-1.11.3.min.js"></script>
+        <link href="${pageContext.request.contextPath}/vnpay_jsp/assets/bootstrap.min.css" rel="stylesheet"/>
+        <link href="${pageContext.request.contextPath}/vnpay_jsp/assets/jumbotron-narrow.css" rel="stylesheet"/>
+        <script src="${pageContext.request.contextPath}/vnpay_jsp/assets/jquery-1.11.3.min.js"></script>
     </head>
     <body>
         <%
@@ -114,7 +113,7 @@
                                         OrderDAO orderDAO = new OrderDAO();
 
                                         double shippingFee = 20000;
-                                        
+
                                         int orderId = orderDAO.createOrder(
                                                 user.getId(),
                                                 items,
@@ -145,10 +144,21 @@
                         %></label>
                 </div> 
             </div>
+                
             <p>
                 &nbsp;
             </p>
+            
             <footer class="footer">
+                <a href="${pageContext.request.contextPath}/home" class="btn btn-home">
+                🏠 Về trang chủ
+            </a>
+
+
+            <a href="${pageContext.request.contextPath}/OrderList" class="btn btn-order">
+
+                📦 Xem đơn hàng
+            </a>
                 <p>&copy; VNPAY 2020</p>
             </footer>
         </div>  

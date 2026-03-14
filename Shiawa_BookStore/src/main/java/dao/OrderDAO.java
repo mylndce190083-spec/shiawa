@@ -489,7 +489,7 @@ public class OrderDAO extends DBContext {
 
             // 1️⃣ Kiểm tra đơn có thuộc customer và đang Pending không
             String checkSql = """
-            SELECT status 
+            SELECT status , payment_method
             FROM Orders 
             WHERE order_id = ? AND customer_id = ?
         """;
@@ -502,9 +502,12 @@ public class OrderDAO extends DBContext {
 
             if (rs.next()) {
                 String status = rs.getString("status");
-
+                String paymentMethod = rs.getString("payment_method");
                 if ("Pending".equalsIgnoreCase(status)) {
-
+                    if ("ONLINE".equalsIgnoreCase(paymentMethod)) {
+                        // Demo refund
+                        System.out.println("Refund VNPAY for order " + orderId);
+                    }
                     // 2️⃣ Lấy danh sách sản phẩm trong đơn
                     String itemSql = """
                     SELECT book_id, quantity
@@ -580,7 +583,8 @@ public class OrderDAO extends DBContext {
                    o.shipping_fee,
                    o.receiver_name,
                    c.full_name,
-                   o.phone
+                   o.phone,
+                  o.payment_method
             FROM Orders o
             JOIN Customer c ON o.customer_id = c.customer_id
             WHERE o.order_id = ?
@@ -606,7 +610,7 @@ public class OrderDAO extends DBContext {
                 o.setCustomerName(rs.getString("full_name"));
                 o.setPhone(rs.getString("phone")); // ✅ thêm dòng này
                 o.setReceiverName(rs.getString("receiver_name"));
-
+                o.setPaymentMethod(rs.getString("payment_method"));
                 // 🔥 LOAD ORDER ITEMS
                 String itemSql = """
                  SELECT oi.quantity,

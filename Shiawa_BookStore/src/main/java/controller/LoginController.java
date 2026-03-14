@@ -43,7 +43,6 @@ public class LoginController extends HttpServlet {
         CustomerDAO cdao = new CustomerDAO();
         String hashPassword = dao.hashMD5(password);
         Account user = dao.login(email, hashPassword);
-        Customer customer = cdao.getCustomerByAccountIdUpgraded(user.getId());
         HttpSession session = request.getSession();
 
         if (user.getId() == -1) {
@@ -62,27 +61,33 @@ public class LoginController extends HttpServlet {
             }
 
             if ("Customer".equalsIgnoreCase(user.getRole())) {
-                session.setAttribute("customer", customer);
+                Customer customer = cdao.getCustomerByAccountIdUpgraded(user.getId());
+                if (customer != null) {
+                    session.setAttribute("customer", customer);
 
-                CartItemDAO cartDAO = new CartItemDAO();
+                    CartItemDAO cartDAO = new CartItemDAO();
 
-                List<CartItem> cartItems
-                        = cartDAO.getCartByCustomerId(customer.getId());
-                // 👈 dùng user.getId() nếu id = customerId
+                    List<CartItem> cartItems
+                            = cartDAO.getCartByCustomerId(customer.getId());
+                    // 👈 dùng user.getId() nếu id = customerId
 
-                int totalQuantity = 0;
-                for (CartItem ci : cartItems) {
-                    totalQuantity += ci.getQuantity();
+                    int totalQuantity = 0;
+                    for (CartItem ci : cartItems) {
+                        totalQuantity += ci.getQuantity();
+                    }
+
+                    session.setAttribute("cartSize", totalQuantity);
                 }
-                
-
-                session.setAttribute("cartSize", totalQuantity);
                 request.setCharacterEncoding("UTF-8");
                 response.setCharacterEncoding("UTF-8");
                 response.setContentType("text/html; charset=UTF-8");
                 response.sendRedirect("home");
-            } else if (user.getRole().equals("Admin")) {
-                response.sendRedirect("account");
+            } else if ("Admin".equalsIgnoreCase(user.getRole())) {
+                response.sendRedirect(request.getContextPath() + "/account");
+            } else if ("Staff".equalsIgnoreCase(user.getRole())) {
+                response.sendRedirect(request.getContextPath() + "/inventory?view=list");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/inventory?view=list");
             }
         }
     }

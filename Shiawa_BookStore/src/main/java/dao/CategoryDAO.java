@@ -72,4 +72,13 @@ public class CategoryDAO extends DBContext {
         }
         return null;
     }
+
+    public List<Category> getAllCategories() {
+        return getAllCategory();
+    }
+
+    public Category findById(int id) {
+        return getCategoryById(id);
+    }
 }
+
