@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -18,7 +19,7 @@ public class DBContext {
     private Connection conn;
     private final String DB_URL = "jdbc:sqlserver://127.0.0.1:1433;databaseName=DB_DESIGN;encrypt=false";
     private final String DB_USER = "sa";
-    private final String DB_PWD = "admin";
+    private final String DB_PWD = "my123";
 
 
     public DBContext() {

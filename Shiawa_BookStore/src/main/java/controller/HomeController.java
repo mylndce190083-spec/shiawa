@@ -27,31 +27,50 @@ public class HomeController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    BookDAO dao = new BookDAO();
-    CategoryDAO cdao = new CategoryDAO();
-    String cateIdRaw = request.getParameter("id");
-    List<Book> list;
+        // kiểm tra có phải VNPAY trả kết quả về không
+        String responseCode = request.getParameter("vnp_ResponseCode");
 
-    if (cateIdRaw != null && !cateIdRaw.isEmpty()) {
-        int cateId = Integer.parseInt(cateIdRaw);
-        list = dao.getBooksByCategoryId(cateId); 
-    } else {
-        list = dao.getAllBook();
-    }
-    List<Category> clist = cdao.getAllCategory();
-    request.setAttribute("listB", list);
-    request.setAttribute("listC", clist);
-    request.getRequestDispatcher("/WEB-INF/home/home.jsp").forward(request, response);
-    for (Book b : list) {
+        if (responseCode != null) {
+
+            if ("00".equals(responseCode)) {
+                request.setAttribute("paymentMessage", "Thanh toán thành công");
+            } else {
+                request.setAttribute("paymentMessage", "Thanh toán thất bại");
+            }
+
+            request.getRequestDispatcher("/WEB-INF/home/vnpay_return.jsp")
+                    .forward(request, response);
+            return;
+        }
+        BookDAO dao = new BookDAO();
+        CategoryDAO cdao = new CategoryDAO();
+        String cateIdRaw = request.getParameter("id");
+        List<Book> list;
+
+        if (cateIdRaw != null && !cateIdRaw.isEmpty()) {
+            int cateId = Integer.parseInt(cateIdRaw);
+            list = dao.getBooksByCategoryId(cateId);
+        } else {
+            list = dao.getAllBook();
+        }
+        for (Book b : list) {// lấy số lượng đã bán
+            int sold = dao.getSoldQuantity(b.getBookId());
+            b.setSold(sold);
+        }
+
+        List<Category> clist = cdao.getAllCategory();
+        request.setAttribute("listB", list);
+        request.setAttribute("listC", clist);
+        request.getRequestDispatcher("/WEB-INF/home/home.jsp").forward(request, response);
+        for (Book b : list) {
             System.out.println(b);
         }
-}
+    }
 
-    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
     }
 
     /**

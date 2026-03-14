@@ -62,39 +62,67 @@
 
                                         </span>
                                     </td>                     
-                                        <td>${o.totalAmount}</td>
-                                        <td>${o.discount}</td>
-                                        <td>${o.shippingFee}</td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${not empty o.voucherName}">
-                                                    ${o.voucherName}
-                                                </c:when>
-                                                <c:otherwise>
-                                                    None
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                        <td class="text-center">
-                                            <a href="${pageContext.request.contextPath}/order-admin?action=detail&id=${o.orderId}"
-                                               class="btn btn-sm" style="background-color:#6366f1; color:white;">
-                                                Detail
-                                            </a>
-                                            <a href="${pageContext.request.contextPath}/order-admin?action=updateStatus&id=${o.orderId}"
-                                               class="btn btn-sm" style="background-color:#fd7e14; color:white;">
-                                                Change Status
-                                            </a>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
-                </c:otherwise>
-            </c:choose>
+                                    <td>${o.totalAmount}</td>
+                                    <td>${o.discount}</td>
+                                    <td>${o.shippingFee}</td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${not empty o.voucherName}">
+                                                ${o.voucherName}
+                                            </c:when>
+                                            <c:otherwise>
+                                                None
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="${pageContext.request.contextPath}/order-admin?action=detail&id=${o.orderId}"
+                                           class="btn btn-sm" style="background-color:#6366f1; color:white;">
+                                            Detail
+                                        </a>
+                                        <a href="${pageContext.request.contextPath}/order-admin?action=updateStatus&id=${o.orderId}"
+                                           class="btn btn-sm" style="background-color:#fd7e14; color:white;">
+                                            Change Status
+                                        </a>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
 
-        </div>
+                    <div class="d-flex justify-content-center mt-3">
+
+                        <!-- Previous page -->
+                        <c:if test="${currentPage > 1}">
+                            <a class="btn btn-sm btn-outline-secondary me-2"
+                               href="order-admin?action=list&page=${currentPage - 1}">
+                                <<
+                            </a>
+                        </c:if>
+
+                        <!-- Page numbers -->
+                        <c:forEach begin="1" end="${totalPage}" var="i">
+                            <a class="btn btn-sm ${i == currentPage ? 'btn-primary' : 'btn-outline-primary'} me-1"
+                               href="order-admin?action=list&page=${i}">
+                                ${i}
+                            </a>
+                        </c:forEach>
+
+                        <!-- Next page -->
+                        <c:if test="${currentPage < totalPage}">
+                            <a class="btn btn-sm btn-outline-secondary ms-2"
+                               href="order-admin?action=list&page=${currentPage + 1}">
+                                >>
+                            </a>
+                        </c:if>
+
+                    </div>
+                </div>
+            </c:otherwise>
+        </c:choose>
+
     </div>
-    <!-- Recent Sales End -->
-    <%@include file="../include/footerAdmin.jsp" %>
+</div>
+<!-- Recent Sales End -->
+<%@include file="../include/footerAdmin.jsp" %>
 

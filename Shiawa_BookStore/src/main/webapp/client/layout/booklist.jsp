@@ -20,12 +20,15 @@
                 <c:forEach items="${books}" var="b">
                     <div class="book">
                         <a href="${pageContext.request.contextPath}/bookdetail?id=${b.bookId}" style="text-decoration: none; color: inherit;">
-                            <img src="${pageContext.request.contextPath}/${b.urlImg}">
+                             <img src="${pageContext.request.contextPath}/image?file=${b.urlImg}">
                             <p class="title">${b.title}</p>
                         </a>
-                        <div class="price">
-                            <span class="new-price">${b.price}đ</span>
-                        </div>
+                       
+                       <div class="price">
+                        <span class="new-price">${b.price}đ</span>
+                        <span class="discount">-${b.discount}%</span>
+                    </div>
+                         <p class="sold">Đã bán ${b.sold}</p>
                         <form action="${pageContext.request.contextPath}/cart" method="post">
                             <input type="hidden" name="action" value="add">
 

@@ -249,7 +249,10 @@ public class CheckoutController extends HttpServlet {
             for (CartItem item : selectedItems) {
                 total += item.getPrice() * item.getQuantity();
             }
+            double shippingFee = 20000;
+            double discount = 0;
 
+            double amount = total + shippingFee - discount;
             request.setAttribute("orderItems", selectedItems);
             request.setAttribute("totalAmount", total);
 
@@ -263,7 +266,9 @@ public class CheckoutController extends HttpServlet {
                 String phone = request.getParameter("phone");
                 String receiverName = request.getParameter("receiverName");
                 String isEditAddress = request.getParameter("isEditAddress");
-
+// ===== PAYMENT METHOD =====
+                String paymentMethod = request.getParameter("paymentMethod");
+                System.out.println("Payment Method: " + paymentMethod);
                 String phoneRegex = "^(03|05|07|08|09)[0-9]{8}$";
                 String addressDetailRegex = "^.{3,100}$";
 
@@ -336,17 +341,14 @@ public class CheckoutController extends HttpServlet {
                 // =====================================================
                 // TẠO ORDER
                 // =====================================================
-                double shippingFee = 20000;
-
-                int orderId = orderDAO.createOrder(
-                        user.getId(),
-                        selectedItems,
-                        shippingAddress,
-                        shippingFee,
-                        receiverName,
-                        phone
-                );
-
+//                int orderId = orderDAO.createOrder(
+//                        user.getId(),
+//                        selectedItems,
+//                        shippingAddress,
+//                        shippingFee,
+//                        receiverName,
+//                        phone
+//                );
                 // =====================================================
                 // LƯU SESSION (chỉ khi có chỉnh sửa địa chỉ)
                 // =====================================================
@@ -363,16 +365,49 @@ public class CheckoutController extends HttpServlet {
                 // =====================================================
                 // XÓA CART
                 // =====================================================
-                for (CartItem item : selectedItems) {
-                    cartDAO.delete(user.getId(), item.getBookId());
-                }
-
+//                for (CartItem item : selectedItems) {
+//                    cartDAO.delete(user.getId(), item.getBookId());
+//                }
                 request.setAttribute("selectedItems", selectedItems);
-                request.setAttribute("orderId", orderId);
+//                request.setAttribute("orderId", orderId);
 
-                request.getRequestDispatcher("/WEB-INF/home/order-success.jsp")
-                        .forward(request, response);
+                // =====================================================
+// PAYMENT FLOW
+// =====================================================
+                if ("COD".equals(paymentMethod)) {
 
+                    int orderId = orderDAO.createOrder(
+                            user.getId(),
+                            selectedItems,
+                            shippingAddress,
+                            shippingFee,
+                            receiverName,
+                            phone,
+                            paymentMethod
+                    );
+                    for (CartItem item : selectedItems) {
+                        cartDAO.delete(user.getId(), item.getBookId());
+                    }
+                    request.setAttribute("orderId", orderId);
+
+                    request.getRequestDispatcher("/WEB-INF/home/order-success.jsp")
+                            .forward(request, response);
+
+                } else if ("ONLINE".equals(paymentMethod)) {
+                    System.out.println("DEBUG RECEIVER = " + receiverName);
+                    System.out.println("DEBUG PHONE = " + phone);
+                    System.out.println("DEBUG ADDRESS = " + shippingAddress);
+                    System.out.println("DEBUG ITEMS = " + selectedItems.size());
+                   
+
+                    session.setAttribute("pendingItems", selectedItems);
+                    session.setAttribute("pendingAddress", shippingAddress);
+                    session.setAttribute("pendingReceiver", receiverName);
+                    session.setAttribute("pendingPhone", phone);
+                    session.setAttribute("pendingAmount", amount);
+
+                    response.sendRedirect("ajaxServlet?amount=" + (int) amount);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 request.setAttribute("orderItems", fullCart);

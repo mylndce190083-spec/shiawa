@@ -12,6 +12,7 @@ public class Account {
 
     private int id;
     private String username;
+    private String password;
     private String role;
     private String email;
     private String status;
@@ -122,6 +123,14 @@ public class Account {
 
     public void setMustChangePassword(boolean mustChangePassword) {
         this.mustChangePassword = mustChangePassword;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

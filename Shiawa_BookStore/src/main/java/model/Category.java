@@ -9,9 +9,11 @@ package model;
  * @author BA LIEM
  */
 public class Category {
+
     private int categoryId;
     private String categoryName;
     private int parentId;
+
 
     public Category() {
     }

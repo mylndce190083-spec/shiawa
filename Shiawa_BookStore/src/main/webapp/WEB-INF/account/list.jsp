@@ -102,6 +102,33 @@
                 </tbody>
 
             </table>
+            <div class="d-flex justify-content-center mt-4">
+
+                <!-- Previous -->
+                <c:if test="${currentPageNum > 1}">
+                    <a class="btn btn-sm btn-outline-secondary me-2"
+                       href="account?page=${currentPageNum - 1}&role=${selectedRole}">
+                        <<
+                    </a>
+                </c:if>
+
+                <!-- Page numbers -->
+                <c:forEach begin="1" end="${totalPage}" var="i">
+                    <a class="btn btn-sm ${i == currentPageNum ? 'btn-primary' : 'btn-outline-primary'} me-1"
+                       href="account?page=${i}&role=${selectedRole}">
+                        ${i}
+                    </a>
+                </c:forEach>
+
+                <!-- Next -->
+                <c:if test="${currentPageNum < totalPage}">
+                    <a class="btn btn-sm btn-outline-secondary ms-2"
+                       href="account?page=${currentPageNum + 1}&role=${selectedRole}">
+                        >>
+                    </a>
+                </c:if>
+
+            </div>
         </div>
 
     </div>
