@@ -11,13 +11,23 @@ package model;
 public class Category {
     private int categoryId;
     private String categoryName;
+    private int parentId;
 
     public Category() {
     }
 
-    public Category(int categoryId, String categoryName) {
+    public Category(int categoryId, String categoryName, int parentId) {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
+        this.parentId = parentId;
+    }
+
+    public int getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(int parentId) {
+        this.parentId = parentId;
     }
 
     public int getCategoryId() {
@@ -35,6 +45,11 @@ public class Category {
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Category{" + "categoryId=" + categoryId + ", categoryName=" + categoryName + ", parentId=" + parentId + '}';
+    }
+        
     
 }

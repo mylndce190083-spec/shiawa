@@ -694,9 +694,11 @@ public class OrderDAO extends DBContext {
 
     public static void main(String[] args) {
         OrderDAO dao = new OrderDAO();
-        List<Orders> list = dao.getAllOrders();
-        for (Orders o : list) {
-            System.out.println(o);
-        }
+//        List<Orders> list = dao.getAllOrders();
+//        for (Orders o : list) {
+//            System.out.println(o);
+//        }
+
+        System.out.println(dao.getOrderById(17));
     }
 }

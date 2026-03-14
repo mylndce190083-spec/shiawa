@@ -49,7 +49,7 @@
             }
 
             .parent-link:hover {
-                color: #ff9800; 
+                color: #ff9800;
             }
 
 
@@ -70,11 +70,11 @@
             .child-dropdown::before {
                 content: "";
                 position: absolute;
-                top: -15px; 
+                top: -15px;
                 left: 0;
                 width: 100%;
                 height: 20px;
-                background: transparent; 
+                background: transparent;
             }
             .child-dropdown a {
                 display: block;
@@ -248,6 +248,26 @@
             </div>
         </nav>
 
+        <nav class="category-nav">
+            <div class="menu-container">
+                <c:forEach items="${listC}" var="c">
+                    <c:if test="${c.parentId == 0}"><!-- thể loại lớn sẽ ko có parentId, parentId = 0 -->
+                        <div class="menu-item">
+                            <a href="#" class="parent-link">${c.categoryName} <i class="fa-solid fa-chevron-down icon-down"></i></a>
+                            <div class="child-dropdown">
+                                <c:forEach items="${listC}" var="child">
+                                    <c:if test="${c.categoryId == child.parentId}">
+                                        <%-- Trỏ về home kèm id để lọc --%>
+                                        <a href="${pageContext.request.contextPath}/home?id=${child.categoryId}">${child.categoryName}</a>
+                                    </c:if>
+                                </c:forEach>
+                            </div>
+                        </div>
+                    </c:if>
+                </c:forEach>
+            </div>
+        </nav>
+
         <style>
             .category-nav {
                 background-color: #f1f8f1;
@@ -309,8 +329,8 @@
                 color: #ff9800;
             }
         </style>
-
-
+        
+        
 
         <section class="books">
             <c:forEach items="${listB}" var="b">
@@ -324,7 +344,7 @@
                         <span class="discount">-${b.discount}%</span>
                     </div>
                     <p class="sold">Đã bán 120</p>
-                    
+
                     <form onsubmit="addToCart(event, ${b.bookId})">
                         <button type="submit" class="add-cart">
                             Thêm giỏ hàng
@@ -335,9 +355,9 @@
             </c:forEach>
         </section>
 
-            
 
-    
+
+
 
         <section class="cart-page" id="cartPage" style="display:none;">
 
