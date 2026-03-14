@@ -18,8 +18,8 @@ import model.Account;
  *
  * @author BA LIEM
  */
-@WebServlet(name = "AdminProfileController", urlPatterns = {"/admin-profile"})
-public class AdminProfileController extends HttpServlet {
+@WebServlet(name = "AdminProfileController", urlPatterns = {"/staff-profile"})
+public class StaffProfileController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -33,12 +33,17 @@ public class AdminProfileController extends HttpServlet {
             return;
         }
 
-        if (!"Admin".equalsIgnoreCase(user.getRole())) {
+//        if (!"Admin".equalsIgnoreCase(user.getRole())) {
+//            response.sendRedirect("home");
+//            return;
+//        }
+        if (!user.getRole().equalsIgnoreCase("Admin")
+                && !user.getRole().equalsIgnoreCase("Inventory")) {
             response.sendRedirect("home");
             return;
         }
 
-        request.getRequestDispatcher("/WEB-INF/profile/admin-profile.jsp")
+        request.getRequestDispatcher("/WEB-INF/profile/staff-profile.jsp")
                 .forward(request, response);
 
     }
@@ -62,10 +67,8 @@ public class AdminProfileController extends HttpServlet {
 
         /* check username duplicate */
         if (!username.equals(user.getUsername()) && dao.usernameExists(username)) {
-
             request.setAttribute("error", "Username already exists");
-
-            request.getRequestDispatcher("/WEB-INF/profile/admin-profile.jsp")
+            request.getRequestDispatcher("/WEB-INF/profile/staff-profile.jsp")
                     .forward(request, response);
             return;
         }
@@ -83,14 +86,14 @@ public class AdminProfileController extends HttpServlet {
 
             if (!currentHash.equals(user.getPassword())) {
                 request.setAttribute("error", "Current password incorrect");
-                request.getRequestDispatcher("/WEB-INF/profile/admin-profile.jsp")
+                request.getRequestDispatcher("/WEB-INF/profile/staff-profile.jsp")
                         .forward(request, response);
                 return;
             }
 
             if (!newPass.equals(confirmNewPass)) {
                 request.setAttribute("error", "New password not match");
-                request.getRequestDispatcher("/WEB-INF/profile/admin-profile.jsp")
+                request.getRequestDispatcher("/WEB-INF/profile/staff-profile.jsp")
                         .forward(request, response);
                 return;
             }
@@ -104,7 +107,7 @@ public class AdminProfileController extends HttpServlet {
 
         session.setAttribute("user", user);
 
-        response.sendRedirect("admin-profile");
+        response.sendRedirect("staff-profile");
 
     }
 

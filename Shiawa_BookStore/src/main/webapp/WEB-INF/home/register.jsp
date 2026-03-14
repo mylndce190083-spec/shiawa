@@ -60,12 +60,7 @@
                     <label>Mật khẩu</label>
                     <input type="password" name="password" placeholder="Password">
                     <label>Xác nhận mật khẩu</label>
-                    <input type="password" name="confirmPassword" placeholder="Confirm Password">
-                    <p style="color:red;">
-                        ${error}
-                    </p>
-                    <input type="text" name="fullName">
-
+                    <input type="password" name="confirmPassword" placeholder="Confirm Password">                    
                     <button type="submit" class="submit-btn">Create Account</button>
                 </form>
             </div>

@@ -1,3 +1,8 @@
+<%-- 
+    Document   : headerInventory
+    Created on : Mar 14, 2026, 12:43:54?PM
+    Author     : BA LIEM
+--%>
 <!-- Header -->
 <!DOCTYPE html>
 <html lang="en">
@@ -203,8 +208,6 @@
             </div>
             <!-- Spinner End -->
 
-
-            <!-- Sidebar Start -->
             <!-- Sidebar Start -->
             <div class="sidebar pe-4 pb-3 custom-sidebar">
                 <nav class="navbar navbar-dark">
@@ -224,30 +227,26 @@
                         </div>
                     </div>
                     <div class="navbar-nav w-100">
-                        <a href="${pageContext.request.contextPath}/account" 
-                           class="nav-item nav-link ${'account'.equals(currentPage) ? 'active' : ''}">
-                            <i class="fa fa-users me-2">
-                            </i>Account</a>
-
-                        <a href="${pageContext.request.contextPath}/book-admin" 
-                           class="nav-item nav-link ${'book-admin'.equals(currentPage) ? 'active' : ''}">
+                        <a href="${pageContext.request.contextPath}/inventory" 
+                           class="nav-item nav-link ${pageContext.request.requestURI.contains('/inventory') ? 'active' : ''}">
                             <i class="fa fa-book me-2">
                             </i>Book</a>
-                        <a href="category.jsp" class="nav-item nav-link"><i class="fa fa-tags me-2"></i>Category</a>
-                        <a href="${pageContext.request.contextPath}/order-admin" 
-                           class="nav-item nav-link ${'order-admin'.equals(currentPage) ? 'active' : ''}">
-                            <i class="fa fa-shopping-cart me-2">
-                            </i>Order</a>
-                        <a href="${pageContext.request.contextPath}/voucher-admin" 
-                           class="nav-item nav-link ${'voucher-admin'.equals(currentPage) ? 'active' : ''}">
-                            <i class="fa fa-ticket-alt me-2">
-                            </i>Voucher</a>
-                        <a href="table.jsp" class="nav-item nav-link"><i class="fa fa-headset me-2"></i>Customer
-                            Support</a>
-                        <a href="${pageContext.request.contextPath}/staff-profile" 
-                           class="nav-item nav-link"><i class="fa fa-user-edit me-2">
-                            </i>Profile</a>
-                        <a href="logout" class="nav-item nav-link"><i class="fa fa-sign-out-alt me-2"></i>Logout</a>
+                        <a href="${pageContext.request.contextPath}/inventory?view=in" 
+                           class="nav-item nav-link ${pageContext.request.requestURI.contains('/inventory?view=in') ? 'active' : ''}">
+                            <i class="fa fa-arrow-down me-2">  
+                            </i>Stock In</a>
+                        <a href="${pageContext.request.contextPath}/inventory?view=report" 
+                           class="nav-item nav-link ${pageContext.request.requestURI.contains('/inventory?view=report') ? 'active' : ''}">
+                            <i class="fa fa-chart-line me-2">                                    
+                            </i>Inventory History</a>
+                            <a href="${pageContext.request.contextPath}/staff-profile" 
+                           class="nav-item nav-link">
+                            <i class="fa fa-user me-2"></i>Profile
+                        </a>
+                        <a href="${pageContext.request.contextPath}/logout" 
+                           class="nav-item nav-link">
+                            <i class="fa fa-sign-out-alt me-2"></i>Logout
+                        </a>
                     </div>
                 </nav>
             </div>

@@ -1,6 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<jsp:include page="/WEB-INF/include/headerAdmin.jsp"/>
+<%@include file="../include/headerInventory.jsp" %>
 
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light rounded p-4">
@@ -30,25 +30,25 @@
             <div class="table-responsive mb-3">
                 <table class="table table-bordered align-middle">
                     <thead>
-                    <tr class="text-success">
-                        <th>Sách</th>
-                        <th style="width:140px;">Số lượng</th>
-                    </tr>
+                        <tr class="text-success">
+                            <th>Sách</th>
+                            <th style="width:140px;">Số lượng</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    <c:forEach begin="1" end="5" var="i">
-                        <tr>
-                            <td>
-                                <select class="form-select" name="bookId">
-                                    <option value="">-- chọn sách --</option>
-                                    <c:forEach var="b" items="${books}">
-                                        <option value="${b.bookId}">#${b.bookId} - ${b.title} (tồn: ${b.stock})</option>
-                                    </c:forEach>
-                                </select>
-                            </td>
-                            <td><input class="form-control" name="qty" type="number" min="1"/></td>
-                        </tr>
-                    </c:forEach>
+                        <c:forEach begin="1" end="5" var="i">
+                            <tr>
+                                <td>
+                                    <select class="form-select" name="bookId">
+                                        <option value="">-- chọn sách --</option>
+                                        <c:forEach var="b" items="${books}">
+                                            <option value="${b.bookId}">#${b.bookId} - ${b.title} (tồn: ${b.stock})</option>
+                                        </c:forEach>
+                                    </select>
+                                </td>
+                                <td><input class="form-control" name="qty" type="number" min="1"/></td>
+                            </tr>
+                        </c:forEach>
                     </tbody>
                 </table>
             </div>
@@ -59,10 +59,7 @@
     </div>
 </div>
 
-</div>
-</div>
-
-<jsp:include page="/WEB-INF/include/footerAdmin.jsp"/>
+<%@include file="../include/footerInventory.jsp" %>
 
 
 
