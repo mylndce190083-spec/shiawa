@@ -26,17 +26,19 @@ public class InventoryController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        HttpSession session = request.getSession();
-//        Account user = (Account) session.getAttribute("user");
-//
-//        // 1. Check đăng nhập + role
-//        if (user == null || !"Inventory".equalsIgnoreCase(user.getRole())) {
-//            response.sendRedirect(request.getContextPath() + "/login");
-//            return;
-//        }
+        HttpSession session = request.getSession();
+        Account user = (Account) session.getAttribute("user");
+
+        // 1. Check đăng nhập + role
+        if (user == null || !"Inventory".equalsIgnoreCase(user.getRole())) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+//        request.setAttribute("currentPage", "inventory");
         String view = request.getParameter("view");
 
         if ("list".equals(view)) {
+            request.setAttribute("pagePrimary", "inventory-list");
             List<BookAdmin> list = new BookDAO().getAllBooksInfo();
             request.setAttribute("bookList", list);
             request.setAttribute("minStock", "");
@@ -49,6 +51,7 @@ public class InventoryController extends HttpServlet {
         }
 
         if ("in".equals(view)) {
+            request.setAttribute("pagePrimary", "inventory-in");
             loadBooks(request);
             loadCategories(request);
             request.getRequestDispatcher("/WEB-INF/inventory/in.jsp").forward(request, response);
@@ -56,6 +59,7 @@ public class InventoryController extends HttpServlet {
         }
 
         if ("low".equals(view)) {
+            request.setAttribute("pagePrimary", "inventory-low");
             int threshold = 5;
             String t = request.getParameter("threshold");
             if (t != null && !t.isBlank()) {
@@ -72,6 +76,7 @@ public class InventoryController extends HttpServlet {
         }
 
         if ("history".equals(view)) {
+            request.setAttribute("pagePrimary", "inventory-history");
             Object userObj = request.getSession().getAttribute("user");
             Integer staffId = null;
             if (userObj instanceof Account) {
@@ -96,6 +101,7 @@ public class InventoryController extends HttpServlet {
         }
 
         if ("report".equals(view)) {
+            request.setAttribute("pagePrimary", "inventory-report");
             LocalDate to = LocalDate.now();
             LocalDate from = to.minusDays(7);
             String fromStr = request.getParameter("from");
@@ -129,6 +135,7 @@ public class InventoryController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //HttpSession session = request.getSession();
         String view = request.getParameter("view");
 
         if ("in".equals(view)) {

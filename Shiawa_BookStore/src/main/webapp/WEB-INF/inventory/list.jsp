@@ -15,7 +15,7 @@
             <div class="d-flex gap-3 align-items-center">
             </div>
         </div>
-        <form class="row g-2 mb-3" method="get" action="${pageContext.request.contextPath}/book">
+        <form class="row g-2 mb-3" method="get" action="${pageContext.request.contextPath}/inventory">
             <div class="col-md-3">
                 <input class="form-control" type="number" min="0" name="minStock" placeholder="Tồn >= ..." value="${minStock}"/>
             </div>
@@ -31,7 +31,7 @@
             </div>
             <div class="col-md-3 d-flex gap-2">
                 <button class="btn btn-success w-100" type="submit">Lọc</button>
-                <a class="btn btn-outline-secondary w-100" href="${pageContext.request.contextPath}/book">Reset</a>
+                <a class="btn btn-outline-secondary w-100" href="${pageContext.request.contextPath}/inventory?view=list">Reset</a>
             </div>
         </form>
         <div class="table-responsive">

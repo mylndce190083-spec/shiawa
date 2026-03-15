@@ -203,12 +203,10 @@
             </div>
             <!-- Spinner End -->
 
-
-            <!-- Sidebar Start -->
             <!-- Sidebar Start -->
             <div class="sidebar pe-4 pb-3 custom-sidebar">
                 <nav class="navbar navbar-dark">
-                    <a href="index.jsp" class="navbar-brand mx-4 mb-3">
+                    <a href="${pageContext.request.contextPath}/account" class="navbar-brand mx-4 mb-3">
                         <h3 class="text-primary"><img class="rounded-circle" src="assets/img/logo.jpg" alt="" style="width: 40px; height: 40px;">  SHIAWA</h3>
                     </a>
                     <div class="d-flex align-items-center ms-4 mb-4">
@@ -225,27 +223,30 @@
                     </div>
                     <div class="navbar-nav w-100">
                         <a href="${pageContext.request.contextPath}/account" 
-                           class="nav-item nav-link ${'account'.equals(currentPage) ? 'active' : ''}">
+                           class="nav-item nav-link ${'account'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-users me-2">
                             </i>Account</a>
 
                         <a href="${pageContext.request.contextPath}/book-admin" 
-                           class="nav-item nav-link ${'book-admin'.equals(currentPage) ? 'active' : ''}">
+                           class="nav-item nav-link ${'book-admin'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-book me-2">
                             </i>Book</a>
                         <a href="category.jsp" class="nav-item nav-link"><i class="fa fa-tags me-2"></i>Category</a>
                         <a href="${pageContext.request.contextPath}/order-admin" 
-                           class="nav-item nav-link ${'order-admin'.equals(currentPage) ? 'active' : ''}">
+                           class="nav-item nav-link ${'order-admin'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-shopping-cart me-2">
                             </i>Order</a>
                         <a href="${pageContext.request.contextPath}/voucher-admin" 
-                           class="nav-item nav-link ${'voucher-admin'.equals(currentPage) ? 'active' : ''}">
+                           class="nav-item nav-link ${'voucher-admin'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-ticket-alt me-2">
                             </i>Voucher</a>
-                        <a href="table.jsp" class="nav-item nav-link"><i class="fa fa-headset me-2"></i>Customer
+                        <a href="table.jsp" 
+                           class="nav-item nav-link ${'support-admin'.equals(pagePrimary) ? 'active' : ''}">
+                            <i class="fa fa-headset me-2"></i>Customer
                             Support</a>
                         <a href="${pageContext.request.contextPath}/staff-profile" 
-                           class="nav-item nav-link"><i class="fa fa-user-edit me-2">
+                           class="nav-item nav-link ${'staff-profile'.equals(pagePrimary) ? 'active' : ''}">
+                            <i class="fa fa-user-edit me-2">
                             </i>Profile</a>
                         <a href="logout" class="nav-item nav-link"><i class="fa fa-sign-out-alt me-2"></i>Logout</a>
                     </div>

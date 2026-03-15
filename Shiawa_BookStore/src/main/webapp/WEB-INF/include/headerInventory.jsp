@@ -227,20 +227,20 @@
                         </div>
                     </div>
                     <div class="navbar-nav w-100">
-                        <a href="${pageContext.request.contextPath}/inventory" 
-                           class="nav-item nav-link ${pageContext.request.requestURI.contains('/inventory') ? 'active' : ''}">
+                        <a href="${pageContext.request.contextPath}/inventory?view=list" 
+                           class="nav-item nav-link ${'inventory-list'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-book me-2">
                             </i>Book</a>
                         <a href="${pageContext.request.contextPath}/inventory?view=in" 
-                           class="nav-item nav-link ${pageContext.request.requestURI.contains('/inventory?view=in') ? 'active' : ''}">
+                           class="nav-item nav-link ${'inventory-in'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-arrow-down me-2">  
                             </i>Stock In</a>
                         <a href="${pageContext.request.contextPath}/inventory?view=report" 
-                           class="nav-item nav-link ${pageContext.request.requestURI.contains('/inventory?view=report') ? 'active' : ''}">
+                           class="nav-item nav-link ${'inventory-report'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-chart-line me-2">                                    
                             </i>Inventory History</a>
                             <a href="${pageContext.request.contextPath}/staff-profile" 
-                           class="nav-item nav-link">
+                           class="nav-item nav-link ${'staff-profile'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-user me-2"></i>Profile
                         </a>
                         <a href="${pageContext.request.contextPath}/logout" 

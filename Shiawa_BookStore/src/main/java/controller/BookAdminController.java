@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import model.Account;
+import model.Book;
 import model.BookAdmin;
 import model.BookImage;
 import model.Category;
@@ -52,14 +53,19 @@ public class BookAdminController extends HttpServlet {
             return;
         }
 
-        request.setAttribute("currentPage", "book-admin");
+        request.setAttribute("pagePrimary", "book-admin");
         String view = request.getParameter("view");
 
         if ("post".equals(view)) {
-            CategoryDAO cateDAO = new CategoryDAO();
-            List<Category> cateList = cateDAO.getIdNameCategory();
-            request.setAttribute("categoryList", cateList);
-            request.getRequestDispatcher("/WEB-INF/book/post-book.jsp").forward(request, response);
+            BookDAO dao = new BookDAO();
+
+            // lấy sách đã có trong kho nhưng chưa đăng bán
+            List<Book> books = dao.getBooksInStockNotPublished();
+
+            request.setAttribute("books", books);
+
+            request.getRequestDispatcher("/WEB-INF/book/post-book.jsp")
+                    .forward(request, response);
             return;
         } else if ("detail".equals(view)) {
             int id = Integer.parseInt(request.getParameter("id"));
@@ -159,15 +165,14 @@ public class BookAdminController extends HttpServlet {
 //                }
 //            }
 
-
             request.setAttribute("keyword", keyword);
             request.setAttribute("selectedCategoryId", categoryId);
             request.setAttribute("categoryList", cateDAO.getIdNameCategory());
-            
+
             request.setAttribute("bookList", list);
             request.setAttribute("currentPageNum", page);
             request.setAttribute("totalPage", totalPage);
-            
+
             request.getRequestDispatcher("/WEB-INF/book/list.jsp")
                     .forward(request, response);
         }
@@ -182,33 +187,22 @@ public class BookAdminController extends HttpServlet {
             HttpSession session = request.getSession();
 
             try {
-                String title = request.getParameter("title");
-                String author = request.getParameter("author");
+
+                int bookId = Integer.parseInt(request.getParameter("bookId"));
                 double price = Double.parseDouble(request.getParameter("price"));
-                int stock = Integer.parseInt(request.getParameter("stock"));
-                int categoryId = Integer.parseInt(request.getParameter("categoryId"));
 
-                BookAdmin b = new BookAdmin();
-                b.setTitle(title);
-                b.setAuthor(author);
-                b.setPrice(price);
-                b.setCategoryId(categoryId);
+                BookDAO dao = new BookDAO();
 
-                // sách mới chưa có stock
-                b.setStock(0);
-                // active luôn vì admin đăng
-                b.setIsActive(true);
-                BookDAO bdao = new BookDAO();
-                bdao.insertBook(b);
+                dao.publishBook(bookId, price);
 
-                // message thành công
-                session.setAttribute("msg", "Add book successfully");
+                session.setAttribute("msg", "Publish book successfully");
                 session.setAttribute("msgType", "success");
 
             } catch (Exception e) {
-                // message thất bại
-                session.setAttribute("msg", "Add book failed");
+
+                session.setAttribute("msg", "Publish book failed");
                 session.setAttribute("msgType", "danger");
+
             }
 
             response.sendRedirect(request.getContextPath() + "/book-admin");

@@ -31,6 +31,7 @@ public class AccountController extends HttpServlet {
             response.sendRedirect("home");
             return;
         }
+        request.setAttribute("pagePrimary", "account");
         String view = request.getParameter("view");
         AccountDAO dao = new AccountDAO();
 
@@ -65,22 +66,25 @@ public class AccountController extends HttpServlet {
                 System.out.println("Account found: " + acc.getUsername());
             }
             request.setAttribute("account", acc);
-            request.setAttribute("currentPage", "account");
+            //request.setAttribute("currentPage", "account");
 
             request.getRequestDispatcher("/WEB-INF/account/detail.jsp")
                     .forward(request, response);
             return;
 
         } else if ("add".equals(view)) {
-            request.setAttribute("currentPage", "account");
+            //request.setAttribute("currentPage", "account");
             request.getRequestDispatcher("/WEB-INF/account/add.jsp")
                     .forward(request, response);
             return;
         }
-        request.setAttribute("currentPage", "account");
+        //request.setAttribute("pagePrimary", "account");
 
         String role = request.getParameter("role");;
-
+        // FIX lỗi role rỗng khi pagination
+        if (role != null && role.trim().isEmpty()) {
+            role = null;
+        }
         int page = 1;
         int pageSize = 10;
 

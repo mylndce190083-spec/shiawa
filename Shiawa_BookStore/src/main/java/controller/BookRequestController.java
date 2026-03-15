@@ -29,7 +29,7 @@ public class BookRequestController extends HttpServlet {
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
 
-        if (user == null || !"admin".equalsIgnoreCase(user.getRole())) {
+        if (user == null || !"Admin".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }

@@ -66,9 +66,7 @@ public class StockInRequestDAO extends DBContext {
                 ALTER TABLE dbo.StockInRequestItem ADD new_book_category_id INT NULL;
         """;
 
-        try (PreparedStatement ps1 = getConnection().prepareStatement(createRequest);
-             PreparedStatement ps2 = getConnection().prepareStatement(createItem);
-             PreparedStatement ps3 = getConnection().prepareStatement(alterItemColumns)) {
+        try (PreparedStatement ps1 = getConnection().prepareStatement(createRequest); PreparedStatement ps2 = getConnection().prepareStatement(createItem); PreparedStatement ps3 = getConnection().prepareStatement(alterItemColumns)) {
             ps1.execute();
             ps2.execute();
             ps3.execute();
@@ -97,7 +95,9 @@ public class StockInRequestDAO extends DBContext {
                 }
                 ps.executeUpdate();
                 try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (!rs.next()) throw new Exception("Cannot create stock-in request.");
+                    if (!rs.next()) {
+                        throw new Exception("Cannot create stock-in request.");
+                    }
                     requestId = rs.getInt(1);
                 }
             }
@@ -161,15 +161,21 @@ public class StockInRequestDAO extends DBContext {
                     it.setItemId(rs.getInt("item_id"));
                     it.setRequestId(rs.getInt("request_id"));
                     int bid = rs.getInt("book_id");
-                    if (!rs.wasNull()) it.setBookId(bid);
+                    if (!rs.wasNull()) {
+                        it.setBookId(bid);
+                    }
                     it.setNewBookTitle(rs.getString("new_book_title"));
                     it.setNewBookAuthor(rs.getString("new_book_author"));
                     it.setNewBookPublisher(rs.getString("new_book_publisher"));
                     int catId = rs.getInt("new_book_category_id");
-                    if (!rs.wasNull()) it.setNewBookCategoryId(catId);
+                    if (!rs.wasNull()) {
+                        it.setNewBookCategoryId(catId);
+                    }
                     it.setQty(rs.getInt("qty"));
                     java.math.BigDecimal uc = rs.getBigDecimal("unit_cost");
-                    if (uc != null) it.setUnitCost(uc.doubleValue());
+                    if (uc != null) {
+                        it.setUnitCost(uc.doubleValue());
+                    }
                     it.setBookTitle(rs.getString("title"));
                     items.add(it);
                 }
@@ -207,9 +213,13 @@ public class StockInRequestDAO extends DBContext {
                         r.setNote(rs.getString("note"));
                         r.setStatus(rs.getString("status"));
                         int requestedBy = rs.getInt("requested_by_staff_id");
-                        if (!rs.wasNull()) r.setRequestedByStaffId(requestedBy);
+                        if (!rs.wasNull()) {
+                            r.setRequestedByStaffId(requestedBy);
+                        }
                         int approvedBy = rs.getInt("approved_by_staff_id");
-                        if (!rs.wasNull()) r.setApprovedByStaffId(approvedBy);
+                        if (!rs.wasNull()) {
+                            r.setApprovedByStaffId(approvedBy);
+                        }
                         r.setRejectReason(rs.getString("reject_reason"));
                         list.add(r);
                     }
@@ -253,9 +263,13 @@ public class StockInRequestDAO extends DBContext {
                         r.setNote(rs.getString("note"));
                         r.setStatus(rs.getString("status"));
                         int requestedBy = rs.getInt("requested_by_staff_id");
-                        if (!rs.wasNull()) r.setRequestedByStaffId(requestedBy);
+                        if (!rs.wasNull()) {
+                            r.setRequestedByStaffId(requestedBy);
+                        }
                         int approvedBy = rs.getInt("approved_by_staff_id");
-                        if (!rs.wasNull()) r.setApprovedByStaffId(approvedBy);
+                        if (!rs.wasNull()) {
+                            r.setApprovedByStaffId(approvedBy);
+                        }
                         r.setRejectReason(rs.getString("reject_reason"));
                         r.setItems(new ArrayList<>());
                         requestMap.put(requestId, r);
@@ -267,15 +281,21 @@ public class StockInRequestDAO extends DBContext {
                         it.setItemId(itemId);
                         it.setRequestId(requestId);
                         int bid = rs.getInt("book_id");
-                        if (!rs.wasNull()) it.setBookId(bid);
+                        if (!rs.wasNull()) {
+                            it.setBookId(bid);
+                        }
                         it.setNewBookTitle(rs.getString("new_book_title"));
                         it.setNewBookAuthor(rs.getString("new_book_author"));
                         it.setNewBookPublisher(rs.getString("new_book_publisher"));
                         int catId = rs.getInt("new_book_category_id");
-                        if (!rs.wasNull()) it.setNewBookCategoryId(catId);
+                        if (!rs.wasNull()) {
+                            it.setNewBookCategoryId(catId);
+                        }
                         it.setQty(rs.getInt("qty"));
                         java.math.BigDecimal uc = rs.getBigDecimal("unit_cost");
-                        if (uc != null) it.setUnitCost(uc.doubleValue());
+                        if (uc != null) {
+                            it.setUnitCost(uc.doubleValue());
+                        }
                         it.setBookTitle(rs.getString("book_title"));
                         r.getItems().add(it);
                     }
@@ -301,7 +321,9 @@ public class StockInRequestDAO extends DBContext {
             try (PreparedStatement ps = conn.prepareStatement(checkSql)) {
                 ps.setInt(1, requestId);
                 try (ResultSet rs = ps.executeQuery()) {
-                    if (!rs.next()) throw new Exception("Request not found: " + requestId);
+                    if (!rs.next()) {
+                        throw new Exception("Request not found: " + requestId);
+                    }
                     status = rs.getString("status");
                     requestCode = rs.getString("request_code");
                     note = rs.getString("note");
@@ -410,6 +432,45 @@ public class StockInRequestDAO extends DBContext {
             ps.setString(2, reason);
             ps.setInt(3, requestId);
             ps.executeUpdate();
+        }
+    }
+
+    public void postImport(int requestId) {
+
+        String sql = """
+        SELECT book_id, qty
+        FROM StockInRequestItem
+        WHERE request_id = ?
+    """;
+
+        try {
+
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, requestId);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+
+                int bookId = rs.getInt("book_id");
+                int qty = rs.getInt("qty");
+
+                String update = """
+                UPDATE Book
+                SET stock = stock + ?
+                WHERE book_id = ?
+            """;
+
+                PreparedStatement ps2 = getConnection().prepareStatement(update);
+
+                ps2.setInt(1, qty);
+                ps2.setInt(2, bookId);
+
+                ps2.executeUpdate();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

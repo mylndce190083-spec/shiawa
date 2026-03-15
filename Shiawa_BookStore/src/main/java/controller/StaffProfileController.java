@@ -43,6 +43,7 @@ public class StaffProfileController extends HttpServlet {
             return;
         }
 
+        request.setAttribute("pagePrimary", "staff-profile");
         request.getRequestDispatcher("/WEB-INF/profile/staff-profile.jsp")
                 .forward(request, response);
 

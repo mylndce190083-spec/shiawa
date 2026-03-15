@@ -473,9 +473,9 @@ public class AccountDAO extends DBContext {
             SELECT customer_id AS id, username, 'Customer' AS role, email, status
             FROM Customer
             WHERE (? IS NULL OR ? = 'Customer')
-
+        
             UNION ALL
-
+        
             SELECT s.staff_id AS id, s.username, r.name AS role, s.email, s.status
             FROM Staff s
             JOIN Role r ON s.role_id = r.role_id

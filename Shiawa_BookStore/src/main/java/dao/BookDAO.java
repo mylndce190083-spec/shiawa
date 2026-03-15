@@ -613,7 +613,7 @@ public class BookDAO extends DBContext {
         }
         throw new Exception("Cannot insert book (no generated key).");
     }
-    
+
     public int countBooks(String keyword, Integer categoryId) {
         int total = 0;
 
@@ -705,6 +705,60 @@ public class BookDAO extends DBContext {
                 b.setPrice(rs.getDouble("price"));
                 b.setStock(rs.getInt("stock"));
                 b.setCategoryName(rs.getString("category_name"));
+                list.add(b);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public void publishBook(int bookId, double price) {
+
+        String sql = """
+        UPDATE Book
+        SET price = ?, status = 'PUBLISHED'
+        WHERE book_id = ?
+    """;
+
+        try (
+                PreparedStatement ps = getConnection().prepareStatement(sql);) {
+
+            ps.setDouble(1, price);
+            ps.setInt(2, bookId);
+
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<Book> getBooksInStockNotPublished() {
+
+        List<Book> list = new ArrayList<>();
+
+        String sql = """
+        SELECT *
+        FROM Book
+        WHERE stock > 0
+        AND status = 'IN_STOCK'
+    """;
+
+        try (
+                PreparedStatement ps = getConnection().prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
+
+            while (rs.next()) {
+
+                Book b = new Book();
+
+                b.setBookId(rs.getInt("book_id"));
+                b.setTitle(rs.getString("title"));
+                b.setAuthor(rs.getString("author"));
+                b.setStock(rs.getInt("stock"));
+
                 list.add(b);
             }
 

@@ -35,7 +35,7 @@ public class OrderAdminController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-        request.setAttribute("currentPage", "order-admin");
+        request.setAttribute("pagePrimary", "order-admin");
         String action = request.getParameter("action");
         OrderDAO dao = new OrderDAO();
         if (action == null || action.equals("list")) {
