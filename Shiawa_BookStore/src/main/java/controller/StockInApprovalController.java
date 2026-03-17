@@ -12,18 +12,20 @@ import model.Account;
 import model.StockInRequest;
 import model.StockInRequestItem;
 
-@WebServlet(name = "StockInApprovalController", urlPatterns = {"/admin/stock-in-approval"})
+@WebServlet(name = "StockInApprovalController", urlPatterns = {"/stock-in-approval"})
 public class StockInApprovalController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
         Object u = request.getSession().getAttribute("user");
         if (!(u instanceof Account) || !"Admin".equalsIgnoreCase(((Account) u).getRole())) {
             response.sendRedirect(request.getContextPath() + "/inventory?view=in");
             return;
         }
 
+        request.setAttribute("pagePrimary", "stock-in-approval");
         StockInRequestDAO dao = new StockInRequestDAO();
         List<StockInRequest> requests = dao.getRequestsWithItems(null);
         request.setAttribute("requests", requests);

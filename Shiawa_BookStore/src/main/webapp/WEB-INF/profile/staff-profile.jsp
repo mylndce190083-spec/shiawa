@@ -1,12 +1,22 @@
 <%-- 
-    Document   : admin-profile
+    Document   : staff-profile
     Created on : Mar 9, 2026, 5:51:38 PM
     Author     : BA LIEM
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@include file="../include/headerAdmin.jsp" %>
+<c:choose>
+
+    <c:when test="${sessionScope.user.role == 'Admin'}">
+        <%@include file="../include/headerAdmin.jsp" %>
+    </c:when>
+
+    <c:when test="${sessionScope.user.role == 'Inventory'}">
+        <%@include file="../include/headerInventory.jsp" %>
+    </c:when>
+
+</c:choose>
 
 <div class="container-fluid pt-4 px-4">
     <div class="row justify-content-center">
@@ -30,7 +40,7 @@
 
         <!-- RIGHT: Profile Info -->
         <div class="col-md-6">
-            <form action="admin-profile" method="post" class="profile-form">
+            <form action="staff-profile" method="post" class="profile-form">
 
                 <h2>Edit Profile</h2>
 
@@ -126,4 +136,14 @@
         margin-bottom:10px;
     }
 </style>
-<%@include file="../include/footerAdmin.jsp" %>
+<c:choose>
+
+    <c:when test="${sessionScope.user.role == 'Admin'}">
+        <%@include file="../include/footerAdmin.jsp" %>
+    </c:when>
+
+    <c:when test="${sessionScope.user.role == 'Inventory'}">
+        <%@include file="../include/footerInventory.jsp" %>
+    </c:when>
+
+</c:choose>

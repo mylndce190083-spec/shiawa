@@ -77,14 +77,22 @@ public class CheckoutController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+//        HttpSession session = request.getSession();
+//        Account user = (Account) session.getAttribute("user");
+//
+//        if (user == null) {
+//            response.sendRedirect(request.getContextPath() + "/login");
+//            return;
+//        }
+
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
 
-        if (user == null) {
+        // 1. Check đăng nhập + role
+        if (user == null || !"Customer".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-
         CartItemDAO cartDAO = new CartItemDAO();
         List<CartItem> cartList
                 = cartDAO.getCartByCustomerId(user.getId());
@@ -398,7 +406,6 @@ public class CheckoutController extends HttpServlet {
                     System.out.println("DEBUG PHONE = " + phone);
                     System.out.println("DEBUG ADDRESS = " + shippingAddress);
                     System.out.println("DEBUG ITEMS = " + selectedItems.size());
-                   
 
                     session.setAttribute("pendingItems", selectedItems);
                     session.setAttribute("pendingAddress", shippingAddress);

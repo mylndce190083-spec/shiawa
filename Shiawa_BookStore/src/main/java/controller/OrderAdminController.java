@@ -31,11 +31,11 @@ public class OrderAdminController extends HttpServlet {
         Account user = (Account) session.getAttribute("user");
 
         // 1. Check đăng nhập + role
-        if (user == null || !"admin".equalsIgnoreCase(user.getRole())) {
+        if (user == null || !"Admin".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-        request.setAttribute("currentPage", "order-admin");
+        request.setAttribute("pagePrimary", "order-admin");
         String action = request.getParameter("action");
         OrderDAO dao = new OrderDAO();
         if (action == null || action.equals("list")) {
@@ -96,11 +96,14 @@ public class OrderAdminController extends HttpServlet {
 
             int id = Integer.parseInt(request.getParameter("id"));
             String newStatus = request.getParameter("status");
+            HttpSession session = request.getSession();
+            Account user = (Account) session.getAttribute("user");
+            int adminId = user.getId();
 
             Orders current = dao.getOrderByIdAdmin(id);
 
             if (isValidTransition(current.getStatus(), newStatus)) {
-                dao.updateStatus(id, newStatus);
+                dao.updateStatus(id, newStatus, adminId);
             }
 
             response.sendRedirect("order-admin?action=list");

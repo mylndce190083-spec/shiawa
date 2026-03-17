@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -190,18 +191,32 @@
 
             <!-- Back to Top -->
             <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+
         </div>
 
-        <!-- JavaScript Libraries -->
-        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="assets/lib/chart/chart.min.js"></script>
-        <script src="assets/lib/easing/easing.min.js"></script>
-        <script src="assets/lib/waypoints/waypoints.min.js"></script>
-        <script src="assets/lib/owlcarousel/owl.carousel.min.js"></script>
-        <script src="assets/lib/tempusdominus/js/moment.min.js"></script>
-        <script src="assets/lib/tempusdominus/js/moment-timezone.min.js"></script>
-        <script src="assets/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+        <form class="row g-2 align-items-end mb-4" method="get" action="${pageContext.request.contextPath}/inventory">
+            <input type="hidden" name="view" value="report"/>
+            <div class="col-md-3">
+                <label class="form-label">From</label>
+                <input class="form-control" type="date" name="from" value="${from}"/>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">To</label>
+                <input class="form-control" type="date" name="to" value="${to}"/>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Lọc theo sách</label>
+                <select class="form-select" name="bookId">
+                    <option value="">-- tất cả --</option>
+                    <c:forEach var="b" items="${books}">
+                        <option value="${b.bookId}" ${selectedBookId == b.bookId ? 'selected' : ''}>#${b.bookId} - ${b.title}</option>
+                    </c:forEach>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-success w-100" type="submit">Xem</button>
+            </div>
+        </form>
 
         <!-- Template Javascript -->
         <script src="assets/js/main.js"></script>
@@ -220,3 +235,4 @@
         </script>
     </body>
 </html>
+

@@ -66,7 +66,8 @@
 
                 <div class="d-flex gap-4">
                     <a class="btn btn-sm btn-warning"
-                       href="${pageContext.request.contextPath}/book-request?action=list">
+                       href="${pageContext.request.contextPath}/book-request?action=list"
+                       class="nav-item nav-link ${'book-request'.equals(pagePrimary) ? 'active' : ''}">
                         Accept Book Request
                     </a>
 

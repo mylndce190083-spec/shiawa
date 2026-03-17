@@ -49,7 +49,7 @@
             }
 
             .parent-link:hover {
-                color: #ff9800; 
+                color: #ff9800;
             }
 
 
@@ -70,11 +70,11 @@
             .child-dropdown::before {
                 content: "";
                 position: absolute;
-                top: -15px; 
+                top: -15px;
                 left: 0;
                 width: 100%;
                 height: 20px;
-                background: transparent; 
+                background: transparent;
             }
             .child-dropdown a {
                 display: block;
@@ -97,158 +97,88 @@
             .icon-down {
                 font-size: 10px;
             }
-        </style>
-    </head>
+            .custom-toast {
+                position: fixed;
+                top: -120px;
+                right: 20px;
+                background: linear-gradient(135deg, #ff1e1e, #b30000);
+                color: white;
+                width: 340px;
+                border-radius: 14px;
+                overflow: hidden;
+                box-shadow: 0 15px 35px rgba(255,0,0,0.4);
+                transition: all 0.5s cubic-bezier(.68,-0.55,.27,1.55);
+                z-index: 9999;
+            }
 
-    <style>
-        .custom-toast {
-            position: fixed;
-            top: -120px;
-            right: 20px;
-            background: linear-gradient(135deg, #ff1e1e, #b30000);
-            color: white;
-            width: 340px;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 15px 35px rgba(255,0,0,0.4);
-            transition: all 0.5s cubic-bezier(.68,-0.55,.27,1.55);
-            z-index: 9999;
-        }
+            .custom-toast.show {
+                top: 20px;
+            }
 
-        .custom-toast.show {
-            top: 20px;
-        }
+            .toast-content {
+                display: flex;
+                align-items: center;
+                padding: 16px;
+            }
 
-        .toast-content {
-            display: flex;
-            align-items: center;
-            padding: 16px;
-        }
+            .toast-content .icon {
+                font-size: 26px;
+                margin-right: 14px;
+                animation: pop 0.4s ease;
+            }
 
-        .toast-content .icon {
-            font-size: 26px;
-            margin-right: 14px;
-            animation: pop 0.4s ease;
-        }
+            .toast-content strong {
+                font-size: 16px;
+            }
 
-        .toast-content strong {
-            font-size: 16px;
-        }
+            .toast-content .sub {
+                font-size: 13px;
+                opacity: 0.9;
+            }
 
-        .toast-content .sub {
-            font-size: 13px;
-            opacity: 0.9;
-        }
-
-        .progress-bar {
-            height: 4px;
-            background: #fff;
-            width: 100%;
-            animation: progress 3s linear forwards;
-        }
-
-        /* Thanh chạy */
-        @keyframes progress {
-            from {
+            .progress-bar {
+                height: 4px;
+                background: #fff;
                 width: 100%;
+                animation: progress 3s linear forwards;
             }
-            to {
-                width: 0%;
+
+            /* Thanh chạy */
+            @keyframes progress {
+                from {
+                    width: 100%;
+                }
+                to {
+                    width: 0%;
+                }
             }
-        }
 
-        /* Icon nhảy nhẹ */
-        @keyframes pop {
-            0% {
-                transform: scale(0.5);
+            /* Icon nhảy nhẹ */
+            @keyframes pop {
+                0% {
+                    transform: scale(0.5);
+                }
+                80% {
+                    transform: scale(1.2);
+                }
+                100% {
+                    transform: scale(1);
+                }
             }
-            80% {
-                transform: scale(1.2);
+            .cart-icon {
+                position: relative;
             }
-            100% {
-                transform: scale(1);
+
+            .cart-badge {
+                position: absolute;
+                top: -6px;
+                right: 0px;
+                background: red;
+                color: white;
+                font-size: 12px;
+                padding: 3px 6px;
+                border-radius: 50px;
             }
-        }
-        .cart-icon {
-            position: relative;
-        }
-
-        .cart-badge {
-            position: absolute;
-            top: -6px;
-            right: 0px;
-            background: red;
-            color: white;
-            font-size: 12px;
-            padding: 3px 6px;
-            border-radius: 50px;
-        }
-    </style>
-    <body>
-
-        <jsp:include page="/client/layout/header.jsp"/>
-        <nav class="breadcrumb">
-            <a href="#">Trang chủ</a>
-            <span>›</span>
-            <a href="#">Siêu ưu đãi</a>
-            <span>›</span>
-            <span class="current">Mua sắm</span>
-        </nav>
-
-        <hr>
-        <nav class="category-nav">
-            <div class="menu-container">
-                <div class="menu-item">
-                    <a href="#" class="parent-link">Nhóm văn học-truyện <i class="fa-solid fa-chevron-down icon-down"></i></a>
-                    <div class="child-dropdown">
-                        <c:forEach items="${listC}" var="c">
-                            <c:if test="${c.categoryName == 'Sách Văn học' || c.categoryName == 'Văn học nước ngoài' || 
-                                          c.categoryName == 'Văn học trong nước' || c.categoryName == 'Trinh thám / Kinh dị' || 
-                                          c.categoryName == 'Manga / Truyện tranh' || c.categoryName == 'Thiếu nhi'}">
-                                <%-- Trỏ về home kèm id để lọc --%>
-                                <a href="${pageContext.request.contextPath}/home?id=${c.categoryId}">${c.categoryName}</a>
-                            </c:if>
-                        </c:forEach>
-                    </div>
-                </div>
-
-                <div class="menu-item">
-                    <a href="#" class="parent-link">Nhóm sách học thuật-kiến thức <i class="fa-solid fa-chevron-down icon-down"></i></a>
-                    <div class="child-dropdown">
-                        <c:forEach items="${listC}" var="c">
-                            <c:if test="${c.categoryName == 'Sách CNTT' || c.categoryName == 'Kinh tế' || 
-                                          c.categoryName == 'Ngôn ngữ' || c.categoryName == 'Sách giáo khoa'}">
-                                  <a href="${pageContext.request.contextPath}/home?id=${c.categoryId}">${c.categoryName}</a>
-                            </c:if>
-                        </c:forEach>
-                    </div>
-                </div>
-
-                <div class="menu-item">
-                    <a href="#" class="parent-link">Nhóm kỹ năng-phát triển <i class="fa-solid fa-chevron-down icon-down"></i></a>
-                    <div class="child-dropdown">
-                        <c:forEach items="${listC}" var="c">
-                            <c:if test="${c.categoryName == 'Kỹ năng sống'}">
-                                <a href="${pageContext.request.contextPath}/home?id=${c.categoryId}">${c.categoryName}</a>
-                            </c:if>
-                        </c:forEach>
-                    </div>
-                </div>
-
-                <div class="menu-item">
-                    <a href="#" class="parent-link">Nhóm nghệ thuật <i class="fa-solid fa-chevron-down icon-down"></i></a>
-                    <div class="child-dropdown">
-                        <c:forEach items="${listC}" var="c">
-                            <c:if test="${c.categoryName == 'Nghệ thuật'}">
-                                <a href="${pageContext.request.contextPath}/home?id=${c.categoryId}">${c.categoryName}</a>
-                            </c:if>
-                        </c:forEach>
-                    </div>
-                </div>
-            </div>
-        </nav>
-
-        <style>
             .category-nav {
                 background-color: #f1f8f1;
                 padding: 12px 0;
@@ -309,8 +239,38 @@
                 color: #ff9800;
             }
         </style>
+    </head>
+
+    <body>
+
+        <jsp:include page="/client/layout/header.jsp"/>
+        <nav class="breadcrumb">
+
+            <a href="home">Trang chủ</a>
 
 
+        </nav>
+
+        <hr>
+        <nav class="category-nav">
+            <div class="menu-container">
+                <c:forEach items="${listC}" var="c">
+                    <c:if test="${c.parentId == 0}"><!-- thể loại lớn sẽ ko có parentId, parentId = 0 -->
+                        <div class="menu-item">
+                            <a href="#" class="parent-link">${c.categoryName} <i class="fa-solid fa-chevron-down icon-down"></i></a>
+                            <div class="child-dropdown">
+                                <c:forEach items="${listC}" var="child">
+                                    <c:if test="${c.categoryId == child.parentId}">
+                                        <%-- Trỏ về home kèm id để lọc --%>
+                                        <a href="${pageContext.request.contextPath}/home?id=${child.categoryId}">${child.categoryName}</a>
+                                    </c:if>
+                                </c:forEach>
+                            </div>
+                        </div>
+                    </c:if>
+                </c:forEach>
+            </div>
+        </nav>
 
         <section class="books">
             <c:forEach items="${listB}" var="b">
@@ -323,8 +283,9 @@
                         <span class="new-price">${b.price}đ</span>
                         <span class="discount">-${b.discount}%</span>
                     </div>
-                    <p class="sold">Đã bán 120</p>
-                    
+                    <p class="sold">Đã bán ${b.sold}</p>
+
+
                     <form onsubmit="addToCart(event, ${b.bookId})">
                         <button type="submit" class="add-cart">
                             Thêm giỏ hàng
@@ -335,9 +296,9 @@
             </c:forEach>
         </section>
 
-            
 
-    
+
+
 
         <section class="cart-page" id="cartPage" style="display:none;">
 
@@ -442,9 +403,13 @@
     </section>
 
     <script>
+        const isLoggedIn = ${sessionScope.user != null};
         function addToCart(event, bookId) {
             event.preventDefault();
-
+            if (!isLoggedIn) {
+                window.location.href = "${pageContext.request.contextPath}/login";
+                return;
+            }
             fetch("${pageContext.request.contextPath}/cart", {
                 method: "POST",
                 headers: {

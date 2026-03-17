@@ -98,11 +98,7 @@
                                     out.print("Thành công");
                                     // ===== TẠO ORDER SAU KHI THANH TOÁN =====
                                     HttpSession sessionUser = request.getSession();
-                                    out.println("<br>SESSION USER = " + sessionUser.getAttribute("user"));
-                                    out.println("<br>SESSION ITEMS = " + sessionUser.getAttribute("pendingItems"));
-                                    out.println("<br>SESSION ADDRESS = " + sessionUser.getAttribute("pendingAddress"));
-                                    out.println("<br>SESSION RECEIVER = " + sessionUser.getAttribute("pendingReceiver"));
-                                    out.println("<br>SESSION PHONE = " + sessionUser.getAttribute("pendingPhone"));
+                                  
                                     Account user = (Account) sessionUser.getAttribute("user");
                                     List<CartItem> items = (List<CartItem>) sessionUser.getAttribute("pendingItems");
                                     String address = (String) sessionUser.getAttribute("pendingAddress");
@@ -124,7 +120,7 @@
                                                 "ONLINE"
                                         );
 
-                                        out.print("<br>OrderID: " + orderId);
+                                    
                                         dao.CartItemDAO cartDAO = new dao.CartItemDAO();
 
                                         for (CartItem item : items) {

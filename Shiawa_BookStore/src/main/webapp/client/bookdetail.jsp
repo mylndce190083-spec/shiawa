@@ -11,8 +11,8 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
         <link href="${pageContext.request.contextPath}/assets/css/css.css" rel="stylesheet" type="text/css"/>
-        
-        
+
+
         <style>
             body {
                 background-color: #f5f5f5;
@@ -141,7 +141,23 @@
 
     <body>
         <jsp:include page="/client/layout/header.jsp" />
+        <nav class="breadcrumb">
 
+            <a href="home">Trang chủ</a>
+
+            <span>›</span>
+
+            <a href="home?id=${book.category.categoryId}">
+                ${book.category.categoryName}
+            </a>
+
+            <span>›</span>
+
+            <span class="current">
+                ${book.title}
+            </span>
+
+        </nav>
         <div class="container my-5">
 
             <div class="book-card shadow-sm">
@@ -250,6 +266,7 @@
                                     <img src="/uploads/${b.urlImg}" class="img-fluid mb-2" style="height: 150px; object-fit: cover;">
                                     <p class="mb-1 text-truncate fw-bold">${b.title}</p>
                                     <p class="small text-muted mb-1">${b.category.categoryName}</p>
+                                      <p class="sold">Đã bán ${b.sold}</p>
                                     <p class="text-success fw-bold">$${b.price}</p>
                                 </div>
                             </a>
@@ -266,6 +283,7 @@
             <i class="bi bi-check-circle-fill"></i>
             <h3 class="fw-bold">Đã thêm vào giỏ hàng</h3>
             <p class="text-muted">Sách <strong>${book.title}</strong> đã nằm trong giỏ hàng của bạn.</p>
+            
             <a href="#" class="btn-ok">OK</a>
         </div>
     </div>

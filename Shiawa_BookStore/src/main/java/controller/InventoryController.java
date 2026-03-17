@@ -27,17 +27,19 @@ public class InventoryController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        HttpSession session = request.getSession();
-//        Account user = (Account) session.getAttribute("user");
-//
-//        // 1. Check đăng nhập + role
-//        if (user == null || !"Inventory".equalsIgnoreCase(user.getRole())) {
-//            response.sendRedirect(request.getContextPath() + "/login");
-//            return;
-//        }
+        HttpSession session = request.getSession();
+        Account user = (Account) session.getAttribute("user");
+
+        // 1. Check đăng nhập + role
+        if (user == null || !"Inventory".equalsIgnoreCase(user.getRole())) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+//        request.setAttribute("currentPage", "inventory");
         String view = request.getParameter("view");
 
         if ("list".equals(view)) {
+
             String minStockStr = request.getParameter("minStock");
             String maxStockStr = request.getParameter("maxStock");
             String sort = request.getParameter("sort");
@@ -77,6 +79,9 @@ public class InventoryController extends HttpServlet {
                     ? new java.util.ArrayList<>()
                     : filtered.subList(fromIndex, toIndex);
 
+
+            request.setAttribute("pagePrimary", "inventory-list");
+
             request.setAttribute("bookList", list);
             request.setAttribute("minStock", minStockStr == null ? "" : minStockStr);
             request.setAttribute("maxStock", maxStockStr == null ? "" : maxStockStr);
@@ -88,6 +93,7 @@ public class InventoryController extends HttpServlet {
         }
 
         if ("in".equals(view)) {
+            request.setAttribute("pagePrimary", "inventory-in");
             loadBooks(request);
             loadCategories(request);
             request.getRequestDispatcher("/WEB-INF/inventory/in.jsp").forward(request, response);
@@ -95,6 +101,7 @@ public class InventoryController extends HttpServlet {
         }
 
         if ("low".equals(view)) {
+            request.setAttribute("pagePrimary", "inventory-low");
             int threshold = 5;
             String t = request.getParameter("threshold");
             if (t != null && !t.isBlank()) {
@@ -111,8 +118,18 @@ public class InventoryController extends HttpServlet {
         }
 
         if ("history".equals(view)) {
+
             Integer staffId = getStaffId(request);
 
+            request.setAttribute("pagePrimary", "inventory-history");
+            Object userObj = request.getSession().getAttribute("user");
+            
+            if (userObj instanceof Account) {
+                Account acc = (Account) userObj;
+                if (!"Customer".equalsIgnoreCase(acc.getRole())) {
+                    staffId = acc.getId();
+                }
+            }
             List<StockInRequest> requests = new StockInRequestDAO().getRequestsWithItems(staffId);
             int approvedCount = 0;
             for (StockInRequest r : requests) {
@@ -126,6 +143,7 @@ public class InventoryController extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/inventory/history.jsp").forward(request, response);
             return;
         }
+
 
         if ("history-detail".equals(view)) {
             Integer staffId = getStaffId(request);
@@ -170,6 +188,7 @@ public class InventoryController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //HttpSession session = request.getSession();
         String view = request.getParameter("view");
 
         if ("in".equals(view)) {

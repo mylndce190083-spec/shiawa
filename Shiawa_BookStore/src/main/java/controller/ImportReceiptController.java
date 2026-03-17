@@ -7,9 +7,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import model.Account;
 import model.Book;
 import model.ImportReceipt;
 import model.ImportReceiptDetail;
@@ -20,6 +22,15 @@ public class ImportReceiptController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        Account user = (Account) session.getAttribute("user");
+
+        // 1. Check đăng nhập + role
+        if (user == null || !"Inventory".equalsIgnoreCase(user.getRole())) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        request.setAttribute("pagePrimary", "import-receipt");
         String view = request.getParameter("view");
         if (view == null || view.equals("list")) {
             List<ImportReceipt> receipts = new ImportReceiptDAO().getReceipts();

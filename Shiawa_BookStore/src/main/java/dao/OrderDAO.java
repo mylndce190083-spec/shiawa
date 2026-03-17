@@ -179,11 +179,12 @@ public class OrderDAO extends DBContext {
         return list;
     }
 
-    public boolean updateStatus(int orderId, String status) {
-        String sql = "UPDATE Orders SET status = ? WHERE order_id = ?";
+    public boolean updateStatus(int orderId, String status, int adminId) {
+        String sql = "UPDATE Orders SET status = ?, staff_id =? WHERE order_id = ?";
         try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
             ps.setString(1, status);
-            ps.setInt(2, orderId);
+            ps.setInt(2, adminId);
+            ps.setInt(3, orderId);
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -781,9 +782,11 @@ public class OrderDAO extends DBContext {
 
     public static void main(String[] args) {
         OrderDAO dao = new OrderDAO();
-        List<Orders> list = dao.getAllOrders();
-        for (Orders o : list) {
-            System.out.println(o);
-        }
+//        List<Orders> list = dao.getAllOrders();
+//        for (Orders o : list) {
+//            System.out.println(o);
+//        }
+
+        System.out.println(dao.getOrderById(17));
     }
 }

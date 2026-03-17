@@ -2,17 +2,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>Add Book</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="${pageContext.request.contextPath}/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/assets/css/style.css" rel="stylesheet">
-</head>
-<body>
-<jsp:include page="/WEB-INF/include/header.jsp"/>
+<%@include file="../include/headerInventory.jsp" %>
 
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light rounded p-4">
@@ -60,5 +50,4 @@
 
 
 <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
-</body>
-</html>
+<%@include file="../include/footerInventory.jsp" %>
