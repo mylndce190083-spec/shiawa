@@ -778,6 +778,34 @@ public class OrderDAO extends DBContext {
 
         return 0;
     }
+    
+       public int insertOrderMyMy(Connection con, int customerId, String shippingAddress, double shippingFee, String receiverName, String phone, List<CartItem> items) throws Exception {
+        String sqlOrder = "INSERT INTO Orders (customer_id, staff_id, order_date, status, discount, shipping_address, shipping_fee, receiver_name, phone) VALUES (?, ?, GETDATE(), ?, ?, ?, ?, ?, ?)";
+        int orderId = 0;
+
+        try (PreparedStatement ps = con.prepareStatement(sqlOrder, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, customerId);
+            ps.setNull(2, java.sql.Types.INTEGER);
+            ps.setString(3, "Pending");
+            ps.setInt(4, 0);
+            ps.setString(5, shippingAddress);
+            ps.setDouble(6, shippingFee);
+            ps.setString(7, receiverName);
+            ps.setString(8, phone);
+            ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                orderId = rs.getInt(1);
+            }
+
+            // KHÔNG lặp qua items ở đây nữa, việc này để createOrder lo
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return orderId;
+    }
 
     public static void main(String[] args) {
         OrderDAO dao = new OrderDAO();

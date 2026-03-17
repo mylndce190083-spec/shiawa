@@ -7,6 +7,7 @@ package controller;
 import dao.BookDAO;
 import dao.CartItemDAO;
 import dao.CustomerDAO;
+import dao.OrderDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,6 +16,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.List;
 import model.Account;
@@ -35,35 +37,23 @@ public class CartController extends HttpServlet {
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
 
-        // 1. Check đăng nhập + role
         if (user == null || !"Customer".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
-//
-//        // 2. Lấy customer từ account
-//        CustomerDAO customerDAO = new CustomerDAO();
-//        Customer customer = customerDAO.getCustomerByAccountId(user.getId());
-//
-//        if (customer == null) {
-//            request.setAttribute("cartItem", List.of());
-//            request.getRequestDispatcher("/WEB-INF/home/cart.jsp")
-//                    .forward(request, response);
-//            return;
-//        }
-//
         CustomerDAO customerDAO = new CustomerDAO();
         Customer customer = customerDAO.getCustomerByAccountId(user.getId());
 
         if (customer == null) {
-            response.sendRedirect(request.getContextPath() + "/cart");
+            response.sendRedirect(request.getContextPath() + "/home");
             return;
         }
-          int customerId = customer.getId(); //  CHUẨN
 
+        int customerId = customer.getId();
         CartItemDAO dao = new CartItemDAO();
         List<CartItem> cartItems = dao.getCartByCustomerId(customerId);
+        
         int totalQuantity = 0;
         for (CartItem ci : cartItems) {
             totalQuantity += ci.getQuantity();
@@ -71,27 +61,12 @@ public class CartController extends HttpServlet {
 
         session.setAttribute("cartSize", totalQuantity);
         request.setAttribute("cartItem", cartItems);
-
-        request.getRequestDispatcher("/WEB-INF/home/cart.jsp")
-                .forward(request, response);
-
+        request.getRequestDispatcher("/WEB-INF/home/cart.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        System.out.println(">>> CartController doPost CALLED");
-        System.out.println("ACTION = " + request.getParameter("action"));
-        System.out.println("BOOK_ID = " + request.getParameter("book_id"));
 
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
@@ -103,21 +78,61 @@ public class CartController extends HttpServlet {
 
         CustomerDAO customerDAO = new CustomerDAO();
         Customer customer = customerDAO.getCustomerByAccountId(user.getId());
-        System.out.println("CUSTOMER = " + customer);
-        // ví dụ
-        if (customer != null) {
-            System.out.println("CUSTOMER_ID = " + customer.getId());
-        }
         if (customer == null) {
             response.sendRedirect(request.getContextPath() + "/cart");
             return;
         }
 
         int customerId = customer.getId();
-        int bookId = Integer.parseInt(request.getParameter("book_id"));
         String action = request.getParameter("action");
-
         CartItemDAO dao = new CartItemDAO();
+
+        if ("confirm".equals(action)) {
+            String receiverName = request.getParameter("receiverName");
+            String phone = request.getParameter("phone");
+            String fullAddress = request.getParameter("detailAddress") + ", "
+                    + request.getParameter("ward") + ", "
+                    + request.getParameter("district") + ", "
+                    + request.getParameter("province");
+
+            double shippingFee = 0;
+            String shipRaw = request.getParameter("shippingFee");
+            if (shipRaw != null && !shipRaw.isEmpty()) {
+                shippingFee = Double.parseDouble(shipRaw);
+            }
+
+            List<CartItem> itemsToBuy = dao.getCartByCustomerId(customerId);
+           
+            if (itemsToBuy != null && !itemsToBuy.isEmpty()) {
+                try (Connection conn = new db.DBContext().getConnection()) {
+                    OrderDAO orderDao = new OrderDAO();
+              
+                    String paymentMethod = request.getParameter("paymentMethod");
+                    int newOrderId = orderDao.insertOrder(conn, customerId, fullAddress, shippingFee, receiverName, phone, paymentMethod);
+
+                    if (newOrderId > 0) {
+                      
+                        dao.getCartByCustomerId(customerId); 
+                        session.setAttribute("cartSize", 0);
+                        request.setAttribute("orderId", newOrderId);
+                        request.getRequestDispatcher("/WEB-INF/home/order-success.jsp").forward(request, response);
+                        return; 
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            response.sendRedirect(request.getContextPath() + "/cart");
+            return;
+        }
+
+     
+        String bookIdRaw = request.getParameter("book_id");
+        if (bookIdRaw == null || bookIdRaw.isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/cart");
+            return;
+        }
+        int bookId = Integer.parseInt(bookIdRaw);
         CartItem item = dao.findItem(customerId, bookId);
 
         switch (action) {
@@ -128,83 +143,49 @@ public class CartController extends HttpServlet {
                 } else {
                     BookDAO bookDAO = new BookDAO();
                     Book book = bookDAO.getBookById(bookId);
-
-                    CartItem newItem = new CartItem(
-                            0, customerId, bookId, 1,
-                            book.getPrice(), LocalDateTime.now()
-                    );
+                    CartItem newItem = new CartItem(0, customerId, bookId, 1, book.getPrice(), LocalDateTime.now());
                     dao.insert(newItem);
                 }
                 break;
-
             case "decrease":
                 if (item != null) {
                     int newQty = item.getQuantity() - 1;
-                    if (newQty <= 0) {
-                        dao.delete(customerId, bookId);
-                    } else {
-                        dao.updateQuantity(customerId, bookId, newQty);
-                    }
+                    if (newQty <= 0) dao.delete(customerId, bookId);
+                    else dao.updateQuantity(customerId, bookId, newQty);
                 }
                 break;
-
             case "delete":
                 dao.delete(customerId, bookId);
                 break;
-
-        }
-        // 🔥 Cập nhật lại tổng số sản phẩm trong giỏ
-        List<CartItem> cartItems = dao.getCartByCustomerId(customerId);
-
-        int totalQuantity = 0;
-        for (CartItem ci : cartItems) {
-            totalQuantity += ci.getQuantity();
         }
 
+        // Tính toán lại tổng số lượng sau khi thao tác
+        int totalQuantity = dao.getTotalQuantityByCustomerId(customerId);
         session.setAttribute("cartSize", totalQuantity);
-        CartItem updatedItem = dao.findItem(customerId, bookId);
-        int newQty = (updatedItem != null) ? updatedItem.getQuantity() : 0;
 
-// Kiểm tra có phải AJAX không
-        boolean isAjax = "XMLHttpRequest"
-                .equals(request.getHeader("X-Requested-With"));
+        // --- TRẢ VỀ KẾT QUẢ ---
+        boolean isAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
 
         if (isAjax) {
+            CartItem updatedItem = dao.findItem(customerId, bookId);
+            int currentQty = (updatedItem != null) ? updatedItem.getQuantity() : 0;
+            String message = "add".equals(action) ? "Added to cart successfully!" : "";
 
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
-
-            String message = "";
-
-            if ("add".equals(action)) {
-                message = "Added to cart successfully!";
-            }
-
-            String json = "{"
-                    + "\"quantity\":" + newQty + ","
-                    + "\"totalCartItems\":" + totalQuantity + ","
-                    + "\"message\":\"" + message + "\""
-                    + "}";
-
+            String json = String.format("{\"quantity\":%d, \"totalCartItems\":%d, \"message\":\"%s\"}",
+                    currentQty, totalQuantity, message);
             response.getWriter().print(json);
-
+            return;
         } else {
-            // Nếu là submit form bình thường (delete)
-            response.sendRedirect(request.getContextPath() + "/cart");
+            String destination = request.getParameter("redirect");
+            if ("checkout".equals(destination)) {
+                request.setAttribute("orderItems", dao.getBuyNowList(bookId, customerId));
+                request.setAttribute("isBuyNow", true);
+                request.getRequestDispatcher("/WEB-INF/home/placeorder.jsp").forward(request, response);
+            } else {
+                response.sendRedirect(request.getContextPath() + "/cart");
+            }
         }
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
-    public static void main(String[] args) {
-
     }
 }

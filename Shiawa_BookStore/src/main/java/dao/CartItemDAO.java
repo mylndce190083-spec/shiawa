@@ -246,6 +246,23 @@ public class CartItemDAO extends DBContext {
 //        }
 //    }
     // xóa
+    
+    public List<CartItem> getBuyNowList(int bookId, int customerId) {
+        BookDAO bDao = new BookDAO();
+        Book book = bDao.getBookById(bookId);
+        List<CartItem> list = new ArrayList<>();
+        if (book != null) {
+            CartItem item = new CartItem();
+            item.setBookId(bookId);
+            item.setCustomerId(customerId);
+            item.setPrice(book.getPrice());
+            item.setQuantity(1);
+            item.setBook(book);
+            list.add(item);
+        }
+        return list;
+    }
+    
     public void delete(int customerId, int bookId) {
         String sql = """
             DELETE FROM CartItem
@@ -298,4 +315,11 @@ public class CartItemDAO extends DBContext {
             e.printStackTrace();
         }
     }
+     public int getTotalQuantityByCustomerId(int customerId) {
+        List<CartItem> cartItems = this.getCartByCustomerId(customerId);
+        return cartItems.stream().mapToInt(CartItem::getQuantity).sum();
+    }
+
+   
+
 }

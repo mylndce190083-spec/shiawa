@@ -228,10 +228,31 @@
                 </a>
             </div>
 
+            <%
+                java.util.Enumeration<String> attrs = request.getAttributeNames();
+
+                while (attrs.hasMoreElements()) {
+                    String name = attrs.nextElement();
+                    Object value = request.getAttribute(name);
+
+                    out.println("<h3>Attribute: " + name + "</h3>");
+
+                    if (value instanceof java.util.List) {
+                        java.util.List list = (java.util.List) value;
+
+                        for (Object item : list) {
+                            out.println(item + "<br>");
+                        }
+                    } else {
+                        out.println(value + "<br>");
+                    }
+                }
+            %>
+
             <c:if test="${empty orders}">
                 <div class="alert alert-info">Không có đơn hàng nào.</div>
             </c:if>
-                
+
             <c:forEach var="o" items="${orders}">
 
                 <a href="${pageContext.request.contextPath}/OrderDetail?id=${o.orderId}"
@@ -256,7 +277,7 @@
 
                         </div>
 
-                            
+
                         <c:forEach var="item" items="${o.items}">
 
                             <div class="order-item">
@@ -296,14 +317,38 @@
 
                             </div>
 
+
+
+                            <hr>
+
+                            <div style="text-align:right; font-size:18px; font-weight:bold; color:black;">
+                                Tổng số tiền( ${o.quantity} sản phẩm):
+                                <fmt:formatNumber value="${o.totalAmount}" type="number" groupingUsed="true" maxFractionDigits="0"/> VND
+                            </div>
+
+                            <c:if test="${o.status == 'DELIVERED'}">
+                                <%-- Giả sử bạn đã xử lý việc check feedback ở Servlet và gán vào item --%>
+                                <%-- Nếu chưa, đây là logic hiển thị: --%>
+                                <c:if test="${item.isRated == 'unrated'}">     
+                                    <a href="${pageContext.request.contextPath}/feedback?book_id=${item.book.bookId}&order_detail_id=${item.orderDetailId}" 
+                                       style="background: ${item.isRated ? '#888' : '#00a651'};
+                                       color: white; text-decoration: none; padding: 6px 15px;
+                                       border-radius: 8px; display: inline-block; font-size: 13px; font-weight: 600;">
+                                        Đánh giá sản phẩm
+                                    </a>
+                                </c:if>
+                                <c:if test="${item.isRated == 'rated'}">     
+                                    <a href="${pageContext.request.contextPath}/feedback?book_id=${item.book.bookId}&order_detail_id=${item.orderDetailId}" 
+                                       style="background: ${item.isRated ? '#888' : '#00a651'};
+                                       color: white; text-decoration: none; padding: 6px 15px;
+                                       border-radius: 8px; display: inline-block; font-size: 13px; font-weight: 600;">
+                                        Đã đánh giá sản phẩm
+                                    </a>
+                                </c:if>
+
+                            </c:if>
+
                         </c:forEach>
-
-                        <hr>
-
-                        <div style="text-align:right; font-size:18px; font-weight:bold; color:black;">
-                            Tổng số tiền( ${o.quantity} sản phẩm):
-                            <fmt:formatNumber value="${o.totalAmount}" type="number" groupingUsed="true" maxFractionDigits="0"/> VND
-                        </div>
                         <c:if test="${o.status == 'PENDING'}">
                             <form action="${pageContext.request.contextPath}/OrderList" 
                                   method="post" 

@@ -148,5 +148,4 @@ public class BookImageDAO extends DBContext {
             e.printStackTrace();
         }
     }
-
 }

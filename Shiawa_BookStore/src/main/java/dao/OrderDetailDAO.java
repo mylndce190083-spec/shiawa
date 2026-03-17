@@ -52,7 +52,9 @@ public class OrderDetailDAO extends DBContext {
             od.price,
             b.title,
             b.url_img,
-            b.book_id
+            b.book_id,
+            od.isRated,
+            od.order_detail_id
         FROM OrderDetail od
         JOIN Book b ON od.book_id = b.book_id
         WHERE od.order_id = ?
@@ -69,6 +71,8 @@ public class OrderDetailDAO extends DBContext {
                 item.setQuantity(rs.getInt("quantity"));
                 item.setPrice(rs.getDouble("price"));
                 item.setBook(dao.getBookById(rs.getInt("book_id")));
+                item.setIsRated(rs.getString("isRated"));
+                item.setOrderDetailId(rs.getInt("order_detail_id"));
 
                 list.add(item);
             }
@@ -79,9 +83,49 @@ public class OrderDetailDAO extends DBContext {
         return list;
     }
     
-//    public static void main(String[] args) {
-//        OrderDetailDAO dao = new OrderDetailDAO();
-//        System.out.println("mmmmmmmmmmmmmmmmmm");
-//        dao.getItemsByOrderId(53);
-//    }
+public OrderItem getOneItemByOrderDetailId(int orderDetailId) {
+        BookDAO dao = new BookDAO();
+        OrderItem item = new OrderItem();
+        String sql = """
+        select * from OrderDetail where order_detail_id = ?
+    """;
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, orderDetailId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                item.setQuantity(rs.getInt("quantity"));
+                item.setPrice(rs.getDouble("price"));
+                item.setBook(dao.getBookById(rs.getInt("book_id")));
+                item.setOrderDetailId(rs.getInt("order_detail_id"));
+                item.setOrderId(rs.getInt("order_id"));
+                item.setIsRated(rs.getString("isRated"));
+                System.out.println(rs.getInt("book_id"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return item;
+    }
+
+    public void changeIsRatedById(int orderDetailId) {
+        String sql = """
+        update OrderDetail set isRated = 'rated' where order_detail_id = ?
+    """;
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, orderDetailId);
+            ps.setInt(1, orderDetailId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        OrderDetailDAO dao = new OrderDetailDAO();
+        dao.getItemsByOrderId(52);
+        dao.getOneItemByOrderDetailId(85);
+        dao.changeIsRatedById(84);
+    }
 }
