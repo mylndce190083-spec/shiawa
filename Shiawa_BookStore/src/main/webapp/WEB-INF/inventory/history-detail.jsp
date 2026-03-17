@@ -104,50 +104,79 @@
             <div class="container-fluid pt-4 px-4">
                 <div class="bg-light rounded p-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="mb-0">Thông báo & lịch sử yêu cầu nhập sách</h6>
-                        <a class="btn btn-outline-secondary btn-sm" href="${pageContext.request.contextPath}/inventory?view=in">Quay lại nhập kho</a>
+                        <h6 class="mb-0">Chi tiết phiếu nhập</h6>
+                        <a href="${pageContext.request.contextPath}/inventory?view=history" class="btn btn-secondary btn-sm">
+                            <i class="fa fa-arrow-left me-1"></i> Back
+                        </a>
                     </div>
 
-                    <c:if test="${approvedCount > 0}">
-                        <div class="alert alert-success">
-                            Bạn có <strong>${approvedCount}</strong> yêu cầu đã được Admin đồng ý.
+                    <c:if test="${empty request}">
+                        <div class="alert alert-danger">Không tìm thấy phiếu yêu cầu.</div>
+                    </c:if>
+
+                    <c:if test="${not empty request}">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-3">
+                                <div class="small text-muted">Mã phiếu</div>
+                                <div class="fw-semibold">${request.requestCode}</div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="small text-muted">Trạng thái</div>
+                                <div>
+                                    <span class="badge ${request.status == 'APPROVED' ? 'bg-success' : (request.status == 'REJECTED' ? 'bg-danger' : 'bg-warning text-dark')}">
+                                        ${request.status}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="small text-muted">Ghi chú</div>
+                                <div class="fw-semibold">${request.note}</div>
+                            </div>
                         </div>
-                    </c:if>
 
-                    <c:if test="${empty requestHistory}">
-                        <div class="alert alert-info mb-0">Chưa có yêu cầu nhập kho nào.</div>
-                    </c:if>
-
-                    <c:if test="${not empty requestHistory}">
-                        <div class="table-responsive">
-                            <table class="table table-bordered align-middle mb-0">
+                        <div class="table-responsive mb-3">
+                            <table class="table table-bordered align-middle">
                                 <thead>
-                                    <tr class="text-success">
-                                        <th>ID</th>
-                                        <th>Mã yêu cầu</th>
-                                        <th>Trạng thái</th>
-                                        <th>Ghi chú</th>
-                                        <th>Xem chi tiết</th>
-                                    </tr>
+                                <tr class="text-success">
+                                    <th>Sách</th>
+                                    <th>Tác giả</th>
+                                    <th>NXB</th>
+                                    <th>Thể loại</th>
+                                    <th>Số lượng</th>
+                                    <th>Giá nhập</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    <c:forEach var="r" items="${requestHistory}">
-                                        <tr>
-                                            <td>${r.requestId}</td>
-                                            <td>${r.requestCode}</td>
-                                            <td>
-                                                <c:choose>
-                                                    <c:when test="${r.status == 'APPROVED'}"><span class="badge bg-success">Đã duyệt</span></c:when>
-                                                    <c:when test="${r.status == 'REJECTED'}"><span class="badge bg-danger">Từ chối</span></c:when>
-                                                    <c:otherwise><span class="badge bg-warning text-dark">Chờ duyệt</span></c:otherwise>
-                                                </c:choose>
-                                            </td>
-                                            <td>${r.note}</td>
-                                            <td>
-                                                <a class="btn btn-sm btn-outline-primary" href="${pageContext.request.contextPath}/inventory?view=history-detail&id=${r.requestId}">Xem chi tiết</a>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
+                                <c:forEach var="it" items="${request.items}">
+                                    <tr>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${not empty it.bookId}">#${it.bookId} - ${it.bookTitle}</c:when>
+                                                <c:otherwise>${it.newBookTitle}</c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${not empty it.newBookAuthor}">${it.newBookAuthor}</c:when>
+                                                <c:otherwise>-</c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${not empty it.newBookPublisher}">${it.newBookPublisher}</c:when>
+                                                <c:otherwise>-</c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${not empty it.newBookCategoryId}">${it.newBookCategoryId}</c:when>
+                                                <c:otherwise>-</c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>${it.qty}</td>
+                                        <td>${it.unitCost}</td>
+                                    </tr>
+                                </c:forEach>
                                 </tbody>
                             </table>
                         </div>
@@ -190,6 +219,3 @@
         }
     </script>
 </body>
-
-
-

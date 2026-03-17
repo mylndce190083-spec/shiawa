@@ -118,7 +118,8 @@
                             <div class="d-flex gap-3 align-items-center">
                             </div>
                         </div>
-                        <form class="row g-2 mb-3" method="get" action="${pageContext.request.contextPath}/book">
+                        <form class="row g-2 mb-3" method="get" action="${pageContext.request.contextPath}/inventory">
+                            <input type="hidden" name="view" value="list"/>
                             <div class="col-md-3">
                                 <input class="form-control" type="number" min="0" name="minStock" placeholder="Tồn >= ..." value="${minStock}"/>
                             </div>
@@ -134,7 +135,7 @@
                             </div>
                             <div class="col-md-3 d-flex gap-2">
                                 <button class="btn btn-success w-100" type="submit">Lọc</button>
-                                <a class="btn btn-outline-secondary w-100" href="${pageContext.request.contextPath}/book">Reset</a>
+                                <a class="btn btn-outline-secondary w-100" href="${pageContext.request.contextPath}/inventory?view=list">Reset</a>
                             </div>
                         </form>
                         <div class="table-responsive">
@@ -159,7 +160,7 @@
                                             <td class="text-center">
                                                 <c:choose>
                                                     <c:when test="${not empty b.urlImg}">
-                                                        <img src="${pageContext.request.contextPath}/${b.urlImg}"
+                                                        <img src="${pageContext.request.contextPath}/image?file=${b.urlImg}"
                                                              alt="${b.title}"
                                                              style="width:50px;height:70px;object-fit:cover;">
                                                     </c:when>
@@ -191,21 +192,22 @@
                             <nav class="mt-4">
                                 <ul class="pagination justify-content-end mb-0">
                                     <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                        <a class="page-link" href="${pageContext.request.contextPath}/book?page=${currentPage - 1}&minStock=${minStock}&maxStock=${maxStock}&sort=${sort}">Previous</a>
+                                        <a class="page-link" href="${pageContext.request.contextPath}/inventory?view=list&page=${currentPage - 1}&minStock=${minStock}&maxStock=${maxStock}&sort=${sort}">Previous</a>
                                     </li>
 
                                     <c:forEach begin="1" end="${totalPages}" var="p">
                                         <li class="page-item ${p == currentPage ? 'active' : ''}">
-                                            <a class="page-link" href="${pageContext.request.contextPath}/book?page=${p}&minStock=${minStock}&maxStock=${maxStock}&sort=${sort}">${p}</a>
+                                            <a class="page-link" href="${pageContext.request.contextPath}/inventory?view=list&page=${p}&minStock=${minStock}&maxStock=${maxStock}&sort=${sort}">${p}</a>
                                         </li>
                                     </c:forEach>
 
                                     <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                                        <a class="page-link" href="${pageContext.request.contextPath}/book?page=${currentPage + 1}&minStock=${minStock}&maxStock=${maxStock}&sort=${sort}">Next</a>
+                                        <a class="page-link" href="${pageContext.request.contextPath}/inventory?view=list&page=${currentPage + 1}&minStock=${minStock}&maxStock=${maxStock}&sort=${sort}">Next</a>
                                     </li>
                                 </ul>
                             </nav>
                         </c:if>
+
 
                     </div>
                 </div>
