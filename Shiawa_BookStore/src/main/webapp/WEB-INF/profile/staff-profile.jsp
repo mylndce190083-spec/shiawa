@@ -23,17 +23,23 @@
 
         <!-- LEFT: Avatar -->
         <div class="col-md-4">
-            <div class="card shadow-sm p-4 text-center">
+            <div class="card avatar-card text-center">
+
                 <h4 class="mb-3">Profile Picture</h4>
 
-                <img src="https://via.placeholder.com/150"
-                     class="avatar mb-3">
+                <img src="${pageContext.request.contextPath}/image?file=${user.avatar}" 
+                     alt="Avatar"
+                     class="avatar">
 
-                <input type="file" class="form-control mb-3">
+                <h5 class="mt-2">${user.username}</h5>
 
-                <button class="btn btn-primary w-100">
-                    Upload Image
-                </button>
+                <form action="staff-avatar" method="post" enctype="multipart/form-data">
+                    <input type="file" name="avatarS" class="form-control mt-3" required>
+                    <button type="submit" class="btn btn-primary mt-3 w-100">
+                        Upload Image
+                    </button>
+                </form>
+
             </div>
         </div>
 
@@ -121,14 +127,35 @@
         border-radius:5px;
     }
 
+    .avatar-card{
+        background:#fff;
+        padding:25px;
+        border-radius:10px;
+        box-shadow:0 0 15px rgba(0,0,0,0.1);
+    }
+
     .avatar{
         width:150px;
         height:150px;
         border-radius:50%;
         object-fit:cover;
-        border:4px solid #eee;
+        border:5px solid #f1f1f1;
         display:block;
-        margin:0 auto 15px auto; /* căn giữa */
+        margin:0 auto 15px auto;
+        transition:0.3s;
+    }
+
+    /* Hover effect cho xịn */
+    .avatar:hover{
+        transform:scale(1.05);
+        border-color:#2ecc71;
+    }
+
+    /* Button đẹp hơn */
+    .avatar-card .btn{
+        border-radius:8px;
+        padding:10px;
+        font-weight:500;
     }
 
     .error-box{

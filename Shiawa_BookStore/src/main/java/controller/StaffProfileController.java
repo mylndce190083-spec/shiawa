@@ -33,10 +33,6 @@ public class StaffProfileController extends HttpServlet {
             return;
         }
 
-//        if (!"Admin".equalsIgnoreCase(user.getRole())) {
-//            response.sendRedirect("home");
-//            return;
-//        }
         if (!user.getRole().equalsIgnoreCase("Admin")
                 && !user.getRole().equalsIgnoreCase("Inventory")) {
             response.sendRedirect("home");
