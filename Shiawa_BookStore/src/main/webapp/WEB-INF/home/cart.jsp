@@ -120,6 +120,7 @@
                                         <button type="button"
                                                 onclick="updateQty(${item.bookId}, 'increase')">+</button>
                                     </div>
+                                    
                                 </div>
 
 
@@ -240,11 +241,11 @@
                         .then(data => {
 
 
-                            // ✅ 1. Cập nhật số lượng hiển thị
+                            //  1. Cập nhật số lượng hiển thị
                             document.getElementById("qty-" + bookId).innerText = data.quantity;
-// 👇 server nên trả về totalCartItems
+//  server nên trả về totalCartItems
                             updateCartBadge(data.totalCartItems);
-                            // ✅ 2. Lấy checkbox của item đó
+                            //  2. Lấy checkbox của item đó
                             let checkbox = document.querySelector(
                                     "input.select-item[value='" + bookId + "']"
                                     );
@@ -254,17 +255,17 @@
                                 // Lấy giá
                                 let price = parseFloat(checkbox.dataset.price);
 
-                                // ✅ 3. Tính lại subtotal
+                                //  3. Tính lại subtotal
                                 let newSubtotal = price * data.quantity;
 
                                 document.getElementById("subtotal-" + bookId)
                                         .innerText = "$" + newSubtotal.toFixed(2);
 
-                                // ✅ 4. Cập nhật lại data-qty
+                                //  4. Cập nhật lại data-qty
                                 checkbox.dataset.qty = data.quantity;
                             }
 
-                            // ✅ 5. Tính lại tổng tiền
+                            //  5. Tính lại tổng tiền
                             updateTotal();
 
                             if (data.message) {

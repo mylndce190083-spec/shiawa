@@ -60,7 +60,7 @@ public class CartController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/cart");
             return;
         }
-          int customerId = customer.getId(); //  CHUẨN
+        int customerId = customer.getId(); //  CHUẨN
 
         CartItemDAO dao = new CartItemDAO();
         List<CartItem> cartItems = dao.getCartByCustomerId(customerId);
@@ -119,16 +119,36 @@ public class CartController extends HttpServlet {
 
         CartItemDAO dao = new CartItemDAO();
         CartItem item = dao.findItem(customerId, bookId);
-
+        boolean isAjax = "XMLHttpRequest"
+                .equals(request.getHeader("X-Requested-With"));
         switch (action) {
             case "add":
             case "increase":
-                if (item != null) {
-                    dao.updateQuantity(customerId, bookId, item.getQuantity() + 1);
-                } else {
-                    BookDAO bookDAO = new BookDAO();
-                    Book book = bookDAO.getBookById(bookId);
+                BookDAO bookDAO = new BookDAO();
+                Book book = bookDAO.getBookById(bookId);
 
+                int currentQty = (item != null) ? item.getQuantity() : 0;
+
+                if (currentQty + 1 > book.getStock()) {
+                    // ❌ Không cho tăng nữa
+                    if (isAjax) {
+                        response.setContentType("application/json");
+                        response.getWriter().print(
+                                "{\"quantity\":" + currentQty + ","
+                                + "\"totalCartItems\":0,"
+                                + "\"message\":\"Chỉ còn " + book.getStock() + " sản phẩm\"}"
+                        );
+                        return;
+                    } else {
+                        request.setAttribute("error", "Chỉ còn " + book.getStock() + " sản phẩm");
+                        response.sendRedirect(request.getContextPath() + "/cart");
+                        return;
+                    }
+                }
+
+                if (item != null) {
+                    dao.updateQuantity(customerId, bookId, currentQty + 1);
+                } else {
                     CartItem newItem = new CartItem(
                             0, customerId, bookId, 1,
                             book.getPrice(), LocalDateTime.now()
@@ -164,10 +184,6 @@ public class CartController extends HttpServlet {
         session.setAttribute("cartSize", totalQuantity);
         CartItem updatedItem = dao.findItem(customerId, bookId);
         int newQty = (updatedItem != null) ? updatedItem.getQuantity() : 0;
-
-// Kiểm tra có phải AJAX không
-        boolean isAjax = "XMLHttpRequest"
-                .equals(request.getHeader("X-Requested-With"));
 
         if (isAjax) {
 
