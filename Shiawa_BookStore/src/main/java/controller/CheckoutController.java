@@ -208,7 +208,7 @@ public class CheckoutController extends HttpServlet {
 
             request.setAttribute("orderItems", selectedItems);
             request.setAttribute("totalAmount", total);
-
+            session.setAttribute("pendingItems", selectedItems);
             request.getRequestDispatcher(
                     "/WEB-INF/home/placeorder.jsp")
                     .forward(request, response);
@@ -223,7 +223,6 @@ public class CheckoutController extends HttpServlet {
         if ("confirm".equals(action)) {
 
             System.out.println("=== CONFIRM CALLED ===");
-
             if (isBuyNow) {
 
                 selectedItems = (List<CartItem>) session.getAttribute("buyNowItems");
@@ -258,6 +257,8 @@ public class CheckoutController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/cart");
                 return;
             }
+            // 🔥 LƯU LẠI ĐỂ KHÔNG BỊ MẤT
+            session.setAttribute("pendingItems", selectedItems);
 
             double total = 0;
             for (CartItem item : selectedItems) {
@@ -422,8 +423,8 @@ public class CheckoutController extends HttpServlet {
                     session.setAttribute("pendingPhone", phone);
                     session.setAttribute("pendingAmount", amount);
                     // 🔥 FIX QUAN TRỌNG
-                    session.removeAttribute("isBuyNow");
-                    session.removeAttribute("buyNowItems");
+//                    session.removeAttribute("isBuyNow");
+//                    session.removeAttribute("buyNowItems");
                     response.sendRedirect("ajaxServlet?amount=" + (int) amount);
                 }
             } catch (Exception e) {
