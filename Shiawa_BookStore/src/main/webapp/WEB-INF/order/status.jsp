@@ -91,12 +91,14 @@
                                 <c:when test="${order.status == 'SHIPPING'}">
                                     <div class="d-grid gap-2">
                                         <button type="submit" name="status" value="DELIVERED" 
-                                                class="btn btn-success">
+                                                class="btn btn-success"
+                                                onclick="return confirm('Xác nhận đơn hàng đã giao thành công?');">
                                             Giao thành công
                                         </button>
 
                                         <button type="submit" name="status" value="FAILED" 
-                                                class="btn btn-danger">
+                                                class="btn btn-danger"
+                                                onclick="return confirm('Xác nhận đơn hàng giao thất bại?');">
                                             Giao thất bại
                                         </button>
                                     </div>

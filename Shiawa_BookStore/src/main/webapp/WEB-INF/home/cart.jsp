@@ -55,7 +55,26 @@
         <jsp:include page="/client/layout/header.jsp"/>
 
 
+<%
+            java.util.Enumeration<String> attrs = request.getAttributeNames();
 
+            while (attrs.hasMoreElements()) {
+                String name = attrs.nextElement();
+                Object value = request.getAttribute(name);
+
+                out.println("<h3>Attribute: " + name + "</h3>");
+
+                if (value instanceof java.util.List) {
+                    java.util.List list = (java.util.List) value;
+
+                    for (Object item : list) {
+                        out.println(item + "<br>");
+                    }
+                } else {
+                    out.println(value + "<br>");
+                }
+            }
+        %>
         <section class="cart-page" id="cartPage">
 
             <h2>Giỏ hàng</h2>

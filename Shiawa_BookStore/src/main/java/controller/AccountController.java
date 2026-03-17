@@ -25,10 +25,12 @@ public class AccountController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //kiểm tra session
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            response.sendRedirect("home");
+        HttpSession session = request.getSession();
+        Account user = (Account) session.getAttribute("user");
+
+        // 1. Check đăng nhập + role
+        if (user == null || !"Admin".equalsIgnoreCase(user.getRole())) {
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
         request.setAttribute("pagePrimary", "account");

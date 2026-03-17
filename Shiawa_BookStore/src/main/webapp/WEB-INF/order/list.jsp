@@ -14,6 +14,14 @@
         <div class="d-flex align-items-center justify-content-between mb-4">
             <h6 class="mb-0">Order List</h6>
         </div>
+        <%
+                java.util.Enumeration<String> names = session.getAttributeNames();
+                while (names.hasMoreElements()) {
+                    String name = names.nextElement();
+                    Object value = session.getAttribute(name);
+                    out.println(name + " = " + value + "<br>");
+                }
+            %>
 
         <c:choose>
             <c:when test="${empty orderList}">
@@ -21,7 +29,7 @@
                     No orders found.
                 </div>
             </c:when>
-
+            
             <c:otherwise>
                 <div class="table-responsive">
                     <table class="table text-start align-middle table-bordered table-hover mb-0">

@@ -211,7 +211,7 @@
             <!-- Sidebar Start -->
             <div class="sidebar pe-4 pb-3 custom-sidebar">
                 <nav class="navbar navbar-dark">
-                    <a href="index.jsp" class="navbar-brand mx-4 mb-3">
+                    <a href="${pageContext.request.contextPath}/inventory" class="navbar-brand mx-4 mb-3">
                         <h3 class="text-primary"><img class="rounded-circle" src="assets/img/logo.jpg" alt="" style="width: 40px; height: 40px;">  SHIAWA</h3>
                     </a>
                     <div class="d-flex align-items-center ms-4 mb-4">

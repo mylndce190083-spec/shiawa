@@ -34,6 +34,7 @@ public class BookRequestController extends HttpServlet {
             return;
         }
 
+        request.setAttribute("pagePrimary", "book-request");
         String action = request.getParameter("action");
         if (action == null) {
             action = "list";

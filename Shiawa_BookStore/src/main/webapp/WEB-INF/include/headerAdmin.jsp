@@ -231,7 +231,9 @@
                            class="nav-item nav-link ${'book-admin'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-book me-2">
                             </i>Book</a>
-                        <a href="category.jsp" class="nav-item nav-link"><i class="fa fa-tags me-2"></i>Category</a>
+                        <a href="${pageContext.request.contextPath}/category-admin" 
+                           class="nav-item nav-link ${'category-admin'.equals(pagePrimary) ? 'active' : ''}">
+                            <i class="fa fa-tags me-2"></i>Category</a>
                         <a href="${pageContext.request.contextPath}/order-admin" 
                            class="nav-item nav-link ${'order-admin'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-shopping-cart me-2">

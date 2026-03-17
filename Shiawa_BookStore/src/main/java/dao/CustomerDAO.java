@@ -97,6 +97,7 @@ public class CustomerDAO extends DBContext {
                 c.setPhone(rs.getString("phone"));
                 c.setAddress(rs.getString("address"));
                 c.setFullname(rs.getString("full_name"));
+                c.setPassword(rs.getString("password"));
                 return c;
             }
         } catch (Exception e) {

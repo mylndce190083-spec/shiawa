@@ -25,11 +25,14 @@
 
                 <form action="${pageContext.request.contextPath}/change-password" method="post">
 
+                    <label>Current Password</label>
+                    <input type="password" name="currentPassword" placeholder="Enter current password" required>
+
                     <label>New Password</label>
-                    <input type="password" name="newPassword" placeholder="Nhập mật khẩu mới" required>
+                    <input type="password" name="newPassword" placeholder="Enter new password" required>
 
                     <label>Confirm Password</label>
-                    <input type="password" name="confirmPassword" placeholder="Nhập lại mật khẩu" required>
+                    <input type="password" name="confirmPassword" placeholder="Confirm your password" required>
 
                     <p style="color:red;">
                         ${error}
