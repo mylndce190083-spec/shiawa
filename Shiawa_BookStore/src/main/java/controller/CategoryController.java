@@ -105,8 +105,22 @@ public class CategoryController extends HttpServlet {
 
             request.getRequestDispatcher("/WEB-INF/category/edit.jsp").forward(request, response);
             return;
-        }
-        else {
+        } else if ("delete".equals(view)) {
+            int id = Integer.parseInt(request.getParameter("id"));
+
+            CategoryDAO cdao = new CategoryDAO();
+            Category category = cdao.getCategoryById(id);
+            Category categoryParent = null;
+            if (category.getParentId() > 0) {
+                categoryParent = cdao.getCategoryById(category.getParentId());
+            }
+
+            request.setAttribute("categoryParent", categoryParent);
+            request.setAttribute("category", category);
+            request.getRequestDispatcher("/WEB-INF/category/delete.jsp")
+                    .forward(request, response);
+            return;
+        } else {
 
             String keyword = request.getParameter("keyword");
             String categoryParentParam = request.getParameter("categoryParentId");
@@ -274,6 +288,44 @@ public class CategoryController extends HttpServlet {
                 return;
             }
 
+        } else if ("delete".equals(view)) {
+            HttpSession session = request.getSession();
+            try {
+                int id = Integer.parseInt(request.getParameter("categoryId"));
+                CategoryDAO cdao = new CategoryDAO();
+                Category category = cdao.getCategoryById(id);
+
+                if (category.getParentId() > 0) {//thể loại con, có parentId
+                    if (cdao.isCategoryHasBook(id)) {
+                        // nếu có sách đang có thể loại này -> không thể xóa
+                        session.setAttribute("msg",
+                                "Cannot delete! This category has been using");
+                        session.setAttribute("msgType", "warning");
+                    } else {
+                        // nếu không có sách nào thuộc thể loại này -> có thể xóa
+                        cdao.deleteCategory(id);
+                        session.setAttribute("msg", "Delete category successfully");
+                        session.setAttribute("msgType", "success");
+                    }
+                } else {//thể loại cha
+                    if (cdao.isParentCategoryHasChild(id)) {
+                        // nếu có thể loại con -> không thể xóa
+                        session.setAttribute("msg",
+                                "Cannot delete! This category has child");
+                        session.setAttribute("msgType", "warning");
+                    } else {
+                        // nếu không có thể loại con -> có thể xóa
+                        cdao.deleteCategory(id);
+                        session.setAttribute("msg", "Delete parent category successfully");
+                        session.setAttribute("msgType", "success");
+                    }
+                }
+            } catch (Exception e) {
+                session.setAttribute("msg", "Delete book failed");
+                session.setAttribute("msgType", "danger");
+            }
+            response.sendRedirect(request.getContextPath() + "/category-admin");
+            return;
         }
     }
 

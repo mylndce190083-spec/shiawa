@@ -196,6 +196,58 @@ public class CategoryDAO extends DBContext {
         }
     }
 
+    public boolean isCategoryHasBook(int categoryId) {
+        String sql = """
+        SELECT COUNT(*)
+        FROM Book
+        WHERE category_id = ?
+    """;
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, categoryId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean isParentCategoryHasChild(int categoryParentId) {
+        String sql = """
+        SELECT COUNT(*) 
+        FROM Category
+        WHERE parent_id = ?
+    """;
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, categoryParentId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void deleteCategory(int categoryId) {
+        String sql = """
+        DELETE FROM Category 
+        WHERE category_id = ?
+    """;
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, categoryId);
+
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         CategoryDAO dao = new CategoryDAO();
         List<Category> list = new ArrayList<>();

@@ -83,7 +83,7 @@
                 ${searchMsg}
             </div>
         </c:if>
-        <%
+        <!--%
             java.util.Enumeration<String> attrs = request.getAttributeNames();
 
             while (attrs.hasMoreElements()) {
@@ -102,7 +102,7 @@
                     out.println(value + "<br>");
                 }
             }
-        %>
+        %-->
         <div class="table-responsive">
             <c:choose>
                 <c:when test="${empty categoryList}">
