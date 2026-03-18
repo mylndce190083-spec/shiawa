@@ -511,6 +511,17 @@ public class AccountDAO extends DBContext {
 
         return list;
     }
+    
+    public void updateAvatar(int staffId, String avatarPath) {
+        String sql = "UPDATE Staff SET avatar = ? WHERE staff_id = ?";
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setString(1, avatarPath);
+            ps.setInt(2, staffId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) {
         AccountDAO dao = new AccountDAO();
