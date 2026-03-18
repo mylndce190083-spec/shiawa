@@ -28,6 +28,7 @@
                             <th>Mã yêu cầu</th>
                             <th>Trạng thái</th>
                             <th>Ghi chú</th>
+                            <th>Xem chi tiết</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -43,6 +44,9 @@
                                     </c:choose>
                                 </td>
                                 <td>${r.note}</td>
+                                <td>
+                                    <a class="btn btn-sm btn-outline-primary" href="${pageContext.request.contextPath}/inventory?view=history-detail&id=${r.requestId}">Xem chi tiết</a>
+                                </td>
                             </tr>
                         </c:forEach>
                     </tbody>

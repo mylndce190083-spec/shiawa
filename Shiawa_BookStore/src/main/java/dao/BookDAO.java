@@ -47,7 +47,6 @@ public class BookDAO extends DBContext {
     """;
 
         try (PreparedStatement ps = getConnection().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-
             while (rs.next()) {
                 BookAdmin b = new BookAdmin();
                 b.setBookId(rs.getInt("book_id"));
@@ -57,7 +56,11 @@ public class BookDAO extends DBContext {
                 b.setStock(rs.getInt("stock"));
                 b.setPublisher(rs.getString("publisher"));
                 b.setDiscount(rs.getInt("discount"));
-                b.setUrlImg(rs.getString("url_img"));
+                String imgUrl = getImgURLbyBookId(rs.getInt("book_id"));
+                if (imgUrl == null || imgUrl.isBlank()) {
+                    imgUrl = rs.getString("url_img");
+                }
+                b.setUrlImg(imgUrl);
                 b.setIsActive(rs.getBoolean("is_active"));
                 b.setCreatedAt(rs.getString("created_at"));
                 b.setCategoryName(rs.getString("category_name"));
@@ -69,6 +72,27 @@ public class BookDAO extends DBContext {
         }
         return list;
     }
+
+    private BookAdmin mapBookAdmin(ResultSet rs) throws SQLException {
+        BookAdmin b = new BookAdmin();
+        b.setBookId(rs.getInt("book_id"));
+        b.setTitle(rs.getString("title"));
+        b.setAuthor(rs.getString("author"));
+        b.setPrice(rs.getDouble("price"));
+        b.setStock(rs.getInt("stock"));
+        b.setPublisher(rs.getString("publisher"));
+        b.setDiscount(rs.getInt("discount"));
+        String imgUrl = getImgURLbyBookId(rs.getInt("book_id"));
+        if (imgUrl == null || imgUrl.isBlank()) {
+            imgUrl = rs.getString("url_img");
+        }
+        b.setUrlImg(imgUrl);
+        b.setIsActive(rs.getBoolean("is_active"));
+        b.setCreatedAt(rs.getString("created_at"));
+        b.setCategoryName(rs.getString("category_name"));
+        return b;
+    }
+
 
     public void insertBook(BookAdmin b) {
         String sql = """
@@ -226,7 +250,11 @@ public class BookDAO extends DBContext {
                 b.setStock(rs.getInt("stock"));
                 b.setPublisher(rs.getString("publisher"));
                 b.setDiscount(rs.getInt("discount"));
-                b.setUrlImg(rs.getString("url_img"));
+                String imgUrl = getImgURLbyBookId(rs.getInt("book_id"));
+                if (imgUrl == null || imgUrl.isBlank()) {
+                    imgUrl = rs.getString("url_img");
+                }
+                b.setUrlImg(imgUrl);
                 b.setIsActive(rs.getBoolean("is_active"));
                 b.setCreatedAt(rs.getString("created_at"));
                 b.setCategoryName(rs.getString("category_name"));
