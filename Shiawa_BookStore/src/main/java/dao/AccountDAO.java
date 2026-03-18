@@ -93,6 +93,7 @@ public class AccountDAO extends DBContext {
                     u.setFullName(rs.getString("full_name"));
                     u.setPassword(rs.getString("password"));
                     u.setMustChangePassword(rs.getBoolean("must_change_password"));
+                    u.setAvatar(rs.getString("avatar"));
                     return u;
                 }
             } catch (Exception e) {

@@ -29,6 +29,7 @@ public class Orders {
     private String receiverName;
     private int quantity;
     private String paymentMethod;
+    private String staffName;
 
     public Orders() {
     }
@@ -177,6 +178,14 @@ public class Orders {
 
     public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
+    }
+
+    public String getStaffName() {
+        return staffName;
+    }
+
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
     }
 
     @Override

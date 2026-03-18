@@ -24,10 +24,18 @@
         <!-- LEFT: Avatar -->
         <div class="col-md-4">
             <div class="card avatar-card text-center">
+                <%
+                java.util.Enumeration<String> names = session.getAttributeNames();
+                while (names.hasMoreElements()) {
+                    String name = names.nextElement();
+                    Object value = session.getAttribute(name);
+                    out.println(name + " = " + value + "<br>");
+                }
+            %>
 
                 <h4 class="mb-3">Profile Picture</h4>
 
-                <img src="${pageContext.request.contextPath}/image?file=${user.avatar}" 
+                <img src="${pageContext.request.contextPath}/image?file=${sessionScope.user.avatar}" 
                      alt="Avatar"
                      class="avatar">
 

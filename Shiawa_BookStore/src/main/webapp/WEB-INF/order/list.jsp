@@ -15,13 +15,13 @@
             <h6 class="mb-0">Order List</h6>
         </div>
         <%
-                java.util.Enumeration<String> names = session.getAttributeNames();
-                while (names.hasMoreElements()) {
-                    String name = names.nextElement();
-                    Object value = session.getAttribute(name);
-                    out.println(name + " = " + value + "<br>");
-                }
-            %>
+            java.util.Enumeration<String> names = session.getAttributeNames();
+            while (names.hasMoreElements()) {
+                String name = names.nextElement();
+                Object value = session.getAttribute(name);
+                out.println(name + " = " + value + "<br>");
+            }
+        %>
 
         <c:choose>
             <c:when test="${empty orderList}">
@@ -29,7 +29,7 @@
                     No orders found.
                 </div>
             </c:when>
-            
+
             <c:otherwise>
                 <div class="table-responsive">
                     <table class="table text-start align-middle table-bordered table-hover mb-0">
@@ -40,9 +40,8 @@
                                 <th>Order Date</th>
                                 <th>Status</th>
                                 <th>Total Amount</th>
-                                <th>Discount</th>
                                 <th>Shipping Fee</th>
-                                <th>Voucher</th>
+                                <th>Handled By</th>
                                 <th class="text-center">Action</th>
                             </tr>
                         </thead>
@@ -71,18 +70,27 @@
                                         </span>
                                     </td>                     
                                     <td>${o.totalAmount}</td>
-                                    <td>${o.discount}</td>
                                     <td>${o.shippingFee}</td>
                                     <td>
                                         <c:choose>
-                                            <c:when test="${not empty o.voucherName}">
-                                                ${o.voucherName}
+                                            <c:when test="${not empty o.staffName}">
+                                                ${o.staffName}
                                             </c:when>
                                             <c:otherwise>
-                                                None
+                                                Not processed
                                             </c:otherwise>
                                         </c:choose>
                                     </td>
+                                    <!--                                    <td>
+                                    <c:choose>
+                                        <c:when test="${not empty o.voucherName}">
+                                            ${o.voucherName}
+                                        </c:when>
+                                        <c:otherwise>
+                                            None
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>-->
                                     <td class="text-center">
                                         <a href="${pageContext.request.contextPath}/order-admin?action=detail&id=${o.orderId}"
                                            class="btn btn-sm" style="background-color:#6366f1; color:white;">

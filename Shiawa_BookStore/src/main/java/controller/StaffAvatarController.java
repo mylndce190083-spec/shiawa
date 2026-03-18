@@ -116,7 +116,7 @@ public class StaffAvatarController extends HttpServlet {
         dao.updateAvatar(user.getId(), avatarPath);
 
         user.setAvatar(avatarPath);
-        session.setAttribute("account", user);
+        session.setAttribute("user", user);
         System.out.println("Upload path: " + uploadPath);
 
         response.sendRedirect("staff-profile");

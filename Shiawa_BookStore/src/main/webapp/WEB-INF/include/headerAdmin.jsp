@@ -189,6 +189,41 @@
             .custom-sidebar h3 {
                 color: #ffffff !important;
             }
+            /* Avatar sidebar */
+            .sidebar-avatar{
+                width: 45px;
+                height: 45px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid #ffffff;
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+
+            /* Hover gi?ng profile */
+            .sidebar-avatar:hover{
+                transform: scale(1.1);
+                border-color: #20c997;
+                box-shadow: 0 0 10px rgba(32, 201, 151, 0.7);
+            }
+
+            /* Active (khi click ho?c focus) */
+            .sidebar-avatar:active{
+                transform: scale(0.95);
+            }
+
+            /* Online indicator ??p h?n */
+            .avatar-status{
+                width: 12px;
+                height: 12px;
+                background: #2ecc71;
+                border-radius: 50%;
+                border: 2px solid white;
+                position: absolute;
+                bottom: 2px;
+                right: 2px;
+                box-shadow: 0 0 6px rgba(46, 204, 113, 0.8);
+            }
         </style>
     </head>
 
@@ -211,9 +246,10 @@
                     </a>
                     <div class="d-flex align-items-center ms-4 mb-4">
                         <div class="position-relative">
-                            <img class="rounded-circle" src="assets/img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                            <img class="sidebar-avatar" 
+                                 src="${pageContext.request.contextPath}/image?file=${sessionScope.user.avatar}">
                             <div
-                                class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1">
+                                class="avatar-status">
                             </div>
                         </div>
                         <div class="ms-3">
@@ -246,6 +282,10 @@
                            class="nav-item nav-link ${'support-admin'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-headset me-2"></i>Customer
                             Support</a>
+                        <a href="${pageContext.request.contextPath}/income-admin" 
+                           class="nav-item nav-link ${'income-admin'.equals(pagePrimary) ? 'active' : ''}">
+                            <i class="fa fa-ticket-alt me-2">
+                            </i>Income</a>
                         <a href="${pageContext.request.contextPath}/staff-profile" 
                            class="nav-item nav-link ${'staff-profile'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-user-edit me-2">
@@ -276,3 +316,4 @@
                     </div>
                 </nav>
                 <!-- Navbar End -->
+

@@ -714,22 +714,20 @@ public class OrderDAO extends DBContext {
             c.full_name,
             o.order_date,
             o.status,
-            COALESCE(SUM(od.quantity * od.price),0) AS total_amount,
-            o.discount,
+            COALESCE(SUM(od.quantity * od.price),0) AS total_amount,            
             o.shipping_fee,
-            v.name AS voucher_name
+            s.full_name AS staff_name
         FROM Orders o
         LEFT JOIN Customer c ON o.customer_id = c.customer_id
         LEFT JOIN OrderDetail od ON o.order_id = od.order_id
-        LEFT JOIN Voucher v ON o.voucher_id = v.voucher_id
+        LEFT JOIN Staff s ON o.staff_id = s.staff_id
         GROUP BY 
             o.order_id,
             c.full_name,
             o.order_date,
             o.status,
-            o.discount,
             o.shipping_fee,
-            v.name
+            s.full_name
         ORDER BY o.order_id DESC
         OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
     """;
@@ -748,9 +746,8 @@ public class OrderDAO extends DBContext {
                 o.setOrderDate(rs.getTimestamp("order_date").toLocalDateTime());
                 o.setStatus(rs.getString("status"));
                 o.setTotalAmount(rs.getDouble("total_amount"));
-                o.setDiscount(rs.getInt("discount"));
                 o.setShippingFee(rs.getDouble("shipping_fee"));
-                o.setVoucherName(rs.getString("voucher_name"));
+                o.setStaffName(rs.getString("staff_name"));
 
                 list.add(o);
             }
