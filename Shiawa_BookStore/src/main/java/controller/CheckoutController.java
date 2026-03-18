@@ -216,34 +216,47 @@ public class CheckoutController extends HttpServlet {
 
             request.setAttribute("orderItems", selectedItems);
             request.setAttribute("totalAmount", total);
-
+            session.setAttribute("pendingItems", selectedItems);
             request.getRequestDispatcher(
                     "/WEB-INF/home/placeorder.jsp")
                     .forward(request, response);
 
-            return;  // 🔥 QUAN TRỌNG
+            return;  //  QUAN TRỌNG
         }
+        boolean isBuyNow = Boolean.TRUE.equals(session.getAttribute("isBuyNow"));
 
+        List<CartItem> selectedItems;
+        CartItemDAO cartDAO = new CartItemDAO();
+        List<CartItem> fullCart = cartDAO.getCartByCustomerId(user.getId());
         if ("confirm".equals(action)) {
 
             System.out.println("=== CONFIRM CALLED ===");
+            if (isBuyNow) {
 
-            String[] selectedIds = request.getParameterValues("selectedItem");
+                selectedItems = (List<CartItem>) session.getAttribute("buyNowItems");
 
-            if (selectedIds == null) {
-                response.sendRedirect(request.getContextPath() + "/cart");
-                return;
-            }
+                if (selectedItems == null || selectedItems.isEmpty()) {
+                    response.sendRedirect(request.getContextPath() + "/cart");
+                    return;
+                }
 
-            CartItemDAO cartDAO = new CartItemDAO();
-            List<CartItem> fullCart = cartDAO.getCartByCustomerId(user.getId());
-            List<CartItem> selectedItems = new ArrayList<>();
+            } else {
 
-            for (String id : selectedIds) {
-                int bookId = Integer.parseInt(id);
-                for (CartItem item : fullCart) {
-                    if (item.getBookId() == bookId) {
-                        selectedItems.add(item);
+                String[] selectedIds = request.getParameterValues("selectedItem");
+
+                if (selectedIds == null) {
+                    response.sendRedirect(request.getContextPath() + "/cart");
+                    return;
+                }
+
+                selectedItems = new ArrayList<>();
+
+                for (String id : selectedIds) {
+                    int bookId = Integer.parseInt(id);
+                    for (CartItem item : fullCart) {
+                        if (item.getBookId() == bookId) {
+                            selectedItems.add(item);
+                        }
                     }
                 }
             }
@@ -252,6 +265,8 @@ public class CheckoutController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/cart");
                 return;
             }
+            // 🔥 LƯU LẠI ĐỂ KHÔNG BỊ MẤT
+            session.setAttribute("pendingItems", selectedItems);
 
             double total = 0;
             for (CartItem item : selectedItems) {
@@ -393,8 +408,11 @@ public class CheckoutController extends HttpServlet {
                             phone,
                             paymentMethod
                     );
-                    for (CartItem item : selectedItems) {
-                        cartDAO.delete(user.getId(), item.getBookId());
+                    // ❗ FIX Ở ĐÂY
+                    if (!isBuyNow) {
+                        for (CartItem item : selectedItems) {
+                            cartDAO.delete(user.getId(), item.getBookId());
+                        }
                     }
                     request.setAttribute("orderId", orderId);
 
@@ -412,7 +430,9 @@ public class CheckoutController extends HttpServlet {
                     session.setAttribute("pendingReceiver", receiverName);
                     session.setAttribute("pendingPhone", phone);
                     session.setAttribute("pendingAmount", amount);
-
+                    // 🔥 FIX QUAN TRỌNG
+//                    session.removeAttribute("isBuyNow");
+//                    session.removeAttribute("buyNowItems");
                     response.sendRedirect("ajaxServlet?amount=" + (int) amount);
                 }
             } catch (Exception e) {
@@ -421,6 +441,36 @@ public class CheckoutController extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/home/cart.jsp")
                         .forward(request, response);
             }
+        }
+
+        if ("buy_now".equals(action)) {
+
+            int bookId = Integer.parseInt(request.getParameter("book_id"));
+
+            BookDAO bookDAO = new BookDAO();
+            Book book = bookDAO.getBookById(bookId);
+
+            // 🔥 tạo 1 CartItem giả
+            CartItem item = new CartItem();
+            item.setBook(book);
+            item.setBookId(bookId);
+            item.setQuantity(1);
+            item.setPrice(book.getPrice());
+
+            // 🔥 tạo list giống cart
+            List<CartItem> orderItems = new ArrayList<>();
+            orderItems.add(item);
+            session.setAttribute("buyNowItems", orderItems);
+            session.setAttribute("isBuyNow", true);
+            // 🔥 set giống cart luôn
+            request.setAttribute("orderItems", orderItems);
+
+            // subtotal
+            request.setAttribute("subtotal", book.getPrice());
+
+            request.getRequestDispatcher("/WEB-INF/home/placeorder.jsp")
+                    .forward(request, response);
+            return;
         }
     }
 

@@ -93,68 +93,33 @@
                     <label >Tình trạng giao dịch:</label>
                     <label>
                         <%
-                            if (true) {
-                                if ("00".equals(request.getParameter("vnp_ResponseCode"))) {
-                                    out.print("Thành công");
-                                    // ===== TẠO ORDER SAU KHI THANH TOÁN =====
-                                    HttpSession sessionUser = request.getSession();
-                                  
-                                    Account user = (Account) sessionUser.getAttribute("user");
-                                    List<CartItem> items = (List<CartItem>) sessionUser.getAttribute("pendingItems");
-                                    String address = (String) sessionUser.getAttribute("pendingAddress");
-                                    String receiverName = (String) sessionUser.getAttribute("pendingReceiver");
-                                    String phone = (String) sessionUser.getAttribute("pendingPhone");
-                                    if (user != null) {
+                            String responseCode = request.getParameter("vnp_ResponseCode");
 
-                                        OrderDAO orderDAO = new OrderDAO();
-
-                                        double shippingFee = 20000;
-
-                                        int orderId = orderDAO.createOrder(
-                                                user.getId(),
-                                                items,
-                                                address,
-                                                shippingFee,
-                                                receiverName,
-                                                phone,
-                                                "ONLINE"
-                                        );
-
-                                    
-                                        dao.CartItemDAO cartDAO = new dao.CartItemDAO();
-
-                                        for (CartItem item : items) {
-                                            cartDAO.delete(user.getId(), item.getBookId());
-                                        }
-                                        sessionUser.removeAttribute("pendingItems");
-                                        sessionUser.removeAttribute("pendingAddress");
-
-                                    }
-                                } else {
-                                    out.print("Không thành công");
-                                }
+                            if ("00".equals(responseCode)) {
+                                out.print("Thành công");
 
                             } else {
-                                out.print("invalid signature");
+                                out.print("Không thành công");
                             }
-                        %></label>
+                        %>
+                    </label>
                 </div> 
             </div>
-                
+
             <p>
                 &nbsp;
             </p>
-            
+
             <footer class="footer">
                 <a href="${pageContext.request.contextPath}/home" class="btn btn-home">
-                🏠 Về trang chủ
-            </a>
+                    🏠 Về trang chủ
+                </a>
 
 
-            <a href="${pageContext.request.contextPath}/OrderList" class="btn btn-order">
+                <a href="${pageContext.request.contextPath}/OrderList" class="btn btn-order">
 
-                📦 Xem đơn hàng
-            </a>
+                    📦 Xem đơn hàng
+                </a>
                 <p>&copy; VNPAY 2020</p>
             </footer>
         </div>  

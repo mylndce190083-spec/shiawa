@@ -24,7 +24,7 @@ public class Config {
             = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
 
     public static String vnp_ReturnUrl
-            = "http://localhost:8080/Shiawa_BookStore/vnpay_return.jsp";
+            = "http://localhost:8080/Shiawa_BookStore/vnpay_return";
 
     public static String vnp_TmnCode = "U9049Y78";
 
