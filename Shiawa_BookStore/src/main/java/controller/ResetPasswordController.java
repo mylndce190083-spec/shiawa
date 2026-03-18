@@ -1,0 +1,82 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ */
+package controller;
+
+import dao.AccountDAO;
+import dao.CustomerDAO;
+import java.io.IOException;
+import java.io.PrintWriter;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import model.Account;
+import model.Customer;
+
+/**
+ *
+ * @author Lenovo
+ */
+@WebServlet(name = "ResetPasswordController", urlPatterns = {"/reset-password"})
+public class ResetPasswordController extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        request.getRequestDispatcher("/WEB-INF/home/reset-password.jsp").forward(request, response);
+    }
+
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        AccountDAO adao = new AccountDAO();
+        String password = request.getParameter("password");
+        String confirm = request.getParameter("confirmPassword");
+        String oldpass = request.getParameter("oldPassword");
+        HttpSession session = request.getSession();
+        Account user = (Account) session.getAttribute("user");
+        Customer customer = (Customer) session.getAttribute("customer");
+
+        if (user != null) {
+            if (!(adao.hashMD5(oldpass).equals(customer.getPassword()))) {
+                request.setAttribute("error", "Mật khẩu cũ không đúng!");
+                request.getRequestDispatcher("/WEB-INF/home/reset-password.jsp").forward(request, response);
+                return;
+            }
+        }
+        if (!password.equals(confirm)) {
+            request.setAttribute("error", "Passwords do not match!");
+            request.getRequestDispatcher("/WEB-INF/home/reset-password.jsp").forward(request, response);
+            return;
+        }
+
+        String hashed = adao.hashMD5(password);
+        CustomerDAO dao = new CustomerDAO();
+        //reset pass voi otp
+        if (user == null) {
+            dao.updatePassword(hashed);
+            response.sendRedirect("login");
+            return;
+        }
+
+        //reset pass trong profile
+        dao.updatePasswordCustomer(hashed, user.getId());
+        response.sendRedirect("profile");
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}
