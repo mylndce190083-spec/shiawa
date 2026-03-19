@@ -319,9 +319,21 @@
 
 
                     <form onsubmit="addToCart(event, ${b.bookId})">
-                        <button type="submit" class="add-cart">
-                            Thêm giỏ hàng
-                        </button>
+
+                        <c:choose>
+                            <c:when test="${b.stock == 0}">
+                                <button type="button" class="add-cart" disabled 
+                                        style="background: gray; cursor: not-allowed;">
+                                    Hết hàng
+                                </button>
+                            </c:when>
+
+                            <c:otherwise>
+                                <button type="submit" class="add-cart">
+                                    Thêm giỏ hàng
+                                </button>
+                            </c:otherwise>
+                        </c:choose>
 
                     </form>
                 </div>

@@ -72,6 +72,8 @@ public class FeedbackDAO extends db.DBContext {
                 fb.setContent(rs.getString("comment"));
                 // Nếu model Feedback có trường username, hãy set vào để hiển thị tên người dùng
                 fb.setUsername(rs.getString("username"));
+                fb.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                fb.setOrderdetailId(rs.getInt("order_detail_id"));
                 list.add(fb);
             }
         } catch (SQLException ex) {
@@ -99,7 +101,7 @@ public class FeedbackDAO extends db.DBContext {
 
     public static void main(String[] args) {
         FeedbackDAO dao = new FeedbackDAO();
-        List<Feedback> list = dao.getFeedbacksByBookId(6);
+        List<Feedback> list = dao.getFeedbacksByBookId(7);
         for (Feedback f : list) {
             System.out.println(f);
         }
@@ -107,8 +109,7 @@ public class FeedbackDAO extends db.DBContext {
         fb.setContent("dowrr");
         fb.setRating(2);
         
-        
-        dao.updateFeedback(fb, 115);
+        System.out.println(dao.getFeedbacksByBookId(7));
 
     }
 }

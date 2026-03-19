@@ -119,7 +119,8 @@ public class OrderAdminController extends HttpServlet {
             case "SHIPPING":
                 return next.equals("DELIVERED")
                         || next.equals("FAILED");
-
+            case "CANCEL_REQUESTED":
+                return next.equals("REFUNDED");
             default:
                 return false;
         }

@@ -34,22 +34,28 @@
                 </c:choose>
             </p>
             <span class="badge 
-                  bg-${order.status == 'PENDING' ? 'warning' :
-                       order.status == 'CONFIRMED' ? 'info' :
-                       order.status == 'SHIPPING' ? 'primary' :
-                       order.status == 'DELIVERED' ? 'success' :
-                       order.status == 'FAILED' ? 'danger' : 'secondary'}">
+                  bg-${order.status eq 'PENDING' ? 'warning' :
+                       order.status eq 'CONFIRMED' ? 'info' :
+                       order.status eq 'SHIPPING' ? 'primary' :
+                       order.status eq 'DELIVERED' ? 'success' :
+                       order.status eq 'FAILED' ? 'danger' :
+                       order.status eq 'CANCEL_REQUESTED' ? 'warning' :
+                       order.status eq 'REFUNDED' ? 'dark' :
+                       'secondary'}">
 
                 <c:choose>
-                    <c:when test="${order.status == 'PENDING'}">Chờ xác nhận</c:when>
-                    <c:when test="${order.status == 'CONFIRMED'}">Đã xác nhận</c:when>
-                    <c:when test="${order.status == 'SHIPPING'}">Đang vận chuyển</c:when>
-                    <c:when test="${order.status == 'DELIVERED'}">Giao thành công</c:when>
-                    <c:when test="${order.status == 'FAILED'}">Giao thất bại</c:when>
+                    <c:when test="${order.status eq 'PENDING'}">Chờ xác nhận</c:when>
+                    <c:when test="${order.status eq 'CONFIRMED'}">Đã xác nhận</c:when>
+                    <c:when test="${order.status eq 'SHIPPING'}">Đang vận chuyển</c:when>
+                    <c:when test="${order.status eq 'DELIVERED'}">Giao thành công</c:when>
+                    <c:when test="${order.status eq 'FAILED'}">Đã hủy</c:when>
+                    <c:when test="${order.status eq 'CANCEL_REQUESTED'}">Chờ duyệt hủy</c:when>
+                    <c:when test="${order.status eq 'REFUNDED'}">Đã hoàn tiền</c:when>
                 </c:choose>
 
             </span>
         </div>
+        
         <div class="order-progress">
 
             <div class="progress-line">
@@ -84,7 +90,7 @@
                 </div>
 
                 <div class="step 
-                     ${order.status == 'DELIVERED' ? 'active' : ''}">
+                     ${order.status eq 'DELIVERED' ? 'active' : ''}">
                     <div class="circle">4</div>
                     <div class="label">Delivered</div>
                 </div>
@@ -131,4 +137,4 @@
     </div>
 </div>
 
-        <%@include file="../include/footerAdmin.jsp" %>
+<%@include file="../include/footerAdmin.jsp" %>

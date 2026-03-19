@@ -398,6 +398,12 @@
                             </div>
                             <c:set var="hasOutOfStock" value="true"/>
                         </c:if>
+                        <c:if test="${item.quantity > item.book.stock}">
+                            <div style="color:red; font-weight:bold;">
+                                Không đủ số lượng sản phẩm trong kho
+                            </div>
+                            <c:set var="hasOutOfStock" value="true"/>
+                        </c:if>
                     </div>
 
 
@@ -703,7 +709,7 @@
 
             window.onload = calculateSummary;
 
-            
+
             function showEditForm() {
                 document.getElementById("viewAddress").style.display = "none";
                 document.getElementById("editForm").style.display = "block";

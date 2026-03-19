@@ -19,18 +19,31 @@ public class Feedback {
     private String content;
     private String username;
     private LocalDateTime createdAt;
+    private int orderdetailId;
 
     public Feedback() {
     }
 
-    public Feedback(int id, int userId, int bookId, int rating, String content, LocalDateTime createdAt) {
+    public Feedback(int id, int userId, int bookId, int rating, String content, String username, LocalDateTime createdAt, int orderdetailId) {
         this.id = id;
         this.userId = userId;
         this.bookId = bookId;
         this.rating = rating;
         this.content = content;
+        this.username = username;
         this.createdAt = createdAt;
+        this.orderdetailId = orderdetailId;
     }
+
+    public int getOrderdetailId() {
+        return orderdetailId;
+    }
+
+    public void setOrderdetailId(int orderdetailId) {
+        this.orderdetailId = orderdetailId;
+    }
+
+    
 
     public int getId() {
         return id;
@@ -90,8 +103,10 @@ public class Feedback {
 
     @Override
     public String toString() {
-        return "Feedback{" + "id=" + id + ", userId=" + userId + ", bookId=" + bookId + ", rating=" + rating + ", content=" + content + ", username=" + username + ", createdAt=" + createdAt + '}';
+        return "Feedback{" + "id=" + id + ", userId=" + userId + ", bookId=" + bookId + ", rating=" + rating + ", content=" + content + ", username=" + username + ", createdAt=" + createdAt + ", orderdetailId=" + orderdetailId + '}';
     }
+
+    
     
     
 }

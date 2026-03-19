@@ -50,7 +50,10 @@
                                                    o.status == 'CONFIRMED' ? 'info' :
                                                    o.status == 'SHIPPING' ? 'primary' :
                                                    o.status == 'DELIVERED' ? 'success' :
-                                                   o.status == 'FAILED' ? 'danger' : 'secondary'}">
+                                                   o.status == 'FAILED' ? 'danger' :
+                                                   o.status == 'CANCEL_REQUESTED' ? 'dark' :
+                                                   o.status == 'REFUNDED' ? 'secondary' :
+                                                   'secondary'}">
 
                                             <c:choose>
                                                 <c:when test="${o.status == 'PENDING'}">Chờ xác nhận</c:when>
@@ -58,9 +61,14 @@
                                                 <c:when test="${o.status == 'SHIPPING'}">Đang vận chuyển</c:when>
                                                 <c:when test="${o.status == 'DELIVERED'}">Giao thành công</c:when>
                                                 <c:when test="${o.status == 'FAILED'}">Giao thất bại</c:when>
+                                                <c:when test="${o.status == 'CANCEL_REQUESTED'}">Yêu cầu hủy</c:when>
+                                                <c:when test="${o.status == 'REFUNDED'}">Đã hoàn tiền</c:when>
+                                                <c:otherwise>${o.status}</c:otherwise>
                                             </c:choose>
 
                                         </span>
+                                    </td>
+                                    </span>
                                     </td>                     
                                     <td>${o.totalAmount}</td>
                                     <td>${o.discount}</td>

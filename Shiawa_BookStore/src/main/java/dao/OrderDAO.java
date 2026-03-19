@@ -111,7 +111,8 @@ public class OrderDAO extends DBContext {
                    o.shipping_fee,
                    c.full_name,
                    c.phone,
-                   v.name AS voucher_name
+                   v.name AS voucher_name,
+                     o.payment_method
             FROM Orders o
             JOIN Customer c ON o.customer_id = c.customer_id
             LEFT JOIN Voucher v ON o.voucher_id = v.voucher_id
@@ -132,6 +133,7 @@ public class OrderDAO extends DBContext {
                 o.setShippingAddress(rs.getString("shipping_address"));
                 o.setShippingFee(rs.getDouble("shipping_fee"));
                 o.setCustomerName(rs.getString("full_name"));
+                o.setPaymentMethod(rs.getString("payment_method"));
                 o.setPhone(rs.getString("phone")); // ✅ thêm dòng này
                 o.setVoucherName(rs.getString("voucher_name"));
                 return o;
@@ -237,7 +239,8 @@ public class OrderDAO extends DBContext {
             double shippingFee,
             String receiverName,
             String phone,
-            String paymentMethod
+            String paymentMethod,
+            boolean isBuyNow //  THÊM
     ) throws Exception {
         Connection con = getConnection();
 
@@ -257,23 +260,31 @@ public class OrderDAO extends DBContext {
 
             // 2️⃣ Loop từng sản phẩm
             for (CartItem item : items) {
-
-                // Lấy stock hiện tại
                 int stock = bookDAO.getStock(con, item.getBookId());
-
+                // Lấy stock hiện tại
+                // int stock = bookDAO.getStock(con, item.getBookId());
                 // Kiểm tra quantity hợp lệ
                 if (item.getQuantity() <= 0) {
                     throw new Exception("Invalid quantity for product ID "
                             + item.getBookId());
                 }
+//
+//                // Kiểm tra đủ hàng không
+//                if (stock < item.getQuantity()) {
+//                    throw new Exception("Product ID "
+//                            + item.getBookId()
+//                            + " only has "
+//                            + stock
+//                            + " items left");
+//                }
+// ❌ hết hàng
+                if (stock == 0) {
+                    throw new Exception("Sản phẩm đã hết hàng");
+                }
 
-                // Kiểm tra đủ hàng không
-                if (stock < item.getQuantity()) {
-                    throw new Exception("Product ID "
-                            + item.getBookId()
-                            + " only has "
-                            + stock
-                            + " items left");
+// ❌ mua quá
+                if (item.getQuantity() > stock) {
+                    throw new Exception("Chỉ còn " + stock + " sản phẩm trong kho");
                 }
 
                 // Insert OrderDetail
@@ -292,7 +303,13 @@ public class OrderDAO extends DBContext {
                         item.getQuantity()
                 );
             }
+            if (!isBuyNow) {
+                CartItemDAO cartDAO = new CartItemDAO();
 
+                for (CartItem item : items) {
+                    cartDAO.delete(customerId, item.getBookId());
+                }
+            }
             // 3️⃣ Commit nếu mọi thứ OK
             con.commit();
             return orderId;
@@ -321,6 +338,7 @@ public class OrderDAO extends DBContext {
             o.shipping_address,
             o.shipping_fee,
             o.discount,
+           o.payment_method,
             SUM(od.quantity * od.price) 
                 + ISNULL(o.shipping_fee,0)
                 - ISNULL(o.discount,0) AS total_amount
@@ -335,7 +353,8 @@ public class OrderDAO extends DBContext {
             o.status,
             o.shipping_address,
             o.shipping_fee,
-            o.discount
+            o.discount,
+          o.payment_method -- 🔥 THÊM
         ORDER BY o.order_date DESC
     """;
         try {
@@ -357,6 +376,7 @@ public class OrderDAO extends DBContext {
                 }
 
                 o.setStatus(rs.getString("status"));
+                o.setPaymentMethod(rs.getString("payment_method")); // ✅ THÊM
                 o.setShippingAddress(rs.getString("shipping_address"));
                 o.setShippingFee(rs.getDouble("shipping_fee"));
                 o.setTotalAmount(rs.getDouble("total_amount"));
@@ -388,7 +408,6 @@ public class OrderDAO extends DBContext {
 
                     String img = bookDAO.getImgURLbyBookId(rs2.getInt("book_id"));
                     b.setUrlImg(img);
-                    System.out.println("ORDER IMG = " + img);   // 👈 thêm dòng này
                     OrderItem item = new OrderItem();
                     item.setQuantity(rs2.getInt("quantity"));
                     item.setBook(b);
@@ -426,6 +445,7 @@ public class OrderDAO extends DBContext {
             o.shipping_address,
             o.shipping_fee,
             o.discount,
+        o.payment_method,   -- 🔥 THÊM
             SUM(od.quantity * od.price) 
                 + ISNULL(o.shipping_fee,0)
                 - ISNULL(o.discount,0) AS total_amount
@@ -440,7 +460,8 @@ public class OrderDAO extends DBContext {
             o.status,
             o.shipping_address,
             o.shipping_fee,
-            o.discount
+            o.discount,
+          o.payment_method   -- 🔥 THÊM
         ORDER BY o.order_date DESC
     """;
 
@@ -463,6 +484,7 @@ public class OrderDAO extends DBContext {
                 }
 
                 o.setStatus(rs.getString("status"));
+                o.setPaymentMethod(rs.getString("payment_method"));
                 o.setShippingAddress(rs.getString("shipping_address"));
                 o.setShippingFee(rs.getDouble("shipping_fee"));
 
@@ -620,7 +642,7 @@ public class OrderDAO extends DBContext {
                            oi.price
                     FROM OrderDetail oi
                     JOIN Book b ON oi.book_id = b.book_id
-                    LEFT JOIN BookImages bi ON b.book_id = bi.book_id
+                    LEFT JOIN BookImages bi ON b.book_id = bi.book_id AND bi.is_primary = 1
                     WHERE oi.order_id = ?
             """;
 
@@ -778,6 +800,7 @@ public class OrderDAO extends DBContext {
 
         return 0;
     }
+
     public int insertOrderMyMy(Connection con, int customerId, String shippingAddress, double shippingFee, String receiverName, String phone, List<CartItem> items) throws Exception {
         String sqlOrder = "INSERT INTO Orders (customer_id, staff_id, order_date, status, discount, shipping_address, shipping_fee, receiver_name, phone) VALUES (?, ?, GETDATE(), ?, ?, ?, ?, ?, ?)";
         int orderId = 0;
@@ -808,9 +831,12 @@ public class OrderDAO extends DBContext {
 
     public static void main(String[] args) {
         OrderDAO dao = new OrderDAO();
-        List<Orders> list = dao.getAllOrders();
-        for (Orders o : list) {
-            System.out.println(o);
-        }
+//        List<Orders> list = dao.getAllOrders();
+//        for (Orders o : list) {
+//            System.out.println(o);
+//        }
+        
+       
+        System.out.println(dao.getOrderById(126));
     }
 }

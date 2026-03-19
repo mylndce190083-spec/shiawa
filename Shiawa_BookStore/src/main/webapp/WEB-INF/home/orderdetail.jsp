@@ -118,8 +118,7 @@
     </head>
     <body>
 
-        <div class="detail-container">
-
+        <div class="detail-container">         
             <div class="detail-header">
                 Đơn hàng 
                 <c:choose>
@@ -138,7 +137,9 @@
                     <c:when test="${order.status == 'FAILED'}">
                         đã hủy
                     </c:when>
-
+                    <c:when test="${order.status == 'CANCEL_REQUESTED'}">
+                         chờ hoàn tiền
+                    </c:when>
                     <c:otherwise>
                         ${order.status}
                     </c:otherwise>
@@ -200,9 +201,14 @@
                     </c:choose>
 
                 </div>
-                <c:if test="${order.status == 'FAILED' && order.paymentMethod == 'ONLINE'}">
+                <c:if test="${order.status == 'CANCEL_REQUESTED' && order.paymentMethod == 'ONLINE'}">
                     <div style="color:red; margin-top:10px;">
                         Đơn hàng đã hủy. Tiền sẽ được hoàn lại trong 3-5 ngày làm việc.
+                    </div>
+                </c:if>
+                 <c:if test="${order.status == 'REFUNDED' && order.paymentMethod == 'ONLINE'}">
+                    <div style="color:red; margin-top:10px;">
+                        Đơn hàng đã được hoàn tiền.
                     </div>
                 </c:if>
                 <c:set var="subtotal" value="0" />

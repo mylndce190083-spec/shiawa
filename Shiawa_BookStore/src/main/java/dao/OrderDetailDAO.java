@@ -52,7 +52,7 @@ public class OrderDetailDAO extends DBContext {
             b.title,
             b.url_img,
             b.book_id,
-         od.order_detail_id,
+            od.order_detail_id,
             od.isRated
         FROM OrderDetail od
         JOIN Book b ON od.book_id = b.book_id

@@ -21,7 +21,6 @@ import model.CartItem;
  */
 public class CartItemDAO extends DBContext {
 
-  
     public CartItem findItem(int customerId, int bookId) {
         String sql = """
             SELECT c.cart_item_id, c.quantity, c.price, c.created_at,
@@ -63,7 +62,6 @@ public class CartItemDAO extends DBContext {
         return null;
     }
 
-
     // insert mới
     public void insert(CartItem item) {
         String sql = """
@@ -83,7 +81,6 @@ public class CartItemDAO extends DBContext {
             e.printStackTrace();
         }
     }
-
 
     // update số lượng
     public void updateQuantity(int customerId, int bookId, int quantity) {
@@ -136,7 +133,7 @@ public class CartItemDAO extends DBContext {
                 int stock = rs.getInt("stock");
                 Timestamp t = rs.getTimestamp("created_at");
                 LocalDateTime createAt = (t != null) ? t.toLocalDateTime() : null;
-
+ 
                 // tạo Book (theo style quen tay)
                 Book book = new Book();
                 book.setBookId(bookId);
@@ -162,7 +159,6 @@ public class CartItemDAO extends DBContext {
 
         return list;
     }
-
 
     // xóa
     public void delete(int customerId, int bookId) {

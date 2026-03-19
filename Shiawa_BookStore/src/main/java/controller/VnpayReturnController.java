@@ -65,7 +65,7 @@ public class VnpayReturnController extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
-
+        boolean isBuyNow = Boolean.TRUE.equals(session.getAttribute("isBuyNow"));
         String responseCode = request.getParameter("vnp_ResponseCode");
 
         if ("00".equals(responseCode)) {
@@ -100,7 +100,8 @@ public class VnpayReturnController extends HttpServlet {
                         20000,
                         receiver,
                         phone,
-                        "ONLINE"
+                        "ONLINE",
+                        isBuyNow
                 );
 
             } catch (Exception e) {
@@ -112,14 +113,14 @@ public class VnpayReturnController extends HttpServlet {
                 return;
             }
 
-            
-
             // clear session
             session.removeAttribute("pendingItems");
             session.removeAttribute("pendingAddress");
             session.removeAttribute("pendingReceiver");
             session.removeAttribute("pendingPhone");
-
+// ✅ thêm 2 dòng này
+            session.removeAttribute("isBuyNow");
+            session.removeAttribute("buyNowItems");
             request.setAttribute("orderId", orderId);
             request.getRequestDispatcher("/vnpay_return.jsp")
                     .forward(request, response);

@@ -398,14 +398,18 @@ public class CheckoutController extends HttpServlet {
                             shippingFee,
                             receiverName,
                             phone,
-                            paymentMethod
+                            paymentMethod,
+                            isBuyNow
                     );
+                    session.removeAttribute("isBuyNow");
+                    session.removeAttribute("buyNowItems");
+
                     // ❗ FIX Ở ĐÂY
-                    if (!isBuyNow) {
-                        for (CartItem item : selectedItems) {
-                            cartDAO.delete(user.getId(), item.getBookId());
-                        }
-                    }
+//                    if (!isBuyNow) {
+//                        for (CartItem item : selectedItems) {
+//                            cartDAO.delete(user.getId(), item.getBookId());
+//                        }
+//                    }
                     request.setAttribute("orderId", orderId);
 
                     request.getRequestDispatcher("/WEB-INF/home/order-success.jsp")

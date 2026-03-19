@@ -253,7 +253,7 @@ public class BookDAO extends DBContext {
             }
         }
 
-        throw new Exception("Book not found");
+        return 0;
     }
 
     public void updateStock(Connection con,
@@ -261,17 +261,23 @@ public class BookDAO extends DBContext {
             int quantity) throws Exception {
 
         String sql = """
-            UPDATE Book
-            SET stock = stock - ?
-            WHERE book_id = ?
-        """;
+        UPDATE Book
+        SET stock = stock - ?
+        WHERE book_id = ?
+        AND stock >= ?
+    """;
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, quantity);
             ps.setInt(2, bookId);
+            ps.setInt(3, quantity);
 
-            ps.executeUpdate();
+            int rows = ps.executeUpdate();
+
+            if (rows == 0) {
+                throw new Exception("Không đủ hàng trong kho!");
+            }
         }
     }
 

@@ -252,6 +252,26 @@
         </div>
 
         <div class="mt-5">
+            <%
+    java.util.Enumeration<String> attrs = request.getAttributeNames();
+
+    while(attrs.hasMoreElements()) {
+        String name = attrs.nextElement();
+        Object value = request.getAttribute(name);
+
+        out.println("<h3>Attribute: " + name + "</h3>");
+
+        if(value instanceof java.util.List){
+            java.util.List list = (java.util.List) value;
+
+            for(Object item : list){
+                out.println(item + "<br>");
+            }
+        }else{
+            out.println(value + "<br>");
+        }
+    }
+%>
             <h4 class="mb-4">Đánh giá từ khách hàng</h4>
 
             <c:if test="${empty feedbackList}">
@@ -262,7 +282,11 @@
                 <div class="card mb-3 border-0 border-bottom">
                     <div class="form-container">
                         <div class="edit-btn" onclick="showEditForm()">
-                            <i class="fa-solid fa-pen"></i> Sửa
+                            <i class="fa-solid fa-pen"><a href="${pageContext.request.contextPath}/feedback?book_id=${fb.bookId}&order_detail_id=${fb.orderdetailId}" 
+                                       style="background: ${item.isRated ? '#888' : '#00a651'};
+                                       color: white; text-decoration: none; padding: 6px 15px;
+                                       border-radius: 8px; display: inline-block; font-size: 13px; font-weight: 600;">
+                                    </a></i> Sửa
                         </div>
                     </div>
                     <div class="card-body">

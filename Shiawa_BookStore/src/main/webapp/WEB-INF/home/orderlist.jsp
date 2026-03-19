@@ -104,7 +104,25 @@
                 color: #e53935;
                 font-weight: bold;
             }
+            /* CỘT TÊN */
+            .book-info{
+                display:flex;
+                align-items:center;
+                width:40%;
+            }
 
+            /* CÁC CỘT KHÁC */
+            .col{
+                width:20%;
+                text-align:center;
+                font-size:14px;
+            }
+
+            /* GIÁ */
+            .price{
+                color:#e53935;
+                font-weight:600;
+            }
             /* Animated underline */
             .tab-link::after {
                 content: "";
@@ -130,11 +148,10 @@
             }
             .order-item{
                 display:flex;
-                justify-content:space-between;
                 align-items:center;
                 padding:15px;
-                margin-bottom:15px;
-
+                margin-bottom:10px;
+                border-bottom:1px solid #eee;
             }
 
             .book-info{
@@ -161,18 +178,7 @@
                 color:#666;
             }
 
-            .price-area{
-                display:flex;
-                justify-content:flex-end;
-                margin-top: 40px;
-            }
 
-            .item-total{
-                display:flex;
-                align-items:center;
-                gap:12px;
-                font-size:14px;
-            }
 
             .label{
                 color:#555;
@@ -189,6 +195,14 @@
             .price{
                 color:#e53935;
                 font-weight:600;
+            }
+            .order-header{
+                display:flex;
+                padding:10px 15px;
+                background:#f1f1f1;
+                font-weight:bold;
+                border-radius:8px;
+                margin-bottom:10px;
             }
         </style>
     </head>
@@ -208,8 +222,12 @@
                 </a>
 
                 <a href="${pageContext.request.contextPath}/OrderList/pending"
-                   class="tab-link ${currentStatus == 'PENDING' ? 'active' : ''}">
+                   class="tab-link ${currentStatus == 'PENDING' ? 'active' :'CONFIRMED' }">
                     Chờ xác nhận
+                </a>
+                <a href="${pageContext.request.contextPath}/OrderList/confirmed"
+                   class="tab-link ${currentStatus == 'CONFIRMED' ? 'active' :'' }">
+                    Đã xác nhận
                 </a>
 
                 <a href="${pageContext.request.contextPath}/OrderList/shipping"
@@ -219,35 +237,22 @@
 
                 <a href="${pageContext.request.contextPath}/OrderList/delivered"
                    class="tab-link ${currentStatus == 'DELIVERED' ? 'active' : ''}">
-                    Hoàn thành
+                    Đã giao
                 </a>
+                </a>
+                <a href="${pageContext.request.contextPath}/OrderList/cancel_requested"
+                   class="tab-link ${currentStatus == 'CANCEL_REQUESTED' ? 'active' : ''}">
+                    Chờ hoàn tiền
+                </a>
+                <a href="${pageContext.request.contextPath}/OrderList/refunded"
+                   class="tab-link ${currentStatus == 'REFUNDED' ? 'active' : ''}">
+                    Hoàn tiền
 
-                <a href="${pageContext.request.contextPath}/OrderList/failed"
-                   class="tab-link ${currentStatus == 'FAILED' ? 'active' : ''}">
-                    Đã hủy
-                </a>
+                    <a href="${pageContext.request.contextPath}/OrderList/failed"
+                       class="tab-link ${currentStatus == 'FAILED' ? 'active' : ''}">
+                        Đã hủy
+                    </a>
             </div>
-
-            <%
-                java.util.Enumeration<String> attrs = request.getAttributeNames();
-
-                while (attrs.hasMoreElements()) {
-                    String name = attrs.nextElement();
-                    Object value = request.getAttribute(name);
-
-                    out.println("<h3>Attribute: " + name + "</h3>");
-
-                    if (value instanceof java.util.List) {
-                        java.util.List list = (java.util.List) value;
-
-                        for (Object item : list) {
-                            out.println(item + "<br>");
-                        }
-                    } else {
-                        out.println(value + "<br>");
-                    }
-                }
-            %>
 
             <c:if test="${empty orders}">
                 <div class="alert alert-info">Không có đơn hàng nào.</div>
@@ -270,6 +275,9 @@
                                  color: red;
                                  ">
                                 ${o.status == 'PENDING' ? 'Chờ xác nhận' :
+                                  o.status == 'CANCEL_REQUESTED' ? 'Chờ duyệt hủy' :
+                                  o.status == 'REFUNDED' ? 'Đã hoàn tiền' :
+                                  o.status == 'CONFIRMED' ? 'Đã xác nhận' :
                                   o.status == 'SHIPPING' ? 'Đang giao' :
                                   o.status == 'DELIVERED' ? 'Hoàn thành' :
                                   o.status == 'FAILED' ? 'Đã hủy' : o.status}
@@ -277,55 +285,41 @@
 
                         </div>
 
-
+                        <div class="order-header">
+                            <div style="width:40%">Tên sách</div>
+                            <div class="col">SL</div>
+                            <div class="col">Giá</div>
+                            <div class="col">Thành tiền</div>
+                        </div>
                         <c:forEach var="item" items="${o.items}">
 
                             <div class="order-item">
 
-                                <!-- LEFT -->
+                                <!-- TÊN -->
                                 <div class="book-info">
                                     <img src="${pageContext.request.contextPath}/image?file=${item.book.urlImg.replace(' ', '%20')}" class="book-img">
-                                    <div class="book-detail">
-                                        <div class="book-title">${item.title}</div>
-                                        <div class="book-quantity">Số lượng: ${item.quantity}</div>
-                                    </div>
-
+                                    <div class="book-title">${item.title}</div>
                                 </div>
 
-                                <!-- RIGHT -->
-                                <div class="price-area">
-
-                                    <div class="item-total">
-                                        <span class="label">Thành tiền:</span>
-
-                                        <span class="formula">
-                                            ${item.quantity} × 
-                                            <fmt:formatNumber value="${item.price}" type="number"
-                                                              groupingUsed="true" maxFractionDigits="0"/>
-                                        </span>
-
-                                        <span class="equal">=</span>
-
-                                        <span class="price">
-                                            <fmt:formatNumber value="${item.price * item.quantity}"
-                                                              type="number" groupingUsed="true"
-                                                              maxFractionDigits="0"/> VND
-                                        </span>
-                                    </div>
-
+                                <!-- SỐ LƯỢNG -->
+                                <div class="col">
+                                    ${item.quantity}x
                                 </div>
 
+                                <!-- GIÁ -->
+                                <div class="col">
+                                    <fmt:formatNumber value="${item.price}" type="number"
+                                                      groupingUsed="true" maxFractionDigits="0"/>
+                                </div>
+
+                                <!-- THÀNH TIỀN -->
+                                <div class="col price">
+                                    <fmt:formatNumber value="${item.price * item.quantity}"
+                                                      type="number" groupingUsed="true"
+                                                      maxFractionDigits="0"/> VND
+                                </div>
                             </div>
-
-
-
                             <hr>
-
-                            <div style="text-align:right; font-size:18px; font-weight:bold; color:black;">
-                                Tổng số tiền( ${o.quantity} sản phẩm):
-                                <fmt:formatNumber value="${o.totalAmount}" type="number" groupingUsed="true" maxFractionDigits="0"/> VND
-                            </div>
-
                             <c:if test="${o.status == 'DELIVERED'}">
                                 <%-- Giả sử bạn đã xử lý việc check feedback ở Servlet và gán vào item --%>
                                 <%-- Nếu chưa, đây là logic hiển thị: --%>
@@ -337,6 +331,7 @@
                                         Đánh giá sản phẩm
                                     </a>
                                 </c:if>
+
                                 <c:if test="${item.isRated == 'rated'}">     
                                     <a href="${pageContext.request.contextPath}/feedback?book_id=${item.book.bookId}&order_detail_id=${item.orderDetailId}" 
                                        style="background: ${item.isRated ? '#888' : '#00a651'};
@@ -345,10 +340,32 @@
                                         Đã đánh giá sản phẩm
                                     </a>
                                 </c:if>
-
                             </c:if>
-
                         </c:forEach>
+                        <div style="text-align:right; font-size:18px; font-weight:bold; color:black;">
+                            Tổng số tiền( ${o.quantity} sản phẩm):
+                            <fmt:formatNumber value="${o.totalAmount}" type="number" groupingUsed="true" maxFractionDigits="0"/> VND
+                        </div>
+
+
+                        <c:if test="${o.status eq 'PENDING'}">
+                            <form action="${pageContext.request.contextPath}/OrderList" method="post"
+                                  onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?');">
+                                <input type="hidden" name="action" value="cancel">
+                                <input type="hidden" name="orderId" value="${o.orderId}">
+
+                                <button type="submit" class="btn-danger">
+                                    ${o.paymentMethod eq 'ONLINE' ? 'Yêu cầu hủy' : 'Hủy đơn'}
+                                </button>
+                            </form>
+                        </c:if>
+
+
+
+
+
+                        <!--                        
+                                                
                         <c:if test="${o.status == 'PENDING'}">
                             <form action="${pageContext.request.contextPath}/OrderList" 
                                   method="post" 
@@ -365,6 +382,7 @@
                                 </button>
                             </form>
                         </c:if>
+                        -->
 
                     </div>
 
