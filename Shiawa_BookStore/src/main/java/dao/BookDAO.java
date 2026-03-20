@@ -92,7 +92,7 @@ public class BookDAO extends DBContext {
     public List<Book> getAllBook() {
         List<Book> list = new ArrayList<>();
         CategoryDAO dao = new CategoryDAO();
-        String sql = "select * from Book";
+        String sql = "select * from Book where is_published = 1";
         try {
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -140,7 +140,7 @@ public class BookDAO extends DBContext {
         String url = "";
         String sql = """
         SELECT * FROM BookImages
-        WHERE book_id = ? AND is_active = 1
+        WHERE book_id = ? AND is_active = 1 and is_primary =1
         ORDER BY is_primary DESC, display_order ASC
     """;
         try {
@@ -790,7 +790,7 @@ public class BookDAO extends DBContext {
 
         String sql = """
         UPDATE Book
-        SET price = ?, status = 'PUBLISHED'
+        SET price = ?, is_published = 1
         WHERE book_id = ?
     """;
 
@@ -815,7 +815,8 @@ public class BookDAO extends DBContext {
         SELECT *
         FROM Book
         WHERE stock > 0
-        AND status = 'IN_STOCK'
+        AND is_published = 0
+        AND is_active = 1
     """;
 
         try (
@@ -827,7 +828,6 @@ public class BookDAO extends DBContext {
 
                 b.setBookId(rs.getInt("book_id"));
                 b.setTitle(rs.getString("title"));
-                b.setAuthor(rs.getString("author"));
                 b.setStock(rs.getInt("stock"));
 
                 list.add(b);
