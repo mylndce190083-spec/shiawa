@@ -11,6 +11,7 @@
 <html>
     <head>
         <title>Đơn hàng của tôi</title>
+
         <link rel="stylesheet"
               href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <style>
@@ -204,6 +205,38 @@
                 border-radius:8px;
                 margin-bottom:10px;
             }
+            .pagination-custom {
+                text-align: center;
+                margin-top: 20px;
+            }
+
+            .pagination-custom a {
+                display: inline-block;
+                padding: 6px 12px;
+                margin: 0 4px;
+                border: 1px solid #ddd;
+                text-decoration: none;
+                color: #333;
+                border-radius: 5px;
+                transition: 0.2s;
+            }
+
+            .pagination-custom a:hover {
+                background-color: #f0f0f0;
+            }
+
+            .pagination-custom a.active {
+                background-color: #007bff;
+                color: white;
+                border-color: #007bff;
+            }
+            .pagination-custom a.disabled {
+                pointer-events: none;
+                opacity: 0.4;
+            }
+            .pagination-custom a:empty {
+                display: none;
+            }
         </style>
     </head>
     <body>
@@ -222,7 +255,7 @@
                 </a>
 
                 <a href="${pageContext.request.contextPath}/OrderList/pending"
-                   class="tab-link ${currentStatus == 'PENDING' ? 'active' :'CONFIRMED' }">
+                   class="tab-link ${currentStatus == 'PENDING' ? 'active' :'' }">
                     Chờ xác nhận
                 </a>
                 <a href="${pageContext.request.contextPath}/OrderList/confirmed"
@@ -238,7 +271,7 @@
                 <a href="${pageContext.request.contextPath}/OrderList/delivered"
                    class="tab-link ${currentStatus == 'DELIVERED' ? 'active' : ''}">
                     Đã giao
-                </a>
+
                 </a>
                 <a href="${pageContext.request.contextPath}/OrderList/cancel_requested"
                    class="tab-link ${currentStatus == 'CANCEL_REQUESTED' ? 'active' : ''}">
@@ -247,11 +280,11 @@
                 <a href="${pageContext.request.contextPath}/OrderList/refunded"
                    class="tab-link ${currentStatus == 'REFUNDED' ? 'active' : ''}">
                     Hoàn tiền
-
-                    <a href="${pageContext.request.contextPath}/OrderList/failed"
-                       class="tab-link ${currentStatus == 'FAILED' ? 'active' : ''}">
-                        Đã hủy
-                    </a>
+                </a>
+                <a href="${pageContext.request.contextPath}/OrderList/failed"
+                   class="tab-link ${currentStatus == 'FAILED' ? 'active' : ''}">
+                    Đã hủy
+                </a>
             </div>
 
             <c:if test="${empty orders}">
@@ -321,8 +354,7 @@
                             </div>
                             <hr>
                             <c:if test="${o.status == 'DELIVERED'}">
-                                <%-- Giả sử bạn đã xử lý việc check feedback ở Servlet và gán vào item --%>
-                                <%-- Nếu chưa, đây là logic hiển thị: --%>
+                             
                                 <c:if test="${item.isRated == 'unrated'}">     
                                     <a href="${pageContext.request.contextPath}/feedback?book_id=${item.book.bookId}&order_detail_id=${item.orderDetailId}" 
                                        style="background: ${item.isRated ? '#888' : '#00a651'};
@@ -360,33 +392,32 @@
                             </form>
                         </c:if>
 
-
-
-
-
-                        <!--                        
-                                                
-                        <c:if test="${o.status == 'PENDING'}">
-                            <form action="${pageContext.request.contextPath}/OrderList" 
-                                  method="post" 
-                                  style="text-align:right; margin-top:10px;"
-                                  onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?');">
-
-                                <input type="hidden" name="action" value="cancel">
-                                <input type="hidden" name="orderId" value="${o.orderId}">
-
-                                <button type="submit" 
-                                        style="background:#ff4d4f; color:white; border:none;
-                                        padding:8px 16px; border-radius:6px; cursor:pointer;">
-                                    Hủy đơn
-                                </button>
-                            </form>
-                        </c:if>
-                        -->
-
                     </div>
 
                 </c:forEach>
+
+        </div>
+        <div class="pagination-custom">
+
+            <!-- Previous -->
+            <a class="${currentPage == 1 ? 'disabled' : ''}"
+               href="${pageContext.request.contextPath}/OrderList/${currentStatus}?page=${currentPage - 1}">
+                «
+            </a>
+
+            <!-- Page number -->
+            <c:forEach begin="1" end="${totalPage}" var="i">
+                <a class="${i == currentPage ? 'active' : ''}"
+                   href="${pageContext.request.contextPath}/OrderList/${currentStatus}?page=${i}">
+                    ${i}
+                </a>
+            </c:forEach>
+
+            <!-- Next -->
+            <a class="${currentPage == totalPage ? 'disabled' : ''}"
+               href="${pageContext.request.contextPath}/OrderList/${currentStatus}?page=${currentPage + 1}">
+                »
+            </a>
 
         </div>
     </body>

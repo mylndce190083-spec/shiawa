@@ -783,6 +783,21 @@ public class OrderDAO extends DBContext {
         return list;
     }
 
+    public int countOrdersByCustomer(int userId) {
+        String sql = "SELECT COUNT(*) FROM Orders WHERE customer_id = ?";
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public int getTotalOrders() {
         String sql = "SELECT COUNT(*) FROM Orders";
 
@@ -829,14 +844,126 @@ public class OrderDAO extends DBContext {
         return orderId;
     }
 
+    public List<Orders> getOrdersByCustomerPagingFull(int customerId, int page, int pageSize) {
+        List<Orders> list = new ArrayList<>();
+        int offset = (page - 1) * pageSize;
+
+        String sql = """
+    SELECT *
+    FROM Orders
+    WHERE customer_id = ?
+    ORDER BY order_id DESC
+    OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+    """;
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, customerId);
+            ps.setInt(2, offset);
+            ps.setInt(3, pageSize);
+
+            ResultSet rs = ps.executeQuery();
+            OrderDetailDAO detailDAO = new OrderDetailDAO();
+
+            while (rs.next()) {
+                Orders o = new Orders();
+                o.setOrderId(rs.getInt("order_id"));
+                o.setStatus(rs.getString("status"));
+                o.setPaymentMethod(rs.getString("payment_method"));
+
+                // Load items cho từng order
+                List<OrderItem> items = detailDAO.getItemsByOrderId(o.getOrderId());
+                o.setItems(items);
+
+                int totalQty = 0;
+                double totalAmount = 0;
+                for (OrderItem item : items) {
+                    totalQty += item.getQuantity();
+                    totalAmount += item.getQuantity() * item.getPrice();
+                }
+                o.setQuantity(totalQty);
+                o.setTotalAmount(totalAmount);
+
+                list.add(o);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public int countOrdersByStatus(int userId, String status) {
+        String sql = "SELECT COUNT(*) FROM Orders WHERE customer_id = ? AND status = ?";
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, userId);
+            ps.setString(2, status);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<Orders> getOrdersByStatusPaging(int customerId, String status, int page, int pageSize) {
+        List<Orders> list = new ArrayList<>();
+        int offset = (page - 1) * pageSize;
+
+        String sql = """
+        SELECT *
+        FROM Orders
+        WHERE customer_id = ? AND status = ?
+        ORDER BY order_id DESC
+        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+    """;
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, customerId);
+            ps.setString(2, status);
+            ps.setInt(3, offset);
+            ps.setInt(4, pageSize);
+
+            ResultSet rs = ps.executeQuery();
+            OrderDetailDAO detailDAO = new OrderDetailDAO();
+
+            while (rs.next()) {
+                Orders o = new Orders();
+                o.setOrderId(rs.getInt("order_id"));
+                o.setStatus(rs.getString("status"));
+                o.setPaymentMethod(rs.getString("payment_method"));
+
+                List<OrderItem> items = detailDAO.getItemsByOrderId(o.getOrderId());
+                o.setItems(items);
+
+                int totalQty = 0;
+                double totalAmount = 0;
+                for (OrderItem item : items) {
+                    totalQty += item.getQuantity();
+                    totalAmount += item.getQuantity() * item.getPrice();
+                }
+
+                o.setQuantity(totalQty);
+                o.setTotalAmount(totalAmount);
+
+                list.add(o);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
     public static void main(String[] args) {
         OrderDAO dao = new OrderDAO();
-//        List<Orders> list = dao.getAllOrders();
-//        for (Orders o : list) {
-//            System.out.println(o);
-//        }
-        
-       
+
         System.out.println(dao.getOrderById(126));
     }
 }
