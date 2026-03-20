@@ -133,9 +133,9 @@ public class OrderListController extends HttpServlet {
             boolean ok;
 
             if ("ONLINE".equals(order.getPaymentMethod())) {
-                ok = dao.updateStatus(orderId, "CANCEL_REQUESTED");
+                ok = dao.updateStatusCustomer(orderId, "CANCEL_REQUESTED");
             } else {
-                ok = dao.updateStatus(orderId, "FAILED");
+                ok = dao.updateStatusCustomer(orderId, "FAILED");
             }
 
             System.out.println("UPDATE STATUS RESULT = " + ok);

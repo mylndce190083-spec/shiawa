@@ -103,7 +103,7 @@ public class OrderAdminController extends HttpServlet {
             Orders current = dao.getOrderByIdAdmin(id);
 
             if (isValidTransition(current.getStatus(), newStatus)) {
-                dao.updateStatus(id, newStatus);
+                dao.updateStatus(id, newStatus,adminId);
             }
 
             response.sendRedirect("order-admin?action=list");

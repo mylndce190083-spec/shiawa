@@ -181,12 +181,24 @@ public class OrderDAO extends DBContext {
         return list;
     }
 
-    public boolean updateStatus(int orderId, String status) {
+    public boolean updateStatus(int orderId, String status, int adminId) {
         String sql = "UPDATE Orders SET status = ?, staff_id =? WHERE order_id = ?";
         try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
             ps.setString(1, status);
             ps.setInt(2, adminId);
             ps.setInt(3, orderId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+     public boolean updateStatusCustomer(int orderId, String status) {
+        String sql = "UPDATE Orders SET status = ? WHERE order_id = ?";
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, orderId);
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
