@@ -22,6 +22,7 @@ public class Customer {
     private String phone;
     private String address;
     private String fullname;
+    private boolean mustChangePassword;
 
     public Customer() {
     }
@@ -126,6 +127,14 @@ public class Customer {
 
     public void setFullname(String fullname) {
         this.fullname = fullname;
+    }
+
+    public boolean isMustChangePassword() {
+        return mustChangePassword;
+    }
+
+    public void setMustChangePassword(boolean mustChangePassword) {
+        this.mustChangePassword = mustChangePassword;
     }
 
     @Override

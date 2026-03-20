@@ -36,6 +36,7 @@ public class VoucherAdminController extends HttpServlet {
             return;
         }
 
+        request.setAttribute("pagePrimary", "voucher-admin");
         String view = request.getParameter("view");
         VoucherDAO dao = new VoucherDAO();
 

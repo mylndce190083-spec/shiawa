@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,6 @@ public class BookDAO extends DBContext {
     """;
 
         try (PreparedStatement ps = getConnection().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-
             while (rs.next()) {
                 BookAdmin b = new BookAdmin();
                 b.setBookId(rs.getInt("book_id"));
@@ -56,7 +56,11 @@ public class BookDAO extends DBContext {
                 b.setStock(rs.getInt("stock"));
                 b.setPublisher(rs.getString("publisher"));
                 b.setDiscount(rs.getInt("discount"));
-                b.setUrlImg(rs.getString("url_img"));
+                String imgUrl = getImgURLbyBookId(rs.getInt("book_id"));
+                if (imgUrl == null || imgUrl.isBlank()) {
+                    imgUrl = rs.getString("url_img");
+                }
+                b.setUrlImg(imgUrl);
                 b.setIsActive(rs.getBoolean("is_active"));
                 b.setCreatedAt(rs.getString("created_at"));
                 b.setCategoryName(rs.getString("category_name"));
@@ -68,6 +72,27 @@ public class BookDAO extends DBContext {
         }
         return list;
     }
+
+    private BookAdmin mapBookAdmin(ResultSet rs) throws SQLException {
+        BookAdmin b = new BookAdmin();
+        b.setBookId(rs.getInt("book_id"));
+        b.setTitle(rs.getString("title"));
+        b.setAuthor(rs.getString("author"));
+        b.setPrice(rs.getDouble("price"));
+        b.setStock(rs.getInt("stock"));
+        b.setPublisher(rs.getString("publisher"));
+        b.setDiscount(rs.getInt("discount"));
+        String imgUrl = getImgURLbyBookId(rs.getInt("book_id"));
+        if (imgUrl == null || imgUrl.isBlank()) {
+            imgUrl = rs.getString("url_img");
+        }
+        b.setUrlImg(imgUrl);
+        b.setIsActive(rs.getBoolean("is_active"));
+        b.setCreatedAt(rs.getString("created_at"));
+        b.setCategoryName(rs.getString("category_name"));
+        return b;
+    }
+
 
     public void insertBook(BookAdmin b) {
         String sql = """
@@ -225,7 +250,11 @@ public class BookDAO extends DBContext {
                 b.setStock(rs.getInt("stock"));
                 b.setPublisher(rs.getString("publisher"));
                 b.setDiscount(rs.getInt("discount"));
-                b.setUrlImg(rs.getString("url_img"));
+                String imgUrl = getImgURLbyBookId(rs.getInt("book_id"));
+                if (imgUrl == null || imgUrl.isBlank()) {
+                    imgUrl = rs.getString("url_img");
+                }
+                b.setUrlImg(imgUrl);
                 b.setIsActive(rs.getBoolean("is_active"));
                 b.setCreatedAt(rs.getString("created_at"));
                 b.setCategoryName(rs.getString("category_name"));
@@ -253,7 +282,7 @@ public class BookDAO extends DBContext {
             }
         }
 
-        throw new Exception("Book not found");
+        return 0;
     }
 
     public void updateStock(Connection con,
@@ -261,17 +290,23 @@ public class BookDAO extends DBContext {
             int quantity) throws Exception {
 
         String sql = """
-            UPDATE Book
-            SET stock = stock - ?
-            WHERE book_id = ?
-        """;
+        UPDATE Book
+        SET stock = stock - ?
+        WHERE book_id = ?
+        AND stock >= ?
+    """;
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, quantity);
             ps.setInt(2, bookId);
+            ps.setInt(3, quantity);
 
-            ps.executeUpdate();
+            int rows = ps.executeUpdate();
+
+            if (rows == 0) {
+                throw new Exception("Không đủ hàng trong kho!");
+            }
         }
     }
 
@@ -631,6 +666,58 @@ public class BookDAO extends DBContext {
         return list;
     }
 
+    public List<Book> getLowStockBooks(int threshold) {
+        List<Book> list = new ArrayList<>();
+        String sql = "SELECT * FROM Book WHERE is_active = 1 AND stock <= ? ORDER BY stock ASC";
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, threshold);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Book b = new Book();
+                    b.setBookId(rs.getInt("book_id"));
+                    b.setTitle(rs.getString("title"));
+                    b.setAuthor(rs.getString("author"));
+                    b.setPrice(rs.getDouble("price"));
+                    b.setStock(rs.getInt("stock"));
+                    b.setUrlImg(getImgURLbyBookId(rs.getInt("book_id")));
+                    list.add(b);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public int insertBookReturnId(Book b) throws Exception {
+        String sql = """
+            INSERT INTO Book(title, author, price, stock, category_id, is_active, publisher)
+            VALUES(?, ?, ?, ?, ?, 1, ?)
+        """;
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, b.getTitle());
+            ps.setString(2, b.getAuthor());
+            ps.setDouble(3, b.getPrice());
+            ps.setInt(4, b.getStock());
+            if (b.getCategory() == null) {
+                ps.setNull(5, java.sql.Types.INTEGER);
+            } else {
+                ps.setInt(5, b.getCategory().getCategoryId());
+            }
+            ps.setString(6, b.getPublisher());
+
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        throw new Exception("Cannot insert book (no generated key).");
+    }
+
     public int countBooks(String keyword, Integer categoryId) {
         int total = 0;
 
@@ -732,6 +819,61 @@ public class BookDAO extends DBContext {
         return list;
     }
 
+    
+    public void publishBook(int bookId, double price) {
+
+        String sql = """
+        UPDATE Book
+        SET price = ?, status = 'PUBLISHED'
+        WHERE book_id = ?
+    """;
+
+        try (
+                PreparedStatement ps = getConnection().prepareStatement(sql);) {
+
+            ps.setDouble(1, price);
+            ps.setInt(2, bookId);
+
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<Book> getBooksInStockNotPublished() {
+
+        List<Book> list = new ArrayList<>();
+
+        String sql = """
+        SELECT *
+        FROM Book
+        WHERE stock > 0
+        AND status = 'IN_STOCK'
+    """;
+
+        try (
+                PreparedStatement ps = getConnection().prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
+
+            while (rs.next()) {
+
+                Book b = new Book();
+
+                b.setBookId(rs.getInt("book_id"));
+                b.setTitle(rs.getString("title"));
+                b.setAuthor(rs.getString("author"));
+                b.setStock(rs.getInt("stock"));
+
+                list.add(b);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
     public int getSoldQuantity(int bookId) {
         String sql = "SELECT ISNULL(SUM(od.quantity),0) AS sold "
                 + "FROM OrderDetail od "
@@ -750,6 +892,7 @@ public class BookDAO extends DBContext {
             e.printStackTrace();
         }
         return 0;
+
     }
 
     public static void main(String[] args) {

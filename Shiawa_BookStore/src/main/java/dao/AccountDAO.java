@@ -473,9 +473,9 @@ public class AccountDAO extends DBContext {
             SELECT customer_id AS id, username, 'Customer' AS role, email, status
             FROM Customer
             WHERE (? IS NULL OR ? = 'Customer')
-
+        
             UNION ALL
-
+        
             SELECT s.staff_id AS id, s.username, r.name AS role, s.email, s.status
             FROM Staff s
             JOIN Role r ON s.role_id = r.role_id
@@ -510,6 +510,17 @@ public class AccountDAO extends DBContext {
         }
 
         return list;
+    }
+    
+    public void updateAvatar(int staffId, String avatarPath) {
+        String sql = "UPDATE Staff SET avatar = ? WHERE staff_id = ?";
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setString(1, avatarPath);
+            ps.setInt(2, staffId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {

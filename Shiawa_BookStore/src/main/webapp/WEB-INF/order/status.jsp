@@ -60,7 +60,10 @@
                                    order.status == 'CONFIRMED' ? 'info' :
                                    order.status == 'SHIPPING' ? 'primary' :
                                    order.status == 'DELIVERED' ? 'success' :
-                                   order.status == 'FAILED' ? 'danger' : 'secondary'}">
+                                   order.status == 'FAILED' ? 'danger' :
+                                   order.status == 'CANCEL_REQUESTED' ? 'dark' :
+                                   order.status == 'REFUNDED' ? 'secondary' :
+                                   'secondary'}">
                                   ${order.status}
                               </span>
                         </div>
@@ -91,18 +94,28 @@
                                 <c:when test="${order.status == 'SHIPPING'}">
                                     <div class="d-grid gap-2">
                                         <button type="submit" name="status" value="DELIVERED" 
-                                                class="btn btn-success">
+                                                class="btn btn-success"
+                                                onclick="return confirm('Xác nhận đơn hàng đã giao thành công?');">
                                             Giao thành công
                                         </button>
 
                                         <button type="submit" name="status" value="FAILED" 
-                                                class="btn btn-danger">
+                                                class="btn btn-danger"
+                                                onclick="return confirm('Xác nhận đơn hàng giao thất bại?');">
                                             Giao thất bại
                                         </button>
                                     </div>
                                 </c:when>
 
+                                <c:when test="${order.status eq 'CANCEL_REQUESTED'}">
+                                    <div class="d-grid gap-2">
 
+                                        <button type="submit" name="status" value="REFUNDED" 
+                                                class="btn btn-success">
+                                            Hoàn tiền
+                                        </button>
+                                    </div>
+                                </c:when>
                                 <c:otherwise>
                                     <div class="alert alert-success">
                                         Đơn hàng đã hoàn tất. Không thể thay đổi trạng thái.

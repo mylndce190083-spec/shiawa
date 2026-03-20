@@ -26,48 +26,14 @@ import model.Orders;
 @WebServlet(name = "OrderListController", urlPatterns = {"/OrderList/*"})
 public class OrderListController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet OrderListController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet OrderListController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
 
-        if (user == null) {
+        // 1. Check đăng nhập + role
+        if (user == null || !"Customer".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
@@ -80,30 +46,55 @@ public class OrderListController extends HttpServlet {
             status = pathInfo.substring(1).toUpperCase();
         }
 
+        int page = 1;
+        int pageSize = 5;
+
+        String pageParam = request.getParameter("page");
+        if (pageParam != null) {
+            page = Integer.parseInt(pageParam);
+        }
+
         OrderDAO dao = new OrderDAO();
         OrderDetailDAO detailDAO = new OrderDetailDAO();
         List<Orders> orders;
+        int totalOrders;
 
         if (status == null || status.equals("ALL")) {
-            orders = dao.getOrdersByCustomer(user.getId());
+            totalOrders = dao.countOrdersByCustomer(user.getId());
+            orders = dao.getOrdersByCustomerPagingFull(user.getId(), page, pageSize);
         } else {
-            orders = dao.getOrdersByStatus(user.getId(), status);
+            totalOrders = dao.countOrdersByStatus(user.getId(), status);
+            orders = dao.getOrdersByStatusPaging(user.getId(), status, page, pageSize);
         }
+
+        int totalPage = (int) Math.ceil((double) totalOrders / pageSize);
+
+        // orders = dao.getOrdersByCustomerPagingFull(user.getId(), page, pageSize);
         for (Orders o : orders) {
-            List<OrderItem> items = detailDAO.getItemsByOrderId(o.getOrderId());            
-            o.setItems(items); //chổ này chưa biết tác dụng nên cmt lại
+            List<OrderItem> items = detailDAO.getItemsByOrderId(o.getOrderId());
+            o.setItems(items);
+
+            // ✅ THÊM ĐOẠN NÀY
+            int totalQty = 0;
+            for (OrderItem item : items) {
+                totalQty += item.getQuantity();
+            }
+            o.setQuantity(totalQty);
         }
+        // ====== TÍNH TOTAL PAGE ======
+
 //test        
         for (Orders o : orders) {
             for (OrderItem oi : o.getItems()) {
-            System.out.println("ORDER 11: "+oi);
+                System.out.println("ORDER 11: " + oi);
             }
         }
-        
+
         request.setAttribute(
                 "orders", orders);
         request.setAttribute("currentStatus", status);   // ⭐ THÊM DÒNG NÀY
-
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPage", totalPage);
         request.getRequestDispatcher(
                 "/WEB-INF/home/orderlist.jsp")
                 .forward(request, response);
@@ -137,7 +128,17 @@ public class OrderListController extends HttpServlet {
             OrderDAO dao = new OrderDAO();
 
             // Chỉ hủy nếu đơn thuộc về user đó
-            dao.cancelOrderIfPending(orderId, user.getId());
+            // dao.cancelOrderIfPending(orderId, user.getId());
+            Orders order = dao.getOrderById(orderId);
+            boolean ok;
+
+            if ("ONLINE".equals(order.getPaymentMethod())) {
+                ok = dao.updateStatusCustomer(orderId, "CANCEL_REQUESTED");
+            } else {
+                ok = dao.updateStatusCustomer(orderId, "FAILED");
+            }
+
+            System.out.println("UPDATE STATUS RESULT = " + ok);
         }
 
         // Redirect lại để load danh sách mới

@@ -4,7 +4,6 @@
 <%@page import="java.time.format.DateTimeFormatter" %>
 <!DOCTYPE html>
 <html>
-
     <head>
         <title>${book.title} | Shiawa</title>
 
@@ -136,6 +135,27 @@
                 background: #1b5e20;
                 color: white;
             }
+            /* FORM CHỈNH SỬA */
+            .form-container {
+                position: relative; /* QUAN TRỌNG */
+            }
+
+            .edit-btn {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+
+                color: #e53935;   /* 🔴 chữ đỏ */
+                background: none; /* ❌ không nền */
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 13px;
+            }
+
+            .edit-btn:hover {
+                background: #0056b3;
+            }
         </style>
     </head>
 
@@ -163,7 +183,7 @@
             <div class="book-card shadow-sm">
                 <div class="row g-4">
                     <div class="col-md-3 text-center">
-                        <img src="${pageContext.request.contextPath}/image?file=${book.urlImg}" class="img-fluid rounded shadow-sm" alt="${book.title}">
+                        <img src="${book.urlImg}" class="img-fluid rounded shadow-sm" alt="${book.title}">
                     </div>
 
                     <div class="col-md-9">
@@ -200,25 +220,6 @@
                             <i class="bi bi-check-circle-fill"></i>
                             ${book.stock} sản phẩm có sẵn
                         </div>
-
-
-
-<!--                        <form action="${pageContext.request.contextPath}/cart" method="post">
-                            <input type="hidden" name="book_id" value="${book.bookId}">
-                            <input type="hidden" name="action" value="add">
-
-                            <div class="d-flex gap-3">
-                                <button type="button" class="btn btn-buy px-5 py-2 fw-bold">
-                                    <i class="bi bi-lightning-fill"></i> Mua ngay
-                                </button>
-                                
-
-                                <button type="submit" class="btn btn-cart px-4 py-2 fw-bold">
-                                    <i class="bi bi-cart-plus"></i> Thêm vào giỏ
-                                </button>
-                            </div>
-                        </form>-->
-
                         <div class="d-flex gap-3">
                             <form action="${pageContext.request.contextPath}/checkout" method="post">
                                 <input type="hidden" name="book_id" value="${book.bookId}">
@@ -250,46 +251,96 @@
             </div>
         </div>
 
-
         <div class="mt-5">
-            <h5 class="section-title mb-4">Có thể bạn cũng thích</h5>
+            <%
+    java.util.Enumeration<String> attrs = request.getAttributeNames();
 
-            <div class="row row-cols-2 row-cols-md-6 g-3">
-                <c:forEach items="${similarBooks}" var="b">
+    while(attrs.hasMoreElements()) {
+        String name = attrs.nextElement();
+        Object value = request.getAttribute(name);
 
-                    <c:if test="${b.bookId != book.bookId}">
-                        <div class="col">
-                            <a href="${pageContext.request.contextPath}/bookdetail?id=${b.bookId}"
-                               style="text-decoration: none; color: inherit;">
+        out.println("<h3>Attribute: " + name + "</h3>");
 
-                                <div class="book-item shadow-sm">
-                                    <img src="/uploads/${b.urlImg}" class="img-fluid mb-2" style="height: 150px; object-fit: cover;">
-                                    <p class="mb-1 text-truncate fw-bold">${b.title}</p>
-                                    <p class="small text-muted mb-1">${b.category.categoryName}</p>
-                                      <p class="sold">Đã bán ${b.sold}</p>
-                                    <p class="text-success fw-bold">$${b.price}</p>
-                                </div>
-                            </a>
+        if(value instanceof java.util.List){
+            java.util.List list = (java.util.List) value;
+
+            for(Object item : list){
+                out.println(item + "<br>");
+            }
+        }else{
+            out.println(value + "<br>");
+        }
+    }
+%>
+            <h4 class="mb-4">Đánh giá từ khách hàng</h4>
+
+            <c:if test="${empty feedbackList}">
+                <p class="text-muted">Chưa có đánh giá nào cho cuốn sách này.</p>
+            </c:if>
+
+            <c:forEach items="${feedbackList}" var="fb">
+                <div class="card mb-3 border-0 border-bottom">
+                    <div class="form-container">
+                        <div class="edit-btn" onclick="showEditForm()">
+                            <i class="fa-solid fa-pen"><a href="${pageContext.request.contextPath}/feedback?book_id=${fb.bookId}&order_detail_id=${fb.orderdetailId}" 
+                                       style="background: ${item.isRated ? '#888' : '#00a651'};
+                                       color: white; text-decoration: none; padding: 6px 15px;
+                                       border-radius: 8px; display: inline-block; font-size: 13px; font-weight: 600;">
+                                    </a></i> Sửa
                         </div>
-                    </c:if>
-
-                </c:forEach>
-            </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="text-warning me-2">
+                                <c:forEach begin="1" end="${fb.rating}">★</c:forEach>
+                                </div>
+                                <small class="text-muted">| Người dùng: ${fb.username}</small>
+                        </div>
+                        <p class="card-text">${fb.content}</p>
+                    </div>
+                </div>
+            </c:forEach>
         </div>
     </div>
 
-    <div id="success-pop" class="notification-overlay">
-        <div class="notification-box">
-            <i class="bi bi-check-circle-fill"></i>
-            <h3 class="fw-bold">Đã thêm vào giỏ hàng</h3>
-            <p class="text-muted">Sách <strong>${book.title}</strong> đã nằm trong giỏ hàng của bạn.</p>
-            
-            <a href="#" class="btn-ok">OK</a>
+    <div class="mt-5">
+        <h5 class="section-title mb-4">Có thể bạn cũng thích</h5>
+
+        <div class="row row-cols-2 row-cols-md-6 g-3">
+            <c:forEach items="${similarBooks}" var="b">
+
+                <c:if test="${b.bookId != book.bookId}">
+                    <div class="col">
+                        <a href="${pageContext.request.contextPath}/bookdetail?id=${b.bookId}"
+                           style="text-decoration: none; color: inherit;">
+
+                            <div class="book-item shadow-sm">
+                                <img src="${b.urlImg}" class="img-fluid mb-2" style="height: 150px; object-fit: cover;">
+                                <p class="mb-1 text-truncate fw-bold">${b.title}</p>
+                                <p class="small text-muted mb-1">${b.category.categoryName}</p>
+                                <p class="sold">Đã bán ${b.sold}</p>
+                                <p class="text-success fw-bold">$${b.price}</p>
+                            </div>
+                        </a>
+                    </div>
+                </c:if>
+
+            </c:forEach>
         </div>
     </div>
+</div>
 
-    <jsp:include page="./layout/footer.jsp" />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<div id="success-pop" class="notification-overlay">
+    <div class="notification-box">
+        <i class="bi bi-check-circle-fill"></i>
+        <h3 class="fw-bold">Đã thêm vào giỏ hàng</h3>
+        <p class="text-muted">Sách <strong>${book.title}</strong> đã nằm trong giỏ hàng của bạn.</p>
+
+        <a href="#" class="btn-ok">OK</a>
+    </div>
+</div>
+<jsp:include page="./layout/footer.jsp" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

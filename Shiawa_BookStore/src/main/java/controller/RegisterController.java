@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.UUID;
+import model.Account;
 import model.Customer;
 import utils.Email;
 
@@ -25,55 +26,13 @@ import utils.Email;
 @WebServlet(name = "RegisterController", urlPatterns = {"/register"})
 public class RegisterController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet RegisterController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet RegisterController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.getRequestDispatcher("/WEB-INF/home/register.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -83,6 +42,9 @@ public class RegisterController extends HttpServlet {
         String email = request.getParameter("email").trim();
         String fullName = request.getParameter("fullName").trim();
         String token = UUID.randomUUID().toString();
+
+        HttpSession session = request.getSession();
+        Account user = (Account) session.getAttribute("user");
 
         // biểu thức chính quy để kiểm tra input
         String usernameRegex = "^[a-zA-Z0-9_]{3,20}$";
@@ -138,6 +100,7 @@ public class RegisterController extends HttpServlet {
         } else {
             String hashPassword = adao.hashMD5(password);
             Customer c = new Customer();
+            c.setMustChangePassword(false);
             c.setUsername(username);
             c.setPassword(hashPassword);
             c.setEmail(email);
@@ -146,7 +109,6 @@ public class RegisterController extends HttpServlet {
             c.setAvatar("images/avatar/macdinh.jpg");
             c.setFullname(fullName);
             dao.insert(c);
-            HttpSession session = request.getSession();
             session.setAttribute("success", "Đăng kí thành công! Vui lòng xác minh email để đăng nhập");
             try {
                 Email.sendVerificationEmail(email, token);

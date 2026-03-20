@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -16,19 +17,33 @@ public class Feedback {
     private int bookId;
     private int rating;
     private String content;
+    private String username;
     private LocalDateTime createdAt;
+    private int orderdetailId;
 
     public Feedback() {
     }
 
-    public Feedback(int id, int userId, int bookId, int rating, String content, LocalDateTime createdAt) {
+    public Feedback(int id, int userId, int bookId, int rating, String content, String username, LocalDateTime createdAt, int orderdetailId) {
         this.id = id;
         this.userId = userId;
         this.bookId = bookId;
         this.rating = rating;
         this.content = content;
+        this.username = username;
         this.createdAt = createdAt;
+        this.orderdetailId = orderdetailId;
     }
+
+    public int getOrderdetailId() {
+        return orderdetailId;
+    }
+
+    public void setOrderdetailId(int orderdetailId) {
+        this.orderdetailId = orderdetailId;
+    }
+
+    
 
     public int getId() {
         return id;
@@ -77,6 +92,21 @@ public class Feedback {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
+    public String toString() {
+        return "Feedback{" + "id=" + id + ", userId=" + userId + ", bookId=" + bookId + ", rating=" + rating + ", content=" + content + ", username=" + username + ", createdAt=" + createdAt + ", orderdetailId=" + orderdetailId + '}';
+    }
+
+    
     
     
 }

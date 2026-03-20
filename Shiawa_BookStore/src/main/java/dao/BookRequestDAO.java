@@ -96,39 +96,5 @@ public class BookRequestDAO extends DBContext {
             e.printStackTrace();
         }
     }
-    public void postImport(int receiptId) {
 
-    String sql = """
-        SELECT book_id, quantity
-        FROM ImportReceiptDetail
-        WHERE receipt_id = ?
-    """;
-
-    try {
-        PreparedStatement ps = getConnection().prepareStatement(sql);
-        ps.setInt(1, receiptId);
-
-        ResultSet rs = ps.executeQuery();
-
-        while (rs.next()) {
-
-            int bookId = rs.getInt("book_id");
-            int quantity = rs.getInt("quantity");
-
-            String updateStock = """
-                UPDATE Book
-                SET stock = stock + ?
-                WHERE book_id = ?
-            """;
-
-            PreparedStatement ps2 = getConnection().prepareStatement(updateStock);
-            ps2.setInt(1, quantity);
-            ps2.setInt(2, bookId);
-            ps2.executeUpdate();
-        }
-
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-}
 }

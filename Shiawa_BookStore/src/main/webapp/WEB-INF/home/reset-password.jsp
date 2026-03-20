@@ -16,110 +16,110 @@
     </head>
     <body>
         <c:if test="${empty sessionScope.user}">
-        <header class="header">
+            <header class="header">
 
-            <!-- LOGO -->
-            <div class="logo" id="backToShop">
-                <img src="${pageContext.request.contextPath}/assets/img/logo.jpg" class="rounded-img">
-            </div>
-
-            <!-- SEARCH (GIỮA) -->
-            <div class="search-box">
-                <input type="text">
-                <button>
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
-            </div>
-
-            <!-- ICONS -->
-            <div class="icons">
-                <div class="icon" id="cartIcon">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    <span>Giỏ hàng</span>
+                <!-- LOGO -->
+                <div class="logo" id="backToShop">
+                    <img src="${pageContext.request.contextPath}/assets/img/logo.jpg" class="rounded-img">
                 </div>
 
-
-                <div class="icon" id="accountIcon">
-                    <i class="fa-regular fa-user"></i>
-                    <span>Tài khoản</span>
+                <!-- SEARCH (GIỮA) -->
+                <div class="search-box">
+                    <input type="text">
+                    <button>
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
                 </div>
-            </div>
 
-        </header>
+                <!-- ICONS -->
+                <div class="icons">
+                    <div class="icon" id="cartIcon">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span>Giỏ hàng</span>
+                    </div>
+
+
+                    <div class="icon" id="accountIcon">
+                        <i class="fa-regular fa-user"></i>
+                        <span>Tài khoản</span>
+                    </div>
+                </div>
+
+            </header>
         </c:if>
         <c:if test="${not empty sessionScope.user}">
             <div class="profile-wrapper">
 
-            <!-- Sidebar -->
-            <div class="profile-sidebar">
-                <div class="avatar-box">
-                    <img src="/uploads/${customer.avatar}" 
-                         alt="Avatar"
-                         class="avatar-img">
-                    <h3>${customer.username}</h3>
+                <!-- Sidebar -->
+                <div class="profile-sidebar">
+                    <div class="avatar-box">
+                        <img src="${pageContext.request.contextPath}/image?file=${customer.avatar}" 
+                             alt="Avatar"
+                             class="avatar-img">
+                        <h3>${customer.username}</h3>
 
-                    <form action="update-avatar" method="post" enctype="multipart/form-data">
-                        <input type="file" name="avatarFile" accept="image/*" required>
-                        <button type="submit" class="avatar-btn">Đổi avatar</button>
+                        <form action="update-avatar" method="post" enctype="multipart/form-data">
+                            <input type="file" name="avatarFile" accept="image/*" required>
+                            <button type="submit" class="avatar-btn">Đổi avatar</button>
+                        </form>
+                    </div>
+
+                    <ul class="profile-menu">
+                        <li class="active">Thông tin cá nhân</li>
+                        <li>
+                            <a href="${pageContext.request.contextPath}/reset-password">
+                                <span>Đổi mật khẩu</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="${pageContext.request.contextPath}/OrderList">
+                                Lịch sử mua hàng
+                            </a>
+
+                        </li>
+                        <li>
+                            <a href="${pageContext.request.contextPath}/logout">
+                                <span>Đăng xuất</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Main Content -->
+                <div class="profile-content">
+                    <h2>Thông tin cá nhân</h2>
+
+                    <form action="update-profile" method="post" class="profile-form">
+
+                        <div class="form-group">
+                            <label>Họ và tên</label>
+                            <input type="text" name="username" value="${customer.username}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Số điện thoại</label>
+                            <input type="text" name="phone" value="${customer.phone}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Địa chỉ</label>
+                            <input type="text" name="address" value="${customer.address}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" value="${customer.email}" disabled>
+                        </div>
+
+                        <button type="submit" class="save-btn">Lưu thay đổi</button>
+
+                        <p class="success">${message}</p>
+                        <p class="error">${error}</p>
+
                     </form>
                 </div>
 
-                <ul class="profile-menu">
-                    <li class="active">Thông tin cá nhân</li>
-                    <li>
-                        <a href="${pageContext.request.contextPath}/reset-password">
-                            <span>Đổi mật khẩu</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="${pageContext.request.contextPath}/OrderList">
-                            Lịch sử mua hàng
-                        </a>
-
-                    </li>
-                    <li>
-                        <a href="${pageContext.request.contextPath}/logout">
-                            <span>Đăng xuất</span>
-                        </a>
-                    </li>
-                </ul>
             </div>
-
-            <!-- Main Content -->
-            <div class="profile-content">
-                <h2>Thông tin cá nhân</h2>
-
-                <form action="update-profile" method="post" class="profile-form">
-
-                    <div class="form-group">
-                        <label>Họ và tên</label>
-                        <input type="text" name="username" value="${customer.username}">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Số điện thoại</label>
-                        <input type="text" name="phone" value="${customer.phone}">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Địa chỉ</label>
-                        <input type="text" name="address" value="${customer.address}">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" value="${customer.email}" disabled>
-                    </div>
-
-                    <button type="submit" class="save-btn">Lưu thay đổi</button>
-
-                    <p class="success">${message}</p>
-                    <p class="error">${error}</p>
-
-                </form>
-            </div>
-
-        </div>
         </c:if>
         <section class="account-page">
 
@@ -131,6 +131,13 @@
                     <h2>Đặt lại mật khẩu</h2>
 
                     <form action="reset-password" method="post" class="modal-form">
+
+                        <c:if test="${not empty sessionScope.user}">
+                            <div class="form-group">
+                                <label>Mật khẩu cũ</label>
+                                <input type="password" name="oldPassword" placeholder="Nhập mật khẩu cũ" required>
+                            </div>
+                        </c:if>
 
                         <div class="form-group">
                             <label>Mật khẩu mới</label>
@@ -146,11 +153,16 @@
                         <p class="success">${message}</p>
 
                         <button type="submit" class="modal-btn">Đặt lại mật khẩu</button>
-
-                        <div class="modal-link">
-                            <a href="login">Quay lại đăng nhập</a>
-                        </div>
-
+                        <c:if test="${empty sessionScope.user}">
+                            <div class="modal-link">
+                                <a href="login">Quay lại đăng nhập</a>
+                            </div>
+                        </c:if>
+                        <c:if test="${not empty sessionScope.user}">
+                            <div class="modal-link">
+                                <a href="profile">Quay lại</a>
+                            </div>
+                        </c:if>
                     </form>
                 </div>
             </div>

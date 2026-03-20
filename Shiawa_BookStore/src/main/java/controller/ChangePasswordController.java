@@ -25,6 +25,13 @@ public class ChangePasswordController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        //kiểm tra session
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user") == null) {
+            response.sendRedirect("home");
+            return;
+        }
         request.getRequestDispatcher("/WEB-INF/account/change-password.jsp")
                 .forward(request, response);
     }
@@ -40,8 +47,21 @@ public class ChangePasswordController extends HttpServlet {
             return;
         }
 
+        String currentPass = request.getParameter("currentPassword");
         String newPass = request.getParameter("newPassword");
         String confirm = request.getParameter("confirmPassword");
+
+        AccountDAO dao = new AccountDAO();
+        // hash mật khẩu cũ nhập vào
+        String currentHash = dao.hashMD5(currentPass);
+
+        // kiểm tra password cũ đúng không
+        if (!currentHash.equals(user.getPassword())) {
+            request.setAttribute("error", "Current password is incorrect");
+            request.getRequestDispatcher("/WEB-INF/account/change-password.jsp")
+                    .forward(request, response);
+            return;
+        }
 
         if (!newPass.equals(confirm)) {
             request.setAttribute("error", "Password confirmation does not match");
@@ -49,8 +69,6 @@ public class ChangePasswordController extends HttpServlet {
                     .forward(request, response);
             return;
         }
-
-        AccountDAO dao = new AccountDAO();
 
         // hash password
         String hash = dao.hashMD5(newPass);
@@ -61,6 +79,10 @@ public class ChangePasswordController extends HttpServlet {
         // cập nhật trạng thái đổi password
         dao.updateMustChangePassword(user.getId(), user.getRole(), false);
 
+        //mới thêm
+        // update session
+        user.setMustChangePassword(false);
+        session.setAttribute("user", user);
         response.sendRedirect("home");
     }
 
