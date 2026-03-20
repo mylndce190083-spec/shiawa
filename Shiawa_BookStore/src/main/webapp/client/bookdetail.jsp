@@ -279,8 +279,10 @@
             </c:if>
 
             <c:forEach items="${feedbackList}" var="fb">
+                
                 <div class="card mb-3 border-0 border-bottom">
                     <div class="form-container">
+                        <c:if test="${fb.userId == sessionScope.user.id}">
                         <div class="edit-btn" onclick="showEditForm()">
                             <i class="fa-solid fa-pen"><a href="${pageContext.request.contextPath}/feedback?book_id=${fb.bookId}&order_detail_id=${fb.orderdetailId}" 
                                        style="background: ${item.isRated ? '#888' : '#00a651'};
@@ -288,6 +290,7 @@
                                        border-radius: 8px; display: inline-block; font-size: 13px; font-weight: 600;">
                                     </a></i> Sửa
                         </div>
+                        </c:if>
                     </div>
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-2">
@@ -299,6 +302,7 @@
                         <p class="card-text">${fb.content}</p>
                     </div>
                 </div>
+                    
             </c:forEach>
         </div>
     </div>
