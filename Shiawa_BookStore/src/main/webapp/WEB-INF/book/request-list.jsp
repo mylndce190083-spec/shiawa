@@ -27,10 +27,11 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Title</th>
-                        <th>Author</th>
+                        <th>Code</th>
                         <th>Requested By</th>
                         <th>Status</th>
+                        <th>Note</th>
+                        <th>Items</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -41,23 +42,26 @@
 
                         <tr>
                             <td>${r.requestId}</td>
-                            <td>${r.title}</td>
-                            <td>${r.author}</td>
-                            <td>${r.staffId}</td>
+                            <td>${r.requestCode}</td>
+                            <td>${r.requestedByStaffId}</td>
                             <td>${r.status}</td>
+                            <td>${r.note}</td>
+                            <td>
+                                <a class="btn btn-sm btn-outline-primary"
+                                   href="${pageContext.request.contextPath}/book-request?action=detail&id=${r.requestId}">
+                                    Xem chi tiết
+                                </a>
+                            </td>
 
                             <td>
-
-                                <a class="btn btn-sm btn-success"
-                                   href="${pageContext.request.contextPath}/book-request?action=accept&id=${r.requestId}">
-                                    Accept
-                                </a>
-
-                                <a class="btn btn-sm btn-danger"
-                                   href="${pageContext.request.contextPath}/book-request?action=reject&id=${r.requestId}">
-                                    Reject
-                                </a>
-
+                                <c:choose>
+                                    <c:when test="${r.status == 'PENDING'}">
+                                        <span class="text-muted">Chờ duyệt</span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="text-muted">Đã xử lý</span>
+                                    </c:otherwise>
+                                </c:choose>
                             </td>
 
                         </tr>

@@ -8,4 +8,31 @@
             30
         </session-timeout>
     </session-config>
+
+    <servlet>
+        <servlet-name>BookController</servlet-name>
+        <servlet-class>controller.BookController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BookController</servlet-name>
+        <url-pattern>/book</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>InventoryController</servlet-name>
+        <servlet-class>controller.InventoryController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>InventoryController</servlet-name>
+        <url-pattern>/inventory</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>BookAdminController</servlet-name>
+        <servlet-class>controller.BookAdminController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BookAdminController</servlet-name>
+        <url-pattern>/book-admin</url-pattern>
+    </servlet-mapping>
 </web-app>

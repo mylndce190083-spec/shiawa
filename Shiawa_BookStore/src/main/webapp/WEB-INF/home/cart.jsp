@@ -55,7 +55,6 @@
         <jsp:include page="/client/layout/header.jsp"/>
 
 
-
         <section class="cart-page" id="cartPage">
 
             <h2>Giỏ hàng</h2>

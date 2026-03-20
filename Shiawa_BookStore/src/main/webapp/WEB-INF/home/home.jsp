@@ -254,53 +254,21 @@
         <hr>
         <nav class="category-nav">
             <div class="menu-container">
-                <div class="menu-item">
-                    <a href="#" class="parent-link">Nhóm văn học-truyện <i class="fa-solid fa-chevron-down icon-down"></i></a>
-                    <div class="child-dropdown">
-                        <c:forEach items="${listC}" var="c">
-                            <c:if test="${c.categoryName == 'Sách Văn học' || c.categoryName == 'Văn học nước ngoài' || 
-                                          c.categoryName == 'Văn học trong nước' || c.categoryName == 'Trinh thám / Kinh dị' || 
-                                          c.categoryName == 'Manga / Truyện tranh' || c.categoryName == 'Thiếu nhi'}">
-                                <%-- Trỏ về home kèm id để lọc --%>
-                                <a href="${pageContext.request.contextPath}/home?id=${c.categoryId}">${c.categoryName}</a>
-                            </c:if>
-                        </c:forEach>
-                    </div>
-                </div>
-
-                <div class="menu-item">
-                    <a href="#" class="parent-link">Nhóm sách học thuật-kiến thức <i class="fa-solid fa-chevron-down icon-down"></i></a>
-                    <div class="child-dropdown">
-                        <c:forEach items="${listC}" var="c">
-                            <c:if test="${c.categoryName == 'Sách CNTT' || c.categoryName == 'Kinh tế' || 
-                                          c.categoryName == 'Ngôn ngữ' || c.categoryName == 'Sách giáo khoa'}">
-                                  <a href="${pageContext.request.contextPath}/home?id=${c.categoryId}">${c.categoryName}</a>
-                            </c:if>
-                        </c:forEach>
-                    </div>
-                </div>
-
-                <div class="menu-item">
-                    <a href="#" class="parent-link">Nhóm kỹ năng-phát triển <i class="fa-solid fa-chevron-down icon-down"></i></a>
-                    <div class="child-dropdown">
-                        <c:forEach items="${listC}" var="c">
-                            <c:if test="${c.categoryName == 'Kỹ năng sống'}">
-                                <a href="${pageContext.request.contextPath}/home?id=${c.categoryId}">${c.categoryName}</a>
-                            </c:if>
-                        </c:forEach>
-                    </div>
-                </div>
-
-                <div class="menu-item">
-                    <a href="#" class="parent-link">Nhóm nghệ thuật <i class="fa-solid fa-chevron-down icon-down"></i></a>
-                    <div class="child-dropdown">
-                        <c:forEach items="${listC}" var="c">
-                            <c:if test="${c.categoryName == 'Nghệ thuật'}">
-                                <a href="${pageContext.request.contextPath}/home?id=${c.categoryId}">${c.categoryName}</a>
-                            </c:if>
-                        </c:forEach>
-                    </div>
-                </div>
+                <c:forEach items="${listC}" var="c">
+                    <c:if test="${c.parentId == 0}"><!-- thể loại lớn sẽ ko có parentId, parentId = 0 -->
+                        <div class="menu-item">
+                            <a href="#" class="parent-link">${c.categoryName} <i class="fa-solid fa-chevron-down icon-down"></i></a>
+                            <div class="child-dropdown">
+                                <c:forEach items="${listC}" var="child">
+                                    <c:if test="${c.categoryId == child.parentId}">
+                                        <%-- Trỏ về home kèm id để lọc --%>
+                                        <a href="${pageContext.request.contextPath}/home?id=${child.categoryId}">${child.categoryName}</a>
+                                    </c:if>
+                                </c:forEach>
+                            </div>
+                        </div>
+                    </c:if>
+                </c:forEach>
             </div>
         </nav>
 

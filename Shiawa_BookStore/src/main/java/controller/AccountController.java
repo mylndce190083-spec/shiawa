@@ -25,12 +25,15 @@ public class AccountController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //kiểm tra session
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            response.sendRedirect("home");
+        HttpSession session = request.getSession();
+        Account user = (Account) session.getAttribute("user");
+
+        // 1. Check đăng nhập + role
+        if (user == null || !"Admin".equalsIgnoreCase(user.getRole())) {
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
+        request.setAttribute("pagePrimary", "account");
         String view = request.getParameter("view");
         AccountDAO dao = new AccountDAO();
 
@@ -65,22 +68,25 @@ public class AccountController extends HttpServlet {
                 System.out.println("Account found: " + acc.getUsername());
             }
             request.setAttribute("account", acc);
-            request.setAttribute("currentPage", "account");
+            //request.setAttribute("currentPage", "account");
 
             request.getRequestDispatcher("/WEB-INF/account/detail.jsp")
                     .forward(request, response);
             return;
 
         } else if ("add".equals(view)) {
-            request.setAttribute("currentPage", "account");
+            //request.setAttribute("currentPage", "account");
             request.getRequestDispatcher("/WEB-INF/account/add.jsp")
                     .forward(request, response);
             return;
         }
-        request.setAttribute("currentPage", "account");
+        //request.setAttribute("pagePrimary", "account");
 
         String role = request.getParameter("role");;
-
+        // FIX lỗi role rỗng khi pagination
+        if (role != null && role.trim().isEmpty()) {
+            role = null;
+        }
         int page = 1;
         int pageSize = 10;
 

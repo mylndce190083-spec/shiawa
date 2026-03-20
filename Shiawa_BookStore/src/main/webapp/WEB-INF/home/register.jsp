@@ -53,16 +53,14 @@
                 <form action="register" method="post">
                     <label>Tên tài khoản</label>
                     <input type="text" name="username" placeholder="Name">
+                    <label>Họ và Tên</label>
+                    <input type="text" name="fullName" placeholder="Full Name">
                     <label>Email</label>
                     <input type="email" name="email" placeholder="Email">
                     <label>Mật khẩu</label>
                     <input type="password" name="password" placeholder="Password">
                     <label>Xác nhận mật khẩu</label>
-                    <input type="password" name="confirmPassword" placeholder="Confirm Password">
-                    <p style="color:red;">
-                        ${error}
-                    </p>
-
+                    <input type="password" name="confirmPassword" placeholder="Confirm Password">                    
                     <button type="submit" class="submit-btn">Create Account</button>
                 </form>
             </div>

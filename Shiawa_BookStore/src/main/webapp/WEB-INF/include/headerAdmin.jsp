@@ -10,7 +10,7 @@
         <meta content="" name="description">
 
         <!-- Favicon -->
-        <link href="assets/img/favicon.ico" rel="icon">
+        <link href="${pageContext.request.contextPath}/assets/img/favicon.ico" rel="icon">
 
         <!-- Google Web Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,14 +22,14 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
         <!-- Libraries Stylesheet -->
-        <link href="assets/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-        <link href="assets/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+        <link href="${pageContext.request.contextPath}/assets/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/assets/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
 
         <!-- Customized Bootstrap Stylesheet -->
-        <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/assets/css/bootstrap.min.css" rel="stylesheet">
 
         <!-- Template Stylesheet -->
-        <link href="assets/css/style.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/assets/css/style.css" rel="stylesheet">
         <style>
             .order-progress {
                 margin: 40px 0;
@@ -136,6 +136,30 @@
                 transition: all 0.3s ease;
             }
 
+            .custom-sidebar.staff-theme {
+                background: #f8f9fa;
+            }
+
+            .custom-sidebar.staff-theme .nav-link,
+            .custom-sidebar.staff-theme .nav-link i,
+            .custom-sidebar.staff-theme h6,
+            .custom-sidebar.staff-theme span,
+            .custom-sidebar.staff-theme h3 {
+                color: #198754 !important;
+            }
+
+            .custom-sidebar.staff-theme .nav-link:hover,
+            .custom-sidebar.staff-theme .nav-link.active {
+                background: #ffffff;
+                color: #198754 !important;
+                box-shadow: 0 4px 12px rgba(25, 135, 84, 0.15);
+            }
+
+            .custom-sidebar.staff-theme .nav-link:hover i,
+            .custom-sidebar.staff-theme .nav-link.active i {
+                color: #198754 !important;
+            }
+
             .custom-sidebar .nav-link:hover {
                 background: rgba(0, 0, 0, 0.2);
                 color: #000000 !important;
@@ -179,11 +203,10 @@
             </div>
             <!-- Spinner End -->
 
-
             <!-- Sidebar Start -->
             <div class="sidebar pe-4 pb-3 custom-sidebar">
                 <nav class="navbar navbar-dark">
-                    <a href="index.jsp" class="navbar-brand mx-4 mb-3">
+                    <a href="${pageContext.request.contextPath}/account" class="navbar-brand mx-4 mb-3">
                         <h3 class="text-primary"><img class="rounded-circle" src="assets/img/logo.jpg" alt="" style="width: 40px; height: 40px;">  SHIAWA</h3>
                     </a>
                     <div class="d-flex align-items-center ms-4 mb-4">
@@ -200,32 +223,38 @@
                     </div>
                     <div class="navbar-nav w-100">
                         <a href="${pageContext.request.contextPath}/account" 
-                           class="nav-item nav-link ${'account'.equals(currentPage) ? 'active' : ''}">
+                           class="nav-item nav-link ${'account'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-users me-2">
                             </i>Account</a>
 
                         <a href="${pageContext.request.contextPath}/book-admin" 
-                           class="nav-item nav-link ${'book-admin'.equals(currentPage) ? 'active' : ''}">
+                           class="nav-item nav-link ${'book-admin'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-book me-2">
                             </i>Book</a>
-                        <a href="category.jsp" class="nav-item nav-link"><i class="fa fa-tags me-2"></i>Category</a>
+                        <a href="${pageContext.request.contextPath}/category-admin" 
+                           class="nav-item nav-link ${'category-admin'.equals(pagePrimary) ? 'active' : ''}">
+                            <i class="fa fa-tags me-2"></i>Category</a>
                         <a href="${pageContext.request.contextPath}/order-admin" 
-                           class="nav-item nav-link ${'order-admin'.equals(currentPage) ? 'active' : ''}">
+                           class="nav-item nav-link ${'order-admin'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-shopping-cart me-2">
                             </i>Order</a>
                         <a href="${pageContext.request.contextPath}/voucher-admin" 
-                           class="nav-item nav-link ${'voucher-admin'.equals(currentPage) ? 'active' : ''}">
+                           class="nav-item nav-link ${'voucher-admin'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-ticket-alt me-2">
                             </i>Voucher</a>
-                        <a href="table.jsp" class="nav-item nav-link"><i class="fa fa-headset me-2"></i>Customer
+                        <a href="table.jsp" 
+                           class="nav-item nav-link ${'support-admin'.equals(pagePrimary) ? 'active' : ''}">
+                            <i class="fa fa-headset me-2"></i>Customer
                             Support</a>
-                        <a href="${pageContext.request.contextPath}/admin-profile" 
-                           class="nav-item nav-link"><i class="fa fa-user-edit me-2">
-                            </i>Edit Profile</a>
+                        <a href="${pageContext.request.contextPath}/staff-profile" 
+                           class="nav-item nav-link ${'staff-profile'.equals(pagePrimary) ? 'active' : ''}">
+                            <i class="fa fa-user-edit me-2">
+                            </i>Profile</a>
                         <a href="logout" class="nav-item nav-link"><i class="fa fa-sign-out-alt me-2"></i>Logout</a>
                     </div>
                 </nav>
             </div>
+
             <!-- Sidebar End -->
 
 

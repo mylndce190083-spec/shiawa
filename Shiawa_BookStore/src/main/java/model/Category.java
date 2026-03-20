@@ -12,18 +12,24 @@ public class Category {
 
     private int categoryId;
     private String categoryName;
-    private Category parent;
+    private int parentId;
 
-    public Category(Category parent) {
-        this.parent = parent;
-    }
 
     public Category() {
     }
 
-    public Category(int categoryId, String categoryName) {
+    public Category(int categoryId, String categoryName, int parentId) {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
+        this.parentId = parentId;
+    }
+
+    public int getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(int parentId) {
+        this.parentId = parentId;
     }
 
     public int getCategoryId() {
@@ -42,12 +48,10 @@ public class Category {
         this.categoryName = categoryName;
     }
 
-    public Category getParent() {
-        return parent;
+    @Override
+    public String toString() {
+        return "Category{" + "categoryId=" + categoryId + ", categoryName=" + categoryName + ", parentId=" + parentId + '}';
     }
-
-    public void setParent(Category parent) {
-        this.parent = parent;
-    }
-
+        
+    
 }
