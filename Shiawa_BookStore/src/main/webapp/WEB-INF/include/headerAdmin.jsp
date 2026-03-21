@@ -242,6 +242,10 @@
                            class="nav-item nav-link ${'voucher-admin'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-ticket-alt me-2">
                             </i>Voucher</a>
+                        <a href="${pageContext.request.contextPath}/feedback-admin" 
+                           class="nav-item nav-link ${'feedback-admin'.equals(pagePrimary) ? 'active' : ''}">
+                            <i class="fa fa-comments me-2"></i>Feedback
+                        </a>
                         <a href="table.jsp" 
                            class="nav-item nav-link ${'support-admin'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-headset me-2"></i>Customer

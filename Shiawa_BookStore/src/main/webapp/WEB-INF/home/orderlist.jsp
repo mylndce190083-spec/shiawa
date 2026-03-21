@@ -353,26 +353,30 @@
                                 </div>
                             </div>
                             <hr>
+
                             <c:if test="${o.status == 'DELIVERED'}">
-                             
+
+                                <%-- TRƯỜNG HỢP 1: CHƯA ĐÁNH GIÁ (Nút xanh, bấm được) --%>
                                 <c:if test="${item.isRated == 'unrated'}">     
                                     <a href="${pageContext.request.contextPath}/feedback?book_id=${item.book.bookId}&order_detail_id=${item.orderDetailId}" 
-                                       style="background: ${item.isRated ? '#888' : '#00a651'};
-                                       color: white; text-decoration: none; padding: 6px 15px;
+                                       style="background: #00a651; color: white; text-decoration: none; padding: 6px 15px;
                                        border-radius: 8px; display: inline-block; font-size: 13px; font-weight: 600;">
                                         Đánh giá sản phẩm
                                     </a>
                                 </c:if>
 
+                                <%-- TRƯỜNG HỢP 2: ĐÃ ĐÁNH GIÁ (Nút xám, KHÔNG bấm được) --%>
                                 <c:if test="${item.isRated == 'rated'}">     
-                                    <a href="${pageContext.request.contextPath}/feedback?book_id=${item.book.bookId}&order_detail_id=${item.orderDetailId}" 
-                                       style="background: ${item.isRated ? '#888' : '#00a651'};
-                                       color: white; text-decoration: none; padding: 6px 15px;
-                                       border-radius: 8px; display: inline-block; font-size: 13px; font-weight: 600;">
-                                        Đã đánh giá sản phẩm
+                                    <%-- Đổi từ thẻ <a> sang <span> để mất link và thêm pointer-events: none --%>
+                                    <a href="#"  style="background: #888; color: white; padding: 6px 15px;
+                                          border-radius: 8px; display: inline-block; font-size: 13px;
+                                          font-weight: 600; cursor: not-allowed; pointer-events: none;">
+                                        Đã đánh giá sản phẩm 
                                     </a>
                                 </c:if>
+
                             </c:if>
+
                         </c:forEach>
                         <div style="text-align:right; font-size:18px; font-weight:bold; color:black;">
                             Tổng số tiền( ${o.quantity} sản phẩm):
