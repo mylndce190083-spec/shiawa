@@ -6,24 +6,24 @@
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light rounded p-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="mb-0">Chi tiết phiếu nhập</h6>
+            <h6 class="mb-0">Receipt details</h6>
             <a href="${pageContext.request.contextPath}/book-request?action=list" class="btn btn-secondary btn-sm">
                 <i class="fa fa-arrow-left me-1"></i> Back
             </a>
         </div>
 
         <c:if test="${empty request}">
-            <div class="alert alert-danger">Không tìm thấy phiếu yêu cầu.</div>
+            <div class="alert alert-danger">No request form found</div>
         </c:if>
 
         <c:if test="${not empty request}">
             <div class="row g-3 mb-3">
                 <div class="col-md-3">
-                    <div class="small text-muted">Mã phiếu</div>
+                    <div class="small text-muted">Ticket code</div>
                     <div class="fw-semibold">${request.requestCode}</div>
                 </div>
                 <div class="col-md-3">
-                    <div class="small text-muted">Trạng thái</div>
+                    <div class="small text-muted">Status</div>
                     <div>
                         <span class="badge ${request.status == 'APPROVED' ? 'bg-success' : (request.status == 'REJECTED' ? 'bg-danger' : 'bg-warning text-dark')}">
                             ${request.status}
@@ -44,12 +44,12 @@
                 <table class="table table-bordered align-middle">
                     <thead>
                     <tr class="text-success">
-                        <th>Sách</th>
-                        <th>Tác giả</th>
-                        <th>NXB</th>
-                        <th>Thể loại</th>
-                        <th>Số lượng</th>
-                        <th>Giá nhập</th>
+                        <th>Book</th>
+                        <th>Author</th>
+                        <th>Publish</th>
+                        <th>Category</th>
+                        <th>Quantity</th>
+                        <th>Import price</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -90,11 +90,11 @@
             <div class="d-flex gap-2">
                 <c:choose>
                     <c:when test="${request.status == 'PENDING'}">
-                        <a class="btn btn-success" href="${pageContext.request.contextPath}/book-request?action=accept&id=${request.requestId}">Duyệt</a>
-                        <a class="btn btn-danger" href="${pageContext.request.contextPath}/book-request?action=reject&id=${request.requestId}">Không duyệt</a>
+                        <a class="btn btn-success" href="${pageContext.request.contextPath}/book-request?action=accept&id=${request.requestId}">Approve</a>
+                        <a class="btn btn-danger" href="${pageContext.request.contextPath}/book-request?action=reject&id=${request.requestId}">Reject</a>
                     </c:when>
                     <c:otherwise>
-                        <span class="text-muted">Đã xử lý</span>
+                        <span class="text-muted">Complete</span>
                     </c:otherwise>
                 </c:choose>
             </div>

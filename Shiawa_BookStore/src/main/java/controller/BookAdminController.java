@@ -306,18 +306,20 @@ public class BookAdminController extends HttpServlet {
                 int id = Integer.parseInt(request.getParameter("bookId"));
                 BookDAO dao = new BookDAO();
 
-                if (dao.isBookUsedInOrder(id)) {
-                    // đang được sử dụng -> xóa mềm
-                    dao.softDeleteBook(id);
-                    session.setAttribute("msg",
-                            "Book is currently used in orders. Status changed to inactive.");
-                    session.setAttribute("msgType", "warning");
-                } else {
-                    // không bị ràng buộc -> xóa cứng
-                    dao.hardDeleteBook(id);
-                    session.setAttribute("msg", "Delete book successfully");
-                    session.setAttribute("msgType", "success");
-                }
+//                if (dao.canHardDelete(id)) {
+//                    // không bị ràng buộc -> xóa cứng
+//                    dao.hardDeleteBook(id);
+//                    
+//                    session.setAttribute("msg", "Delete book successfully");
+//                    session.setAttribute("msgType", "success");
+//                } else{
+//                    // đang được sử dụng -> xóa mềm
+//                    dao.softDeleteBook(id);
+                dao.softDeleteBook(id);
+                session.setAttribute("msg",
+                        "Book is currently used in orders. Status changed to inactive.");
+                session.setAttribute("msgType", "warning");
+                //}
             } catch (Exception e) {
                 session.setAttribute("msg", "Delete book failed");
                 session.setAttribute("msgType", "danger");

@@ -7,6 +7,45 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@include file="../include/headerAdmin.jsp" %>
+
+<style>
+    /* STATUS */
+    .badge-status {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .pending {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .done {
+        background-color: #d1e7dd;
+        color: #0f5132;
+    }
+
+    /* ITEMS BUTTON */
+    .btn-detail {
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-size: 13px;
+    }
+
+    .btn-detail:hover {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    /* ACTION */
+    .action-text {
+        font-weight: 500;
+        font-size: 13px;
+        color: #6c757d;
+    }
+</style>
 <!-- Recent Sales Start -->
 <div class="container-fluid pt-4 px-4">
 
@@ -44,22 +83,40 @@
                             <td>${r.requestId}</td>
                             <td>${r.requestCode}</td>
                             <td>${r.requestedByStaffId}</td>
-                            <td>${r.status}</td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${r.status == 'APPROVED'}">
+                                        <span class="badge-status done">
+                                            ✔ Approved
+                                        </span>
+                                    </c:when>
+
+                                    <c:when test="${r.status == 'REJECTED'}">
+                                        <span class="badge-status rejected">
+                                            ❌ Rejected
+                                        </span>
+                                    </c:when>
+                                </c:choose>
+                            </td>
                             <td>${r.note}</td>
                             <td>
-                                <a class="btn btn-sm btn-outline-primary"
+                                <a class="btn btn-sm btn-outline-primary btn-detail"
                                    href="${pageContext.request.contextPath}/book-request?action=detail&id=${r.requestId}">
-                                    Xem chi tiết
+                                    <i class="fa fa-eye"></i> Detail
                                 </a>
                             </td>
 
                             <td>
                                 <c:choose>
                                     <c:when test="${r.status == 'PENDING'}">
-                                        <span class="text-muted">Chờ duyệt</span>
+                                        <span class="action-text text-warning">
+                                            ⏳ Waiting
+                                        </span>
                                     </c:when>
                                     <c:otherwise>
-                                        <span class="text-muted">Đã xử lý</span>
+                                        <span class="action-text text-success">
+                                            ✔ Done
+                                        </span>
                                     </c:otherwise>
                                 </c:choose>
                             </td>

@@ -3,7 +3,7 @@
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
-        <title>Đăng nhập</title>
+        <title>Login</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <link href="${pageContext.request.contextPath}/assets/css/css.css" rel="stylesheet" type="text/css"/>
     </head>
@@ -11,7 +11,7 @@
         <jsp:include page="/client/layout/header.jsp"/>
         <section class="account-page">
 
-            <h2>Tài khoản</h2>
+            <h2>Account</h2>
             <%
                 java.util.Enumeration<String> names = session.getAttributeNames();
                 while (names.hasMoreElements()) {
@@ -23,8 +23,8 @@
 
             <!-- TABS -->
             <div class="account-tabs">
-                <a href="${pageContext.request.contextPath}/login" class="tab active" data-tab="login">Đăng nhập</a>
-                <a href="${pageContext.request.contextPath}/register" class="tab" data-tab="register">Đăng ký</a>
+                <a href="${pageContext.request.contextPath}/login" class="tab active" data-tab="login">Login</a>
+                <a href="${pageContext.request.contextPath}/register" class="tab" data-tab="register">Register</a>
             </div>
 
             <!-- LOGIN -->
@@ -32,7 +32,7 @@
                 <form action="login" method="post">
                     <label>Email</label>
                     <input type="text" name="email" placeholder="Email" required>
-                    <label>Mật khẩu</label>
+                    <label>Password</label>
                     <input type="password" name="password" placeholder="Mật khẩu" required>
                     <p style="color:green;">
                         ${sessionScope.success}
@@ -50,10 +50,10 @@
                         ${message}
                     </p>
 
-                    <a href="${pageContext.request.contextPath}/forgot-password" class="forgot">Quên mật khẩu?</a>
+                    <a href="${pageContext.request.contextPath}/forgot-password" class="forgot">Forgot password?</a>
 
 
-                    <button type="submit" class="submit-btn">Đăng nhập</button>
+                    <button type="submit" class="submit-btn">Login</button>
                 </form>
             </div>
 

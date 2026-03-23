@@ -454,11 +454,33 @@ public class BookDAO extends DBContext {
         }
     }
 
-    public boolean isBookUsedInOrder(int bookId) {
+//    public boolean isBookUsedInOrder(int bookId) {
+//        String sql = """
+//        SELECT COUNT(*)
+//                FROM OrderDetail od
+//                JOIN Orders o ON od.order_id = o.order_id
+//                WHERE od.book_id = ?
+//                AND o.status != 'DELIVERED'
+//    """;
+//
+//        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+//            ps.setInt(1, bookId);
+//            ResultSet rs = ps.executeQuery();
+//            if (rs.next()) {
+//                return rs.getInt(1) > 0;
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
+    public boolean isBookInActiveOrder(int bookId) {
         String sql = """
-        SELECT COUNT(*) 
-        FROM OrderDetail
-        WHERE book_id = ?
+        SELECT COUNT(*)
+        FROM OrderDetail od
+        JOIN [Order] o ON od.order_id = o.order_id
+        WHERE od.book_id = ?
+        AND o.status NOT IN ('DELIVERED', 'FAILED')
     """;
 
         try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
@@ -471,6 +493,33 @@ public class BookDAO extends DBContext {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public boolean canHardDelete(int bookId) {
+
+        // 1. check stock
+        String sql = "SELECT stock FROM Book WHERE book_id = ?";
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, bookId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                int stock = rs.getInt("stock");
+                if (stock > 0) {
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // 2. check order đang active
+        if (isBookInActiveOrder(bookId)) {
+            return false;
+        }
+
+        return true;
     }
 
     public void hardDeleteBook(int bookId) {
@@ -785,7 +834,6 @@ public class BookDAO extends DBContext {
         return list;
     }
 
-    
     public void publishBook(int bookId, double price) {
 
         String sql = """
