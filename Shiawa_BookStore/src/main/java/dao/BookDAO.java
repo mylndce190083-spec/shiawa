@@ -164,7 +164,7 @@ public class BookDAO extends DBContext {
         String url = "";
         String sql = """
         SELECT * FROM BookImages
-        WHERE book_id = ? AND is_active = 1
+        WHERE book_id = ? AND is_active = 1 and is_primary = 1
         ORDER BY is_primary DESC, display_order ASC
     """;
         try {
@@ -895,5 +895,7 @@ public class BookDAO extends DBContext {
         for (Book b : list) {
             System.out.println(b);
         }
+        
+        dao.hardDeleteBook(12);
     }
 }

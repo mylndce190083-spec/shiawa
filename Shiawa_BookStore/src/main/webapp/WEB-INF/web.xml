@@ -35,4 +35,8 @@
         <servlet-name>BookAdminController</servlet-name>
         <url-pattern>/book-admin</url-pattern>
     </servlet-mapping>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/home</location>
+    </error-page>
 </web-app>

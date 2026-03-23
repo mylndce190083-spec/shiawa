@@ -231,7 +231,7 @@
                     <div class="summary-row">
                         <span>Voucher</span>
                         <span>
-                            - <fmt:formatNumber value="${order.discount}" type="number"/> VND
+                            - <fmt:formatNumber value="${order.discount}" type="number"/> %
                         </span>
                     </div>
 
@@ -239,7 +239,7 @@
                         <span>Thành tiền</span>
                         <span>
                             <fmt:formatNumber 
-                                value="${subtotal + order.shippingFee - order.discount}" 
+                                value="${subtotal + order.shippingFee - subtotal*order.discount/100}" 
                                 type="number"/> VND
                         </span>
                     </div>

@@ -8,6 +8,7 @@ import dao.BookDAO;
 import dao.CartItemDAO;
 import dao.OrderDAO;
 import dao.OrderDetailDAO;
+import dao.VoucherDAO;
 import db.DBContext;
 import jakarta.persistence.criteria.Order;
 
@@ -31,6 +32,7 @@ import model.CartItem;
 import model.Customer;
 import model.OrderItem;
 import model.Orders;
+import model.Voucher;
 
 /**
  *
@@ -217,6 +219,13 @@ public class CheckoutController extends HttpServlet {
             request.setAttribute("orderItems", selectedItems);
             request.setAttribute("totalAmount", total);
             session.setAttribute("pendingItems", selectedItems);
+            //lấy voucher
+            VoucherDAO vdao = new VoucherDAO();
+            List<Voucher> list;
+            list = vdao.getMyVoucherList(user.getId());
+
+            request.setAttribute("myVoucherList", list);
+            request.setAttribute("now", new java.util.Date());
             request.getRequestDispatcher(
                     "/WEB-INF/home/placeorder.jsp")
                     .forward(request, response);
@@ -268,14 +277,30 @@ public class CheckoutController extends HttpServlet {
             // 🔥 LƯU LẠI ĐỂ KHÔNG BỊ MẤT
             session.setAttribute("pendingItems", selectedItems);
 
+            //áp dụng voucher
+            Voucher v = new Voucher();
+            String voucherIdRaw = request.getParameter("voucherId");
+            VoucherDAO vdao = new VoucherDAO();
+
+            if (voucherIdRaw != null && !voucherIdRaw.isEmpty()) {
+                int voucherId = Integer.parseInt(voucherIdRaw);
+                v = vdao.getVoucherById(voucherId);
+
+                request.setAttribute("selectedVoucher", v);
+
+                // tính discount ở đây
+            }
+
             double total = 0;
             for (CartItem item : selectedItems) {
                 total += item.getPrice() * item.getQuantity();
             }
             double shippingFee = 20000;
-            double discount = 0;
+            int discount = (int)v.getDiscount();
 
-            double amount = total + shippingFee - discount;
+//            double amount = total + shippingFee - discount; đổi công thức
+            double discountAmount = total * discount / 100.0;
+            double amount = total - discountAmount + shippingFee;
             request.setAttribute("orderItems", selectedItems);
             request.setAttribute("totalAmount", total);
 
@@ -406,8 +431,15 @@ public class CheckoutController extends HttpServlet {
                             shippingFee,
                             receiverName,
                             phone,
-                            paymentMethod
+                            paymentMethod,
+                            isBuyNow,
+                            discount,
+                            v.getVoucher_id()
                     );
+                    // ===== UPDATE VOUCHER =====
+                    if (voucherIdRaw != null && !voucherIdRaw.isEmpty()) {
+                        vdao.markVoucherAsUsed(Integer.parseInt(voucherIdRaw), orderId);
+                    }
                     // ❗ FIX Ở ĐÂY
                     if (!isBuyNow) {
                         for (CartItem item : selectedItems) {
@@ -430,6 +462,8 @@ public class CheckoutController extends HttpServlet {
                     session.setAttribute("pendingReceiver", receiverName);
                     session.setAttribute("pendingPhone", phone);
                     session.setAttribute("pendingAmount", amount);
+                    session.setAttribute("discount", discount);
+                    session.setAttribute("voucherId", v.getVoucher_id());
                     // 🔥 FIX QUAN TRỌNG
 //                    session.removeAttribute("isBuyNow");
 //                    session.removeAttribute("buyNowItems");

@@ -18,17 +18,27 @@ public class Voucher {
     private int quantity;
     private Date createdAt;
     private Date endedAt;
+    private String status;
 
     public Voucher() {
     }
 
-    public Voucher(int voucher_id, String name, double discount, int quantity, Date createdAt, Date endedAt) {
+    public Voucher(int voucher_id, String name, double discount, int quantity, Date createdAt, Date endedAt, String status) {
         this.voucher_id = voucher_id;
         this.name = name;
         this.discount = discount;
         this.quantity = quantity;
         this.createdAt = createdAt;
         this.endedAt = endedAt;
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public int getVoucher_id() {
@@ -78,6 +88,11 @@ public class Voucher {
     public void setEndedAt(Date endedAt) {
         this.endedAt = endedAt;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Voucher{" + "voucher_id=" + voucher_id + ", name=" + name + ", discount=" + discount + ", quantity=" + quantity + ", createdAt=" + createdAt + ", endedAt=" + endedAt + ", status=" + status + '}';
+    }
+
     
 }

@@ -29,11 +29,12 @@ public class Orders {
     private String receiverName;
     private int quantity;
     private String paymentMethod;
+    private int voucherId;
 
     public Orders() {
     }
 
-    public Orders(int orderId, int customerId, int staffId, double totalAmount, LocalDateTime orderDate, String status, int discount, String shippingAddress, double shippingFee, List<OrderItem> items, String customerName, String phone, String voucherName, String receiverName, int quantity) {
+    public Orders(int orderId, int customerId, int staffId, double totalAmount, LocalDateTime orderDate, String status, int discount, String shippingAddress, double shippingFee, List<OrderItem> items, String customerName, String phone, String voucherName, String receiverName, int quantity, String paymentMethod, int voucherId) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.staffId = staffId;
@@ -49,7 +50,19 @@ public class Orders {
         this.voucherName = voucherName;
         this.receiverName = receiverName;
         this.quantity = quantity;
+        this.paymentMethod = paymentMethod;
+        this.voucherId = voucherId;
     }
+
+    public int getVoucherId() {
+        return voucherId;
+    }
+
+    public void setVoucherId(int voucherId) {
+        this.voucherId = voucherId;
+    }
+
+    
 
     public int getOrderId() {
         return orderId;
@@ -181,7 +194,9 @@ public class Orders {
 
     @Override
     public String toString() {
-        return "Orders{" + "orderId=" + orderId + ", customerId=" + customerId + ", staffId=" + staffId + ", totalAmount=" + totalAmount + ", orderDate=" + orderDate + ", status=" + status + ", discount=" + discount + ", shippingAddress=" + shippingAddress + ", shippingFee=" + shippingFee + ", items=" + items + ", customerName=" + customerName + ", phone=" + phone + ", voucherName=" + voucherName + ", receiverName=" + receiverName + ", quantity=" + quantity + '}';
+        return "Orders{" + "orderId=" + orderId + ", customerId=" + customerId + ", staffId=" + staffId + ", totalAmount=" + totalAmount + ", orderDate=" + orderDate + ", status=" + status + ", discount=" + discount + ", shippingAddress=" + shippingAddress + ", shippingFee=" + shippingFee + ", items=" + items + ", customerName=" + customerName + ", phone=" + phone + ", voucherName=" + voucherName + ", receiverName=" + receiverName + ", quantity=" + quantity + ", paymentMethod=" + paymentMethod + ", voucherId=" + voucherId + '}';
     }
+
+    
 
 }

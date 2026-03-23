@@ -65,7 +65,7 @@ public class VnpayReturnController extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
-
+        boolean isBuyNow = Boolean.TRUE.equals(session.getAttribute("isBuyNow"));
         String responseCode = request.getParameter("vnp_ResponseCode");
 
         if ("00".equals(responseCode)) {
@@ -88,6 +88,8 @@ public class VnpayReturnController extends HttpServlet {
             String address = (String) session.getAttribute("pendingAddress");
             String receiver = (String) session.getAttribute("pendingReceiver");
             String phone = (String) session.getAttribute("pendingPhone");
+            int discount = (int) session.getAttribute("discount");
+            int voucherId = (int) session.getAttribute("voucherId");
 
             OrderDAO orderDAO = new OrderDAO();
             CartItemDAO cartDAO = new CartItemDAO();
@@ -100,7 +102,10 @@ public class VnpayReturnController extends HttpServlet {
                         20000,
                         receiver,
                         phone,
-                        "ONLINE"
+                        "ONLINE",
+                        isBuyNow,
+                        discount,
+                        voucherId
                 );
 
             } catch (Exception e) {
@@ -112,13 +117,12 @@ public class VnpayReturnController extends HttpServlet {
                 return;
             }
 
-            
-
             // clear session
             session.removeAttribute("pendingItems");
             session.removeAttribute("pendingAddress");
             session.removeAttribute("pendingReceiver");
             session.removeAttribute("pendingPhone");
+            session.removeAttribute("discount");
 
             request.setAttribute("orderId", orderId);
             request.getRequestDispatcher("/vnpay_return.jsp")
