@@ -87,7 +87,7 @@ public class BookAdminController extends HttpServlet {
 
             request.setAttribute("bookImages", imgDAO.getByBookId(id));
             request.setAttribute("book", book);
-            request.setAttribute("categoryList", cdao.getIdNameCategory());
+            request.setAttribute("categoryList", cdao.getAllChildCategories());
 
             request.getRequestDispatcher("/WEB-INF/book/edit.jsp").forward(request, response);
             return;
@@ -165,7 +165,7 @@ public class BookAdminController extends HttpServlet {
 
             request.setAttribute("keyword", keyword);
             request.setAttribute("selectedCategoryId", categoryId);
-            request.setAttribute("categoryList", cateDAO.getIdNameCategory());
+            request.setAttribute("categoryList", cateDAO.getAllChildCategories());
 
             request.setAttribute("bookList", list);
             request.setAttribute("currentPageNum", page);

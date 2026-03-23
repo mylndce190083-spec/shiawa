@@ -777,6 +777,75 @@ public class OrderDAO extends DBContext {
         return 0;
     }
 
+    public double getTotalIncome() {
+        String sql = """
+        SELECT SUM(od.quantity * od.price) AS total
+        FROM OrderDetail od
+        JOIN Orders o ON od.order_id = o.order_id
+        WHERE o.status = 'DELIVERED'
+    """;
+        try (PreparedStatement ps = getConnection().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getDouble("total");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int getTotalSoldQuantity() {
+        String sql = """
+        SELECT SUM(od.quantity) AS total
+        FROM OrderDetail od
+        JOIN Orders o ON od.order_id = o.order_id
+        WHERE o.status = 'DELIVERED'
+    """;
+        try (PreparedStatement ps = getConnection().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<Book> getBestSellerBooks() {
+        List<Book> list = new ArrayList<>();
+
+        String sql = """
+        SELECT TOP 5 
+            b.book_id,
+            b.title,
+            SUM(od.quantity) AS sold
+        FROM OrderDetail od
+        JOIN Orders o ON od.order_id = o.order_id
+        JOIN Book b ON od.book_id = b.book_id
+        WHERE o.status = 'DELIVERED'
+        GROUP BY b.book_id, b.title
+        ORDER BY sold DESC
+    """;
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Book b = new Book();
+                b.setBookId(rs.getInt("book_id"));
+                b.setTitle(rs.getString("title"));
+                b.setSold(rs.getInt("sold"));
+                list.add(b);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
     public static void main(String[] args) {
         OrderDAO dao = new OrderDAO();
 //        List<Orders> list = dao.getAllOrders();

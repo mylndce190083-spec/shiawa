@@ -282,8 +282,8 @@
                            class="nav-item nav-link ${'support-admin'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-headset me-2"></i>Customer
                             Support</a>
-                        <a href="${pageContext.request.contextPath}/income-admin" 
-                           class="nav-item nav-link ${'income-admin'.equals(pagePrimary) ? 'active' : ''}">
+                        <a href="${pageContext.request.contextPath}/income" 
+                           class="nav-item nav-link ${'income'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-ticket-alt me-2">
                             </i>Income</a>
                         <a href="${pageContext.request.contextPath}/staff-profile" 

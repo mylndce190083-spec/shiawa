@@ -35,6 +35,26 @@ public class CategoryDAO extends DBContext {
         return list;
     }
 
+    public List<Category> getAllChildCategories() {
+        List<Category> list = new ArrayList<>();
+        String sql = "SELECT * FROM Category WHERE parent_id IS NOT NULL";
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Category c = new Category();
+                c.setCategoryId(rs.getInt("category_id"));
+                c.setCategoryName(rs.getString("name"));
+                c.setParentId(rs.getInt("parent_id"));
+                list.add(c);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
     public List<Category> getAllCategory() {
         List<Category> list = new ArrayList<>();
         String sql = "select * from Category";
