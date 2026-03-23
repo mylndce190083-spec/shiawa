@@ -156,6 +156,13 @@
             .edit-btn:hover {
                 background: #0056b3;
             }
+            button:disabled {
+                background: gray !important;
+                border: none !important;
+                color: white !important;
+                cursor: not-allowed;
+                opacity: 0.7;
+            }
         </style>
     </head>
 
@@ -221,126 +228,172 @@
                             ${book.stock} sản phẩm có sẵn
                         </div>
                         <div class="d-flex gap-3">
+
+                            <!-- MUA NGAY -->
                             <form action="${pageContext.request.contextPath}/checkout" method="post">
                                 <input type="hidden" name="book_id" value="${book.bookId}">
-                                <input type="hidden" name="action" value="buy_now"> 
+                                <input type="hidden" name="action" value="buy_now">
 
-                                <div class="d-flex gap-3">
-                                    <button type="submit" class="btn btn-buy px-5 py-2 fw-bold">
-                                        <i class="bi bi-lightning-fill"></i> Mua ngay
-                                    </button>
-                                </div>
-                            </form>
-
-                            <form action="${pageContext.request.contextPath}/cart" method="post">
-                                <input type="hidden" name="book_id" value="${book.bookId}">
-                                <input type="hidden" name="action" value="add">
-                                <button type="submit" class="btn btn-cart px-4 py-2 fw-bold">
-                                    <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                                <button type="submit"
+                                        class="btn btn-buy px-5 py-2 fw-bold"
+                                        ${book.stock == 0 ? "disabled" : ""}>
+                                    <i class="bi bi-lightning-fill"></i> Mua ngay
                                 </button>
                             </form>
+
+                            <!-- THÊM GIỎ -->
+                            <form onsubmit="addToCart(event, ${book.bookId})">
+                                <button type="submit"
+                                        class="btn btn-cart px-5 py-2 fw-bold"
+                                        ${book.stock == 0 ? "disabled" : ""}>
+                                    <i class="bi bi-cart-plus"></i> Thêm giỏ hàng
+                                </button>
+                            </form>
+
                         </div>
                     </div>
 
+                    <div class="mt-5 pt-4 border-top">
+                        <h5 class="section-title mb-3">Giới thiệu sách</h5>
+                        <p class="text-secondary">${book.description}</p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="mt-5 pt-4 border-top">
-                <h5 class="section-title mb-3">Giới thiệu sách</h5>
-                <p class="text-secondary">${book.description}</p>
-            </div>
-        </div>
+                <div class="mt-5">
 
-        <div class="mt-5">
-            <%
-    java.util.Enumeration<String> attrs = request.getAttributeNames();
+                    <h4 class="mb-4">Đánh giá từ khách hàng</h4>
 
-    while(attrs.hasMoreElements()) {
-        String name = attrs.nextElement();
-        Object value = request.getAttribute(name);
+                    <c:if test="${empty feedbackList}">
+                        <p class="text-muted">Chưa có đánh giá nào cho cuốn sách này.</p>
+                    </c:if>
 
-        out.println("<h3>Attribute: " + name + "</h3>");
-
-        if(value instanceof java.util.List){
-            java.util.List list = (java.util.List) value;
-
-            for(Object item : list){
-                out.println(item + "<br>");
-            }
-        }else{
-            out.println(value + "<br>");
-        }
-    }
-%>
-            <h4 class="mb-4">Đánh giá từ khách hàng</h4>
-
-            <c:if test="${empty feedbackList}">
-                <p class="text-muted">Chưa có đánh giá nào cho cuốn sách này.</p>
-            </c:if>
-
-            <c:forEach items="${feedbackList}" var="fb">
-                <div class="card mb-3 border-0 border-bottom">
-                    <div class="form-container">
-                        <div class="edit-btn" onclick="showEditForm()">
-                            <i class="fa-solid fa-pen"><a href="${pageContext.request.contextPath}/feedback?book_id=${fb.bookId}&order_detail_id=${fb.orderdetailId}" 
-                                       style="background: ${item.isRated ? '#888' : '#00a651'};
-                                       color: white; text-decoration: none; padding: 6px 15px;
-                                       border-radius: 8px; display: inline-block; font-size: 13px; font-weight: 600;">
-                                    </a></i> Sửa
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="text-warning me-2">
-                                <c:forEach begin="1" end="${fb.rating}">★</c:forEach>
+                    <c:forEach items="${feedbackList}" var="fb">
+                        <div class="card mb-3 border-0 border-bottom">
+                            <div class="form-container">
+                                <div class="edit-btn" onclick="showEditForm()">
+                                    <i class="fa-solid fa-pen"><a href="${pageContext.request.contextPath}/feedback?book_id=${fb.bookId}&order_detail_id=${fb.orderdetailId}" 
+                                                                  style="background: ${item.isRated ? '#888' : '#00a651'};
+                                                                  color: white; text-decoration: none; padding: 6px 15px;
+                                                                  border-radius: 8px; display: inline-block; font-size: 13px; font-weight: 600;">
+                                        </a></i> Sửa
                                 </div>
-                                <small class="text-muted">| Người dùng: ${fb.username}</small>
-                        </div>
-                        <p class="card-text">${fb.content}</p>
-                    </div>
-                </div>
-            </c:forEach>
-        </div>
-    </div>
-
-    <div class="mt-5">
-        <h5 class="section-title mb-4">Có thể bạn cũng thích</h5>
-
-        <div class="row row-cols-2 row-cols-md-6 g-3">
-            <c:forEach items="${similarBooks}" var="b">
-
-                <c:if test="${b.bookId != book.bookId}">
-                    <div class="col">
-                        <a href="${pageContext.request.contextPath}/bookdetail?id=${b.bookId}"
-                           style="text-decoration: none; color: inherit;">
-
-                            <div class="book-item shadow-sm">
-                                <img src="${b.urlImg}" class="img-fluid mb-2" style="height: 150px; object-fit: cover;">
-                                <p class="mb-1 text-truncate fw-bold">${b.title}</p>
-                                <p class="small text-muted mb-1">${b.category.categoryName}</p>
-                                <p class="sold">Đã bán ${b.sold}</p>
-                                <p class="text-success fw-bold">$${b.price}</p>
                             </div>
-                        </a>
-                    </div>
-                </c:if>
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="text-warning me-2">
+                                        <c:forEach begin="1" end="${fb.rating}">★</c:forEach>
+                                        </div>
+                                        <small class="text-muted">| Người dùng: ${fb.username}</small>
+                                </div>
+                                <p class="card-text">${fb.content}</p>
+                            </div>
+                        </div>
+                    </c:forEach>
+                </div>
+            </div>
 
-            </c:forEach>
+            <div class="mt-5">
+                <h5 class="section-title mb-4">Có thể bạn cũng thích</h5>
+
+                <div class="row row-cols-2 row-cols-md-6 g-3">
+                    <c:forEach items="${similarBooks}" var="b">
+
+                        <c:if test="${b.bookId != book.bookId}">
+                            <div class="col">
+                                <a href="${pageContext.request.contextPath}/bookdetail?id=${b.bookId}"
+                                   style="text-decoration: none; color: inherit;">
+
+                                    <div class="book-item shadow-sm">
+                                        <img src="${b.urlImg}" class="img-fluid mb-2" style="height: 150px; object-fit: cover;">
+                                        <p class="mb-1 text-truncate fw-bold">${b.title}</p>
+                                        <p class="small text-muted mb-1">${b.category.categoryName}</p>
+                                        <p class="sold">Đã bán ${b.sold}</p>
+                                        <p class="text-success fw-bold">$${b.price}</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </c:if>
+
+                    </c:forEach>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
-<div id="success-pop" class="notification-overlay">
-    <div class="notification-box">
-        <i class="bi bi-check-circle-fill"></i>
-        <h3 class="fw-bold">Đã thêm vào giỏ hàng</h3>
-        <p class="text-muted">Sách <strong>${book.title}</strong> đã nằm trong giỏ hàng của bạn.</p>
+        <div id="success-pop" class="notification-overlay">
+            <div class="notification-box">
+                <i class="bi bi-check-circle-fill"></i>
+                <h3 class="fw-bold">Đã thêm vào giỏ hàng</h3>
+                <p class="text-muted">Sách <strong>${book.title}</strong> đã nằm trong giỏ hàng của bạn.</p>
 
-        <a href="#" class="btn-ok">OK</a>
-    </div>
-</div>
-<jsp:include page="./layout/footer.jsp" />
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+                <a href="#" class="btn-ok">OK</a>
+            </div>
+        </div>
+        <jsp:include page="./layout/footer.jsp" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+                                    const isLoggedIn = ${sessionScope.user != null};
+
+                                    function addToCart(event, bookId) {
+                                        event.preventDefault();
+
+                                        if (!isLoggedIn) {
+                                            window.location.href = "${pageContext.request.contextPath}/login";
+                                            return;
+                                        }
+
+                                        fetch("${pageContext.request.contextPath}/cart", {
+                                            method: "POST",
+                                            headers: {
+                                                "Content-Type": "application/x-www-form-urlencoded",
+                                                "X-Requested-With": "XMLHttpRequest"
+                                            },
+                                            body: "action=add&book_id=" + bookId
+                                        })
+                                                .then(res => res.json())
+                                                .then(data => {
+                                                    updateCartBadge(data.totalCartItems);
+                                                    showToast();
+                                                })
+                                                .catch(error => console.error(error));
+                                    }
+
+                                    function showToast() {
+
+                                        const toast = document.createElement("div");
+                                        toast.className = "custom-toast";
+                                        toast.innerHTML = `
+        <div class="toast-content">
+            <span class="icon">🛒</span>
+            <div>
+                <strong>Thêm thành công!</strong>
+                <div class="sub">Sản phẩm đã vào giỏ hàng</div>
+            </div>
+        </div>
+        <div class="progress-bar"></div>
+    `;
+
+                                        document.body.appendChild(toast);
+
+                                        setTimeout(() => {
+                                            toast.classList.add("show");
+                                        }, 10);
+
+                                        setTimeout(() => {
+                                            toast.classList.remove("show");
+                                            setTimeout(() => toast.remove(), 300);
+                                        }, 3000);
+                                    }
+                                    function updateCartBadge(count) {
+                                        const badge = document.getElementById("cartBadge");
+
+                                        if (count > 0) {
+                                            badge.style.display = "inline-block";
+                                            badge.innerText = count > 99 ? "99+" : count;
+                                        } else {
+                                            badge.style.display = "none";
+                                        }
+                                    }
+        </script>
+    </body>
 
 </html>

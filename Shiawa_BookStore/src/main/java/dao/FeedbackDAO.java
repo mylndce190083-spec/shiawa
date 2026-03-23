@@ -23,7 +23,7 @@ public class FeedbackDAO extends db.DBContext {
 
     public void insertFeedback(Feedback fb, int order_detail_id) {
         try {
-            String sql = "INSERT INTO Feedback (customer_id, book_id, rating, comment, created_at, order_detail_id) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Feedback (customer_id, book_id, rating, comment, created_at, order_detail_id, status) VALUES (?, ?, ?, ?, ?, ?, 1)";
             PreparedStatement st = getConnection().prepareStatement(sql);
             st.setInt(1, fb.getUserId());
             st.setInt(2, fb.getBookId());
@@ -58,7 +58,8 @@ public class FeedbackDAO extends db.DBContext {
         List<Feedback> list = new ArrayList<>();
         String sql = "SELECT f.*, c.username FROM Feedback f "
                 + "JOIN Customer c ON f.customer_id = c.customer_id "
-                + "WHERE f.book_id = ? ORDER BY f.created_at DESC";
+                + "WHERE f.book_id = ? AND f.status = 1 "
+                + "ORDER BY f.created_at DESC";
         try {
             PreparedStatement st = getConnection().prepareStatement(sql);
             st.setInt(1, bookId);
@@ -95,8 +96,63 @@ public class FeedbackDAO extends db.DBContext {
         } catch (SQLException ex) {
             Logger.getLogger(FeedbackDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
 
+    }
+
+    public List<Feedback> getAllFeedback() {
+        List<Feedback> list = new ArrayList<>();
+
+        String sql = """
+        SELECT 
+                         f.feedback_id, 
+                         f.customer_id,
+                         u.username,   -- thêm username ở đây
+                         b.title, 
+                         f.comment, 
+                         f.rating, 
+                         f.order_detail_id,
+                         f.status
+                     FROM Feedback f 
+                     JOIN Book b ON f.book_id = b.book_id
+                     JOIN Customer u ON f.customer_id=u.customer_id
+                   
+                     	
+    """;
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Feedback f = new Feedback();
+
+                f.setId(rs.getInt("feedback_id"));
+                f.setOrderdetailId(rs.getInt("order_detail_id"));
+                f.setUserId(rs.getInt("customer_id"));
+                f.setBookTitle(rs.getString("title"));
+                f.setContent(rs.getString("comment"));
+                f.setRating(rs.getInt("rating"));
+                f.setUsername(rs.getString("username"));
+                f.setStatus(rs.getInt("status"));
+                list.add(f);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public boolean hideFeedback(int id, int status) {
+        String sql = "UPDATE Feedback SET status = ? WHERE feedback_id = ?";
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setInt(1, status); // 0 hoặc 1
+            ps.setInt(2, id);;
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public static void main(String[] args) {
@@ -108,8 +164,9 @@ public class FeedbackDAO extends db.DBContext {
         Feedback fb = new Feedback();
         fb.setContent("dowrr");
         fb.setRating(2);
-        
+        System.out.println("SIZE = " + list.size());
         System.out.println(dao.getFeedbacksByBookId(7));
 
     }
+
 }

@@ -207,7 +207,7 @@
                 <div class="comment-box mb-3">
                     <label class="form-label fw-bold text-secondary">Nhận xét của bạn</label>
                     <textarea name="content" class="form-control" rows="4" 
-                              placeholder="Hãy chia sẻ những điều bạn thích về cuốn sách này nhé..." required></textarea>
+                              placeholder="Hãy chia sẻ những điều bạn thích về cuốn sách này nhé..." ></textarea>
                 </div>
 
                 <button type="submit" class="btn btn-submit">

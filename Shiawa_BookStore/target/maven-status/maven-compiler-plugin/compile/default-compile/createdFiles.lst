@@ -7,6 +7,7 @@ dao\ReportDAO$ProductRow.class
 controller\VerifyEmailController.class
 utils\Email$1.class
 dao\CustomerDAO.class
+controller\FeedbackAdminController.class
 dao\CategoryDAO.class
 model\Orders.class
 controller\VerifyOTPController.class

@@ -404,7 +404,7 @@ public class OrderDAO extends DBContext {
                     oi.price
                 FROM OrderDetail oi
                 JOIN Book b ON oi.book_id = b.book_id
-                LEFT JOIN BookImages bi ON b.book_id = bi.book_id
+                LEFT JOIN BookImages bi ON b.book_id = bi.book_id AND bi.is_primary=1
                 WHERE oi.order_id = ?
         """;
 
