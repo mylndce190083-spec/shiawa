@@ -19,8 +19,8 @@
         <c:if test="${not empty request}">
             <div class="row g-3 mb-3">
                 <div class="col-md-3">
-                    <div class="small text-muted">Mã phiếu</div>
-                    <div class="fw-semibold">${request.requestCode}</div>
+                    <div class="small text-muted">Người thực hiện</div>
+                    <div class="fw-semibold">${not empty request.requestedByStaffName ? request.requestedByStaffName : request.requestCode}</div>
                 </div>
                 <div class="col-md-3">
                     <div class="small text-muted">Trạng thái</div>

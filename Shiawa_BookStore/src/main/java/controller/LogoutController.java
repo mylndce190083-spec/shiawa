@@ -24,7 +24,10 @@ public class LogoutController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        session.invalidate();
+        if (session != null) {
+            session.removeAttribute("chatSessionId");
+            session.invalidate();
+        }
         response.sendRedirect(request.getContextPath() +"/home");
     }
 

@@ -55,6 +55,7 @@ public class LoginController extends HttpServlet {
                 return;
             }
             session.setAttribute("user", user);
+            session.removeAttribute("chatSessionId");
             if (user.isMustChangePassword()) {
                 response.sendRedirect("change-password");
                 return;

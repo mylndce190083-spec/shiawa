@@ -94,6 +94,7 @@ public class InventoryController extends HttpServlet {
 
         if ("in".equals(view)) {
             request.setAttribute("pagePrimary", "inventory-in");
+            request.setAttribute("currentStaffName", getCurrentStaffName(request));
             loadBooks(request);
             loadCategories(request);
             request.getRequestDispatcher("/WEB-INF/inventory/in.jsp").forward(request, response);
@@ -203,7 +204,7 @@ public class InventoryController extends HttpServlet {
             }
 
             StockInRequest reqModel = new StockInRequest();
-            reqModel.setRequestCode(getRequestCode(request.getParameter("txnCode")));
+            reqModel.setRequestCode(getRequestCode(request));
             reqModel.setNote(request.getParameter("note"));
             reqModel.setStatus("PENDING");
             reqModel.setRequestedByStaffId(getStaffId(request));
@@ -233,15 +234,13 @@ public class InventoryController extends HttpServlet {
         request.setAttribute("categories", new CategoryDAO().getAllCategories());
     }
 
-    private String genRequestCode() {
-        return "REQ-" + System.currentTimeMillis();
+    private String genRequestCode(String staffName) {
+        return "REQ-" + normalizeCodePart(staffName) + "-" + System.currentTimeMillis();
     }
 
-    private String getRequestCode(String input) {
-        if (input == null || input.isBlank()) {
-            return genRequestCode();
-        }
-        return input.trim();
+    private String getRequestCode(HttpServletRequest request) {
+        String staffName = getCurrentStaffName(request);
+        return genRequestCode(staffName);
     }
 
     private LocalDate parseDate(String value, LocalDate fallback) {
@@ -280,6 +279,29 @@ public class InventoryController extends HttpServlet {
             }
         }
         return null;
+    }
+
+    private String getCurrentStaffName(HttpServletRequest request) {
+        Object userObj = request.getSession().getAttribute("user");
+        if (userObj instanceof Account) {
+            Account acc = (Account) userObj;
+            String fullName = trimToNull(acc.getFullName());
+            if (fullName != null) return fullName;
+
+            String username = trimToNull(acc.getUsername());
+            if (username != null) return username;
+        }
+        return "staff";
+    }
+
+    private String normalizeCodePart(String value) {
+        if (value == null || value.isBlank()) return "STAFF";
+        String normalized = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "")
+                .replaceAll("[^a-zA-Z0-9]", "")
+                .toUpperCase();
+        if (normalized.isBlank()) return "STAFF";
+        return normalized.length() > 16 ? normalized.substring(0, 16) : normalized;
     }
 
     private List<StockInRequestItem> buildStockInItems(HttpServletRequest request) {

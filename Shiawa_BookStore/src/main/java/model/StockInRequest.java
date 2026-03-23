@@ -11,6 +11,7 @@ public class StockInRequest {
     private String status; // PENDING | APPROVED | REJECTED
     private Integer requestedByStaffId;
     private Integer approvedByStaffId;
+    private String requestedByStaffName;
     private String rejectReason;
     private LocalDateTime createdAt;
     private LocalDateTime approvedAt;
@@ -62,6 +63,14 @@ public class StockInRequest {
 
     public void setApprovedByStaffId(Integer approvedByStaffId) {
         this.approvedByStaffId = approvedByStaffId;
+    }
+
+    public String getRequestedByStaffName() {
+        return requestedByStaffName;
+    }
+
+    public void setRequestedByStaffName(String requestedByStaffName) {
+        this.requestedByStaffName = requestedByStaffName;
     }
 
     public String getRejectReason() {

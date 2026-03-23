@@ -33,7 +33,7 @@
                         <c:forEach var="r" items="${requests}">
                             <tr>
                                 <td>${r.requestId}</td>
-                                <td>${r.requestCode}</td>
+                                <td>${not empty r.requestedByStaffName ? r.requestedByStaffName : r.requestCode}</td>
                                 <td>
                                     <c:choose>
                                         <c:when test="${r.status == 'APPROVED'}"><span class="badge bg-success">Đã duyệt</span></c:when>

@@ -25,7 +25,7 @@
                     <thead>
                         <tr class="text-success">
                             <th>ID</th>
-                            <th>Mã yêu cầu</th>
+                            <th>Người thực hiện</th>
                             <th>Trạng thái</th>
                             <th>Ghi chú</th>
                             <th>Xem chi tiết</th>
@@ -35,7 +35,7 @@
                         <c:forEach var="r" items="${requestHistory}">
                             <tr>
                                 <td>${r.requestId}</td>
-                                <td>${r.requestCode}</td>
+                                <td>${not empty r.requestedByStaffName ? r.requestedByStaffName : r.requestCode}</td>
                                 <td>
                                     <c:choose>
                                         <c:when test="${r.status == 'APPROVED'}"><span class="badge bg-success">Đã duyệt</span></c:when>

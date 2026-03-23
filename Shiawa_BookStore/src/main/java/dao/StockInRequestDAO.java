@@ -191,11 +191,12 @@ public class StockInRequestDAO extends DBContext {
         try {
             ensureTables();
             String sql = """
-                SELECT request_id, request_code, note, status, requested_by_staff_id, approved_by_staff_id,
-                       reject_reason, created_at, approved_at
-                FROM StockInRequest
-                WHERE (? IS NULL OR requested_by_staff_id = ?)
-                ORDER BY request_id DESC
+                SELECT r.request_id, r.request_code, r.note, r.status, r.requested_by_staff_id, r.approved_by_staff_id,
+                       r.reject_reason, r.created_at, r.approved_at, s.full_name AS requested_by_staff_name
+                FROM StockInRequest r
+                LEFT JOIN Staff s ON r.requested_by_staff_id = s.staff_id
+                WHERE (? IS NULL OR r.requested_by_staff_id = ?)
+                ORDER BY r.request_id DESC
             """;
             try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
                 if (requestedByStaffId == null) {
@@ -221,6 +222,7 @@ public class StockInRequestDAO extends DBContext {
                             r.setApprovedByStaffId(approvedBy);
                         }
                         r.setRejectReason(rs.getString("reject_reason"));
+                        r.setRequestedByStaffName(rs.getString("requested_by_staff_name"));
                         list.add(r);
                     }
                 }
@@ -236,9 +238,11 @@ public class StockInRequestDAO extends DBContext {
         String sql = """
             SELECT r.request_id, r.request_code, r.note, r.status, r.requested_by_staff_id,
                    r.approved_by_staff_id, r.reject_reason, r.created_at, r.approved_at,
+                   s.full_name AS requested_by_staff_name,
                    i.item_id, i.book_id, i.new_book_title, i.new_book_author, i.new_book_publisher,
                    i.new_book_category_id, i.qty, i.unit_cost, b.title AS book_title
             FROM StockInRequest r
+            LEFT JOIN Staff s ON r.requested_by_staff_id = s.staff_id
             LEFT JOIN StockInRequestItem i ON r.request_id = i.request_id
             LEFT JOIN Book b ON i.book_id = b.book_id
             WHERE (? IS NULL OR r.requested_by_staff_id = ?)
@@ -271,6 +275,7 @@ public class StockInRequestDAO extends DBContext {
                             r.setApprovedByStaffId(approvedBy);
                         }
                         r.setRejectReason(rs.getString("reject_reason"));
+                        r.setRequestedByStaffName(rs.getString("requested_by_staff_name"));
                         r.setItems(new ArrayList<>());
                         requestMap.put(requestId, r);
                     }
@@ -386,7 +391,7 @@ public class StockInRequestDAO extends DBContext {
 
             StockTxn txn = new StockTxn();
             txn.setTxnType("IN");
-            txn.setTxnCode("APR-" + requestCode);
+            txn.setTxnCode(buildApprovedTxnCode(requestCode, requestId));
             txn.setNote(note == null ? "Approved stock-in request #" + requestId : note);
             txn.setCreatedByStaffId(approvedByStaffId);
             txn.setItems(txnItems);
@@ -414,6 +419,15 @@ public class StockInRequestDAO extends DBContext {
         } finally {
             conn.setAutoCommit(oldAutoCommit);
         }
+    }
+
+    private String buildApprovedTxnCode(String requestCode, int requestId) {
+        String safe = requestCode == null ? "REQ" : requestCode.replaceAll("[^a-zA-Z0-9-]", "");
+        String base = "APR-" + safe;
+        if (base.length() <= 24) {
+            return base;
+        }
+        return "APR-REQ" + requestId + "-" + System.currentTimeMillis();
     }
 
     public void rejectRequest(int requestId, Integer approvedByStaffId, String reason) throws Exception {
