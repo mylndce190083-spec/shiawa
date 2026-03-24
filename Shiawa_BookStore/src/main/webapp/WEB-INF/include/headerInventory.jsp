@@ -247,7 +247,7 @@
             <div class="sidebar pe-4 pb-3 custom-sidebar">
                 <nav class="navbar navbar-dark">
                     <a href="${pageContext.request.contextPath}/inventory" class="navbar-brand mx-4 mb-3">
-                        <h3 class="text-primary"><img class="rounded-circle" src="assets/img/logo.jpg" alt="" style="width: 40px; height: 40px;">  SHIAWA</h3>
+                        <h3 class="text-primary"><img class="rounded-circle" src="${pageContext.request.contextPath}/assets/img/logo.jpg" alt="" style="width: 40px; height: 40px;">  SHIAWA</h3>
                     </a>
                     <div class="d-flex align-items-center ms-4 mb-4">
                         <div class="position-relative">
@@ -275,7 +275,7 @@
                            class="nav-item nav-link ${'inventory-report'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-chart-line me-2">                                    
                             </i>Inventory History</a>
-                            <a href="${pageContext.request.contextPath}/staff-profile" 
+                        <a href="${pageContext.request.contextPath}/staff-profile" 
                            class="nav-item nav-link ${'staff-profile'.equals(pagePrimary) ? 'active' : ''}">
                             <i class="fa fa-user me-2"></i>Profile
                         </a>

@@ -35,9 +35,29 @@
         <servlet-name>BookAdminController</servlet-name>
         <url-pattern>/book-admin</url-pattern>
     </servlet-mapping>
-    
+
     <error-page>
         <error-code>404</error-code>
         <location>/home</location>
     </error-page>
+
+
+    <servlet>
+        <servlet-name>SupportAdminController</servlet-name>
+        <servlet-class>controller.SupportAdminController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SupportAdminController</servlet-name>
+        <url-pattern>/support-admin</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>SupportChatController</servlet-name>
+        <servlet-class>controller.SupportChatController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SupportChatController</servlet-name>
+        <url-pattern>/chat</url-pattern>
+    </servlet-mapping>
+
 </web-app>

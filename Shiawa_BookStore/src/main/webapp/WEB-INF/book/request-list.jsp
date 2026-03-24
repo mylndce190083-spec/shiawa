@@ -81,7 +81,7 @@
 
                         <tr>
                             <td>${r.requestId}</td>
-                            <td>${r.requestCode}</td>
+                            <td>${not empty r.requestedByStaffName ? r.requestedByStaffName : r.requestCode}</td>
                             <td>${r.requestedByStaffId}</td>
                             <td>
                                 <c:choose>

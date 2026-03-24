@@ -16,6 +16,27 @@
         <link href="${pageContext.request.contextPath}/assets/css/css.css" rel="stylesheet" type="text/css" />
 
         <style>
+            .support-chat-widget {
+                position: fixed;
+                right: 24px;
+                bottom: 120px;
+                z-index: 9999;
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                background: #198754;
+                color: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+                text-decoration: none;
+            }
+            .support-chat-widget:hover {
+                background: #157347;
+                color: #fff;
+            }
+
             /* CSS MỚI ĐỂ GOM NHÓM MENU */
             .category-nav {
                 background-color: #f1f8f1; /* Màu xanh nhạt đồng bộ */
@@ -465,6 +486,9 @@
             }
         }
     </script>
+    <a class="support-chat-widget" href="${pageContext.request.contextPath}/chat" title="Customer Support">
+        <i class="fa-solid fa-comment"></i>
+    </a>
 </body>
 
 

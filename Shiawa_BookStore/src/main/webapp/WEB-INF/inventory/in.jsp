@@ -25,8 +25,9 @@
 
             <div class="row g-3 mb-3">
                 <div class="col-md-4">
-                    <label class="form-label">Mã phiếu</label>
-                    <input class="form-control" name="txnCode" placeholder="Để trống sẽ tự tạo"/>
+                    <label class="form-label">Người thực hiện</label>
+                    <input class="form-control" value="${currentStaffName}" readonly/>
+                    <div class="form-text">Mã phiếu sẽ tự sinh theo tên người thực hiện.</div>
                 </div>
                 <div class="col-md-8">
                     <label class="form-label">Ghi chú</label>
