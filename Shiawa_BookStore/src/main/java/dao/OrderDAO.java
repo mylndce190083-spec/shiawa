@@ -111,7 +111,8 @@ public class OrderDAO extends DBContext {
                    o.shipping_fee,
                    c.full_name,
                    c.phone,
-                   v.name AS voucher_name
+                   v.name AS voucher_name,
+                     o.payment_method
             FROM Orders o
             JOIN Customer c ON o.customer_id = c.customer_id
             LEFT JOIN Voucher v ON o.voucher_id = v.voucher_id
@@ -132,6 +133,7 @@ public class OrderDAO extends DBContext {
                 o.setShippingAddress(rs.getString("shipping_address"));
                 o.setShippingFee(rs.getDouble("shipping_fee"));
                 o.setCustomerName(rs.getString("full_name"));
+                o.setPaymentMethod(rs.getString("payment_method"));
                 o.setPhone(rs.getString("phone")); // ✅ thêm dòng này
                 o.setVoucherName(rs.getString("voucher_name"));
                 return o;
@@ -192,20 +194,34 @@ public class OrderDAO extends DBContext {
         return false;
     }
 
+    public boolean updateStatusCustomer(int orderId, String status) {
+        String sql = "UPDATE Orders SET status = ? WHERE order_id = ?";
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, orderId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public int insertOrder(Connection con,
             int customerId,
             String shippingAddress,
             double shippingFee,
             String receiverName,
             String phone,
-            String paymentMethod
+            String paymentMethod,
+            int discount,
+            Integer voucherId
     ) throws Exception {
 
         String sql = """
         INSERT INTO Orders
         (customer_id, staff_id, order_date, status,
-         discount, shipping_address, shipping_fee,receiver_name,phone,payment_method)
-        VALUES (?, ?, GETDATE(), ?, ?, ?, ?,?,?,?)                   
+         discount, shipping_address, shipping_fee,receiver_name,phone,payment_method, voucher_id)
+        VALUES (?, ?, GETDATE(), ?, ?, ?, ?,?,?,?,?)                   
     """;
 
         try (PreparedStatement ps
@@ -214,12 +230,18 @@ public class OrderDAO extends DBContext {
             ps.setInt(1, customerId);
             ps.setNull(2, java.sql.Types.INTEGER); // staff_id
             ps.setString(3, "PENDING");
-            ps.setInt(4, 0);
+            ps.setInt(4, discount);
             ps.setString(5, shippingAddress);
             ps.setDouble(6, shippingFee);
             ps.setString(7, receiverName);
             ps.setString(8, phone);
             ps.setString(9, paymentMethod);
+
+            if (voucherId == null) {
+                ps.setNull(10, java.sql.Types.INTEGER);
+            } else {
+                ps.setInt(10, voucherId);
+            }
             ps.executeUpdate();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -238,7 +260,10 @@ public class OrderDAO extends DBContext {
             double shippingFee,
             String receiverName,
             String phone,
-            String paymentMethod
+            String paymentMethod,
+            boolean isBuyNow,
+            int discount,
+            Integer voucherId
     ) throws Exception {
         Connection con = getConnection();
 
@@ -251,30 +276,38 @@ public class OrderDAO extends DBContext {
 
             // 1️⃣ Insert order trước
             int orderId = insertOrder(con, customerId,
-                    shippingAddress, shippingFee, receiverName, phone, paymentMethod);
+                    shippingAddress, shippingFee, receiverName, phone, paymentMethod, discount, voucherId);
 
             BookDAO bookDAO = new BookDAO();
             OrderDetailDAO detailDAO = new OrderDetailDAO();
 
             // 2️⃣ Loop từng sản phẩm
             for (CartItem item : items) {
-
-                // Lấy stock hiện tại
                 int stock = bookDAO.getStock(con, item.getBookId());
-
+                // Lấy stock hiện tại
+                // int stock = bookDAO.getStock(con, item.getBookId());
                 // Kiểm tra quantity hợp lệ
                 if (item.getQuantity() <= 0) {
                     throw new Exception("Invalid quantity for product ID "
                             + item.getBookId());
                 }
+//
+//                // Kiểm tra đủ hàng không
+//                if (stock < item.getQuantity()) {
+//                    throw new Exception("Product ID "
+//                            + item.getBookId()
+//                            + " only has "
+//                            + stock
+//                            + " items left");
+//                }
+// ❌ hết hàng
+                if (stock == 0) {
+                    throw new Exception("Sản phẩm đã hết hàng");
+                }
 
-                // Kiểm tra đủ hàng không
-                if (stock < item.getQuantity()) {
-                    throw new Exception("Product ID "
-                            + item.getBookId()
-                            + " only has "
-                            + stock
-                            + " items left");
+// ❌ mua quá
+                if (item.getQuantity() > stock) {
+                    throw new Exception("Chỉ còn " + stock + " sản phẩm trong kho");
                 }
 
                 // Insert OrderDetail
@@ -293,7 +326,13 @@ public class OrderDAO extends DBContext {
                         item.getQuantity()
                 );
             }
+            if (!isBuyNow) {
+                CartItemDAO cartDAO = new CartItemDAO();
 
+                for (CartItem item : items) {
+                    cartDAO.delete(customerId, item.getBookId());
+                }
+            }
             // 3️⃣ Commit nếu mọi thứ OK
             con.commit();
             return orderId;
@@ -322,9 +361,9 @@ public class OrderDAO extends DBContext {
             o.shipping_address,
             o.shipping_fee,
             o.discount,
-            SUM(od.quantity * od.price) 
-                + ISNULL(o.shipping_fee,0)
-                - ISNULL(o.discount,0) AS total_amount
+           o.payment_method,
+            SUM(od.quantity * od.price) * (1 - ISNULL(o.discount,0)/100.0)
+                + ISNULL(o.shipping_fee,0) AS total_amount
         FROM Orders o
         JOIN OrderDetail od ON o.order_id = od.order_id
         WHERE o.customer_id = ?
@@ -336,7 +375,8 @@ public class OrderDAO extends DBContext {
             o.status,
             o.shipping_address,
             o.shipping_fee,
-            o.discount
+            o.discount,
+          o.payment_method 
         ORDER BY o.order_date DESC
     """;
         try {
@@ -358,6 +398,7 @@ public class OrderDAO extends DBContext {
                 }
 
                 o.setStatus(rs.getString("status"));
+                o.setPaymentMethod(rs.getString("payment_method")); // ✅ THÊM
                 o.setShippingAddress(rs.getString("shipping_address"));
                 o.setShippingFee(rs.getDouble("shipping_fee"));
                 o.setTotalAmount(rs.getDouble("total_amount"));
@@ -372,7 +413,7 @@ public class OrderDAO extends DBContext {
                     oi.price
                 FROM OrderDetail oi
                 JOIN Book b ON oi.book_id = b.book_id
-                LEFT JOIN BookImages bi ON b.book_id = bi.book_id
+                LEFT JOIN BookImages bi ON b.book_id = bi.book_id AND bi.is_primary=1
                 WHERE oi.order_id = ?
         """;
 
@@ -389,7 +430,6 @@ public class OrderDAO extends DBContext {
 
                     String img = bookDAO.getImgURLbyBookId(rs2.getInt("book_id"));
                     b.setUrlImg(img);
-                    System.out.println("ORDER IMG = " + img);   // 👈 thêm dòng này
                     OrderItem item = new OrderItem();
                     item.setQuantity(rs2.getInt("quantity"));
                     item.setBook(b);
@@ -427,6 +467,7 @@ public class OrderDAO extends DBContext {
             o.shipping_address,
             o.shipping_fee,
             o.discount,
+        o.payment_method,   -- 🔥 THÊM
             SUM(od.quantity * od.price) 
                 + ISNULL(o.shipping_fee,0)
                 - ISNULL(o.discount,0) AS total_amount
@@ -441,7 +482,8 @@ public class OrderDAO extends DBContext {
             o.status,
             o.shipping_address,
             o.shipping_fee,
-            o.discount
+            o.discount,
+          o.payment_method   -- 🔥 THÊM
         ORDER BY o.order_date DESC
     """;
 
@@ -464,6 +506,7 @@ public class OrderDAO extends DBContext {
                 }
 
                 o.setStatus(rs.getString("status"));
+                o.setPaymentMethod(rs.getString("payment_method"));
                 o.setShippingAddress(rs.getString("shipping_address"));
                 o.setShippingFee(rs.getDouble("shipping_fee"));
 
@@ -621,7 +664,7 @@ public class OrderDAO extends DBContext {
                            oi.price
                     FROM OrderDetail oi
                     JOIN Book b ON oi.book_id = b.book_id
-                    LEFT JOIN BookImages bi ON b.book_id = bi.book_id
+                    LEFT JOIN BookImages bi ON b.book_id = bi.book_id AND bi.is_primary = 1
                     WHERE oi.order_id = ?
             """;
 
@@ -759,6 +802,21 @@ public class OrderDAO extends DBContext {
         return list;
     }
 
+    public int countOrdersByCustomer(int userId) {
+        String sql = "SELECT COUNT(*) FROM Orders WHERE customer_id = ?";
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public int getTotalOrders() {
         String sql = "SELECT COUNT(*) FROM Orders";
 
@@ -776,6 +834,7 @@ public class OrderDAO extends DBContext {
 
         return 0;
     }
+
 
     public double getTotalIncome() {
         String sql = """
@@ -837,6 +896,152 @@ public class OrderDAO extends DBContext {
                 b.setTitle(rs.getString("title"));
                 b.setSold(rs.getInt("sold"));
                 list.add(b);
+                }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public int insertOrderMyMy(Connection con, int customerId, String shippingAddress, double shippingFee, String receiverName, String phone, List<CartItem> items) throws Exception {
+        String sqlOrder = "INSERT INTO Orders (customer_id, staff_id, order_date, status, discount, shipping_address, shipping_fee, receiver_name, phone) VALUES (?, ?, GETDATE(), ?, ?, ?, ?, ?, ?)";
+        int orderId = 0;
+
+        try (PreparedStatement ps = con.prepareStatement(sqlOrder, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, customerId);
+            ps.setNull(2, java.sql.Types.INTEGER);
+            ps.setString(3, "Pending");
+            ps.setInt(4, 0);
+            ps.setString(5, shippingAddress);
+            ps.setDouble(6, shippingFee);
+            ps.setString(7, receiverName);
+            ps.setString(8, phone);
+            ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                orderId = rs.getInt(1);
+            }
+
+            // KHÔNG lặp qua items ở đây nữa, việc này để createOrder lo
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return orderId;
+    }
+
+    public List<Orders> getOrdersByCustomerPagingFull(int customerId, int page, int pageSize) {
+        List<Orders> list = new ArrayList<>();
+        int offset = (page - 1) * pageSize;
+
+        String sql = """
+    SELECT *
+    FROM Orders
+    WHERE customer_id = ?
+    ORDER BY order_id DESC
+    OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+    """;
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, customerId);
+            ps.setInt(2, offset);
+            ps.setInt(3, pageSize);
+
+            ResultSet rs = ps.executeQuery();
+            OrderDetailDAO detailDAO = new OrderDetailDAO();
+
+            while (rs.next()) {
+                Orders o = new Orders();
+                o.setOrderId(rs.getInt("order_id"));
+                o.setStatus(rs.getString("status"));
+                o.setPaymentMethod(rs.getString("payment_method"));
+
+                // Load items cho từng order
+                List<OrderItem> items = detailDAO.getItemsByOrderId(o.getOrderId());
+                o.setItems(items);
+
+                int totalQty = 0;
+                double totalAmount = 0;
+                for (OrderItem item : items) {
+                    totalQty += item.getQuantity();
+                    totalAmount += item.getQuantity() * item.getPrice();
+                }
+                o.setQuantity(totalQty);
+                o.setTotalAmount(totalAmount);
+
+                list.add(o);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public int countOrdersByStatus(int userId, String status) {
+        String sql = "SELECT COUNT(*) FROM Orders WHERE customer_id = ? AND status = ?";
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, userId);
+            ps.setString(2, status);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<Orders> getOrdersByStatusPaging(int customerId, String status, int page, int pageSize) {
+        List<Orders> list = new ArrayList<>();
+        int offset = (page - 1) * pageSize;
+
+        String sql = """
+        SELECT *
+        FROM Orders
+        WHERE customer_id = ? AND status = ?
+        ORDER BY order_id DESC
+        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+    """;
+
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, customerId);
+            ps.setString(2, status);
+            ps.setInt(3, offset);
+            ps.setInt(4, pageSize);
+
+            ResultSet rs = ps.executeQuery();
+            OrderDetailDAO detailDAO = new OrderDetailDAO();
+
+            while (rs.next()) {
+                Orders o = new Orders();
+                o.setOrderId(rs.getInt("order_id"));
+                o.setStatus(rs.getString("status"));
+                o.setPaymentMethod(rs.getString("payment_method"));
+
+                List<OrderItem> items = detailDAO.getItemsByOrderId(o.getOrderId());
+                o.setItems(items);
+
+                int totalQty = 0;
+                double totalAmount = 0;
+                for (OrderItem item : items) {
+                    totalQty += item.getQuantity();
+                    totalAmount += item.getQuantity() * item.getPrice();
+                }
+
+                o.setQuantity(totalQty);
+                o.setTotalAmount(totalAmount);
+
+                list.add(o);
+
             }
 
         } catch (Exception e) {
@@ -848,11 +1053,12 @@ public class OrderDAO extends DBContext {
 
     public static void main(String[] args) {
         OrderDAO dao = new OrderDAO();
+
 //        List<Orders> list = dao.getAllOrders();
 //        for (Orders o : list) {
 //            System.out.println(o);
 //        }
-
         System.out.println(dao.getOrderById(17));
+
     }
 }

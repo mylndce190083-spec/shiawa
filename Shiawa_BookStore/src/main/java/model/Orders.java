@@ -30,11 +30,12 @@ public class Orders {
     private int quantity;
     private String paymentMethod;
     private String staffName;
+    private int voucherId;
 
     public Orders() {
     }
 
-    public Orders(int orderId, int customerId, int staffId, double totalAmount, LocalDateTime orderDate, String status, int discount, String shippingAddress, double shippingFee, List<OrderItem> items, String customerName, String phone, String voucherName, String receiverName, int quantity) {
+    public Orders(int orderId, int customerId, int staffId, double totalAmount, LocalDateTime orderDate, String status, int discount, String shippingAddress, double shippingFee, List<OrderItem> items, String customerName, String phone, String voucherName, String receiverName, int quantity, String paymentMethod, int voucherId) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.staffId = staffId;
@@ -50,8 +51,19 @@ public class Orders {
         this.voucherName = voucherName;
         this.receiverName = receiverName;
         this.quantity = quantity;
+        this.paymentMethod = paymentMethod;
+        this.voucherId = voucherId;
     }
 
+    public int getVoucherId() {
+        return voucherId;
+    }
+
+    public void setVoucherId(int voucherId) {
+        this.voucherId = voucherId;
+    }
+
+  
     public int getOrderId() {
         return orderId;
     }

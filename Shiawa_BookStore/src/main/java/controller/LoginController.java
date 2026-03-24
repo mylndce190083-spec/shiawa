@@ -87,10 +87,10 @@ public class LoginController extends HttpServlet {
                 response.sendRedirect("home");
             } else if ("Admin".equalsIgnoreCase(user.getRole())) {
                 response.sendRedirect(request.getContextPath() + "/account");
-            } else if ("Staff".equalsIgnoreCase(user.getRole())) {
+            } else if ("Inventory".equalsIgnoreCase(user.getRole())) {
                 response.sendRedirect(request.getContextPath() + "/inventory?view=list");
             } else {
-                response.sendRedirect(request.getContextPath() + "/inventory?view=list");
+                response.sendRedirect("home");
             }
         }
     }

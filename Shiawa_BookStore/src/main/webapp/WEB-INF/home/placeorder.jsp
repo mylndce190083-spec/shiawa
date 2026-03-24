@@ -337,8 +337,29 @@
             }
         </style>
     </head>
-
     <body>
+
+<%
+                java.util.Enumeration<String> attrs = request.getAttributeNames();
+
+                while (attrs.hasMoreElements()) {
+                    String name = attrs.nextElement();
+                    Object value = request.getAttribute(name);
+
+                    out.println("<h3>Attribute: " + name + "</h3>");
+
+                    if (value instanceof java.util.List) {
+                        java.util.List list = (java.util.List) value;
+
+                        for (Object item : list) {
+                            out.println(item + "<br>");
+                        }
+                    } else {
+                        out.println(value + "<br>");
+                    }
+                }
+            %>
+    
 
 
 
@@ -369,7 +390,7 @@
                                data-qty="${item.quantity}"/>-->
 
                         <div class="product-info">
-                            <img src="/uploads/${item.book.urlImg}">
+                            <img src="${pageContext.request.contextPath}/image?file=${item.book.urlImg}">
                             ${item.book.title}
                         </div>
 
@@ -395,6 +416,12 @@
                         <c:if test="${item.book.stock == 0}">
                             <div style="color:red; font-weight:bold;">
                                 Sản phẩm này đã hết hàng
+                            </div>
+                            <c:set var="hasOutOfStock" value="true"/>
+                        </c:if>
+                        <c:if test="${item.quantity > item.book.stock}">
+                            <div style="color:red; font-weight:bold;">
+                                Không đủ số lượng sản phẩm trong kho
                             </div>
                             <c:set var="hasOutOfStock" value="true"/>
                         </c:if>
@@ -508,16 +535,22 @@
                         </div>
 
                         <div class="voucher-box">
-                            <input type="text"
-                                   name="voucherCode"
-                                   value="${voucherCode}"
-                                   placeholder="Nhập mã giảm giá">
 
-                            <button type="submit"
-                                    name="action"
-                                    value="applyVoucher">
-                                Áp dụng
-                            </button>
+                            <select id="voucherSelect" name="voucherId">
+                                <option value="">-- Chọn voucher --</option>
+
+                                <c:forEach var="v" items="${myVoucherList}">
+                                    <c:if test="${v.status == 'unused' && v.endedAt >= now}">
+                                        <option value="${v.voucher_id}" 
+                                                data-discount="${v.discount}">
+                                            ${v.name} - Giảm ${v.discount}%
+                                        </option>
+                                    </c:if>
+                                </c:forEach>
+                            </select>
+
+
+
                         </div>
 
                         <c:if test="${not empty voucherError}">
@@ -559,7 +592,7 @@
                     <div class="summary-row total">
                         <span>Tổng thanh toán:</span>
                         <span id="total">
-                            ${subtotal + 20000 - discount} VND
+
                         </span>
                     </div>
 
@@ -685,25 +718,48 @@
                 return number.toLocaleString('vi-VN') + " VND";
             }
 
+//            function calculateSummary() {
+//                let subtotal = 0;
+//                const shipping = 20000;
+//                document.querySelectorAll(".item-total").forEach(item => {
+//
+//                    // Lấy text ví dụ: "78.000 đ"
+//                    let priceText = item.innerText;
+//                    // XÓA TẤT CẢ KÝ TỰ KHÔNG PHẢI SỐ
+//                    priceText = priceText.replace(/\D/g, "");
+//                    subtotal += Number(priceText);
+//                });
+//                const total = subtotal + shipping;
+//                document.getElementById("subtotal").innerText = formatCurrency(subtotal);
+//                document.getElementById("total").innerText = formatCurrency(total);
+//            }
             function calculateSummary() {
                 let subtotal = 0;
                 const shipping = 20000;
-                document.querySelectorAll(".item-total").forEach(item => {
 
-                    // Lấy text ví dụ: "78.000 đ"
-                    let priceText = item.innerText;
-                    // XÓA TẤT CẢ KÝ TỰ KHÔNG PHẢI SỐ
-                    priceText = priceText.replace(/\D/g, "");
+                document.querySelectorAll(".item-total").forEach(item => {
+                    let priceText = item.innerText.replace(/\D/g, "");
                     subtotal += Number(priceText);
                 });
-                const total = subtotal + shipping;
+
+                // 🔥 LẤY DISCOUNT %
+                let discountPercent = 0;
+                let voucherSelect = document.getElementById("voucherSelect");
+
+                if (voucherSelect && voucherSelect.value !== "") {
+                    let selectedOption = voucherSelect.options[voucherSelect.selectedIndex];
+                    discountPercent = Number(selectedOption.getAttribute("data-discount"));
+                }
+
+                let discountAmount = subtotal * discountPercent / 100;
+                let total = subtotal - discountAmount + shipping;
+
                 document.getElementById("subtotal").innerText = formatCurrency(subtotal);
                 document.getElementById("total").innerText = formatCurrency(total);
             }
-
             window.onload = calculateSummary;
 
-            
+
             function showEditForm() {
                 document.getElementById("viewAddress").style.display = "none";
                 document.getElementById("editForm").style.display = "block";
@@ -714,6 +770,10 @@
                 document.getElementById("viewAddress").style.display = "flex";
                 document.getElementById("editForm").style.display = "none";
             }
+            //thêm mới
+            document.getElementById("voucherSelect").addEventListener("change", function () {
+                calculateSummary();
+            });
         </script>
 
     </body>
