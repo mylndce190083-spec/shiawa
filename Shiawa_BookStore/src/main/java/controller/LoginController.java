@@ -55,7 +55,8 @@ public class LoginController extends HttpServlet {
                 return;
             }
             session.setAttribute("user", user);
-            if (user.isMustChangePassword()) {
+            if (user.isMustChangePassword()
+                    && "Customer".equalsIgnoreCase(user.getRole())) {
                 response.sendRedirect("change-password");
                 return;
             }

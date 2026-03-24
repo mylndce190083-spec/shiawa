@@ -25,7 +25,7 @@ public class ChangePasswordController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         //kiểm tra session
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user") == null) {
@@ -83,7 +83,15 @@ public class ChangePasswordController extends HttpServlet {
         // update session
         user.setMustChangePassword(false);
         session.setAttribute("user", user);
-        response.sendRedirect("home");
+        String role = user.getRole();
+
+        if ("Admin".equalsIgnoreCase(role)) {
+            response.sendRedirect("account");
+        } else if ("Inventory".equalsIgnoreCase(role)) {
+            response.sendRedirect("inventory?view=list");
+        } else {
+            response.sendRedirect("home");
+        }
     }
 
     /**
