@@ -10,6 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.util.List;
 import model.Book;
 
@@ -35,6 +36,7 @@ public class BookDetailController extends HttpServlet {
 
                 dao.FeedbackDAO fbDAO = new dao.FeedbackDAO();
                 List<model.Feedback> feedbackList = fbDAO.getFeedbacksByBookId(id);
+                request.setAttribute("currentTime", LocalDateTime.now());
 
                 request.setAttribute("feedbackList", feedbackList); 
 

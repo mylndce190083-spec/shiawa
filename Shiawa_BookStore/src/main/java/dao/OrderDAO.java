@@ -193,8 +193,8 @@ public class OrderDAO extends DBContext {
         }
         return false;
     }
-    
-     public boolean updateStatusCustomer(int orderId, String status) {
+
+    public boolean updateStatusCustomer(int orderId, String status) {
         String sql = "UPDATE Orders SET status = ? WHERE order_id = ?";
         try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
             ps.setString(1, status);
@@ -212,14 +212,16 @@ public class OrderDAO extends DBContext {
             double shippingFee,
             String receiverName,
             String phone,
-            String paymentMethod
+            String paymentMethod,
+            int discount,
+            Integer voucherId
     ) throws Exception {
 
         String sql = """
         INSERT INTO Orders
         (customer_id, staff_id, order_date, status,
-         discount, shipping_address, shipping_fee,receiver_name,phone,payment_method)
-        VALUES (?, ?, GETDATE(), ?, ?, ?, ?,?,?,?)                   
+         discount, shipping_address, shipping_fee,receiver_name,phone,payment_method, voucher_id)
+        VALUES (?, ?, GETDATE(), ?, ?, ?, ?,?,?,?,?)                   
     """;
 
         try (PreparedStatement ps
@@ -228,12 +230,18 @@ public class OrderDAO extends DBContext {
             ps.setInt(1, customerId);
             ps.setNull(2, java.sql.Types.INTEGER); // staff_id
             ps.setString(3, "PENDING");
-            ps.setInt(4, 0);
+            ps.setInt(4, discount);
             ps.setString(5, shippingAddress);
             ps.setDouble(6, shippingFee);
             ps.setString(7, receiverName);
             ps.setString(8, phone);
             ps.setString(9, paymentMethod);
+
+            if (voucherId == null) {
+                ps.setNull(10, java.sql.Types.INTEGER);
+            } else {
+                ps.setInt(10, voucherId);
+            }
             ps.executeUpdate();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -253,7 +261,9 @@ public class OrderDAO extends DBContext {
             String receiverName,
             String phone,
             String paymentMethod,
-            boolean isBuyNow //  THÊM
+            boolean isBuyNow,
+            int discount,
+            Integer voucherId
     ) throws Exception {
         Connection con = getConnection();
 
@@ -266,7 +276,7 @@ public class OrderDAO extends DBContext {
 
             // 1️⃣ Insert order trước
             int orderId = insertOrder(con, customerId,
-                    shippingAddress, shippingFee, receiverName, phone, paymentMethod);
+                    shippingAddress, shippingFee, receiverName, phone, paymentMethod, discount, voucherId);
 
             BookDAO bookDAO = new BookDAO();
             OrderDetailDAO detailDAO = new OrderDetailDAO();
@@ -352,9 +362,8 @@ public class OrderDAO extends DBContext {
             o.shipping_fee,
             o.discount,
            o.payment_method,
-            SUM(od.quantity * od.price) 
-                + ISNULL(o.shipping_fee,0)
-                - ISNULL(o.discount,0) AS total_amount
+            SUM(od.quantity * od.price) * (1 - ISNULL(o.discount,0)/100.0)
+                + ISNULL(o.shipping_fee,0) AS total_amount
         FROM Orders o
         JOIN OrderDetail od ON o.order_id = od.order_id
         WHERE o.customer_id = ?
@@ -367,7 +376,7 @@ public class OrderDAO extends DBContext {
             o.shipping_address,
             o.shipping_fee,
             o.discount,
-          o.payment_method -- 🔥 THÊM
+          o.payment_method 
         ORDER BY o.order_date DESC
     """;
         try {
@@ -981,7 +990,6 @@ public class OrderDAO extends DBContext {
 //        for (Orders o : list) {
 //            System.out.println(o);
 //        }
-
         System.out.println(dao.getOrderById(17));
 
     }

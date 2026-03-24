@@ -43,6 +43,12 @@
 
                     </li>
                     <li>
+                        <a href="${pageContext.request.contextPath}/my-voucher">
+                            Voucher của tôi
+                        </a>
+
+                    </li>
+                    <li>
                         <a href="${pageContext.request.contextPath}/logout">
                             <span>Đăng xuất</span>
                         </a>
@@ -53,7 +59,7 @@
             <!-- Main Content -->
             <div class="profile-content">
                 <h2>Thông tin cá nhân</h2>
-                
+
 
                 <form action="update-profile" method="post" class="profile-form">
 
@@ -61,7 +67,7 @@
                         <label>Tên tài khoản</label>
                         <input type="text" name="username" value="${customer.username}">
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Họ và tên</label>
                         <input type="text" name="fullname" value="${customer.fullname}">

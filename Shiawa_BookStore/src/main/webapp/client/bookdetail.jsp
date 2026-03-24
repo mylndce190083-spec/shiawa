@@ -10,7 +10,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
         <link href="${pageContext.request.contextPath}/assets/css/css.css" rel="stylesheet" type="text/css"/>
-
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
         <style>
             body {
@@ -190,7 +190,7 @@
             <div class="book-card shadow-sm">
                 <div class="row g-4">
                     <div class="col-md-3 text-center">
-                        <img src="${book.urlImg}" class="img-fluid rounded shadow-sm" alt="${book.title}">
+                        <img src="${pageContext.request.contextPath}/image?file=${book.urlImg}" class="img-fluid rounded shadow-sm" alt="${book.title}">
                     </div>
 
                     <div class="col-md-9">
@@ -260,7 +260,6 @@
                 </div>
 
                 <div class="mt-5">
-
                     <h4 class="mb-4">Đánh giá từ khách hàng</h4>
 
                     <c:if test="${empty feedbackList}">
@@ -270,14 +269,33 @@
                     <c:forEach items="${feedbackList}" var="fb">
                         <div class="card mb-3 border-0 border-bottom">
                             <div class="form-container">
-                                <div class="edit-btn" onclick="showEditForm()">
-                                    <i class="fa-solid fa-pen"><a href="${pageContext.request.contextPath}/feedback?book_id=${fb.bookId}&order_detail_id=${fb.orderdetailId}" 
-                                                                  style="background: ${item.isRated ? '#888' : '#00a651'};
-                                                                  color: white; text-decoration: none; padding: 6px 15px;
-                                                                  border-radius: 8px; display: inline-block; font-size: 13px; font-weight: 600;">
-                                        </a></i> Sửa
-                                </div>
+
+                                <c:if test="${fb.userId == sessionScope.user.id}">
+
+                                    <%-- Tính thời gian hết hạn --%>
+                                    <%
+                                        java.time.LocalDateTime createdAt = ((model.Feedback) pageContext.getAttribute("fb")).getCreatedAt();
+                                        java.time.LocalDateTime now = (java.time.LocalDateTime) request.getAttribute("currentTime");
+
+                                        boolean isExpired = false;
+                                        if (createdAt != null && now != null) {
+                                            long hours = java.time.Duration.between(createdAt, now).toHours();
+                                            isExpired = (hours >= 24);
+                                        }
+                                        pageContext.setAttribute("isExpired", isExpired);
+                                    %>
+
+                                    <div class="edit-btn"
+                                         style="cursor: pointer; color: #e53935; font-weight: bold;"
+                                         onclick="checkEditStatus(${isExpired ? 'true' : 'false'}, '${pageContext.request.contextPath}/feedback?book_id=${fb.bookId}&order_detail_id=${fb.orderdetailId}')">
+
+                                        <i class="fa-solid fa-pen"></i> Sửa
+                                    </div>
+
+                                </c:if>
+
                             </div>
+
                             <div class="card-body">
                                 <div class="d-flex align-items-center mb-2">
                                     <div class="text-warning me-2">
@@ -290,110 +308,121 @@
                         </div>
                     </c:forEach>
                 </div>
-            </div>
+                <script>
+                    function checkEditStatus(isExpired, url) {
+                        if (isExpired === true) {
+                            alert("Thông báo: Đã quá 24 giờ kể từ khi gửi đánh giá. Bạn không thể chỉnh sửa được nữa!");
+                        } else {
+                            window.location.href = url;
+                        }
+                    }
+                </script>
 
-            <div class="mt-5">
-                <h5 class="section-title mb-4">Có thể bạn cũng thích</h5>
+                <div class="mt-5">
+                    <h5 class="section-title mb-4">Có thể bạn cũng thích</h5>
 
-                <div class="row row-cols-2 row-cols-md-6 g-3">
-                    <c:forEach items="${similarBooks}" var="b">
+                    <div class="row row-cols-2 row-cols-md-6 g-3">
+                        <c:forEach items="${similarBooks}" var="b">
 
-                        <c:if test="${b.bookId != book.bookId}">
-                            <div class="col">
-                                <a href="${pageContext.request.contextPath}/bookdetail?id=${b.bookId}"
-                                   style="text-decoration: none; color: inherit;">
+                            <c:if test="${b.bookId != book.bookId}">
+                                <div class="col">
+                                    <a href="${pageContext.request.contextPath}/bookdetail?id=${b.bookId}"
+                                       style="text-decoration: none; color: inherit;">
 
-                                    <div class="book-item shadow-sm">
-                                        <img src="${b.urlImg}" class="img-fluid mb-2" style="height: 150px; object-fit: cover;">
-                                        <p class="mb-1 text-truncate fw-bold">${b.title}</p>
-                                        <p class="small text-muted mb-1">${b.category.categoryName}</p>
-                                        <p class="sold">Đã bán ${b.sold}</p>
-                                        <p class="text-success fw-bold">$${b.price}</p>
-                                    </div>
-                                </a>
-                            </div>
-                        </c:if>
+                                        <div class="book-item shadow-sm">
+                                            <img src="${pageContext.request.contextPath}/image?file=${b.urlImg}" class="img-fluid mb-2" style="height: 150px; object-fit: cover;">
+                                            <p class="mb-1 text-truncate fw-bold">${b.title}</p>
+                                            <p class="small text-muted mb-1">${b.category.categoryName}</p>
+                                            <p class="sold">Đã bán ${b.sold}</p>
+                                            <p class="text-success fw-bold">$${b.price}</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </c:if>
 
-                    </c:forEach>
+                        </c:forEach>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div id="success-pop" class="notification-overlay">
-            <div class="notification-box">
-                <i class="bi bi-check-circle-fill"></i>
-                <h3 class="fw-bold">Đã thêm vào giỏ hàng</h3>
-                <p class="text-muted">Sách <strong>${book.title}</strong> đã nằm trong giỏ hàng của bạn.</p>
+            <div id="success-pop" class="notification-overlay">
+                <div class="notification-box">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <h3 class="fw-bold">Đã thêm vào giỏ hàng</h3>
+                    <p class="text-muted">Sách <strong>${book.title}</strong> đã nằm trong giỏ hàng của bạn.</p>
 
-                <a href="#" class="btn-ok">OK</a>
+                    <a href="#" class="btn-ok">OK</a>
+                </div>
             </div>
-        </div>
-        <jsp:include page="./layout/footer.jsp" />
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script>
-                                    const isLoggedIn = ${sessionScope.user != null};
+            <jsp:include page="./layout/footer.jsp" />
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <script>
+            const isLoggedIn = ${sessionScope.user != null ? 'true' : 'false'};
 
-                                    function addToCart(event, bookId) {
-                                        event.preventDefault();
+            function addToCart(event, bookId) 
+            {
+            event.preventDefault();
 
-                                        if (!isLoggedIn) {
-                                            window.location.href = "${pageContext.request.contextPath}/login";
-                                            return;
-                                        }
+            if (!isLoggedIn) {
+            window.location.href = "${pageContext.request.contextPath}/login";
+            return;
+            }
 
-                                        fetch("${pageContext.request.contextPath}/cart", {
-                                            method: "POST",
-                                            headers: {
-                                                "Content-Type": "application/x-www-form-urlencoded",
-                                                "X-Requested-With": "XMLHttpRequest"
-                                            },
-                                            body: "action=add&book_id=" + bookId
-                                        })
-                                                .then(res => res.json())
-                                                .then(data => {
-                                                    updateCartBadge(data.totalCartItems);
-                                                    showToast();
-                                                })
-                                                .catch(error => console.error(error));
-                                    }
+            fetch("${pageContext.request.contextPath}/cart", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-Requested-With": "XMLHttpRequest"
+            },
+            body: "action=add&book_id=" + bookId
+            })
+            .then(res => res.json())
+            .then(data => {
+            updateCartBadge(data.totalCartItems);
+            showToast();
+            })
+            .catch(error => console.error(error));
+            }
 
-                                    function showToast() {
 
-                                        const toast = document.createElement("div");
-                                        toast.className = "custom-toast";
-                                        toast.innerHTML = `
-        <div class="toast-content">
-            <span class="icon">🛒</span>
-            <div>
-                <strong>Thêm thành công!</strong>
-                <div class="sub">Sản phẩm đã vào giỏ hàng</div>
+            function showToast() {
+
+            const toast = document.createElement("div");
+            toast.className = "custom-toast";
+            toast.innerHTML = `
+            <div class="toast-content">
+                <span class="icon">🛒</span>
+                <div>
+                    <strong>Thêm thành công!</strong>
+                    <div class="sub">Sản phẩm đã vào giỏ hàng</div>
+                </div>
             </div>
-        </div>
-        <div class="progress-bar"></div>
-    `;
+            <div class="progress-bar"></div>
+            `;
 
-                                        document.body.appendChild(toast);
+            document.body.appendChild(toast);
 
-                                        setTimeout(() => {
-                                            toast.classList.add("show");
-                                        }, 10);
+            setTimeout(() => {
+            toast.classList.add("show");
+            }, 10);
 
-                                        setTimeout(() => {
-                                            toast.classList.remove("show");
-                                            setTimeout(() => toast.remove(), 300);
-                                        }, 3000);
-                                    }
-                                    function updateCartBadge(count) {
-                                        const badge = document.getElementById("cartBadge");
+            setTimeout(() => {
+            toast.classList.remove("show");
+            setTimeout(() => toast.remove(), 300);
+            }, 3000);
+            }
 
-                                        if (count > 0) {
-                                            badge.style.display = "inline-block";
-                                            badge.innerText = count > 99 ? "99+" : count;
-                                        } else {
-                                            badge.style.display = "none";
-                                        }
-                                    }
+            function updateCartBadge(count) {
+            const badge = document.getElementById("cartBadge");
+
+            if (count > 0) {
+            badge.style.display = "inline-block";
+            badge.innerText = count > 99 ? "99+" : count;
+            } else {
+            badge.style.display = "none";
+            }
+            }
         </script>
-    </body>
+</body>
 
 </html>

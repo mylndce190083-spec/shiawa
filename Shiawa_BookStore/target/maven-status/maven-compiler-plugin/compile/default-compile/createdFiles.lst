@@ -11,6 +11,7 @@ controller\FeedbackAdminController.class
 dao\CategoryDAO.class
 model\Orders.class
 controller\VerifyOTPController.class
+controller\GetVoucherController$1.class
 dao\ReportDAO$DailyRow.class
 model\Address.class
 controller\InventoryController.class
@@ -34,6 +35,7 @@ dao\CartItemDAO.class
 dao\OrderDetailDAO.class
 utils\Email.class
 utils\FileUpload.class
+controller\MyVoucherController.class
 controller\OrderListController.class
 vnpay\ajaxServlet.class
 controller\ImageController.class
@@ -56,6 +58,7 @@ model\OrderDetail.class
 controller\BookAdminController.class
 dao\BookImageDAO.class
 dao\AccountDAO.class
+controller\GetVoucherController.class
 controller\RegisterController.class
 controller\ForgotPasswordController.class
 model\BookRequest.class
@@ -70,6 +73,7 @@ model\Account.class
 controller\VoucherAdminController.class
 controller\StockInApprovalController.class
 dao\BookDAO.class
+dao\VoucherDAO$ClaimVoucherResult.class
 dao\BookRequestDAO.class
 dao\ReportDAO.class
 model\Feedback.class

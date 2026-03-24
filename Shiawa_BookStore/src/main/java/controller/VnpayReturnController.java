@@ -6,6 +6,7 @@ package controller;
 
 import dao.CartItemDAO;
 import dao.OrderDAO;
+import dao.VoucherDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -88,7 +89,8 @@ public class VnpayReturnController extends HttpServlet {
             String address = (String) session.getAttribute("pendingAddress");
             String receiver = (String) session.getAttribute("pendingReceiver");
             String phone = (String) session.getAttribute("pendingPhone");
-
+            int discount = (int) session.getAttribute("discount");
+            Integer voucherId = (Integer) session.getAttribute("voucherId");
             OrderDAO orderDAO = new OrderDAO();
             CartItemDAO cartDAO = new CartItemDAO();
             int orderId = 0;
@@ -101,8 +103,15 @@ public class VnpayReturnController extends HttpServlet {
                         receiver,
                         phone,
                         "ONLINE",
-                        isBuyNow
+                        isBuyNow,
+                        discount,
+                        voucherId
                 );
+                
+                if (voucherId  != null) {
+                    VoucherDAO vdao = new VoucherDAO();
+                        vdao.markVoucherAsUsed(voucherId, orderId);
+                    }
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -118,6 +127,8 @@ public class VnpayReturnController extends HttpServlet {
             session.removeAttribute("pendingAddress");
             session.removeAttribute("pendingReceiver");
             session.removeAttribute("pendingPhone");
+              session.removeAttribute("discount");
+                session.removeAttribute("voucherId");
 // ✅ thêm 2 dòng này
             session.removeAttribute("isBuyNow");
             session.removeAttribute("buyNowItems");
@@ -143,7 +154,7 @@ public class VnpayReturnController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       
+
     }
 
     /**

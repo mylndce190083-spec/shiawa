@@ -9,10 +9,10 @@
         <title>Book Store</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <link href="${pageContext.request.contextPath}/assets/css/css.css" rel="stylesheet" type="text/css"/>
-        
-        
-        
-         <style>
+
+
+
+        <style>
             .custom-toast {
                 position: fixed;
                 top: -120px;
@@ -100,7 +100,7 @@
     </head>
 
     <header class="header"> 
-       
+
         <div class="logo" id="backToShop" onclick="window.location.href = '${pageContext.request.contextPath}/home'">
             <img src="${pageContext.request.contextPath}/assets/img/logo.jpg" class="rounded-img" alt="Logo">
         </div>
@@ -133,7 +133,15 @@
                     </div>
                 </a>
             </c:if>
-
+            <c:if test="${not empty sessionScope.user}">
+                <a href="${pageContext.request.contextPath}/get-voucher" 
+                   style="text-decoration:none; color:inherit;">
+                    <div class="icon">
+                        <i class="fa-solid fa-ticket-simple"></i>
+                        <span>Lấy voucher</span>
+                    </div>
+                </a>
+            </c:if>
             <c:choose>
                 <c:when test="${not empty sessionScope.user}">
                     <a href="profile" class="icon">
@@ -153,6 +161,6 @@
                 </c:otherwise>
             </c:choose>
         </div>
-                
+
     </header>
 </html>

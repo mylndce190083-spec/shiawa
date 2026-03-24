@@ -8,6 +8,7 @@ import dao.BookDAO;
 import dao.CartItemDAO;
 import dao.OrderDAO;
 import dao.OrderDetailDAO;
+import dao.VoucherDAO;
 import db.DBContext;
 import jakarta.persistence.criteria.Order;
 
@@ -31,6 +32,7 @@ import model.CartItem;
 import model.Customer;
 import model.OrderItem;
 import model.Orders;
+import model.Voucher;
 
 /**
  *
@@ -77,14 +79,9 @@ public class CheckoutController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        HttpSession session = request.getSession();
-//        Account user = (Account) session.getAttribute("user");
-//
-//        if (user == null) {
-//            response.sendRedirect(request.getContextPath() + "/login");
-//            return;
-//        }
-
+        Voucher v = new Voucher();
+        String voucherIdRaw = request.getParameter("voucherId");
+        VoucherDAO vdao = new VoucherDAO();
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
 
@@ -128,7 +125,8 @@ public class CheckoutController extends HttpServlet {
                 request.setAttribute("lastOrder", lastOrder);
             }
             request.setAttribute("orderItems", cartList);
-
+            List<Voucher> list = vdao.getMyVoucherList(user.getId());
+            request.setAttribute("myVoucherList", list);
             request.getRequestDispatcher("/WEB-INF/home/placeorder.jsp")
                     .forward(request, response);
         }
@@ -148,6 +146,9 @@ public class CheckoutController extends HttpServlet {
         String action = request.getParameter("action");
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
+        Voucher v = new Voucher();
+        String voucherIdRaw = request.getParameter("voucherId");
+        VoucherDAO vdao = new VoucherDAO();
 
         if (user == null) {
             response.sendRedirect(request.getContextPath() + "/login");
@@ -217,6 +218,13 @@ public class CheckoutController extends HttpServlet {
             request.setAttribute("orderItems", selectedItems);
             request.setAttribute("totalAmount", total);
             session.setAttribute("pendingItems", selectedItems);
+            //lấy voucher
+//            VoucherDAO vdao = new VoucherDAO();
+            List<Voucher> list;
+            list = vdao.getMyVoucherList(user.getId());
+
+            request.setAttribute("myVoucherList", list);
+            request.setAttribute("now", new java.util.Date());
             request.getRequestDispatcher(
                     "/WEB-INF/home/placeorder.jsp")
                     .forward(request, response);
@@ -267,15 +275,27 @@ public class CheckoutController extends HttpServlet {
             }
             // 🔥 LƯU LẠI ĐỂ KHÔNG BỊ MẤT
             session.setAttribute("pendingItems", selectedItems);
+//áp dụng voucher
+
+            if (voucherIdRaw != null && !voucherIdRaw.isEmpty()) {
+                Integer voucherId = Integer.parseInt(voucherIdRaw);
+                v = vdao.getVoucherById(voucherId);
+
+                request.setAttribute("selectedVoucher", v);
+
+                // tính discount ở đây
+            }
 
             double total = 0;
             for (CartItem item : selectedItems) {
                 total += item.getPrice() * item.getQuantity();
             }
             double shippingFee = 20000;
-            double discount = 0;
+            int discount = (int) v.getDiscount();
 
-            double amount = total + shippingFee - discount;
+//            double amount = total + shippingFee - discount; đổi công thức
+            double discountAmount = total * discount / 100.0;
+            double amount = total - discountAmount + shippingFee;
             request.setAttribute("orderItems", selectedItems);
             request.setAttribute("totalAmount", total);
 
@@ -337,6 +357,8 @@ public class CheckoutController extends HttpServlet {
                     }
 
                     if (hasError) {
+                        List<Voucher> list = vdao.getMyVoucherList(user.getId());
+                        request.setAttribute("myVoucherList", list);
                         request.setAttribute("orderItems", selectedItems);
                         request.setAttribute("totalAmount", total);
                         request.getRequestDispatcher("/WEB-INF/home/placeorder.jsp")
@@ -397,6 +419,10 @@ public class CheckoutController extends HttpServlet {
                 // =====================================================
 // PAYMENT FLOW
 // =====================================================
+                Integer voucherId = null;
+                if (voucherIdRaw != null && !voucherIdRaw.isEmpty()) {
+                    voucherId = Integer.parseInt(voucherIdRaw);
+                }
                 if ("COD".equals(paymentMethod)) {
 
                     int orderId = orderDAO.createOrder(
@@ -407,11 +433,17 @@ public class CheckoutController extends HttpServlet {
                             receiverName,
                             phone,
                             paymentMethod,
-                            isBuyNow
+                            isBuyNow,
+                            discount,
+                            voucherId
                     );
                     session.removeAttribute("isBuyNow");
                     session.removeAttribute("buyNowItems");
-
+                    if (voucherId  != null) {
+                        vdao.markVoucherAsUsed(voucherId, orderId);
+                    }
+                    System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+                    System.out.println(voucherIdRaw);
                     // ❗ FIX Ở ĐÂY
 //                    if (!isBuyNow) {
 //                        for (CartItem item : selectedItems) {
@@ -434,6 +466,8 @@ public class CheckoutController extends HttpServlet {
                     session.setAttribute("pendingReceiver", receiverName);
                     session.setAttribute("pendingPhone", phone);
                     session.setAttribute("pendingAmount", amount);
+                    session.setAttribute("discount", discount);
+                    session.setAttribute("voucherId", voucherId );
                     // 🔥 FIX QUAN TRỌNG
 //                    session.removeAttribute("isBuyNow");
 //                    session.removeAttribute("buyNowItems");
@@ -468,7 +502,19 @@ public class CheckoutController extends HttpServlet {
             session.setAttribute("isBuyNow", true);
             // 🔥 set giống cart luôn
             request.setAttribute("orderItems", orderItems);
+            List<Voucher> list;
+            list = vdao.getMyVoucherList(user.getId());
 
+            request.setAttribute("myVoucherList", list);
+            request.setAttribute("now", new java.util.Date());
+            if (voucherIdRaw != null && !voucherIdRaw.isEmpty()) {
+                Integer voucherId = Integer.parseInt(voucherIdRaw);
+                v = vdao.getVoucherById(voucherId);
+
+                request.setAttribute("selectedVoucher", v);
+
+                // tính discount ở đây
+            }
             // subtotal
             request.setAttribute("subtotal", book.getPrice());
 
