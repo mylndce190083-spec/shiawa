@@ -241,25 +241,25 @@
     </head>
     <body>
         <%
-                java.util.Enumeration<String> attrs = request.getAttributeNames();
+            java.util.Enumeration<String> attrs = request.getAttributeNames();
 
-                while (attrs.hasMoreElements()) {
-                    String name = attrs.nextElement();
-                    Object value = request.getAttribute(name);
+            while (attrs.hasMoreElements()) {
+                String name = attrs.nextElement();
+                Object value = request.getAttribute(name);
 
-                    out.println("<h3>Attribute: " + name + "</h3>");
+                out.println("<h3>Attribute: " + name + "</h3>");
 
-                    if (value instanceof java.util.List) {
-                        java.util.List list = (java.util.List) value;
+                if (value instanceof java.util.List) {
+                    java.util.List list = (java.util.List) value;
 
-                        for (Object item : list) {
-                            out.println(item + "<br>");
-                        }
-                    } else {
-                        out.println(value + "<br>");
+                    for (Object item : list) {
+                        out.println(item + "<br>");
                     }
+                } else {
+                    out.println(value + "<br>");
                 }
-            %>
+            }
+        %>
         <jsp:include page="/client/layout/header.jsp"/>
         <br>
         <div class="container mt-5">
@@ -374,7 +374,7 @@
                             </div>
                             <hr>
                             <c:if test="${o.status == 'DELIVERED'}">
-                             
+
                                 <c:if test="${item.isRated == 'unrated'}">     
                                     <a href="${pageContext.request.contextPath}/feedback?book_id=${item.book.bookId}&order_detail_id=${item.orderDetailId}" 
                                        style="background: ${item.isRated ? '#888' : '#00a651'};
@@ -384,12 +384,13 @@
                                     </a>
                                 </c:if>
 
+                                <%-- TRƯỜNG HỢP 2: ĐÃ ĐÁNH GIÁ (Nút xám, KHÔNG bấm được) --%>
                                 <c:if test="${item.isRated == 'rated'}">     
-                                    <a href="${pageContext.request.contextPath}/feedback?book_id=${item.book.bookId}&order_detail_id=${item.orderDetailId}" 
-                                       style="background: ${item.isRated ? '#888' : '#00a651'};
-                                       color: white; text-decoration: none; padding: 6px 15px;
-                                       border-radius: 8px; display: inline-block; font-size: 13px; font-weight: 600;">
-                                        Đã đánh giá sản phẩm
+                                    <%-- Đổi từ thẻ <a> sang <span> để mất link và thêm pointer-events: none --%>
+                                    <a href="#"  style="background: #888; color: white; padding: 6px 15px;
+                                       border-radius: 8px; display: inline-block; font-size: 13px;
+                                       font-weight: 600; cursor: not-allowed; pointer-events: none;">
+                                        Đã đánh giá sản phẩm 
                                     </a>
                                 </c:if>
                             </c:if>
