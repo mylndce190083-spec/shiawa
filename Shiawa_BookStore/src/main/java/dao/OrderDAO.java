@@ -529,11 +529,11 @@ public class OrderDAO extends DBContext {
 
         try {
             con = getConnection();
-            con.setAutoCommit(false); // 🔥 bật transaction
+            con.setAutoCommit(false); // bật transaction
 
             // 1️⃣ Kiểm tra đơn có thuộc customer và đang Pending không
             String checkSql = """
-            SELECT status , payment_method
+            SELECT status, payment_method
             FROM Orders 
             WHERE order_id = ? AND customer_id = ?
         """;
@@ -547,11 +547,9 @@ public class OrderDAO extends DBContext {
             if (rs.next()) {
                 String status = rs.getString("status");
                 String paymentMethod = rs.getString("payment_method");
+
                 if ("Pending".equalsIgnoreCase(status)) {
-                    if ("ONLINE".equalsIgnoreCase(paymentMethod)) {
-                        // Demo refund
-                        System.out.println("Refund VNPAY for order " + orderId);
-                    }
+
                     // 2️⃣ Lấy danh sách sản phẩm trong đơn
                     String itemSql = """
                     SELECT book_id, quantity
@@ -567,7 +565,7 @@ public class OrderDAO extends DBContext {
                         int bookId = rsItem.getInt("book_id");
                         int quantity = rsItem.getInt("quantity");
 
-                        // 3️⃣ Cộng lại stock
+                        // 3️⃣ Cộng lại stock cho cả 2 phương thức
                         String updateStock = """
                         UPDATE Book
                         SET stock = stock + ?
@@ -578,27 +576,38 @@ public class OrderDAO extends DBContext {
                         psStock.setInt(1, quantity);
                         psStock.setInt(2, bookId);
                         psStock.executeUpdate();
+                        psStock.close();
+                    }
+                    rsItem.close();
+                    psItem.close();
+
+                    // 4️⃣ Update status: ONLINE -> CANCEL_REQUESTED, OFFLINE -> FAILED
+                    String newStatus = "FAILED";
+                    if ("ONLINE".equalsIgnoreCase(paymentMethod)) {
+                        newStatus = "CANCEL_REQUESTED";
+                        System.out.println("Refund VNPAY for order " + orderId);
                     }
 
-                    // 4️⃣ Update status
                     String updateOrder = """
                     UPDATE Orders
-                    SET status = 'FAILED'
+                    SET status = ?
                     WHERE order_id = ?
                 """;
 
                     PreparedStatement psUpdate = con.prepareStatement(updateOrder);
-                    psUpdate.setInt(1, orderId);
+                    psUpdate.setString(1, newStatus);
+                    psUpdate.setInt(2, orderId);
                     psUpdate.executeUpdate();
-
-                    con.commit(); // ✅ nếu mọi thứ OK
+                    psUpdate.close();
+                    con.commit(); // commit nếu mọi thứ OK
+                    System.out.println("Order " + orderId + " đã hủy, stock đã cộng lại.");
                 }
             }
 
         } catch (Exception e) {
             try {
                 if (con != null) {
-                    con.rollback(); // ❌ rollback nếu lỗi
+                    con.rollback(); // rollback nếu lỗi
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
