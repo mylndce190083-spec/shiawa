@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.Account;
+import model.Customer;
 import model.OrderItem;
 import model.Orders;
 
@@ -126,19 +127,23 @@ public class OrderListController extends HttpServlet {
             int orderId = Integer.parseInt(request.getParameter("orderId"));
 
             OrderDAO dao = new OrderDAO();
+            // Lấy user từ session
+            Customer customer = (Customer) request.getSession().getAttribute("customer");
 
-            // Chỉ hủy nếu đơn thuộc về user đó
+            // Hủy đơn và cộng lại số lượng
+            dao.cancelOrderIfPending(orderId, customer.getId()); // Chỉ hủy nếu đơn thuộc về user đó
             // dao.cancelOrderIfPending(orderId, user.getId());
             Orders order = dao.getOrderById(orderId);
-            boolean ok;
 
-            if ("ONLINE".equals(order.getPaymentMethod())) {
-                ok = dao.updateStatusCustomer(orderId, "CANCEL_REQUESTED");
-            } else {
-                ok = dao.updateStatusCustomer(orderId, "FAILED");
+            boolean ok;
+            if (order != null) {
+                if ("ONLINE".equals(order.getPaymentMethod())) {
+                    ok = dao.updateStatusCustomer(orderId, "CANCEL_REQUESTED");
+                } else {
+                    ok = dao.updateStatusCustomer(orderId, "FAILED");
+                }
             }
 
-            System.out.println("UPDATE STATUS RESULT = " + ok);
         }
 
         // Redirect lại để load danh sách mới
