@@ -38,13 +38,7 @@ public class StaffAvatarController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        HttpSession session = request.getSession();
-//        Account account = (Account) session.getAttribute("user");
-//
-//        if (account == null) {
-//            response.sendRedirect("login");
-//            return;
-//        }
+
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
 

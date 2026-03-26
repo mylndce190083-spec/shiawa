@@ -26,41 +26,6 @@ import model.CartItem;
 @WebServlet("/vnpay_return")
 public class VnpayReturnController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet VnpayReturnController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet VnpayReturnController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -73,7 +38,7 @@ public class VnpayReturnController extends HttpServlet {
 
             List<CartItem> items = (List<CartItem>) session.getAttribute("pendingItems");
 
-            // 🔥 FIX CHẮC CHẮN
+            // FIX CHẮC CHẮN
             if (items == null || items.isEmpty()) {
                 System.out.println("❌ pendingItems NULL");
 
@@ -107,11 +72,11 @@ public class VnpayReturnController extends HttpServlet {
                         discount,
                         voucherId
                 );
-                
-                if (voucherId  != null) {
+
+                if (voucherId != null) {
                     VoucherDAO vdao = new VoucherDAO();
-                        vdao.markVoucherAsUsed(voucherId, orderId);
-                    }
+                    vdao.markVoucherAsUsed(voucherId, orderId);
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -127,9 +92,8 @@ public class VnpayReturnController extends HttpServlet {
             session.removeAttribute("pendingAddress");
             session.removeAttribute("pendingReceiver");
             session.removeAttribute("pendingPhone");
-              session.removeAttribute("discount");
-                session.removeAttribute("voucherId");
-// ✅ thêm 2 dòng này
+            session.removeAttribute("discount");
+            session.removeAttribute("voucherId");
             session.removeAttribute("isBuyNow");
             session.removeAttribute("buyNowItems");
             request.setAttribute("orderId", orderId);
@@ -143,14 +107,6 @@ public class VnpayReturnController extends HttpServlet {
         }
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

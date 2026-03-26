@@ -158,27 +158,6 @@
             <div class="feedback-header">
                 <i class="bi bi-chat-left-heart-fill"></i> ĐÁNH GIÁ SẢN PHẨM
             </div>
-            <%
-    java.util.Enumeration<String> attrs = request.getAttributeNames();
-
-    while(attrs.hasMoreElements()) {
-        String name = attrs.nextElement();
-        Object value = request.getAttribute(name);
-
-        out.println("<h3>Attribute: " + name + "</h3>");
-
-        if(value instanceof java.util.List){
-            java.util.List list = (java.util.List) value;
-
-            for(Object item : list){
-                out.println(item + "<br>");
-            }
-        }else{
-            out.println(value + "<br>");
-        }
-    }
-%>
-
             <div class="product-info-section">
                 <img src="${pageContext.request.contextPath}/${book.urlImg}" alt="${book.title}">
                 <div class="book-detail-text">

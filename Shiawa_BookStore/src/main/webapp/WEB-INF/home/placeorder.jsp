@@ -338,31 +338,6 @@
         </style>
     </head>
     <body>
-
-<%
-                java.util.Enumeration<String> attrs = request.getAttributeNames();
-
-                while (attrs.hasMoreElements()) {
-                    String name = attrs.nextElement();
-                    Object value = request.getAttribute(name);
-
-                    out.println("<h3>Attribute: " + name + "</h3>");
-
-                    if (value instanceof java.util.List) {
-                        java.util.List list = (java.util.List) value;
-
-                        for (Object item : list) {
-                            out.println(item + "<br>");
-                        }
-                    } else {
-                        out.println(value + "<br>");
-                    }
-                }
-            %>
-    
-
-
-
         <div class="container">
 
             <!-- LEFT -->
@@ -380,14 +355,6 @@
 
                 <c:forEach var="item" items="${orderItems}">
                     <div class="order-item">
-
-                        <!-- CHECKBOX 
-                        <input type="checkbox"
-                               class="select-item"
-                               name="selectedItem"
-                               data-book-id="${item.bookId}"
-                               data-price="${item.price}"
-                               data-qty="${item.quantity}"/>-->
 
                         <div class="product-info">
                             <img src="${pageContext.request.contextPath}/image?file=${item.book.urlImg}">
@@ -437,10 +404,23 @@
             <!-- RIGHT -->
             <div class="box">
 
+                <c:set var="isMissingInfo"
+                       value="${empty sessionScope.customer.address 
+                                or empty sessionScope.customer.phone 
+                                or empty sessionScope.customer.fullname}" />
+                <c:if test="${isMissingInfo}">
+                    <div class="error-msg" style="margin-bottom:10px;">
+                        ⚠ Bạn phải nhập đầy đủ thông tin nhận hàng trước khi đặt hàng!
+                    </div>
+                </c:if>
                 <form id="checkoutForm" action="${pageContext.request.contextPath}/checkout" method="post">
                     <h3>📍 ĐỊA CHỈ NHẬN HÀNG</h3>
-                    <div class="address-box" id="viewAddress">
-                        <input type="hidden" name="isEditAddress" value="false" id="isEditAddress">
+
+                    <div class="address-box" id="viewAddress"
+                         style="${isMissingInfo ? 'display:none;' : 'display:flex;'}">
+                        <input type="hidden" name="isEditAddress" 
+                               value="${isMissingInfo ? 'true' : 'false'}" 
+                               id="isEditAddress">
 
                         <div class="address-info">
                             <!-- TÊN -->
@@ -466,12 +446,13 @@
                         <div class="edit-btn" onclick="showEditForm()">
                             <i class="fa-solid fa-pen"></i> Sửa
                         </div>
-                        <!-- GỬI VỀ SERVER -->
+
 
                     </div>
 
 
-                    <div class="edit-form" id="editForm">
+                    <div class="edit-form" id="editForm"
+                         style="${isMissingInfo ? 'display:block;' : 'display:none;'}">
                         <select name="province" id="province" >
                             <option value="">Chọn Tỉnh / Thành phố</option>
                         </select>
@@ -606,7 +587,6 @@
                             name="action"
                             value="confirm"
                             ${hasOutOfStock ? "disabled" : ""}>
-
                         Đặt hàng
                     </button>
 
@@ -761,8 +741,8 @@
 
 
             function showEditForm() {
-                document.getElementById("viewAddress").style.display = "none";
                 document.getElementById("editForm").style.display = "block";
+                document.getElementById("viewAddress").style.display = "none";
                 document.getElementById("isEditAddress").value = "true";
             }
 

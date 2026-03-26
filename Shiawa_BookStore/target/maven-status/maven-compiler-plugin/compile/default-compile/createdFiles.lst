@@ -59,8 +59,6 @@ controller\CartController.class
 model\StockInRequest.class
 controller\StaffAvatarController.class
 controller\ProfileController.class
-controller\BookImgController.class
-controller\CustomerController.class
 utils\Email.class
 utils\FileUpload.class
 vnpay\ajaxServlet.class

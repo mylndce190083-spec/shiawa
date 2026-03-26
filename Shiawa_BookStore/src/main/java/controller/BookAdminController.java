@@ -116,25 +116,6 @@ public class BookAdminController extends HttpServlet {
             if (categoryParam != null && !categoryParam.trim().isEmpty()) {
                 categoryId = Integer.parseInt(categoryParam);
             }
-//
-//            boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
-//            boolean hasCategory = categoryId != null;
-//
-//            // ===== SEARCH ƯU TIÊN =====
-//            if (hasKeyword) {
-//
-//                list = dao.searchByTitle(keyword);
-//
-//            } // ===== FILTER =====
-//            else if (hasCategory) {
-//
-//                list = dao.getBooksByCategory(categoryId);
-//
-//            } // ===== LOAD ALL =====
-//            else {
-//
-//                list = dao.getAllBooksInfo();
-//            }
 
             int page = 1;
             int pageSize = 10;
@@ -148,20 +129,6 @@ public class BookAdminController extends HttpServlet {
             int totalPage = (int) Math.ceil((double) totalBooks / pageSize);
 
             List<BookAdmin> list = dao.getBooksByPage(page, pageSize, keyword, categoryId);
-            // ===== THÔNG BÁO KHI RỖNG =====
-//            if (list.isEmpty()) {
-//
-//                if (hasKeyword) {
-//                    request.setAttribute("searchMsg",
-//                            "No book found with name \"" + keyword + "\"");
-//                } else if (hasCategory) {
-//                    request.setAttribute("searchMsg",
-//                            "No book found in selected category.");
-//                } else {
-//                    request.setAttribute("searchMsg",
-//                            "No books available.");
-//                }
-//            }
 
             request.setAttribute("keyword", keyword);
             request.setAttribute("selectedCategoryId", categoryId);
@@ -217,8 +184,20 @@ public class BookAdminController extends HttpServlet {
                 b.setAuthor(request.getParameter("author"));
                 b.setDescription(request.getParameter("description"));
                 b.setCategoryId(Integer.parseInt(request.getParameter("categoryId")));
-                b.setPrice(Double.parseDouble(request.getParameter("price")));
-                b.setStock(Integer.parseInt(request.getParameter("stock")));
+                //b.setPrice(Double.parseDouble(request.getParameter("price")));
+                double price;
+                try {
+                    price = Double.parseDouble(request.getParameter("price"));
+                } catch (Exception e) {
+                    throw new Exception("Price must be a number");
+                }
+
+                if (price <= 0) {
+                    throw new Exception("Price must be greater than 0");
+                }
+
+                b.setPrice(price);
+                //b.setStock(Integer.parseInt(request.getParameter("stock")));
                 b.setIsActive("true".equals(request.getParameter("isActive")));
 
                 BookDAO dao = new BookDAO();
@@ -306,15 +285,6 @@ public class BookAdminController extends HttpServlet {
                 int id = Integer.parseInt(request.getParameter("bookId"));
                 BookDAO dao = new BookDAO();
 
-//                if (dao.canHardDelete(id)) {
-//                    // không bị ràng buộc -> xóa cứng
-//                    dao.hardDeleteBook(id);
-//                    
-//                    session.setAttribute("msg", "Delete book successfully");
-//                    session.setAttribute("msgType", "success");
-//                } else{
-//                    // đang được sử dụng -> xóa mềm
-//                    dao.softDeleteBook(id);
                 dao.softDeleteBook(id);
                 session.setAttribute("msg",
                         "Book is currently used in orders. Status changed to inactive.");

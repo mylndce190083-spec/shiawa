@@ -84,6 +84,12 @@ public class VoucherAdminController extends HttpServlet {
 
             String name = request.getParameter("name");
             double discount = Double.parseDouble(request.getParameter("discount"));
+            // VALIDATE
+            if (discount < 0 || discount > 100) {
+                request.setAttribute("error", "Discount must be between 0 and 100");
+                request.getRequestDispatcher("/WEB-INF/voucher/create.jsp").forward(request, response);
+                return;
+            }
             int quantity = Integer.parseInt(request.getParameter("quantity"));
             String createdAt = request.getParameter("createdAt");
             String endedAt = request.getParameter("endedAt");
@@ -104,21 +110,38 @@ public class VoucherAdminController extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("id"));
             String name = request.getParameter("name");
             double discount = Double.parseDouble(request.getParameter("discount"));
-            int quantity = Integer.parseInt(request.getParameter("quantity"));
-            String createdAt = request.getParameter("createdAt");
-            String endedAt = request.getParameter("endedAt");
+            // VALIDATE
+            if (discount < 0 || discount > 100) {
 
-            Voucher v = new Voucher();
-            v.setVoucher_id(id);
-            v.setName(name);
-            v.setDiscount(discount);
-            v.setQuantity(quantity);
-            v.setCreatedAt(java.sql.Date.valueOf(createdAt));
-            v.setEndedAt(java.sql.Date.valueOf(endedAt));
+                int quantity = Integer.parseInt(request.getParameter("quantity"));
+                String createdAt = request.getParameter("createdAt");
+                String endedAt = request.getParameter("endedAt");
 
-            dao.updateVoucher(v);
+                Voucher v = new Voucher();
+                v.setVoucher_id(id);
+                v.setName(name);
+                v.setDiscount(discount);
+                v.setQuantity(quantity);
+                v.setCreatedAt(java.sql.Date.valueOf(createdAt));
+                v.setEndedAt(java.sql.Date.valueOf(endedAt));
 
-            response.sendRedirect("voucher-admin");
+                // tránh lỗi null date
+                if (createdAt != null && !createdAt.isEmpty()) {
+                    v.setCreatedAt(java.sql.Date.valueOf(createdAt));
+                }
+                if (endedAt != null && !endedAt.isEmpty()) {
+                    v.setEndedAt(java.sql.Date.valueOf(endedAt));
+                }
+                // QUAN TRỌNG
+                request.setAttribute("voucher", v);
+                request.setAttribute("error", "Discount must be between 0 and 100");
+
+                request.getRequestDispatcher("/WEB-INF/voucher/edit.jsp").forward(request, response);
+                return;
+            }
+//            dao.updateVoucher(v);
+//
+//            response.sendRedirect("voucher-admin");
         }
     }
 

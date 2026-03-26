@@ -12,15 +12,6 @@
         <section class="account-page">
 
             <h2>Account</h2>
-            <%
-                java.util.Enumeration<String> names = session.getAttributeNames();
-                while (names.hasMoreElements()) {
-                    String name = names.nextElement();
-                    Object value = session.getAttribute(name);
-                    out.println(name + " = " + value + "<br>");
-                }
-            %>
-
             <!-- TABS -->
             <div class="account-tabs">
                 <a href="${pageContext.request.contextPath}/login" class="tab active" data-tab="login">Login</a>

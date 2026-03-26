@@ -65,43 +65,6 @@ public class FeedbackController extends HttpServlet {
         }
     }
 
-//    @Override
-//    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-//            throws ServletException, IOException {
-//
-//        HttpSession session = request.getSession();
-//        Account user = (Account) session.getAttribute("user");
-//
-//        if (user == null) {
-//            response.sendRedirect(request.getContextPath() + "/login");
-//            return;
-//        }
-//        try {
-//        int orderId = Integer.parseInt(request.getParameter("order_id"));
-//        int rating = Integer.parseInt(request.getParameter("rating"));
-//        String content = request.getParameter("content");
-//        String redirectBookId = request.getParameter("book_id"); 
-//
-//        OrderDAO orderDao = new OrderDAO();
-//        Orders order = orderDao.getOrderById(orderId);
-//        List<OrderItem> items = order.getItems();
-//        FeedbackDAO fbDao = new FeedbackDAO();
-//
-//        for (OrderItem item : items) {
-//            Feedback fb = new Feedback();
-//            fb.setUserId(user.getId());
-//            fb.setBookId(item.getBookId());
-//            fb.setRating(rating);
-//            fb.setContent(content);
-//            fbDao.insertFeedback(fb);
-//        }
-//        response.sendRedirect(request.getContextPath() + "/bookdetail?id=" + redirectBookId);
-//
-//    } catch (Exception e) {
-//        e.printStackTrace();
-//        response.sendRedirect(request.getContextPath() + "/home");
-//    }
-//}
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

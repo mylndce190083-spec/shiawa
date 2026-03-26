@@ -12,7 +12,11 @@
     <div class="bg-light rounded p-4 col-lg-8 mx-auto">
 
         <h4 class="mb-4">Edit Voucher</h4>
-
+        <c:if test="${not empty error}">
+            <div class="alert alert-danger">
+                ${error}
+            </div>
+        </c:if>
         <form action="${pageContext.request.contextPath}/voucher-admin" method="post">
 
             <input type="hidden" name="view" value="update">
@@ -27,7 +31,7 @@
 
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Discount (%)</label>
-                    <input type="number" name="discount" value="${voucher.discount}" class="form-control">
+                    <input type="number" name="discount" value="${voucher.discount}" class="form-control" min="0" max="100" required>
                 </div>
 
                 <div class="col-md-6 mb-3">

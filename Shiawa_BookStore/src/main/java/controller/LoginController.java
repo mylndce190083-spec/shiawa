@@ -31,6 +31,26 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        Account user = (Account) session.getAttribute("user");
+
+        if (user != null) {
+
+            if ("Admin".equalsIgnoreCase(user.getRole())) {
+                response.sendRedirect(request.getContextPath() + "/account");
+
+            } else if ("Inventory".equalsIgnoreCase(user.getRole())) {
+                response.sendRedirect(request.getContextPath() + "/inventory?view=list");
+
+            } else if ("Customer".equalsIgnoreCase(user.getRole())) {
+                response.sendRedirect("home");
+
+            } else {
+                response.sendRedirect("home");
+            }
+            return;
+        }
+
         request.getRequestDispatcher("/WEB-INF/account/login.jsp").forward(request, response);
     }
 

@@ -97,14 +97,7 @@ public class CheckoutController extends HttpServlet {
         }
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -238,7 +231,7 @@ public class CheckoutController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/cart");
                 return;
             }
-            // 🔥 LƯU LẠI ĐỂ KHÔNG BỊ MẤT
+            // LƯU LẠI ĐỂ KHÔNG BỊ MẤT
             session.setAttribute("pendingItems", selectedItems);
 //áp dụng voucher
 
@@ -283,9 +276,6 @@ public class CheckoutController extends HttpServlet {
                 boolean hasError = false;
                 String shippingAddress;
 
-                // =====================================================
-                // TRƯỜNG HỢP 1: NGƯỜI DÙNG CÓ CHỈNH SỬA ĐỊA CHỈ
-                // =====================================================
                 if ("true".equals(isEditAddress)) {
 
                     if (province == null || province.trim().isEmpty()) {
@@ -338,9 +328,6 @@ public class CheckoutController extends HttpServlet {
 
                 } else {
 
-                    // =====================================================
-                    // TRƯỜNG HỢP 2: KHÔNG CHỈNH SỬA → DÙNG SESSION
-                    // =====================================================
                     Customer customer = (Customer) session.getAttribute("customer");
 
                     receiverName = customer.getFullname();
@@ -348,20 +335,7 @@ public class CheckoutController extends HttpServlet {
                     shippingAddress = customer.getAddress();
                 }
 
-                // =====================================================
-                // TẠO ORDER
-                // =====================================================
-//                int orderId = orderDAO.createOrder(
-//                        user.getId(),
-//                        selectedItems,
-//                        shippingAddress,
-//                        shippingFee,
-//                        receiverName,
-//                        phone
-//                );
-                // =====================================================
-                // LƯU SESSION (chỉ khi có chỉnh sửa địa chỉ)
-                // =====================================================
+                
                 if ("true".equals(isEditAddress)) {
                     session.setAttribute("savedProvince", province);
                     session.setAttribute("savedDistrict", district);
@@ -372,18 +346,8 @@ public class CheckoutController extends HttpServlet {
 
                 }
 
-                // =====================================================
-                // XÓA CART
-                // =====================================================
-//                for (CartItem item : selectedItems) {
-//                    cartDAO.delete(user.getId(), item.getBookId());
-//                }
                 request.setAttribute("selectedItems", selectedItems);
-//                request.setAttribute("orderId", orderId);
 
-                // =====================================================
-// PAYMENT FLOW
-// =====================================================
                 Integer voucherId = null;
                 if (voucherIdRaw != null && !voucherIdRaw.isEmpty()) {
                     voucherId = Integer.parseInt(voucherIdRaw);
@@ -407,25 +371,13 @@ public class CheckoutController extends HttpServlet {
                     if (voucherId  != null) {
                         vdao.markVoucherAsUsed(voucherId, orderId);
                     }
-                    System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
-                    System.out.println(voucherIdRaw);
-                    // ❗ FIX Ở ĐÂY
-//                    if (!isBuyNow) {
-//                        for (CartItem item : selectedItems) {
-//                            cartDAO.delete(user.getId(), item.getBookId());
-//                        }
-//                    }
+                    
                     request.setAttribute("orderId", orderId);
 
                     request.getRequestDispatcher("/WEB-INF/home/order-success.jsp")
                             .forward(request, response);
 
                 } else if ("ONLINE".equals(paymentMethod)) {
-                    System.out.println("DEBUG RECEIVER = " + receiverName);
-                    System.out.println("DEBUG PHONE = " + phone);
-                    System.out.println("DEBUG ADDRESS = " + shippingAddress);
-                    System.out.println("DEBUG ITEMS = " + selectedItems.size());
-
                     session.setAttribute("pendingItems", selectedItems);
                     session.setAttribute("pendingAddress", shippingAddress);
                     session.setAttribute("pendingReceiver", receiverName);
@@ -433,9 +385,7 @@ public class CheckoutController extends HttpServlet {
                     session.setAttribute("pendingAmount", amount);
                     session.setAttribute("discount", discount);
                     session.setAttribute("voucherId", voucherId );
-                    // 🔥 FIX QUAN TRỌNG
-//                    session.removeAttribute("isBuyNow");
-//                    session.removeAttribute("buyNowItems");
+                    
                     response.sendRedirect("ajaxServlet?amount=" + (int) amount);
                 }
             } catch (Exception e) {
@@ -453,19 +403,19 @@ public class CheckoutController extends HttpServlet {
             BookDAO bookDAO = new BookDAO();
             Book book = bookDAO.getBookById(bookId);
 
-            // 🔥 tạo 1 CartItem giả
+            // tạo 1 CartItem giả
             CartItem item = new CartItem();
             item.setBook(book);
             item.setBookId(bookId);
             item.setQuantity(1);
             item.setPrice(book.getPrice());
 
-            // 🔥 tạo list giống cart
+            // tạo list giống cart
             List<CartItem> orderItems = new ArrayList<>();
             orderItems.add(item);
             session.setAttribute("buyNowItems", orderItems);
             session.setAttribute("isBuyNow", true);
-            // 🔥 set giống cart luôn
+            // set giống cart luôn
             request.setAttribute("orderItems", orderItems);
             List<Voucher> list;
             list = vdao.getMyVoucherList(user.getId());

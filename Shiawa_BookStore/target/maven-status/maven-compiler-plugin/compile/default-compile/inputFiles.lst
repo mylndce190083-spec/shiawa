@@ -7,7 +7,6 @@ D:\SWP391\shiawa\Shiawa_BookStore\src\main\java\dao\AccountDAO.java
 D:\SWP391\shiawa\Shiawa_BookStore\src\main\java\dao\OrderDetailDAO.java
 D:\SWP391\shiawa\Shiawa_BookStore\src\main\java\model\Account.java
 D:\SWP391\shiawa\Shiawa_BookStore\src\main\java\model\StockTxnItem.java
-D:\SWP391\shiawa\Shiawa_BookStore\src\main\java\controller\BookImgController.java
 D:\SWP391\shiawa\Shiawa_BookStore\src\main\java\dao\FeedbackDAO.java
 D:\SWP391\shiawa\Shiawa_BookStore\src\main\java\controller\MyVoucherController.java
 D:\SWP391\shiawa\Shiawa_BookStore\src\main\java\controller\IncomeController.java
@@ -52,7 +51,6 @@ D:\SWP391\shiawa\Shiawa_BookStore\src\main\java\controller\VnpayReturnController
 D:\SWP391\shiawa\Shiawa_BookStore\src\main\java\com\mycompany\shiawa_bookstore\resources\JakartaEE10Resource.java
 D:\SWP391\shiawa\Shiawa_BookStore\src\main\java\vnpay\Config.java
 D:\SWP391\shiawa\Shiawa_BookStore\src\main\java\controller\FeedbackController.java
-D:\SWP391\shiawa\Shiawa_BookStore\src\main\java\controller\CustomerController.java
 D:\SWP391\shiawa\Shiawa_BookStore\src\main\java\model\ChatSession.java
 D:\SWP391\shiawa\Shiawa_BookStore\src\main\java\controller\GetVoucherController.java
 D:\SWP391\shiawa\Shiawa_BookStore\src\main\java\controller\BookController.java

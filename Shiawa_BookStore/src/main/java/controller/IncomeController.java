@@ -30,7 +30,7 @@ public class IncomeController extends HttpServlet {
         HttpSession session = request.getSession();
         Object user = session.getAttribute("user");
 
-        // 🔒 Check login (giống BookAdminController)
+        // Check login (giống BookAdminController)
         if (user == null) {
             response.sendRedirect("login");
             return;

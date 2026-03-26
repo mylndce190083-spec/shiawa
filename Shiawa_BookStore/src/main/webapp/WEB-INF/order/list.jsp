@@ -13,16 +13,7 @@
 
         <div class="d-flex align-items-center justify-content-between mb-4">
             <h6 class="mb-0">Order List</h6>
-        </div>
-        <%
-            java.util.Enumeration<String> names = session.getAttributeNames();
-            while (names.hasMoreElements()) {
-                String name = names.nextElement();
-                Object value = session.getAttribute(name);
-                out.println(name + " = " + value + "<br>");
-            }
-        %>
-
+        </div>       
         <c:choose>
             <c:when test="${empty orderList}">
                 <div class="alert alert-warning">

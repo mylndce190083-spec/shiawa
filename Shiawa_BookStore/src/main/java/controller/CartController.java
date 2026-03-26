@@ -41,18 +41,6 @@ public class CartController extends HttpServlet {
             return;
         }
 
-//
-//        // 2. Lấy customer từ account
-//        CustomerDAO customerDAO = new CustomerDAO();
-//        Customer customer = customerDAO.getCustomerByAccountId(user.getId());
-//
-//        if (customer == null) {
-//            request.setAttribute("cartItem", List.of());
-//            request.getRequestDispatcher("/WEB-INF/home/cart.jsp")
-//                    .forward(request, response);
-//            return;
-//        }
-//
         CustomerDAO customerDAO = new CustomerDAO();
         Customer customer = customerDAO.getCustomerByAccountId(user.getId());
 
@@ -77,14 +65,6 @@ public class CartController extends HttpServlet {
 
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -173,7 +153,7 @@ public class CartController extends HttpServlet {
                 break;
 
         }
-        // 🔥 Cập nhật lại tổng số sản phẩm trong giỏ
+        // Cập nhật lại tổng số sản phẩm trong giỏ
         List<CartItem> cartItems = dao.getCartByCustomerId(customerId);
 
         int totalQuantity = 0;

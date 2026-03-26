@@ -24,22 +24,6 @@
 
                     <h6>Book Images</h6>
 
-                    <!-- Upload form riêng -->
-<!--                                <form action="${pageContext.request.contextPath}/book_img"
-                          method="post"
-                          enctype="multipart/form-data"
-                          class="mb-3">
-
-                        <input type="hidden" name="action" value="upload">
-                        <input type="hidden" name="bookId" value="${book.bookId}">
-
-                        <input type="file" name="image" class="form-control mb-2" required>
-
-                        <button type="submit" class="btn btn-success w-100">
-                            <i class="fa fa-upload me-2"></i>Upload Image
-                        </button>
-                    </form>-->
-
                     <!-- Danh sách ảnh -->
                     <c:forEach var="img" items="${bookImages}">
                         <c:if test="${not empty img.imageUrl}">
@@ -55,46 +39,17 @@
                                        value="">
 
                                 <div class="d-flex justify-content-between">
+                                    <button type="button"
+                                            onclick="markDelete(${img.imageId}, this)"
+                                            class="btn btn-danger btn-sm">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
 
-                                    <!-- Set Primary -->
-                                    <div>
-                                        <!--                                                        <input type="hidden" name="action" value="setPrimary">
-                                                                                                <input type="hidden" name="imageId" value="${img.imageId}">
-                                                                                                <input type="hidden" name="bookId" value="${book.bookId}">
-                                                                                                <button type="submit"
-                                                                                                        class="btn btn-sm ${img.primary ? 'btn-warning' : 'btn-outline-warning'}"
-                                        ${img.primary ? 'disabled' : ''}>
-                                    <i class="fa fa-star"></i>
-                                </button>-->
-                                        <button type="button"
-                                                onclick="setPrimary(${img.imageId}, this)"
-                                                class="btn btn-sm ${img.primary ? 'btn-warning' : 'btn-outline-warning'}">
-                                            <i class="fa fa-star"></i>
-                                        </button>
-
-
-                                    </div>
-
-                                    <!-- Delete -->
-                                    <div>
-                                        <!--                                                        <input type="hidden" name="action" value="delete">
-                                                                                                <input type="hidden" name="imageId" value="${img.imageId}">
-                                                                                                <input type="hidden" name="bookId" value="${book.bookId}">
-                                                                                                <button type="submit" class="btn btn-danger btn-sm">
-                                                                                                    <i class="fa fa-trash"></i>
-                                                                                                </button>-->
-                                        <button type="button"
-                                                onclick="markDelete(${img.imageId}, this)"
-                                                class="btn btn-danger btn-sm">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
-
-
-                                    </div>
 
                                 </div>
 
                             </div>
+
                         </c:if>
                     </c:forEach>
 
@@ -145,8 +100,10 @@
                         <tr>
                             <th>Price</th>
                             <td>
-                                <input type="number" step="0.01" class="form-control"
-                                       name="price" value="${book.price}" required>
+                                <input type="number" step="0.01" min="0.01"
+                                       class="form-control"
+                                       name="price"
+                                       value="${book.price}" required>
                             </td>
                         </tr>
 
@@ -154,7 +111,7 @@
                             <th>Stock</th>
                             <td>
                                 <input type="number" class="form-control"
-                                       name="stock" value="${book.stock}" required>
+                                       name="stock" value="${book.stock}" disabled>
                             </td>
                         </tr>
 
