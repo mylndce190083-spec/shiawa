@@ -39,7 +39,7 @@
 
             /* CSS MỚI ĐỂ GOM NHÓM MENU */
             .category-nav {
-                background-color: #f1f8f1; /* Màu xanh nhạt đồng bộ */
+                background-color: #f1f8f1; 
                 padding: 10px 0;
                 border-bottom: 1px solid #ddd;
             }
@@ -51,7 +51,7 @@
                 list-style: none;
                 margin: 0;
                 padding: 0;
-                flex-wrap: nowrap; /* Ép menu nằm trên 1 dòng */
+                flex-wrap: nowrap; 
             }
 
             .menu-item {

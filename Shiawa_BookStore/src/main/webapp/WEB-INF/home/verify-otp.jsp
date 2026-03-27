@@ -65,7 +65,7 @@
                         <button type="submit" class="modal-btn">Xác nhận</button>
 
                         <div class="modal-link">
-                            <a href="forgot-password">Gửi lại OTP</a>
+                            <a href="forgot-password">Quay lại</a>
                         </div>
 
                     </form>

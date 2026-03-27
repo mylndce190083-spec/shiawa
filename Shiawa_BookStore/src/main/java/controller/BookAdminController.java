@@ -178,12 +178,22 @@ public class BookAdminController extends HttpServlet {
             try {
                 //Update Book
                 BookAdmin b = new BookAdmin();
+                int discount = Integer.parseInt(request.getParameter("discount"));
+
+                if (discount < 0 || discount > 100) {
+
+                    session.setAttribute("msg", "vui lòng nhập từ 0 đến 100");
+                    session.setAttribute("msgType", "danger");
+                    response.sendRedirect(request.getContextPath() + "/book-admin");
+                    return;
+                }
                 b.setBookId(Integer.parseInt(request.getParameter("bookId")));
                 int bookId = b.getBookId();
                 b.setTitle(request.getParameter("title"));
                 b.setAuthor(request.getParameter("author"));
                 b.setDescription(request.getParameter("description"));
                 b.setCategoryId(Integer.parseInt(request.getParameter("categoryId")));
+                b.setDiscount(discount);
                 //b.setPrice(Double.parseDouble(request.getParameter("price")));
                 double price;
                 try {

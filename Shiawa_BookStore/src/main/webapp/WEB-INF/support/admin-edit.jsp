@@ -3,7 +3,7 @@
 
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light rounded p-4">
-        <h6 class="mb-3">Sửa FAQ</h6>
+        <h6 class="mb-3">Edit FAQ</h6>
         <form method="post" action="${pageContext.request.contextPath}/support-admin">
             <input type="hidden" name="view" value="update"/>
             <input type="hidden" name="id" value="${faq.id}"/>
@@ -16,7 +16,7 @@
                 <textarea class="form-control" name="answer" rows="4" required>${faq.answer}</textarea>
             </div>
             <div class="mb-3">
-                <label class="form-label">Tags (phân tách bằng dấu phẩy)</label>
+                <label class="form-label">Tags (analyzed using comma symbols)</label>
                 <input class="form-control" name="tags" value="${faq.tags}" />
             </div>
             <div class="form-check mb-3">
@@ -24,8 +24,8 @@
                 <label class="form-check-label" for="isActive">Active</label>
             </div>
             <div class="d-flex gap-2">
-                <button class="btn btn-success" type="submit">Cập nhật</button>
-                <a class="btn btn-secondary" href="${pageContext.request.contextPath}/support-admin">Hủy</a>
+                <button class="btn btn-success" type="submit">Update</button>
+                <a class="btn btn-secondary" href="${pageContext.request.contextPath}/support-admin">Cancel</a>
             </div>
         </form>
     </div>

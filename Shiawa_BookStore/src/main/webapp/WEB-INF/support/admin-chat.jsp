@@ -26,7 +26,7 @@
             <input type="hidden" name="sessionId" value="${sessionId}"/>
             <div class="input-group">
                 <input class="form-control" name="content" placeholder="Nhập phản hồi cho khách hàng..." required />
-                <button class="btn btn-success" type="submit">Gửi</button>
+                <button class="btn btn-success" type="submit">Submit</button>
             </div>
         </form>
     </div>

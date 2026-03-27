@@ -6,18 +6,18 @@
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light rounded p-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="mb-0">Phiếu nhập kho (GRN)</h6>
-            <a class="btn btn-outline-primary btn-sm" href="${pageContext.request.contextPath}/inventory?view=history">Thông báo yêu cầu</a>
+            <h6 class="mb-0">Inventory receipt (GRN)</h6>
+            <a class="btn btn-outline-primary btn-sm" href="${pageContext.request.contextPath}/inventory?view=history">Notification of request</a>
         </div>
 
         <c:if test="${not empty error}">
             <div class="alert alert-danger">${error}</div>
         </c:if>
         <c:if test="${param.msg == 'requested'}">
-            <div class="alert alert-info">Phiếu nhập đã gửi Admin duyệt thành công. Mã yêu cầu: #${param.id}</div>
+            <div class="alert alert-info">The order has been successfully submitted to the Admin for approval. Request code: #${param.id}</div>
         </c:if>
         <c:if test="${param.msg == 'approved'}">
-            <div class="alert alert-success">Yêu cầu #${param.id} đã được Admin đồng ý.</div>
+            <div class="alert alert-success">Require #${param.id} Approved by Admin.</div>
         </c:if>
 
         <form action="${pageContext.request.contextPath}/inventory" method="post">
@@ -25,12 +25,12 @@
 
             <div class="row g-3 mb-3">
                 <div class="col-md-4">
-                    <label class="form-label">Người thực hiện</label>
+                    <label class="form-label">Perform by</label>
                     <input class="form-control" value="${currentStaffName}" readonly/>
-                    <div class="form-text">Mã phiếu sẽ tự sinh theo tên người thực hiện.</div>
+                    <div class="form-text">The ticket code will be automatically generated based on the name of the person making the transaction.</div>
                 </div>
                 <div class="col-md-8">
-                    <label class="form-label">Ghi chú</label>
+                    <label class="form-label">Note</label>
                     <input class="form-control" name="note"/>
                 </div>
             </div>
@@ -39,13 +39,13 @@
                 <table class="table table-bordered align-middle mb-2">
                     <thead>
                         <tr class="text-success">
-                            <th>Sách (chọn từ DB hoặc nhập sách mới)</th>
-                            <th style="width:160px;">Tác giả</th>
-                            <th style="width:160px;">NXB</th>
-                            <th style="width:180px;">Thể loại</th>
-                            <th style="width:120px;">Số lượng</th>
-                            <th style="width:160px;">Giá nhập (optional)</th>
-                            <th style="width:100px;">Thêm</th>
+                            <th>Books (select from database or import new books)</th>
+                            <th style="width:160px;">Author</th>
+                            <th style="width:160px;">Publisher</th>
+                            <th style="width:180px;">Inventory</th>
+                            <th style="width:120px;">Quantity</th>
+                            <th style="width:160px;">Import price (optional)</th>
+                            <th style="width:100px;">Add</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -60,7 +60,7 @@
                             <td><input class="form-control" id="entryPublisher" type="text" placeholder="Nhà xuất bản"/></td>
                             <td>
                                 <select class="form-select" id="entryCategory">
-                                    <option value="">-- chọn --</option>
+                                    <option value="">-- Select --</option>
                                     <c:forEach var="c" items="${categories}">
                                         <option value="${c.categoryId}">${c.categoryName}</option>
                                     </c:forEach>
@@ -75,19 +75,19 @@
             </div>
 
             <div class="mb-3 position-relative" style="z-index: 1;">
-                <div class="small text-muted mb-2">Danh sách đã Add:</div>
-                <div id="emptyAddedHint" class="text-muted small">Chưa có dòng nào được thêm.</div>
+                <div class="small text-muted mb-2">List Add:</div>
+                <div id="emptyAddedHint" class="text-muted small">No lines have been added yet.</div>
                 <div class="table-responsive" style="overflow: visible;">
                     <table class="table table-sm table-striped align-middle mb-0" id="addedItemsTable" style="display:none;">
                         <thead>
                             <tr>
-                                <th>Sách</th>
-                                <th style="width:160px;">Tác giả</th>
-                                <th style="width:160px;">NXB</th>
-                                <th style="width:180px;">Thể loại</th>
-                                <th style="width:120px;">Số lượng</th>
-                                <th style="width:160px;">Giá nhập</th>
-                                <th style="width:100px;">Xóa</th>
+                                <th>Book</th>
+                                <th style="width:160px;">Author</th>
+                                <th style="width:160px;">Publisher</th>
+                                <th style="width:180px;">Category</th>
+                                <th style="width:120px;">Quantity</th>
+                                <th style="width:160px;">Import price</th>
+                                <th style="width:100px;">Delete</th>
                             </tr>
                         </thead>
                         <tbody id="addedItemsBody"></tbody>
@@ -98,7 +98,7 @@
             <div id="hiddenItemsContainer"></div>
 
             <div class="d-flex gap-2">
-                <button class="btn btn-success" type="submit">Tạo phiếu nhập</button>
+                <button class="btn btn-success" type="submit">Create receipt</button>
             </div>
         </form>
     </div>

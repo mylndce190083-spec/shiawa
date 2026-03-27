@@ -5,7 +5,7 @@
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light rounded p-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="mb-0">Duyệt phiếu nhập kho</h6>
+            <h6 class="mb-0">Review the warehouse receipt.</h6>
         </div>
 
         <c:if test="${not empty error}">
@@ -13,7 +13,7 @@
         </c:if>
 
         <c:if test="${empty requests}">
-            <div class="alert alert-info mb-0">Chưa có yêu cầu nhập kho nào.</div>
+            <div class="alert alert-info mb-0">No warehousing requests have been received yet.</div>
         </c:if>
 
         <c:if test="${not empty requests}">
@@ -22,11 +22,11 @@
                     <thead>
                         <tr class="text-success">
                             <th>ID</th>
-                            <th>Mã yêu cầu</th>
-                            <th>Trạng thái</th>
-                            <th>Ghi chú</th>
-                            <th>Chi tiết</th>
-                            <th style="width:220px;">Hành động</th>
+                            <th>Request code</th>
+                            <th>Status</th>
+                            <th>Note</th>
+                            <th>Detail</th>
+                            <th style="width:220px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -36,9 +36,9 @@
                                 <td>${not empty r.requestedByStaffName ? r.requestedByStaffName : r.requestCode}</td>
                                 <td>
                                     <c:choose>
-                                        <c:when test="${r.status == 'APPROVED'}"><span class="badge bg-success">Đã duyệt</span></c:when>
-                                        <c:when test="${r.status == 'REJECTED'}"><span class="badge bg-danger">Từ chối</span></c:when>
-                                        <c:otherwise><span class="badge bg-warning text-dark">Chờ duyệt</span></c:otherwise>
+                                        <c:when test="${r.status == 'APPROVED'}"><span class="badge bg-success">Approved</span></c:when>
+                                        <c:when test="${r.status == 'REJECTED'}"><span class="badge bg-danger">Rejected</span></c:when>
+                                        <c:otherwise><span class="badge bg-warning text-dark">Waiting</span></c:otherwise>
                                     </c:choose>
                                 </td>
                                 <td>${r.note}</td>
@@ -51,7 +51,7 @@
                                                         #${it.bookId} - ${it.bookTitle}
                                                     </c:when>
                                                     <c:otherwise>
-                                                        (Sách mới) ${it.newBookTitle}
+                                                        (New book) ${it.newBookTitle}
                                                     </c:otherwise>
                                                 </c:choose>
                                                 — SL: ${it.qty}
@@ -63,8 +63,8 @@
                                     <c:if test="${r.status == 'PENDING'}">
                                         <form action="${pageContext.request.contextPath}/admin/stock-in-approval" method="post" class="d-flex gap-2">
                                             <input type="hidden" name="requestId" value="${r.requestId}"/>
-                                            <button class="btn btn-success btn-sm" name="action" value="approve" type="submit">Duyệt</button>
-                                            <button class="btn btn-danger btn-sm" name="action" value="reject" type="submit">Từ chối</button>
+                                            <button class="btn btn-success btn-sm" name="action" value="approve" type="submit">Approve</button>
+                                            <button class="btn btn-danger btn-sm" name="action" value="reject" type="submit">Reject</button>
                                         </form>
                                     </c:if>
                                 </td>

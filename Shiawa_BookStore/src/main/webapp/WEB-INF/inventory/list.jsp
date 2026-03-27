@@ -10,7 +10,7 @@
         <div class="d-flex align-items-center justify-content-between mb-4">
             <!--<h6 class="mb-0">User List</h6>-->
             <div class="d-flex justify-content-between align-items-center">
-                <h6 class="mb-0">Kho sách (tồn kho)</h6>
+                <h6 class="mb-0">Book inventory</h6>
             </div>
             <div class="d-flex gap-3 align-items-center">
             </div>
@@ -25,13 +25,13 @@
                             </div>
                             <div class="col-md-3">
                                 <select class="form-select" name="sort">
-                                    <option value="">Sắp xếp tồn tăng dần</option>
-                                    <option value="stock_desc" ${sort == 'stock_desc' ? 'selected' : ''}>Tồn giảm dần</option>
-                                    <option value="id" ${sort == 'id' ? 'selected' : ''}>Theo ID</option>
+                                    <option value="">Sort in ascending order</option>
+                                    <option value="stock_desc" ${sort == 'stock_desc' ? 'selected' : ''}>Sort in descending order</option>
+                                    <option value="id" ${sort == 'id' ? 'selected' : ''}>Follow ID</option>
                                 </select>
                             </div>
                             <div class="col-md-3 d-flex gap-2">
-                                <button class="btn btn-success w-100" type="submit">Lọc</button>
+                                <button class="btn btn-success w-100" type="submit">Filter</button>
                                 <a class="btn btn-outline-secondary w-100" href="${pageContext.request.contextPath}/inventory?view=list">Reset</a>
                             </div>
                         </form>

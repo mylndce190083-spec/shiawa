@@ -6,6 +6,8 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <%@include file="../include/headerAdmin.jsp" %>
 <!-- Recent Sales Start -->
 <div class="container-fluid pt-4 px-4">
@@ -64,7 +66,9 @@
                         </tr>
                         <tr>
                             <th>Price</th>
-                            <td>${book.price}</td>
+                            <td>
+                            <fmt:formatNumber value="${book.price}" groupingUsed="true" maxFractionDigits="0"/> 
+                            </td>
                         </tr>
                         <tr>
                             <th>Stock</th>

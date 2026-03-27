@@ -54,13 +54,13 @@
                                                    'secondary'}">
 
                                             <c:choose>
-                                                <c:when test="${o.status == 'PENDING'}">Chờ xác nhận</c:when>
-                                                <c:when test="${o.status == 'CONFIRMED'}">Đã xác nhận</c:when>
-                                                <c:when test="${o.status == 'SHIPPING'}">Đang vận chuyển</c:when>
-                                                <c:when test="${o.status == 'DELIVERED'}">Giao thành công</c:when>
-                                                <c:when test="${o.status == 'FAILED'}">Giao thất bại</c:when>
-                                                <c:when test="${o.status == 'CANCEL_REQUESTED'}">Yêu cầu hủy</c:when>
-                                                <c:when test="${o.status == 'REFUNDED'}">Đã hoàn tiền</c:when>
+                                                <c:when test="${o.status == 'PENDING'}">Pending</c:when>
+                                                <c:when test="${o.status == 'CONFIRMED'}">Confirmed</c:when>
+                                                <c:when test="${o.status == 'SHIPPING'}">Shipping</c:when>
+                                                <c:when test="${o.status == 'DELIVERED'}">Delivered</c:when>
+                                                <c:when test="${o.status == 'FAILED'}">Failed</c:when>
+                                                <c:when test="${o.status == 'CANCEL_REQUESTED'}">Cancel requested</c:when>
+                                                <c:when test="${o.status == 'REFUNDED'}">Refunded</c:when>
                                                 <c:otherwise>${o.status}</c:otherwise>
                                             </c:choose>
 

@@ -153,11 +153,19 @@ public class CategoryController extends HttpServlet {
             int categoryParentId = Integer.parseInt(request.getParameter("categoryParentId"));
             if (categoryParentId > 0) {
                 try {
+                    CategoryDAO cdao = new CategoryDAO();
+                    if (cdao.isCategoryNameExists(name)) {
+                        session.setAttribute("msg", "Category name already exists!");
+                        session.setAttribute("msgType", "danger");
+                        response.sendRedirect(request.getContextPath() + "/category-admin");
+                        return;
+                    }
+                    
                     Category c = new Category();
                     c.setCategoryName(name);
                     c.setParentId(categoryParentId);
 
-                    CategoryDAO cdao = new CategoryDAO();
+                    
                     cdao.insertChildCategory(c);
 
                     // message thành công
@@ -174,10 +182,18 @@ public class CategoryController extends HttpServlet {
                 return;
             } else {
                 try {
+                    CategoryDAO cdao = new CategoryDAO();
+                    if (cdao.isCategoryNameExists(name)) {
+                        session.setAttribute("msg", "Category name already exists!");
+                        session.setAttribute("msgType", "danger");
+                        response.sendRedirect(request.getContextPath() + "/category-admin");
+                        return;
+                    }
+                    
                     Category c = new Category();
                     c.setCategoryName(name);
 
-                    CategoryDAO cdao = new CategoryDAO();
+                   
                     cdao.insertParentCategory(c);
 
                     // message thành công
@@ -202,12 +218,20 @@ public class CategoryController extends HttpServlet {
 
             if (categoryParentId > 0) {
                 try {
+                    CategoryDAO cdao = new CategoryDAO();
+                    if (cdao.isCategoryNameExists(name)) {
+                        session.setAttribute("msg", "Category name already exists!");
+                        session.setAttribute("msgType", "danger");
+                        response.sendRedirect(request.getContextPath() + "/category-admin");
+                        return;
+                    }
+                    
                     Category c = new Category();
                     c.setCategoryName(name);
                     c.setParentId(categoryParentId);
                     c.setCategoryId(categoryId);
 
-                    CategoryDAO cdao = new CategoryDAO();
+                  
                     cdao.updateChildCategory(c);
 
                     // message thành công
@@ -224,11 +248,19 @@ public class CategoryController extends HttpServlet {
                 return;
             } else {
                 try {
+                    CategoryDAO cdao = new CategoryDAO();
+                    if (cdao.isCategoryNameExists(name)) {
+                        session.setAttribute("msg", "Category name already exists!");
+                        session.setAttribute("msgType", "danger");
+                        response.sendRedirect(request.getContextPath() + "/category-admin");
+                        return;
+                    }
+                    
                     Category c = new Category();
                     c.setCategoryName(name);
                     c.setCategoryId(categoryId);
 
-                    CategoryDAO cdao = new CategoryDAO();
+                    
                     cdao.updateParentCategory(c);
 
                     // message thành công

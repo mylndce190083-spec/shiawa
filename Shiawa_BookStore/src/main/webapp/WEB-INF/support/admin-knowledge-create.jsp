@@ -3,7 +3,7 @@
 
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light rounded p-4">
-        <h6 class="mb-3">Thêm câu trả lời tự động</h6>
+        <h6 class="mb-3">Add automatic replies</h6>
         <form method="post" action="${pageContext.request.contextPath}/support-admin">
             <input type="hidden" name="view" value="knowledge-add"/>
             <div class="mb-3">
@@ -19,8 +19,8 @@
                 <label class="form-check-label" for="isActive">Active</label>
             </div>
             <div class="d-flex gap-2">
-                <button class="btn btn-success" type="submit">Lưu</button>
-                <a class="btn btn-secondary" href="${pageContext.request.contextPath}/support-admin">Hủy</a>
+                <button class="btn btn-success" type="submit">Save</button>
+                <a class="btn btn-secondary" href="${pageContext.request.contextPath}/support-admin">Cancel</a>
             </div>
         </form>
     </div>

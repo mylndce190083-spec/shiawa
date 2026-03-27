@@ -13,6 +13,7 @@
         <link href="${pageContext.request.contextPath}/assets/css/css.css" rel="stylesheet" type="text/css"/>
     </head>
     <body>
+        <jsp:include page="/client/layout/header.jsp"/>
         <div class="profile-wrapper">
 
             <!-- Sidebar -->

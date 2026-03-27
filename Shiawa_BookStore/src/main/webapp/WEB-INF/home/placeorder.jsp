@@ -338,6 +338,7 @@
         </style>
     </head>
     <body>
+        <jsp:include page="/client/layout/header.jsp"/>
         <div class="container">
 
             <!-- LEFT -->

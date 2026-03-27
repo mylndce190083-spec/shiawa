@@ -158,45 +158,6 @@
 
                 </c:otherwise>
             </c:choose>
-
-
-
-
-
-            <!-- VOUCHER 
-            <div class="voucher">
-                <input type="text" name="voucher" placeholder="Nhập mã giảm giá">
-                <button type="button">Áp dụng</button>
-                <p class="voucher-message"></p>
-            </div>-->
-
-            <!-- TOTAL -->
-            <!--            <div class="cart-footer">
-                            <strong>
-                                Total: $
-            <c:set var="total" value="0"/>
-            <c:forEach var="item" items="${cartItem}">
-                <c:set var="total"
-                       value="${total + (item.price * item.quantity)}"/>
-            </c:forEach>
-            ${total}
-        </strong>
-    </div>-->
-            <!--  <div class="cart-footer">
-                  <strong>
-                      Total: $<span id="totalPrice">0</span>
-                  </strong>
-              </div>
-  
-              <div class="cart-actions">
-                  <form action="${pageContext.request.contextPath}/checkout" method="post">
-                      <input type="hidden" name="action" value="preview">
-                      <button type="submit" class="pay-btn">
-                          PAY NOW
-                      </button>
-                  </form>
-              </div>
-            -->
         </section>
 
         <script>
@@ -295,7 +256,7 @@
                         })
                         .catch(error => console.error("Error:", error));
             }
-            // ===== CHỌN TẤT CẢ =====
+            // chọn tất cả
             document.getElementById("selectAll").addEventListener("change", function () {
 
                 const isChecked = this.checked;

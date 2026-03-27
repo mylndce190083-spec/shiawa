@@ -147,7 +147,7 @@ public class FeedbackDAO extends db.DBContext {
 
         try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
             ps.setInt(1, status); // 0 hoặc 1
-            ps.setInt(2, id);;
+            ps.setInt(2, id);
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -155,18 +155,5 @@ public class FeedbackDAO extends db.DBContext {
         return false;
     }
 
-    public static void main(String[] args) {
-        FeedbackDAO dao = new FeedbackDAO();
-        List<Feedback> list = dao.getFeedbacksByBookId(7);
-        for (Feedback f : list) {
-            System.out.println(f);
-        }
-        Feedback fb = new Feedback();
-        fb.setContent("dowrr");
-        fb.setRating(2);
-        System.out.println("SIZE = " + list.size());
-        System.out.println(dao.getFeedbacksByBookId(7));
-
-    }
-
+   
 }

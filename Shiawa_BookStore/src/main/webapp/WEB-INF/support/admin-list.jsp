@@ -5,11 +5,11 @@
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light rounded p-4 mb-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="mb-0">Customer Support - Danh sách phiên chat</h6>
+            <h6 class="mb-0">Customer Support - Chat session list</h6>
         </div>
 
         <c:if test="${empty chatSessions}">
-            <div class="alert alert-info mb-0">Chưa có phiên chat nào.</div>
+            <div class="alert alert-info mb-0">No chat session has started yet.</div>
         </c:if>
 
         <c:if test="${not empty chatSessions}">
@@ -20,9 +20,9 @@
                             <th>Session ID</th>
                             <th>Customer ID</th>
                             <th>Staff ID</th>
-                            <th>Tin nhắn cuối</th>
-                            <th>Thời gian</th>
-                            <th>Hành động</th>
+                            <th>Last message</th>
+                            <th>Time</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -46,12 +46,12 @@
 
     <div class="bg-light rounded p-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="mb-0">Câu trả lời tự động (Keyword)</h6>
-            <a class="btn btn-success" href="${pageContext.request.contextPath}/support-admin?view=knowledge-add">Thêm</a>
+            <h6 class="mb-0">Automatic reply (Keyword)</h6>
+            <a class="btn btn-success" href="${pageContext.request.contextPath}/support-admin?view=knowledge-add">Add</a>
         </div>
 
         <c:if test="${empty knowledgeList}">
-            <div class="alert alert-info mb-0">Chưa có dữ liệu keyword.</div>
+            <div class="alert alert-info mb-0">Keyword data is not available.</div>
         </c:if>
 
         <c:if test="${not empty knowledgeList}">
@@ -63,7 +63,7 @@
                             <th>Keyword</th>
                             <th>Answer</th>
                             <th>Status</th>
-                            <th>Hành động</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -78,7 +78,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a class="btn btn-sm btn-primary" href="${pageContext.request.contextPath}/support-admin?view=knowledge-edit&id=${k.id}">Sửa</a>
+                                    <a class="btn btn-sm btn-primary" href="${pageContext.request.contextPath}/support-admin?view=knowledge-edit&id=${k.id}">Edit</a>
                                     <a class="btn btn-sm btn-warning" href="${pageContext.request.contextPath}/support-admin?view=knowledge-toggle&id=${k.id}">
                                         ${k.active ? 'Tắt' : 'Bật'}
                                     </a>

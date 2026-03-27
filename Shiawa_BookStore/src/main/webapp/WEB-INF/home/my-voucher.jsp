@@ -187,7 +187,7 @@
           <jsp:include page="/client/layout/header.jsp"/>
         <h2 class="main-title">🎟 Voucher của bạn</h2>
 
-        <!-- ================= ACTIVE VOUCHERS ================= -->
+        <!-- ACTIVE VOUCHERS  -->
         <h3 class="section-title active-title">🟢 Voucher còn hiệu lực</h3>
 
         <c:forEach var="v" items="${myVoucherList}">
@@ -209,7 +209,7 @@
             </c:if>
         </c:forEach>
 
-        <!-- ================= EXPIRED VOUCHERS ================= -->
+        <!-- EXPIRED VOUCHERS -->
         <h3 class="section-title expired-title">⚫ Voucher đã hết hạn (trong 3 ngày)</h3>
 
         <c:forEach var="v" items="${myVoucherList}">

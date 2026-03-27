@@ -11,11 +11,11 @@
         <jsp:include page="/client/layout/header.jsp"/>
         <section class="account-page">
 
-            <h2>Account</h2>
+            <h2>TÀI KHOẢN</h2>
             <!-- TABS -->
             <div class="account-tabs">
-                <a href="${pageContext.request.contextPath}/login" class="tab active" data-tab="login">Login</a>
-                <a href="${pageContext.request.contextPath}/register" class="tab" data-tab="register">Register</a>
+                <a href="${pageContext.request.contextPath}/login" class="tab active" data-tab="login">Đăng Nhập</a>
+                <a href="${pageContext.request.contextPath}/register" class="tab" data-tab="register">Đăng Ký</a>
             </div>
 
             <!-- LOGIN -->
@@ -41,10 +41,10 @@
                         ${message}
                     </p>
 
-                    <a href="${pageContext.request.contextPath}/forgot-password" class="forgot">Forgot password?</a>
+                    <a href="${pageContext.request.contextPath}/forgot-password" class="forgot">Quên mật khẩu?</a>
 
 
-                    <button type="submit" class="submit-btn">Login</button>
+                    <button type="submit" class="submit-btn">Đăng nhập</button>
                 </form>
             </div>
 

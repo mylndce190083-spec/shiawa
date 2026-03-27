@@ -114,9 +114,24 @@
                 color:#d32f2f;
                 margin-top:10px;
             }
+
+            .back-btn-white {
+                background: white;
+                color: #4CAF50;
+                padding: 5px 12px;
+                border-radius: 20px;
+                text-decoration: none;
+                font-size: 13px;
+                font-weight: 500;
+            }
+
+            .back-btn-white:hover {
+                background: #e8f5e9;
+            }
         </style>
     </head>
     <body>
+        <jsp:include page="/client/layout/header.jsp"/>
 
         <div class="detail-container">         
             <div class="detail-header">
@@ -138,7 +153,7 @@
                         đã hủy
                     </c:when>
                     <c:when test="${order.status == 'CANCEL_REQUESTED'}">
-                         chờ hoàn tiền
+                        chờ hoàn tiền
                     </c:when>
                     <c:otherwise>
                         ${order.status}
@@ -206,7 +221,7 @@
                         Đơn hàng đã hủy. Tiền sẽ được hoàn lại trong 3-5 ngày làm việc.
                     </div>
                 </c:if>
-                 <c:if test="${order.status == 'REFUNDED' && order.paymentMethod == 'ONLINE'}">
+                <c:if test="${order.status == 'REFUNDED' && order.paymentMethod == 'ONLINE'}">
                     <div style="color:red; margin-top:10px;">
                         Đơn hàng đã được hoàn tiền.
                     </div>
@@ -248,15 +263,13 @@
                                 value="${subtotal + order.shippingFee -(subtotal*order.discount/100)}" 
                                 type="number"/> VND
                         </span>
+                        <a href="${pageContext.request.contextPath}/order-history" class="back-btn-white">
+                            ← Back
+                        </a>
                     </div>
 
                 </div>
             </div>
-
-
-
-
-
         </div>
     </body>
 </html>

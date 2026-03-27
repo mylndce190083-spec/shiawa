@@ -149,6 +149,22 @@
                 transform: translateY(0);
             }
         }
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 10px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: #e0e0e0;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #4caf50;
+            color: #fff;
+        }
     </style>
     <body>
         <jsp:include page="/client/layout/header.jsp"/>
@@ -167,6 +183,11 @@
             <c:remove var="msgType" scope="session"/>
         </c:if>
 
+        <div style="margin-bottom: 10px;">
+            <a href="${pageContext.request.contextPath}/home" class="back-btn">
+                ← Back
+            </a>
+        </div>
         <c:choose>
             <c:when test="${empty voucherList}">
                 <div class="alert alert-info empty-voucher">Không có voucher nào có sẵn.</div>
@@ -188,5 +209,6 @@
                 </div>
             </c:otherwise>
         </c:choose>
+
     </body>
 </html>

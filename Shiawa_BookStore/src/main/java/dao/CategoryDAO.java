@@ -305,22 +305,18 @@ public class CategoryDAO extends DBContext {
         }
     }
 
-    public static void main(String[] args) {
-        CategoryDAO dao = new CategoryDAO();
-        List<Category> list = new ArrayList<>();
-        list = dao.getAllParentCategory();
-        System.out.println(dao.getCategoryById(5));
-        System.out.println(dao.searchCateByTitle("học"));
-//        for (Category c : list) {
-//            System.out.println("kkkkkkkkkkkk");
-//            System.out.println(c);
-//        }
-        System.out.println(dao.getCateByParentId(13));
-        Category cate = new Category();
-        cate.setCategoryName("Sách vovinam");
-        cate.setParentId(19);
-        cate.setCategoryId(17);
-        dao.updateChildCategory(cate);
+    public boolean isCategoryNameExists(String name) {
+        String sql = "SELECT COUNT(*) FROM Category WHERE name = ?";
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setString(1, name);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }
