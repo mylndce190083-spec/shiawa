@@ -85,7 +85,7 @@
 
                         <c:forEach var="item" items="${cartItem}">
                             <div id="row-${item.bookId}" class="cart-item">
-                               
+
                                 <input type="checkbox"
                                        class="select-item"
                                        name="selectedItem"
@@ -95,8 +95,8 @@
 
                                 <div class="product">
                                     <a href="${pageContext.request.contextPath}/bookdetail?id=${item.bookId}">
-                                  
-                                       <img src="${pageContext.request.contextPath}/image?file=${item.book.urlImg}" >
+
+                                        <img src="${pageContext.request.contextPath}/image?file=${item.book.urlImg}" >
                                     </a>
 
                                     <a href="${pageContext.request.contextPath}/bookdetail?id=${item.bookId}" 
@@ -104,8 +104,8 @@
                                         <p class="book-title">${item.book.title}</p>
                                     </a>
                                 </div>
-
-                                <span class="price">$${item.price}</span>
+                                 
+                                <span class="price">${item.price}</span>
 
                                 <div class="quantity">
                                     <div class="quantity-box">
@@ -119,7 +119,7 @@
                                         <button type="button"
                                                 onclick="updateQty(${item.bookId}, 'increase')">+</button>
                                     </div>
-                                    
+
                                 </div>
 
 

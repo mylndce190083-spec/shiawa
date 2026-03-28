@@ -3,7 +3,8 @@
     Created on : Feb 2, 2026, 5:00:04 PM
     Author     : BA LIEM
 --%>
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> 
 <!DOCTYPE html>
@@ -280,7 +281,12 @@
                         <p class="title">${b.title}</p>
                     </a>
                     <div class="price">
-                        <span class="new-price">${b.price}đ</span>
+                      
+                        <fmt:formatNumber 
+                                value="${b.price}" 
+                                type="number"
+                                groupingUsed="true"
+                                maxFractionDigits="0"/> VND
                         <span class="discount">-${b.discount}%</span>
                     </div>
                     <p class="sold">Đã bán ${b.sold}</p>

@@ -211,6 +211,16 @@ public class BookAdminController extends HttpServlet {
             try {
                 //Update Book
                 BookAdmin b = new BookAdmin();
+                int discount = Integer.parseInt(request.getParameter("discount"));
+                
+                
+                if (discount <0 || discount >100) {
+            
+            session.setAttribute("msg", "vui lòng nhập từ 0 đến 100");
+                session.setAttribute("msgType", "danger");
+                response.sendRedirect(request.getContextPath() + "/book-admin");
+            return;
+        }
                 b.setBookId(Integer.parseInt(request.getParameter("bookId")));
                 int bookId = b.getBookId();
                 b.setTitle(request.getParameter("title"));
@@ -220,6 +230,7 @@ public class BookAdminController extends HttpServlet {
                 b.setPrice(Double.parseDouble(request.getParameter("price")));
                 b.setStock(Integer.parseInt(request.getParameter("stock")));
                 b.setIsActive("true".equals(request.getParameter("isActive")));
+                b.setDiscount(discount);
 
                 BookDAO dao = new BookDAO();
                 dao.updateBook(b);

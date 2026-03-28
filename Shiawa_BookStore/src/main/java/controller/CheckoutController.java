@@ -321,6 +321,7 @@ public class CheckoutController extends HttpServlet {
                 // =====================================================
                 // TRƯỜNG HỢP 1: NGƯỜI DÙNG CÓ CHỈNH SỬA ĐỊA CHỈ
                 // =====================================================
+                System.out.println("hhhhhhhhhhhhhhhhhhhh"+ isEditAddress);
                 if ("true".equals(isEditAddress)) {
 
                     if (province == null || province.trim().isEmpty()) {

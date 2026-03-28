@@ -468,7 +468,7 @@ public class BookDAO extends DBContext {
         String sql = """
         UPDATE Book
         SET title = ?, author = ?, category_id = ?, price = ?,
-            stock = ?, is_active = ?, description = ?, url_img = ?
+            stock = ?, is_active = ?, description = ?, url_img = ?, discount =?
         WHERE book_id = ?
     """;
 
@@ -481,7 +481,8 @@ public class BookDAO extends DBContext {
             ps.setBoolean(6, b.isIsActive());
             ps.setString(7, b.getDescription());
             ps.setString(8, b.getUrlImg());
-            ps.setInt(9, b.getBookId());
+            ps.setInt(10, b.getBookId());
+            ps.setInt(9, b.getDiscount());
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

@@ -157,6 +157,13 @@
                                        name="stock" value="${book.stock}" required>
                             </td>
                         </tr>
+                        <tr>
+                            <th>Discount</th>
+                            <td>
+                                <input type="number" class="form-control"
+                                       name="discount" value="${book.discount}" required>
+                            </td>
+                        </tr>
 
                         <tr>
                             <th>Status</th>
