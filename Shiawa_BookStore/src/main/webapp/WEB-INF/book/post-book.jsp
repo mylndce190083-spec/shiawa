@@ -7,7 +7,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@include file="../include/headerAdmin.jsp" %>
-<!-- Recent Sales Start -->
 
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light rounded p-4">
@@ -23,7 +22,6 @@
 
                     <input type="hidden" name="view" value="post"/>
 
-                    <!-- BOOK SELECT -->
                     <div class="mb-3">
                         <label class="form-label">Select Book From Inventory</label>
 
@@ -36,7 +34,6 @@
                         </select>
                     </div>
 
-                    <!-- PRICE -->
                     <div class="mb-3">
                         <label class="form-label">Selling Price</label>
 
@@ -46,7 +43,6 @@
                                required>
                     </div>
 
-                    <!-- BUTTON -->
                     <div class="text-center mt-4">
 
                         <button class="btn btn-success px-4">
@@ -69,5 +65,4 @@
 </div>
 
 
-<!-- Recent Sales End -->
 <%@include file="../include/footerAdmin.jsp" %>

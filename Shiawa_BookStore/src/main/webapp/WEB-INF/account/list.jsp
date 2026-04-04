@@ -6,7 +6,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@include file="../include/headerAdmin.jsp" %>
-<!-- Recent Sales Start -->
+
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light text-center rounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-4">
@@ -40,10 +40,6 @@
                             Inventory
                         </option>
 
-                        <option value="Sales"
-                                ${selectedRole == 'Customer' ? 'selected' : ''}>
-                            Customer
-                        </option>
 
                     </select>
                 </form>
@@ -79,7 +75,7 @@
                                         Detail
                                     </a>
 
-                                    <!-- Toggle Status -->
+                                    
                                     <c:choose>
                                         <c:when test="${a.status == 'active'}">
                                             <a href="account?view=deactivate&id=${a.id}&role=${a.role}"
@@ -112,7 +108,7 @@
                     </a>
                 </c:if>
 
-                <!-- Page numbers -->
+
                 <c:forEach begin="1" end="${totalPage}" var="i">
                     <a class="btn btn-sm ${i == currentPageNum ? 'btn-primary' : 'btn-outline-primary'} me-1"
                        href="account?page=${i}&role=${selectedRole}">
@@ -120,7 +116,7 @@
                     </a>
                 </c:forEach>
 
-                <!-- Next -->
+
                 <c:if test="${currentPageNum < totalPage}">
                     <a class="btn btn-sm btn-outline-secondary ms-2"
                        href="account?page=${currentPageNum + 1}&role=${selectedRole}">
@@ -133,5 +129,5 @@
 
     </div>
 </div>
-<!-- Recent Sales End -->
+
 <%@include file="../include/footerAdmin.jsp" %>

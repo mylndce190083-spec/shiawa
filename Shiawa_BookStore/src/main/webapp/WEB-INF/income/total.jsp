@@ -92,7 +92,6 @@
 
 <div class="dashboard">
 
-    <!-- TOP CARDS -->
     <div class="card-container">
 
         <div class="card">
@@ -107,7 +106,6 @@
 
     </div>
 
-    <!-- BEST SELLER TABLE -->
     <div class="table-container">
         <h3 style="text-align:center; margin-bottom:20px;">🔥 Best Seller Books</h3>
 

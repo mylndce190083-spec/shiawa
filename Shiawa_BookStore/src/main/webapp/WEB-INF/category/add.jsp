@@ -7,7 +7,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@include file="../include/headerAdmin.jsp" %>
-<!-- Recent Sales Start -->
 
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light rounded p-4">
@@ -28,7 +27,6 @@
                         <input type="text" name="name" class="form-control" required>
                     </div>
 
-                    <!-- CATEGORY -->
                     <c:if test="${categoryParentList != null}">
                         <div class="mb-3">
                             <label class="form-label">Parent Category</label>
@@ -45,7 +43,6 @@
                         <input type="hidden" name="categoryParentId" value="0"/>
                     </c:if>
 
-                    <!-- BUTTON -->
                     <div class="text-center mt-4">
                         <button class="btn btn-success px-4">
                             Add Category

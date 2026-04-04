@@ -111,7 +111,7 @@ public class VoucherAdminController extends HttpServlet {
             String name = request.getParameter("name");
             double discount = Double.parseDouble(request.getParameter("discount"));
             // VALIDATE
-            if (discount < 0 || discount > 100) {
+            if (!(discount < 0 || discount > 100)) {
 
                 int quantity = Integer.parseInt(request.getParameter("quantity"));
                 String createdAt = request.getParameter("createdAt");
@@ -133,15 +133,16 @@ public class VoucherAdminController extends HttpServlet {
                     v.setEndedAt(java.sql.Date.valueOf(endedAt));
                 }
                 // QUAN TRỌNG
-                request.setAttribute("voucher", v);
-                request.setAttribute("error", "Discount must be between 0 and 100");
-
-                request.getRequestDispatcher("/WEB-INF/voucher/edit.jsp").forward(request, response);
-                return;
-            }
-//            dao.updateVoucher(v);
+//                request.setAttribute("voucher", v);
+//                request.setAttribute("error", "Discount must be between 0 and 100");
 //
-//            response.sendRedirect("voucher-admin");
+//                request.getRequestDispatcher("/WEB-INF/voucher/edit.jsp").forward(request, response);
+//                return;
+            
+            dao.updateVoucher(v);
+
+            response.sendRedirect("voucher-admin");
+            }
         }
     }
 

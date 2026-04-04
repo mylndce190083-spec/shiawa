@@ -21,7 +21,6 @@
 <div class="container-fluid pt-4 px-4">
     <div class="row justify-content-center">
 
-        <!-- LEFT: Avatar -->
         <div class="col-md-4">
             <div class="card avatar-card text-center">
                 <h4 class="mb-3">Profile Picture</h4>
@@ -43,7 +42,6 @@
         </div>
 
 
-        <!-- RIGHT: Profile Info -->
         <div class="col-md-6">
             <form action="staff-profile" method="post" class="profile-form">
 

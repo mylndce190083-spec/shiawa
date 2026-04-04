@@ -6,6 +6,7 @@ package utils;
 
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
+import java.net.URLEncoder;
 import java.util.Properties;
 
 /**
@@ -36,7 +37,10 @@ public class Email {
         });
 
         try {
-            String link = "http://localhost:8080/Shiawa_BookStore/verify?token=" + token;
+            String link = "http://localhost:8080/Shiawa_BookStore/verify?email="
+                    + URLEncoder.encode(toEmail, "UTF-8")
+                    + "&token=" + token;
+
 
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromEmail));

@@ -7,6 +7,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 
@@ -69,7 +70,6 @@
                 <span>Tổng</span>
             </div>
 
-            <!-- CART ITEMS -->
 
             <c:choose>
                 <c:when test="${empty cartItem}">
@@ -85,7 +85,7 @@
 
                         <c:forEach var="item" items="${cartItem}">
                             <div id="row-${item.bookId}" class="cart-item">
-                               
+
                                 <input type="checkbox"
                                        class="select-item"
                                        name="selectedItem"
@@ -95,8 +95,8 @@
 
                                 <div class="product">
                                     <a href="${pageContext.request.contextPath}/bookdetail?id=${item.bookId}">
-                                  
-                                       <img src="${pageContext.request.contextPath}/image?file=${item.book.urlImg}" >
+
+                                        <img src="${pageContext.request.contextPath}/image?file=${item.book.urlImg}" >
                                     </a>
 
                                     <a href="${pageContext.request.contextPath}/bookdetail?id=${item.bookId}" 
@@ -105,7 +105,12 @@
                                     </a>
                                 </div>
 
-                                <span class="price">$${item.price}</span>
+                                <span class="price">
+                                    <fmt:formatNumber 
+                                        value="${item.price}" 
+                                        type="number"
+                                        groupingUsed="true"
+                                        maxFractionDigits="0"/> VND</span>
 
                                 <div class="quantity">
                                     <div class="quantity-box">
@@ -119,12 +124,17 @@
                                         <button type="button"
                                                 onclick="updateQty(${item.bookId}, 'increase')">+</button>
                                     </div>
-                                    
+
                                 </div>
 
 
                                 <span class="subtotal" id="subtotal-${item.bookId}">
-                                    $${item.price * item.quantity}
+
+                                    <fmt:formatNumber 
+                                        value=" ${item.price * item.quantity}" 
+                                        type="number"
+                                        groupingUsed="true"
+                                        maxFractionDigits="0"/> VND
                                 </span>
 
                                 <button type="button"
@@ -138,7 +148,7 @@
                         <div class="cart-footer">
                             <strong>
 
-                                Tổng: $<span id="totalPrice">0</span>
+                                Tổng: $<span id="totalPrice"></span>
                             </strong>
                         </div>
                         <!-- VOUCHER -->
@@ -169,10 +179,9 @@
                     total += price * qty;
                 });
                 document.getElementById('totalPrice').innerText =
-                        total.toFixed(2);
+                        total.toLocaleString('vi-VN');
             }
 
-            // gắn sự kiện cho checkbox
             document.querySelectorAll('.select-item').forEach(cb => {
                 cb.addEventListener('change', function () {
 
@@ -201,31 +210,30 @@
                         .then(data => {
 
 
-                            //  1. Cập nhật số lượng hiển thị
                             document.getElementById("qty-" + bookId).innerText = data.quantity;
-//  server nên trả về totalCartItems
+
                             updateCartBadge(data.totalCartItems);
-                            //  2. Lấy checkbox của item đó
+
                             let checkbox = document.querySelector(
                                     "input.select-item[value='" + bookId + "']"
                                     );
 
                             if (checkbox) {
 
-                                // Lấy giá
+
                                 let price = parseFloat(checkbox.dataset.price);
 
-                                //  3. Tính lại subtotal
+
                                 let newSubtotal = price * data.quantity;
 
                                 document.getElementById("subtotal-" + bookId)
                                         .innerText = "$" + newSubtotal.toFixed(2);
 
-                                //  4. Cập nhật lại data-qty
+
                                 checkbox.dataset.qty = data.quantity;
                             }
 
-                            //  5. Tính lại tổng tiền
+
                             updateTotal();
 
                             if (data.message) {
@@ -256,7 +264,7 @@
                         })
                         .catch(error => console.error("Error:", error));
             }
-            // chọn tất cả
+
             document.getElementById("selectAll").addEventListener("change", function () {
 
                 const isChecked = this.checked;
@@ -265,7 +273,7 @@
                     cb.checked = isChecked;
                 });
 
-                updateTotal(); // cập nhật lại tổng tiền
+                updateTotal();
             });
             function updateCartBadge(count) {
                 const badge = document.getElementById("cartBadge");

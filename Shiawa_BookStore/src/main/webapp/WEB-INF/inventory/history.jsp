@@ -1,7 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@include file="../include/headerInventory.jsp" %>
-<!-- Recent Sales Start -->
+
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light rounded p-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -55,7 +55,6 @@
         </c:if>
     </div>
 </div>
-<!-- Recent Sales End -->
 <%@include file="../include/footerInventory.jsp" %>
 
 

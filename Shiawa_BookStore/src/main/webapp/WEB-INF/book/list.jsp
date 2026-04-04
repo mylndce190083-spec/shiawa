@@ -8,7 +8,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@include file="../include/headerAdmin.jsp" %>
-<!-- Recent Sales Start -->
+
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light text-center rounded p-4">
         <c:if test="${not empty sessionScope.msg}">
@@ -17,8 +17,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
 
-            <!-- Xóa message sau khi hiển thị -->
-            <c:remove var="msg" scope="session"/>
+
+                <c:remove var="msg" scope="session"/>
             <c:remove var="msgType" scope="session"/>
         </c:if>
 
@@ -89,7 +89,7 @@
         <div class="table-responsive">
             <c:choose>
                 <c:when test="${empty bookList}">
-                    <!-- chỉ hiện thông báo, không hiện bảng -->
+
                 </c:when>
                 <c:otherwise>
                     <table class="table text-start align-middle table-bordered table-hover mb-0">
@@ -139,7 +139,6 @@
                     </table>
                     <div class="d-flex justify-content-center mt-4">
 
-                        <!-- Previous -->
                         <c:if test="${currentPageNum > 1}">
                             <a class="btn btn-sm btn-outline-secondary me-2"
                                href="book-admin?page=${currentPageNum-1}&keyword=${keyword}&categoryId=${selectedCategoryId}">
@@ -147,7 +146,6 @@
                             </a>
                         </c:if>
 
-                        <!-- Page number -->
                         <c:forEach begin="1" end="${totalPage}" var="i">
                             <a class="btn btn-sm ${i == currentPageNum ? 'btn-primary' : 'btn-outline-primary'} me-1"
                                href="book-admin?page=${i}&keyword=${keyword}&categoryId=${selectedCategoryId}">
@@ -155,7 +153,6 @@
                             </a>
                         </c:forEach>
 
-                        <!-- Next -->
                         <c:if test="${currentPageNum < totalPage}">
                             <a class="btn btn-sm btn-outline-secondary ms-2"
                                href="book-admin?page=${currentPageNum+1}&keyword=${keyword}&categoryId=${selectedCategoryId}">
@@ -170,5 +167,5 @@
 
     </div>
 </div>
-<!-- Recent Sales End -->
-<%@include file="../include/footerAdmin.jsp" %>
+
+                       <%@include file="../include/footerAdmin.jsp" %>

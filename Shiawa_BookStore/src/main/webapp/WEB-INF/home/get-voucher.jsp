@@ -14,12 +14,10 @@
         <title>Get voucher</title>
     </head>
     <style>
-        /* Background */
         body {
             background: #f5f5f5;
         }
 
-        /* Alert custom */
         .custom-alert {
             max-width: 600px;
             margin: 20px auto;
@@ -27,7 +25,6 @@
             font-weight: 500;
         }
 
-        /* Empty voucher */
         .empty-voucher {
             max-width: 600px;
             margin: 20px auto;
@@ -35,13 +32,11 @@
             border-radius: 10px;
         }
 
-        /* Container */
         .voucher-container {
             max-width: 600px;
             margin: 0 auto;
         }
 
-        /* Voucher card */
         .voucher-card {
             background: #fff;
             border: 2px dashed #4caf50;
@@ -57,13 +52,11 @@
             position: relative;
         }
 
-        /* Hover */
         .voucher-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        /* Left green strip (giống coupon) */
         .voucher-card::before {
             content: "";
             width: 6px;
@@ -75,14 +68,12 @@
             border-radius: 12px 0 0 12px;
         }
 
-        /* Text */
         .voucher-info {
             font-size: 16px;
             font-weight: 500;
             color: #2e7d32;
         }
 
-        /* Button */
         .voucher-btn {
             background: #2e7d32;
             color: #fff;
@@ -97,7 +88,6 @@
         .voucher-btn:hover {
             background: #256428;
         }
-        /* Alert đẹp hơn */
         .custom-alert {
             max-width: 600px;
             margin: 20px auto;
@@ -112,14 +102,12 @@
             animation: fadeInDown 0.4s ease;
         }
 
-        /* Icon bên trái */
         .custom-alert::before {
             content: "✔";
             font-weight: bold;
             margin-right: 10px;
         }
 
-        /* Màu theo type */
         .alert-success.custom-alert {
             background: #e8f5e9;
             color: #2e7d32;
@@ -138,7 +126,6 @@
             border: 1px solid #ffa000;
         }
 
-        /* Animation */
         @keyframes fadeInDown {
             from {
                 opacity: 0;

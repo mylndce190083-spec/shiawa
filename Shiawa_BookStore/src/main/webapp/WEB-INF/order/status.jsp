@@ -14,7 +14,6 @@
 
         <div class="row">
 
-            <!-- LEFT: Order Info -->
             <div class="col-md-8">
                 <div class="card p-4 shadow-sm h-100">
                     <h5 class="mb-3">Order Information</h5>
@@ -47,7 +46,6 @@
                 </div>
             </div>
 
-            <!-- RIGHT: Status Panel -->
             <div class="col-md-4">
                 <div class="card p-4 shadow-sm text-center">
 

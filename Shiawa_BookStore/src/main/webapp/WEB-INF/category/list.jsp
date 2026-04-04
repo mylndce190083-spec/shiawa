@@ -7,7 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@include file="../include/headerAdmin.jsp" %>
-<!-- Recent Sales Start -->
+
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light text-center rounded p-4">
         <c:if test="${not empty sessionScope.msg}">
@@ -16,13 +16,13 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
 
-            <!-- Xóa message sau khi hiển thị -->
+
             <c:remove var="msg" scope="session"/>
             <c:remove var="msgType" scope="session"/>
         </c:if>
 
         <div class="d-flex align-items-center justify-content-between mb-4">
-            <!--<h6 class="mb-0">User List</h6>-->
+
             <div class="d-flex justify-content-between align-items-center">
                 <h6 class="mb-0">Category List</h6>
             </div>
@@ -83,11 +83,11 @@
                 ${searchMsg}
             </div>
         </c:if>
-       
+
         <div class="table-responsive">
             <c:choose>
                 <c:when test="${empty categoryList}">
-                    <!-- chỉ hiện thông báo, không hiện bảng -->
+
                 </c:when>
                 <c:otherwise>
                     <table class="table text-start align-middle table-bordered table-hover mb-0">
@@ -159,5 +159,5 @@
 
     </div>
 </div>
-<!-- Recent Sales End -->
+
 <%@include file="../include/footerAdmin.jsp" %>

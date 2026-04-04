@@ -6,7 +6,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@include file="../include/headerAdmin.jsp" %>
-<!-- Recent Sales Start -->
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light text-center rounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-4">
@@ -61,7 +60,6 @@
 
                     </table>
 
-                    <!-- Save & Back Button -->
                     <div class="mt-3">
                         <button type="submit" class="btn btn-primary">
                             <i class="fa fa-save me-2"></i>Save Changes
@@ -80,6 +78,5 @@
 
     </div>
 </div>
-<!-- Recent Sales End -->
 
 <%@include file="../include/footerAdmin.jsp" %>

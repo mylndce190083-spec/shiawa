@@ -13,7 +13,7 @@
         <title>Feedback</title>
         <style>
             .feedback-box {
-                background: #f5f5f5; /* xám nhẹ */
+                background: #f5f5f5;
                 padding: 20px;
                 border-radius: 10px;
                 box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -33,8 +33,8 @@
                 transition: 0.2s;
             }
             .text-muted {
-                background-color: #d6d6d6 !important; /* xám đậm hơn */
-                color: #555 !important;              /* chữ đậm hơn chút */
+                background-color: #d6d6d6 !important;
+                color: #555 !important;
                 opacity: 0.8;
             }
         </style>
@@ -122,7 +122,7 @@
                                     const btn = row.querySelector("button");
 
                                     if (status === 0) {
-                                        // 👉 Hide
+
                                         row.classList.add("text-muted");
 
                                         btn.classList.remove("btn-danger");
@@ -130,7 +130,7 @@
                                         btn.innerText = "Unhide";
                                         btn.setAttribute("onclick", "hideFeedback(" + id + ",1)");
                                     } else {
-                                        // 👉 Unhide
+                                        
                                         row.classList.remove("text-muted");
 
                                         btn.classList.remove("btn-secondary");

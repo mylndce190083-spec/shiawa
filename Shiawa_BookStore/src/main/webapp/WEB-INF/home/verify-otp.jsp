@@ -16,12 +16,10 @@
     <body>
         <header class="header">
 
-            <!-- LOGO -->
             <div class="logo" id="backToShop">
                 <img src="${pageContext.request.contextPath}/assets/img/logo.jpg" class="rounded-img">
             </div>
 
-            <!-- SEARCH (GIỮA) -->
             <div class="search-box">
                 <input type="text">
                 <button>
@@ -29,7 +27,6 @@
                 </button>
             </div>
 
-            <!-- ICONS -->
             <div class="icons">
                 <div class="icon" id="cartIcon">
                     <i class="fa-solid fa-cart-shopping"></i>
@@ -48,7 +45,6 @@
 
             <h2>Nhập OTP</h2>
 
-            <!-- LOGIN -->
             <div class="modal-overlay">
                 <div class="modal-box">
                     <h2>Xác nhận OTP</h2>

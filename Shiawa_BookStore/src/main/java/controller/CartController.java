@@ -32,10 +32,10 @@ public class CartController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
 
-        // 1. Check đăng nhập + role
         if (user == null || !"Customer".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
@@ -48,7 +48,7 @@ public class CartController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/cart");
             return;
         }
-        int customerId = customer.getId(); //  CHUẨN
+        int customerId = customer.getId();
 
         CartItemDAO dao = new CartItemDAO();
         List<CartItem> cartItems = dao.getCartByCustomerId(customerId);
@@ -110,7 +110,7 @@ public class CartController extends HttpServlet {
                 int currentQty = (item != null) ? item.getQuantity() : 0;
 
                 if (currentQty + 1 > book.getStock()) {
-                    // ❌ Không cho tăng nữa
+
                     if (isAjax) {
                         response.setContentType("application/json");
                         response.getWriter().print(
@@ -153,7 +153,7 @@ public class CartController extends HttpServlet {
                 break;
 
         }
-        // Cập nhật lại tổng số sản phẩm trong giỏ
+
         List<CartItem> cartItems = dao.getCartByCustomerId(customerId);
 
         int totalQuantity = 0;
@@ -185,22 +185,8 @@ public class CartController extends HttpServlet {
             response.getWriter().print(json);
 
         } else {
-            // Nếu là submit form bình thường (delete)
+
             response.sendRedirect(request.getContextPath() + "/cart");
         }
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
-    public static void main(String[] args) {
-
     }
 }

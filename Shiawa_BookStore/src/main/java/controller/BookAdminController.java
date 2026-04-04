@@ -45,7 +45,6 @@ public class BookAdminController extends HttpServlet {
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
 
-        // 1. Check đăng nhập + role
         if (user == null || !"Admin".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
@@ -57,7 +56,6 @@ public class BookAdminController extends HttpServlet {
         if ("post".equals(view)) {
             BookDAO dao = new BookDAO();
 
-            // lấy sách đã có trong kho nhưng chưa đăng bán
             List<Book> books = dao.getBooksInStockNotPublished();
 
             request.setAttribute("books", books);

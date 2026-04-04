@@ -38,7 +38,6 @@
             </div>
 
 
-            <!-- User Information -->
             <div class="col-md-8">
 
                 <table class="table table-bordered text-start">
@@ -89,7 +88,6 @@
 
                 </table>
 
-                <!-- Back button -->
                 <a href="${pageContext.request.contextPath}/account"
                    class="btn btn-secondary mt-3">
                     <i class="fa fa-arrow-left me-2"></i>Back to User List

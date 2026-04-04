@@ -9,7 +9,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%@include file="../include/headerAdmin.jsp" %>
-<!-- Recent Sales Start -->
+
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light text-center rounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-4">
@@ -21,7 +21,7 @@
 
 
         <div class="row">
-            <!-- Book Image -->
+            
             <div class="col-md-4 text-center">
                 <c:set var="primaryFound" value="false"/>
 
@@ -29,7 +29,7 @@
                     <c:if test="${img.primary}">
                         <img src="${pageContext.request.contextPath}/image?file=${img.imageUrl}" 
                              class="img-fluid rounded border"
-                             style="max-height: 300px;"> <!--sua duong dan-->
+                             style="max-height: 300px;"> 
                         <c:set var="primaryFound" value="true"/>
                     </c:if>
                 </c:forEach>
@@ -41,7 +41,7 @@
                 </c:if>
             </div>
 
-            <!-- Book Information -->
+           
             <div class="col-md-8">
                 <table class="table table-bordered text-start">
                     <tr>
@@ -94,7 +94,7 @@
 
                 </table>
 
-                <!-- Back Button -->
+                
                 <a href="${pageContext.request.contextPath}/book-admin"
                    class="btn btn-secondary mt-3">
                     <i class="fa fa-arrow-left me-2"></i>Back to Book List
@@ -105,5 +105,5 @@
 
     </div>
 </div>
-<!-- Recent Sales End -->
+
 <%@include file="../include/footerAdmin.jsp" %>

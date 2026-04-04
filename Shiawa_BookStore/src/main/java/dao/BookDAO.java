@@ -312,10 +312,10 @@ public class BookDAO extends DBContext {
 
     public List<Book> getSimilarBook(int categoryId) {
         List<Book> list = new ArrayList<>();
-        String sql = "SELECT TOP 6 b.*, c.name AS category_name "
+        String sql = "SELECT *, c.name AS category_name "
                 + "FROM Book b "
                 + "LEFT JOIN Category c ON b.category_id = c.category_id"
-                + " Where c.category_id = ? ";
+                + " Where c.category_id = ? and is_active = 1 and is_published = 1";
         try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
             ps.setInt(1, categoryId);
             ResultSet rs = ps.executeQuery();

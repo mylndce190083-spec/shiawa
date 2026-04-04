@@ -32,7 +32,6 @@
                 padding: 20px;
             }
 
-            /* Khung Card chính giữa màn hình */
             .feedback-card {
                 width: 100%;
                 max-width: 600px;
@@ -43,7 +42,6 @@
                 border: 1px solid var(--border-color);
             }
 
-            /* Header xanh lá nằm gọn trong khung */
             .feedback-header {
                 background-color: var(--shiawa-green);
                 color: white;
@@ -58,7 +56,6 @@
                 gap: 10px;
             }
 
-            /* Phần thông tin sách trong khung */
             .product-info-section {
                 padding: 20px;
                 border-bottom: 1px solid var(--border-color);
@@ -81,7 +78,6 @@
                 color: #333;
             }
 
-            /* Rating & Textarea */
             .form-content {
                 padding: 30px;
             }
@@ -123,7 +119,6 @@
                 box-shadow: 0 0 0 0.25rem rgba(0, 166, 81, 0.1);
             }
 
-            /* Nút Gửi */
             .btn-submit {
                 background-color: var(--shiawa-green);
                 color: white;
@@ -157,57 +152,57 @@
                 justify-content: center;
                 min-height: 90vh;
             }
-            </style>
-        </head>
-        <body>
-            <jsp:include page="/client/layout/header.jsp"/>
-            
-            <div class="center-wrapper">
-                <div class="feedback-card">
+        </style>
+    </head>
+    <body>
+        <jsp:include page="/client/layout/header.jsp"/>
 
-                    <div class="feedback-header">
-                        <i class="bi bi-chat-left-heart-fill"></i> ĐÁNH GIÁ SẢN PHẨM
-                    </div>
-                    <div class="product-info-section">
-                        <img src="${pageContext.request.contextPath}/image?file=${book.urlImg}" alt="${book.title}">
-                        <div class="book-detail-text">
-                            <h6>${book.title}</h6>
-                            <div class="fw-bold text-success mt-1">${book.price} đ</div>
-                        </div>
-                    </div>
+        <div class="center-wrapper">
+            <div class="feedback-card">
 
-                    <form action="feedback" method="post" class="form-content">
-                        <input type="hidden" name="book_id" value="${book.bookId}">
-                        <input type="hidden" name="order_id" value="${param.order_id}">
-                        <input type="hidden" name="isRated" value="${item.isRated}">
-                        <input type="hidden" name="orderDetailId" value="${item.orderDetailId}">
-
-
-                        <p class="text-center fw-bold text-secondary mb-2">Bạn thấy sản phẩm này thế nào?</p>
-                        <div class="rating-wrapper">
-                            <input type="radio" name="rating" value="5" id="star5" required><label for="star5">★</label>
-                            <input type="radio" name="rating" value="4" id="star4"><label for="star4">★</label>
-                            <input type="radio" name="rating" value="3" id="star3"><label for="star3">★</label>
-                            <input type="radio" name="rating" value="2" id="star2"><label for="star2">★</label>
-                            <input type="radio" name="rating" value="1" id="star1"><label for="star1">★</label>
-                        </div>
-
-                        <div class="comment-box mb-3">
-                            <label class="form-label fw-bold text-secondary">Nhận xét của bạn</label>
-                            <textarea name="content" class="form-control" rows="4" 
-                                      placeholder="Hãy chia sẻ những điều bạn thích về cuốn sách này nhé..." ></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-submit">
-                            GỬI ĐÁNH GIÁ NGAY
-                        </button>
-
-                        <a href="bookdetail?id=${book.bookId}" class="btn-back">
-                            <i class="bi bi-arrow-left"></i> Quay lại
-                        </a>
-                    </form>
+                <div class="feedback-header">
+                    <i class="bi bi-chat-left-heart-fill"></i> ĐÁNH GIÁ SẢN PHẨM
                 </div>
+                <div class="product-info-section">
+                    <img src="${pageContext.request.contextPath}/image?file=${book.urlImg}" alt="${book.title}">
+                    <div class="book-detail-text">
+                        <h6>${book.title}</h6>
+                        <div class="fw-bold text-success mt-1">${book.price} đ</div>
+                    </div>
+                </div>
+
+                <form action="feedback" method="post" class="form-content">
+                    <input type="hidden" name="book_id" value="${book.bookId}">
+                    <input type="hidden" name="order_id" value="${param.order_id}">
+                    <input type="hidden" name="isRated" value="${item.isRated}">
+                    <input type="hidden" name="orderDetailId" value="${item.orderDetailId}">
+
+
+                    <p class="text-center fw-bold text-secondary mb-2">Bạn thấy sản phẩm này thế nào?</p>
+                    <div class="rating-wrapper">
+                        <input type="radio" name="rating" value="5" id="star5" required><label for="star5">★</label>
+                        <input type="radio" name="rating" value="4" id="star4"><label for="star4">★</label>
+                        <input type="radio" name="rating" value="3" id="star3"><label for="star3">★</label>
+                        <input type="radio" name="rating" value="2" id="star2"><label for="star2">★</label>
+                        <input type="radio" name="rating" value="1" id="star1"><label for="star1">★</label>
+                    </div>
+
+                    <div class="comment-box mb-3">
+                        <label class="form-label fw-bold text-secondary">Nhận xét của bạn</label>
+                        <textarea name="content" class="form-control" rows="4" 
+                                  placeholder="Hãy chia sẻ những điều bạn thích về cuốn sách này nhé..." ></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-submit">
+                        GỬI ĐÁNH GIÁ NGAY
+                    </button>
+
+                    <a href="bookdetail?id=${book.bookId}" class="btn-back">
+                        <i class="bi bi-arrow-left"></i> Quay lại
+                    </a>
+                </form>
             </div>
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        </body>
-    </html>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

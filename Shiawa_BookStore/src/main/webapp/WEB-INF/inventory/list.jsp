@@ -4,11 +4,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@include file="../include/headerInventory.jsp" %>
 
-<!-- Recent Sales Start -->
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light text-center rounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-4">
-            <!--<h6 class="mb-0">User List</h6>-->
+
             <div class="d-flex justify-content-between align-items-center">
                 <h6 class="mb-0">Book inventory</h6>
             </div>
@@ -108,7 +107,6 @@
 
                     </div>
                 </div>
-                <!-- Recent Sales End -->
 
             </div>
 <%@include file="../include/footerInventory.jsp" %>               

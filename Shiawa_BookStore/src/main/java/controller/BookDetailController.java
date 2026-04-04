@@ -30,7 +30,7 @@ public class BookDetailController extends HttpServlet {
             int id = Integer.parseInt(idString);
 
             dao.BookDAO bookDAO = new dao.BookDAO();
-            var foundBook = bookDAO.getBookById(id);
+            Book foundBook = bookDAO.getBookById(id);
 
             if (foundBook != null) {
 

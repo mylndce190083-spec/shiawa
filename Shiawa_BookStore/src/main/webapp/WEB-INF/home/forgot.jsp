@@ -16,12 +16,10 @@
     <body>
         <header class="header">
 
-            <!-- LOGO -->
             <div class="logo" id="backToShop">
                 <img src="${pageContext.request.contextPath}/assets/img/logo.jpg" class="rounded-img">
             </div>
 
-            <!-- SEARCH (GIỮA) -->
             <div class="search-box">
                 <input type="text">
                 <button>
@@ -29,7 +27,6 @@
                 </button>
             </div>
 
-            <!-- ICONS -->
             <div class="icons">
                 <div class="icon" id="cartIcon">
                     <i class="fa-solid fa-cart-shopping"></i>

@@ -1,7 +1,9 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
-<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page import="java.time.format.DateTimeFormatter" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -197,7 +199,13 @@
                         <h3 class="fw-bold">${book.title}</h3>
                         <p class="text-muted mb-2">by <span class="fw-semibold">${book.author}</span></p>
 
-                        <div class="price mb-2">$${book.price}</div>
+                        <div class="price mb-2">
+                            <fmt:formatNumber 
+                                value="${book.price}" 
+                                type="number"
+                                groupingUsed="true"
+                                maxFractionDigits="0"/> VND
+                        </div>
 
                         <div class="mt-4">
                             <ul class="list-unstyled text-secondary">
@@ -334,7 +342,13 @@
                                             <p class="mb-1 text-truncate fw-bold">${b.title}</p>
                                             <p class="small text-muted mb-1">${b.category.categoryName}</p>
                                             <p class="sold">Đã bán ${b.sold}</p>
-                                            <p class="text-success fw-bold">$${b.price}</p>
+                                            <p class="text-success fw-bold">
+                                                <fmt:formatNumber 
+                                                    value="${book.price}" 
+                                                    type="number"
+                                                    groupingUsed="true"
+                                                    maxFractionDigits="0"/> VND
+                                            </p>
                                         </div>
                                     </a>
                                 </div>
@@ -357,39 +371,39 @@
             <jsp:include page="./layout/footer.jsp" />
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
             <script>
-            const isLoggedIn = ${sessionScope.user != null ? 'true' : 'false'};
+                    const isLoggedIn = ${sessionScope.user != null ? 'true' : 'false'};
 
-            function addToCart(event, bookId) 
-            {
-            event.preventDefault();
+                    function addToCart(event, bookId)
+                    {
+                        event.preventDefault();
 
-            if (!isLoggedIn) {
-            window.location.href = "${pageContext.request.contextPath}/login";
-            return;
-            }
+                        if (!isLoggedIn) {
+                            window.location.href = "${pageContext.request.contextPath}/login";
+                            return;
+                        }
 
-            fetch("${pageContext.request.contextPath}/cart", {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "X-Requested-With": "XMLHttpRequest"
-            },
-            body: "action=add&book_id=" + bookId
-            })
-            .then(res => res.json())
-            .then(data => {
-            updateCartBadge(data.totalCartItems);
-            showToast();
-            })
-            .catch(error => console.error(error));
-            }
+                        fetch("${pageContext.request.contextPath}/cart", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded",
+                                "X-Requested-With": "XMLHttpRequest"
+                            },
+                            body: "action=add&book_id=" + bookId
+                        })
+                                .then(res => res.json())
+                                .then(data => {
+                                    updateCartBadge(data.totalCartItems);
+                                    showToast();
+                                })
+                                .catch(error => console.error(error));
+                    }
 
 
-            function showToast() {
+                    function showToast() {
 
-            const toast = document.createElement("div");
-            toast.className = "custom-toast";
-            toast.innerHTML = `
+                        const toast = document.createElement("div");
+                        toast.className = "custom-toast";
+                        toast.innerHTML = `
             <div class="toast-content">
                 <span class="icon">🛒</span>
                 <div>
@@ -400,29 +414,29 @@
             <div class="progress-bar"></div>
             `;
 
-            document.body.appendChild(toast);
+                        document.body.appendChild(toast);
 
-            setTimeout(() => {
-            toast.classList.add("show");
-            }, 10);
+                        setTimeout(() => {
+                            toast.classList.add("show");
+                        }, 10);
 
-            setTimeout(() => {
-            toast.classList.remove("show");
-            setTimeout(() => toast.remove(), 300);
-            }, 3000);
-            }
+                        setTimeout(() => {
+                            toast.classList.remove("show");
+                            setTimeout(() => toast.remove(), 300);
+                        }, 3000);
+                    }
 
-            function updateCartBadge(count) {
-            const badge = document.getElementById("cartBadge");
+                    function updateCartBadge(count) {
+                        const badge = document.getElementById("cartBadge");
 
-            if (count > 0) {
-            badge.style.display = "inline-block";
-            badge.innerText = count > 99 ? "99+" : count;
-            } else {
-            badge.style.display = "none";
-            }
-            }
-        </script>
-</body>
+                        if (count > 0) {
+                            badge.style.display = "inline-block";
+                            badge.innerText = count > 99 ? "99+" : count;
+                        } else {
+                            badge.style.display = "none";
+                        }
+                    }
+            </script>
+    </body>
 
 </html>

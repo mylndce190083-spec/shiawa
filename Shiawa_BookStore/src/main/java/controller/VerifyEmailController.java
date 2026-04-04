@@ -12,6 +12,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.UUID;
+import utils.Email;
 
 /**
  *
@@ -24,14 +26,23 @@ public class VerifyEmailController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String token = request.getParameter("token");
-
+String email = request.getParameter("email");
         CustomerDAO dao = new CustomerDAO();
         boolean verified = dao.verifyUser(token);
 
         if (verified) {
             request.setAttribute("message", "Tài khoản xác minh thành công, bạn có thể đăng nhập!");
         } else {
-            request.setAttribute("message", "Invalid verification link!");
+            token = UUID.randomUUID().toString();
+            try {
+                Email.sendVerificationEmail(email, token);
+                System.out.println("Email sent!");
+                dao.updateTokenByEmail(email, token);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            request.setAttribute("message", "Không xác nhận được email! Xin vui lòng thử lại");
+
         }
 
         request.getRequestDispatcher("/WEB-INF/account/login.jsp").forward(request, response);

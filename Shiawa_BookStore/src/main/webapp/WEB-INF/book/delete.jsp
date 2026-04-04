@@ -9,11 +9,11 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%@include file="../include/headerAdmin.jsp" %>
-<!-- Recent Sales Start -->
+
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light text-center rounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-4">
-            <!--<h6 class="mb-0">User List</h6>-->
+            
             <div class="d-flex justify-content-between align-items-center">
                 <h6 class="mb-0">Delete Book</h6>
             </div>                         
@@ -21,7 +21,7 @@
 
 
         <div class="row">
-            <!-- Book Image -->
+
             <div class="col-md-4 text-center">
                 <c:set var="primaryFound" value="false"/>
 
@@ -41,7 +41,7 @@
                 </c:if>                               
             </div>
 
-            <!-- Book Information -->
+            
             <div class="col-md-8">
                 <form action="${pageContext.request.contextPath}/book-admin" method="post">
                     <input type="hidden" name="view" value="delete">
@@ -98,7 +98,7 @@
 
                     </table>
 
-                    <!-- Save & Back Button -->
+                    
                     <div class="mt-3">
                         <button type="submit" class="btn btn-danger"
                                 onclick="return confirm('Are you sure you want to delete this book?')">

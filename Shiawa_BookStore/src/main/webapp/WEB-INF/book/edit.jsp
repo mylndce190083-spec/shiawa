@@ -7,7 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@include file="../include/headerAdmin.jsp" %>
-<!-- Recent Sales Start -->
+
 <div class="container-fluid pt-4 px-4">
     <div class="bg-light text-center rounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-4">
@@ -19,12 +19,11 @@
 
         <form action="${pageContext.request.contextPath}/book-admin" method="post" enctype="multipart/form-data">
             <div class="row">
-                <!-- LEFT: IMAGE MANAGEMENT -->
+
                 <div class="col-md-4">
 
                     <h6>Book Images</h6>
 
-                    <!-- Danh sách ảnh -->
                     <c:forEach var="img" items="${bookImages}">
                         <c:if test="${not empty img.imageUrl}">
                             <div class="border rounded p-2 mb-3 text-center">
@@ -54,7 +53,7 @@
                     </c:forEach>
 
                 </div>
-                <!-- Book Information -->
+
                 <div class="col-md-8">
 
                     <input type="hidden" name="view" value="edit">
@@ -196,19 +195,16 @@
 
     function setPrimary(imageId, btn) {
 
-        // Bỏ màu tất cả sao
         document.querySelectorAll('.fa-star').forEach(icon => {
             icon.parentElement.classList.remove('btn-warning');
             icon.parentElement.classList.add('btn-outline-warning');
         });
 
-        // Set màu cho cái đang chọn
         btn.classList.remove('btn-outline-warning');
         btn.classList.add('btn-warning');
 
         selectedPrimary = imageId;
 
-        // Nếu chưa có input hidden thì tạo
         let input = document.getElementById("primaryImageInput");
         if (!input) {
             input = document.createElement("input");
@@ -223,10 +219,8 @@
 
     function markDelete(imageId, btn) {
 
-        // Ẩn ảnh ngay lập tức
         btn.closest(".border").style.display = "none";
 
-        // Set hidden value
         document.getElementById("delete_" + imageId).value = imageId;
     }
 </script>

@@ -54,14 +54,14 @@
             .order-item {
                 display: grid;
                 grid-template-columns: 3fr 1fr 1fr 1.2fr;
-                align-items: center;   /* 🔥 CĂN GIỮA THEO CHIỀU DỌC */
+                align-items: center;   
                 padding: 15px 0;
                 border-bottom: 1px solid #eee;
             }
 
             .product-info {
                 display: flex;
-                align-items: center;   /* 🔥 CĂN GIỮA ẢNH + TEXT */
+                align-items: center;   
                 gap: 12px;
             }
 
@@ -135,7 +135,6 @@
                 font-size: 13px;
                 margin-top: 4px;
             }
-            /* ===== VOUCHER BOX ===== */
             .voucher-section{
                 margin:15px 0;
                 padding:15px;
@@ -196,7 +195,6 @@
                 color:#e53935;
                 font-size:14px;
             }
-            /* BOX HIỂN THỊ ĐỊA CHỈ */
             .address-box {
                 background: #ffffff;
                 border: 1px solid #e8e8e8;
@@ -215,14 +213,12 @@
                 box-shadow: 0 6px 16px rgba(0,0,0,0.08);
             }
 
-            /* thông tin */
             .address-info{
                 display: flex;
                 flex-direction: column;
                 gap: 6px;
             }
 
-            /* dòng thông tin */
             .address-info p{
                 margin: 0;
                 font-size: 14px;
@@ -232,22 +228,19 @@
                 gap: 8px;
             }
 
-            /* icon */
             .address-info i{
                 color: #888;
                 font-size: 13px;
                 width: 18px;
             }
 
-            /* tên */
             .name{
                 font-size: 15px;
 
-                font-weight: 700;   /* in đậm hơn */
+                font-weight: 700;  
                 color: #222;
             }
 
-            /* nút chỉnh sửa */
             .edit-btn{
                 position: absolute;
                 top: 10px;
@@ -265,9 +258,8 @@
                 background: #ffeaea;
             }
 
-            /* FORM CHỈNH SỬA */
             .edit-form {
-                display: none;   /* ẨN BAN ĐẦU */
+                display: none;   
                 background: #ffffff;
                 border: 1px solid #ddd;
                 border-radius: 8px;
@@ -341,7 +333,6 @@
         <jsp:include page="/client/layout/header.jsp"/>
         <div class="container">
 
-            <!-- LEFT -->
             <div class="box">
 
                 <h3>📦 SẢN PHẨM</h3>
@@ -373,7 +364,6 @@
                                 groupingUsed="true"
                                 maxFractionDigits="0"/> VND
                         </div>
-                        <!-- THÀNH TIỀN -->
                         <div class="price item-total">
                             <fmt:formatNumber 
                                 value="${item.price * item.quantity}" 
@@ -381,18 +371,21 @@
                                 groupingUsed="true"
                                 maxFractionDigits="0"/> VND
                         </div>
-                        <c:if test="${item.book.stock == 0}">
-                            <div style="color:red; font-weight:bold;">
-                                Sản phẩm này đã hết hàng
-                            </div>
-                            <c:set var="hasOutOfStock" value="true"/>
-                        </c:if>
-                        <c:if test="${item.quantity > item.book.stock}">
-                            <div style="color:red; font-weight:bold;">
-                                Không đủ số lượng sản phẩm trong kho
-                            </div>
-                            <c:set var="hasOutOfStock" value="true"/>
-                        </c:if>
+                        <c:choose>
+                            <c:when test="${item.book.stock == 0}">
+                                <div style="color:red; font-weight:bold;">
+                                    Sản phẩm này đã hết hàng
+                                </div>
+                                <c:set var="hasOutOfStock" value="true"/>
+                            </c:when>
+
+                            <c:when test="${item.quantity > item.book.stock}">
+                                <div style="color:red; font-weight:bold;">
+                                    Không đủ số lượng sản phẩm trong kho
+                                </div>
+                                <c:set var="hasOutOfStock" value="true"/>
+                            </c:when>
+                        </c:choose>
                     </div>
 
 
@@ -402,7 +395,6 @@
 
             </div>
 
-            <!-- RIGHT -->
             <div class="box">
 
                 <c:set var="isMissingInfo"
@@ -424,19 +416,16 @@
                                id="isEditAddress">
 
                         <div class="address-info">
-                            <!-- TÊN -->
                             <p class="name">
                                 <i class="fa-solid fa-user"></i>
                                 ${sessionScope.customer.fullname}
                             </p>
 
-                            <!-- SĐT -->
                             <p>
                                 <i class="fa-solid fa-phone"></i>
                                 ${sessionScope.customer.phone}
                             </p>
 
-                            <!-- ĐỊA CHỈ -->
                             <p>
                                 <i class="fa-solid fa-location-dot"></i>
                                 ${sessionScope.customer.address}
@@ -598,17 +587,14 @@
         </div>
 
 
-
-        <!-- ================== JAVASCRIPT ================== -->
-
         <script>
 
             const province = document.getElementById("province");
             const district = document.getElementById("district");
             const ward = document.getElementById("ward");
             let provincesData = [];
-            // 🔥 Giá trị giữ lại từ server
-            let selectedProvince = "${selectedProvince != null ? selectedProvince : ''}";
+
+    let selectedProvince = "${selectedProvince != null ? selectedProvince : ''}";
             let selectedDistrict = "${selectedDistrict != null ? selectedDistrict : ''}";
             let selectedWard = "${selectedWard != null ? selectedWard : ''}";
             fetch("https://provinces.open-api.vn/api/?depth=3")
@@ -678,8 +664,6 @@
             }
 
 
-            // Event khi người dùng tự chọn
-
             province.addEventListener("change", function () {
                 selectedProvince = this.value;
                 selectedDistrict = "";
@@ -693,27 +677,12 @@
                 selectedWard = "";
                 autoLoadWard();
             });
-            // ===== TÍNH TỔNG TIỀN THEO CHECKBOX =====
 
             function formatCurrency(number) {
                 return number.toLocaleString('vi-VN') + " VND";
             }
 
-//            function calculateSummary() {
-//                let subtotal = 0;
-//                const shipping = 20000;
-//                document.querySelectorAll(".item-total").forEach(item => {
-//
-//                    // Lấy text ví dụ: "78.000 đ"
-//                    let priceText = item.innerText;
-//                    // XÓA TẤT CẢ KÝ TỰ KHÔNG PHẢI SỐ
-//                    priceText = priceText.replace(/\D/g, "");
-//                    subtotal += Number(priceText);
-//                });
-//                const total = subtotal + shipping;
-//                document.getElementById("subtotal").innerText = formatCurrency(subtotal);
-//                document.getElementById("total").innerText = formatCurrency(total);
-//            }
+
             function calculateSummary() {
                 let subtotal = 0;
                 const shipping = 20000;
@@ -723,7 +692,6 @@
                     subtotal += Number(priceText);
                 });
 
-                // 🔥 LẤY DISCOUNT %
                 let discountPercent = 0;
                 let voucherSelect = document.getElementById("voucherSelect");
 
@@ -751,7 +719,6 @@
                 document.getElementById("viewAddress").style.display = "flex";
                 document.getElementById("editForm").style.display = "none";
             }
-            //thêm mới
             document.getElementById("voucherSelect").addEventListener("change", function () {
                 calculateSummary();
             });

@@ -6,6 +6,8 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -37,7 +39,6 @@
                 color: #fff;
             }
 
-            /* CSS MỚI ĐỂ GOM NHÓM MENU */
             .category-nav {
                 background-color: #f1f8f1; 
                 padding: 10px 0;
@@ -164,7 +165,6 @@
                 animation: progress 3s linear forwards;
             }
 
-            /* Thanh chạy */
             @keyframes progress {
                 from {
                     width: 100%;
@@ -174,7 +174,6 @@
                 }
             }
 
-            /* Icon nhảy nhẹ */
             @keyframes pop {
                 0% {
                     transform: scale(0.5);
@@ -226,7 +225,6 @@
                 font-size: 10px;
             }
 
-            /* Dropdown menu con */
             .child-dropdown {
                 display: none;
                 position: absolute;
@@ -252,7 +250,6 @@
                 color: #2e7d32;
             }
 
-            /* Hiệu ứng Hover */
             .menu-item:hover .child-dropdown {
                 display: block;
             }
@@ -276,7 +273,7 @@
         <nav class="category-nav">
             <div class="menu-container">
                 <c:forEach items="${listC}" var="c">
-                    <c:if test="${c.parentId == 0}"><!-- thể loại lớn sẽ ko có parentId, parentId = 0 -->
+                    <c:if test="${c.parentId == 0}">
                         <div class="menu-item">
                             <a href="#" class="parent-link">${c.categoryName} <i class="fa-solid fa-chevron-down icon-down"></i></a>
                             <div class="child-dropdown">
@@ -301,7 +298,12 @@
                         <p class="title">${b.title}</p>
                     </a>
                     <div class="price">
-                        <span class="new-price">${b.price}đ</span>
+                        <span class="new-price">
+                         <fmt:formatNumber 
+                                value="${b.price}" 
+                                type="number"
+                                groupingUsed="true"
+                                maxFractionDigits="0"/> VND</span>
                         <span class="discount">-${b.discount}%</span>
                     </div>
                     <p class="sold">Đã bán ${b.sold}</p>
@@ -451,10 +453,10 @@
                 },
                 body: "action=add&book_id=" + bookId
             })
-                    .then(res => res.json())   // 🔥 ĐỔI Ở ĐÂY
+                    .then(res => res.json())   
                     .then(data => {
 
-                        updateCartBadge(data.totalCartItems);  // 🔥 giờ mới đúng
+                        updateCartBadge(data.totalCartItems);  
 
                         showToast();
                     })

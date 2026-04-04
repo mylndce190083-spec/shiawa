@@ -70,7 +70,6 @@
                 font-weight: bold;
                 color: #2e7d32;
             }
-            /* Card */
             .voucher-card {
                 display: flex;
                 align-items: center;
@@ -84,12 +83,10 @@
                 transition: 0.3s;
             }
 
-            /* Hover */
             .voucher-card:hover {
                 transform: translateY(-4px);
             }
 
-            /* LEFT (discount block) */
             .left {
                 background: #4caf50;
                 color: #fff;
@@ -107,7 +104,6 @@
                 font-size: 12px;
             }
 
-            /* RIGHT */
             .right {
                 flex: 1;
                 padding: 12px 16px;
@@ -131,11 +127,9 @@
                 margin-top: 5px;
             }
 
-            /* ACTIVE */
             .active {
                 border-left: 4px solid #4caf50;
             }
-            /* Title chính */
             .main-title {
                 text-align: center;
                 font-size: 28px;
@@ -144,7 +138,6 @@
                 margin-bottom: 30px;
             }
 
-            /* Section title */
             .section-title {
                 max-width: 600px;
                 margin: 30px auto 10px;
@@ -154,7 +147,6 @@
                 padding-bottom: 5px;
             }
 
-            /* Line dưới */
             .section-title::after {
                 content: "";
                 width: 100%;
@@ -164,7 +156,6 @@
                 bottom: 0;
             }
 
-            /* Active */
             .active-title {
                 color: #2e7d32;
             }
@@ -173,7 +164,6 @@
                 background: #4caf50;
             }
 
-            /* Expired */
             .expired-title {
                 color: gray;
             }
@@ -187,7 +177,6 @@
           <jsp:include page="/client/layout/header.jsp"/>
         <h2 class="main-title">🎟 Voucher của bạn</h2>
 
-        <!-- ACTIVE VOUCHERS  -->
         <h3 class="section-title active-title">🟢 Voucher còn hiệu lực</h3>
 
         <c:forEach var="v" items="${myVoucherList}">
@@ -209,7 +198,6 @@
             </c:if>
         </c:forEach>
 
-        <!-- EXPIRED VOUCHERS -->
         <h3 class="section-title expired-title">⚫ Voucher đã hết hạn (trong 3 ngày)</h3>
 
         <c:forEach var="v" items="${myVoucherList}">

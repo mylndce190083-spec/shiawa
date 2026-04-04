@@ -29,13 +29,13 @@
                         ${sessionScope.success}
                     </p>
                     <%
-                        session.removeAttribute("success");
+                        session.removeAttribute("Success");
                     %>
                     <p style="color:red;">
                         ${sessionScope.error}
                     </p>
                     <%
-                        session.removeAttribute("error");
+                        session.removeAttribute("Error");
                     %>
                     <p style="color:green;">
                         ${message}

@@ -95,36 +95,30 @@
                 transition: all 0.3s ease;
             }
 
-            /* Hover effect */
             .tab-link:hover {
                 color: #e53935;
             }
 
-            /* Active tab */
             .tab-link.active {
                 color: #e53935;
                 font-weight: bold;
             }
-            /* CỘT TÊN */
             .book-info{
                 display:flex;
                 align-items:center;
                 width:40%;
             }
 
-            /* CÁC CỘT KHÁC */
             .col{
                 width:20%;
                 text-align:center;
                 font-size:14px;
             }
 
-            /* GIÁ */
             .price{
                 color:#e53935;
                 font-weight:600;
             }
-            /* Animated underline */
             .tab-link::after {
                 content: "";
                 position: absolute;
@@ -400,13 +394,11 @@
         </div>
         <div class="pagination-custom">
 
-            <!-- Previous -->
             <a class="${currentPage == 1 ? 'disabled' : ''}"
                href="${pageContext.request.contextPath}/OrderList/${currentStatus}?page=${currentPage - 1}">
                 «
             </a>
 
-            <!-- Page number -->
             <c:forEach begin="1" end="${totalPage}" var="i">
                 <a class="${i == currentPage ? 'active' : ''}"
                    href="${pageContext.request.contextPath}/OrderList/${currentStatus}?page=${i}">
@@ -414,7 +406,6 @@
                 </a>
             </c:forEach>
 
-            <!-- Next -->
             <a class="${currentPage == totalPage ? 'disabled' : ''}"
                href="${pageContext.request.contextPath}/OrderList/${currentStatus}?page=${currentPage + 1}">
                 »

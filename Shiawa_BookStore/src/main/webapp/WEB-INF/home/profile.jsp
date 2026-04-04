@@ -16,7 +16,6 @@
         <jsp:include page="/client/layout/header.jsp"/>
         <div class="profile-wrapper">
 
-            <!-- Sidebar -->
             <div class="profile-sidebar">
                 <div class="avatar-box">
                     <img src="${pageContext.request.contextPath}/image?file=${customer.avatar}" 
@@ -57,7 +56,6 @@
                 </ul>
             </div>
 
-            <!-- Main Content -->
             <div class="profile-content">
                 <h2>Thông tin cá nhân</h2>
 

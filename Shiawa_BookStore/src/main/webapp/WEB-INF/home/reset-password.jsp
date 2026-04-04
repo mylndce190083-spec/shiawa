@@ -18,12 +18,10 @@
         <c:if test="${empty sessionScope.user}">
             <header class="header">
 
-                <!-- LOGO -->
                 <div class="logo" id="backToShop">
                     <img src="${pageContext.request.contextPath}/assets/img/logo.jpg" class="rounded-img">
                 </div>
 
-                <!-- SEARCH (GIỮA) -->
                 <div class="search-box">
                     <input type="text">
                     <button>
@@ -31,7 +29,6 @@
                     </button>
                 </div>
 
-                <!-- ICONS -->
                 <div class="icons">
                     <div class="icon" id="cartIcon">
                         <i class="fa-solid fa-cart-shopping"></i>
@@ -50,7 +47,6 @@
         <c:if test="${not empty sessionScope.user}">
             <div class="profile-wrapper">
 
-                <!-- Sidebar -->
                 <div class="profile-sidebar">
                     <div class="avatar-box">
                         <img src="${pageContext.request.contextPath}/image?file=${customer.avatar}" 
@@ -85,7 +81,6 @@
                     </ul>
                 </div>
 
-                <!-- Main Content -->
                 <div class="profile-content">
                     <h2>Thông tin cá nhân</h2>
 
@@ -125,7 +120,6 @@
 
             <h2>Đặt lại mật khẩu</h2>
 
-            <!-- LOGIN -->
             <div class="modal-overlay">
                 <div class="modal-box">
                     <h2>Đặt lại mật khẩu</h2>

@@ -14,7 +14,6 @@
 
         <h4 class="mb-4">Order Detail</h4>
 
-        <!-- Order Info -->
         <div class="card p-3 mb-4">
             <p><strong>Order ID:</strong> ${order.orderId}</p>
             <p><strong>Customer:</strong> ${order.customerName}</p>
@@ -104,7 +103,6 @@
 
         </div>     
 
-        <!-- Order Details -->
         <h5 class="mb-3">Books in this Order</h5>
 
         <div class="table-responsive">
