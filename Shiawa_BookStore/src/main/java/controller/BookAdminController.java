@@ -242,7 +242,7 @@ public class BookAdminController extends HttpServlet {
 
                         BookImage img = new BookImage();
                         img.setBookId(bookId);
-                        img.setImageUrl("book/" + fileName);//sua duong dan
+                        img.setImageUrl("book/" + fileName);
                         img.setPrimary(false);
                         img.setDisplayOrder(0);
 

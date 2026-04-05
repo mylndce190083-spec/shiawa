@@ -52,11 +52,10 @@ public class AccountDAO extends DBContext {
     public Account login(String username, String pass) {
         Account u = new Account();
         u.setId(-1);
-        String sqlCus = "select * from Customer where (email = ? OR phone = ?) and password = ?";
+        String sqlCus = "select * from Customer where email = ? and password = ?";
         try (PreparedStatement ps = getConnection().prepareStatement(sqlCus)) {
             ps.setString(1, username);
-            ps.setString(2, username);
-            ps.setString(3, pass);
+            ps.setString(2, pass);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 u.setId(rs.getInt("customer_id"));
@@ -77,11 +76,10 @@ public class AccountDAO extends DBContext {
         if (u.getUsername() == null) {
             String sqlStaff = "select * from Staff s\n"
                     + "  join Role r on s.role_id = r.role_id\n"
-                    + "  where (email = ? OR phone = ?) and password = ?";
+                    + "  where email = ? and password = ?";
             try (PreparedStatement ps = getConnection().prepareStatement(sqlStaff)) {
                 ps.setString(1, username);
-                ps.setString(2, username);
-                ps.setString(3, pass);
+                ps.setString(2, pass);
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
                     u.setId(rs.getInt("Staff_id"));
