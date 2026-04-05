@@ -48,6 +48,12 @@
             </div>
         </div>
         <div class="table-responsive">
+            <c:if test="${not empty sessionScope.message}">
+                <div class="alert alert-success text-center">
+                    ${sessionScope.message}
+                </div>
+                <c:remove var="message" scope="session"/>
+            </c:if>
             <table class="table text-start align-middle table-bordered table-hover mb-0">
                 <thead>
                     <tr class="text-success">
@@ -69,28 +75,29 @@
 
                                 <div class="d-flex justify-content-center gap-2">
 
-                                    <!-- View Detail -->
                                     <a href="account?view=detail&id=${a.id}&role=${a.role}"
                                        class="btn btn-sm btn-primary">
                                         Detail
                                     </a>
 
-                                    
-                                    <c:choose>
-                                        <c:when test="${a.status == 'active'}">
-                                            <a href="account?view=deactivate&id=${a.id}&role=${a.role}"
-                                               class="btn btn-sm btn-danger">
-                                                Deactivate
-                                            </a>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <a href="account?view=activate&id=${a.id}&role=${a.role}"
-                                               class="btn btn-sm btn-success">
-                                                Activate
-                                            </a>
-                                        </c:otherwise>
-                                    </c:choose>
-
+                                    <c:if test="${sessionScope.user.id != a.id || sessionScope.user.role != a.role}">
+                                        <c:choose>
+                                            <c:when test="${a.status == 'active'}">
+                                                <a href="account?view=deactivate&id=${a.id}&role=${a.role}"
+                                                   class="btn btn-sm btn-danger"
+                                                   onclick="return confirm('Are you sure you want to deactivate this account?');">
+                                                    Deactivate
+                                                </a>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <a href="account?view=activate&id=${a.id}&role=${a.role}"
+                                                   class="btn btn-sm btn-success"
+                                                   onclick="return confirm('Activate this account?');">
+                                                    Activate
+                                                </a>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </c:if>
                                 </div>
                             </td>
                         </tr>
@@ -100,7 +107,6 @@
             </table>
             <div class="d-flex justify-content-center mt-4">
 
-                <!-- Previous -->
                 <c:if test="${currentPageNum > 1}">
                     <a class="btn btn-sm btn-outline-secondary me-2"
                        href="account?page=${currentPageNum - 1}&role=${selectedRole}">

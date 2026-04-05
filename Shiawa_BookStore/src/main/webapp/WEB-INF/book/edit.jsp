@@ -176,7 +176,6 @@
 
     </div>
 </div>
-<!-- Recent Sales End -->
 
 <script>
     function previewImage(input) {

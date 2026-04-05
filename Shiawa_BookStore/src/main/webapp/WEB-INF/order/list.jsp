@@ -80,16 +80,6 @@
                                             </c:otherwise>
                                         </c:choose>
                                     </td>
-                                    
-                                    <c:choose>
-                                        <c:when test="${not empty o.voucherName}">
-                                            ${o.voucherName}
-                                        </c:when>
-                                        <c:otherwise>
-                                            None
-                                        </c:otherwise>
-                                    </c:choose>
-
                                     <td class="text-center">
                                         <a href="${pageContext.request.contextPath}/order-admin?action=detail&id=${o.orderId}"
                                            class="btn btn-sm" style="background-color:#6366f1; color:white;">
@@ -107,7 +97,7 @@
 
                     <div class="d-flex justify-content-center mt-3">
 
-                        
+
                         <c:if test="${currentPage > 1}">
                             <a class="btn btn-sm btn-outline-secondary me-2"
                                href="order-admin?action=list&page=${currentPage - 1}">

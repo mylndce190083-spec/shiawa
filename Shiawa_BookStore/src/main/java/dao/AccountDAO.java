@@ -65,7 +65,6 @@ public class AccountDAO extends DBContext {
                 u.setStatus(rs.getString("status"));
                 u.setFullName(rs.getString("full_name"));
                 u.setPassword(rs.getString("password"));
-                // FIX QUAN TRỌNG
                 u.setRole("Customer");
                 u.setMustChangePassword(rs.getBoolean("must_change_password"));
 
@@ -109,11 +108,8 @@ public class AccountDAO extends DBContext {
         try {
             MessageDigest ms = MessageDigest.getInstance("MD5");
             byte[] bytePass = ms.digest(pass.getBytes());
-            //[0x1a, 0x09, 0x1b, 0xa, 0x77,...]
             for (byte bytePas : bytePass) {
-                //0x1a, 0x09, 0x1b, 0xa
                 String ch = String.format("%02x", bytePas);
-                //1a, 09, 1b, 0a
                 hashPass += ch;
             }
         } catch (Exception e) {
@@ -148,14 +144,14 @@ public class AccountDAO extends DBContext {
         if ("Customer".equalsIgnoreCase(role)) {
             sql = """
               SELECT customer_id AS id, username, full_name, gender,
-                     email, phone, address, status
+                     email, phone, address, status, avatar
               FROM Customer
               WHERE customer_id = ?
               """;
         } else {
             sql = """
               SELECT s.staff_id AS id, s.username, s.full_name, s.gender,
-                     s.email, s.phone, s.address, s.status, r.name AS role
+                     s.email, s.phone, s.address, s.status, s.avatar, r.name AS role
               FROM Staff s
               JOIN Role r ON s.role_id = r.role_id
               WHERE s.staff_id = ?
@@ -177,6 +173,7 @@ public class AccountDAO extends DBContext {
                 a.setPhone(rs.getString("phone"));
                 a.setAddress(rs.getString("address"));
                 a.setStatus(rs.getString("status"));
+                a.setAvatar(rs.getString("avatar"));
                 return a;
             }
 
@@ -303,15 +300,10 @@ public class AccountDAO extends DBContext {
 
     public void addUser(String username, String email, String fullName,
             String phone, String role, String password) {
-
         if ("Customer".equalsIgnoreCase(role)) {
-
             createCustomer(username, fullName, email, phone, password);
-
         } else {
-
             createStaff(username, fullName, email, phone, password, role);
-
         }
     }
 
@@ -417,7 +409,6 @@ public class AccountDAO extends DBContext {
         return false;
     }
 
-    // update profile (Admin only)
     public void updateProfile(Account acc) {
         String sql = "UPDATE Staff SET username=?, full_name=?, email=? WHERE staff_id=?";
         try {
@@ -522,11 +513,5 @@ public class AccountDAO extends DBContext {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        AccountDAO dao = new AccountDAO();
-        //System.out.println(dao.hashMD5("123456"));
-        System.out.println(dao.login("admin@gmail.com", "admin123"));
     }
 }

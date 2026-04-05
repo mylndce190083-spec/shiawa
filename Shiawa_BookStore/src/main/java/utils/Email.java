@@ -41,7 +41,6 @@ public class Email {
                     + URLEncoder.encode(toEmail, "UTF-8")
                     + "&token=" + token;
 
-
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromEmail));
             message.setRecipients(
@@ -57,7 +56,7 @@ public class Email {
             e.printStackTrace();
         }
     }
-    
+
     public static void sendOTP(String toEmail, String otp) {
         final String fromEmail = "hienpdt.ce190957@gmail.com";
         final String password = "uudpwqxrdjnudksp";

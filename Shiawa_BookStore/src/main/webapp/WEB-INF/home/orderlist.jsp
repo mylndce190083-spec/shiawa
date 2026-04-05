@@ -241,7 +241,6 @@
                 Đơn hàng của tôi
             </div>
 
-            <!-- Tabs lọc trạng thái -->
             <div class="tab-container">
                 <a href="${pageContext.request.contextPath}/OrderList"
                    class="tab-link ${currentStatus == 'ALL' ? 'active' : ''}">
@@ -322,24 +321,20 @@
 
                             <div class="order-item">
 
-                                <!-- TÊN -->
                                 <div class="book-info">
                                     <img src="${pageContext.request.contextPath}/image?file=${item.book.urlImg.replace(' ', '%20')}" class="book-img">
                                     <div class="book-title">${item.title}</div>
                                 </div>
 
-                                <!-- SỐ LƯỢNG -->
                                 <div class="col">
                                     ${item.quantity}x
                                 </div>
 
-                                <!-- GIÁ -->
                                 <div class="col">
                                     <fmt:formatNumber value="${item.price}" type="number"
                                                       groupingUsed="true" maxFractionDigits="0"/>
                                 </div>
 
-                                <!-- THÀNH TIỀN -->
                                 <div class="col price">
                                     <fmt:formatNumber value="${item.price * item.quantity}"
                                                       type="number" groupingUsed="true"

@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.List;
 import model.Account;
 import model.StockInRequest;
-import model.StockInRequestItem;
 
 @WebServlet(name = "StockInApprovalController", urlPatterns = {"/stock-in-approval"})
 public class StockInApprovalController extends HttpServlet {

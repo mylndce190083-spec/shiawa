@@ -7,7 +7,6 @@ package controller;
 import dao.AccountDAO;
 import dao.CustomerDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -46,7 +45,6 @@ public class RegisterController extends HttpServlet {
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
 
-        // biểu thức chính quy để kiểm tra input
         String usernameRegex = "^[a-zA-Z0-9_]{3,20}$";
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
         String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).{8,}$";
@@ -54,7 +52,6 @@ public class RegisterController extends HttpServlet {
         CustomerDAO dao = new CustomerDAO();
         AccountDAO adao = new AccountDAO();
 
-        // Validate username
         if (!username.matches(usernameRegex)) {
             request.setAttribute("error",
                     "Tên bao gồm 3 đến 20 kí tự (chữ, số và dấu _)");
@@ -62,14 +59,12 @@ public class RegisterController extends HttpServlet {
             return;
         }
 
-        // Validate email
         if (!email.matches(emailRegex)) {
             request.setAttribute("error", "Email không hợp lệ!");
             request.getRequestDispatcher("/WEB-INF/home/register.jsp").forward(request, response);
             return;
         }
 
-        // Validate password
         if (!password.matches(passwordRegex)) {
             request.setAttribute("error",
                     "Mật khẩu gồm ít nhất 8 kí tự. Bao gồm ít nhất 1 chữ thường, 1 chữ hoa, 1 chữ số và 1 kí tự đặc biệt");
@@ -77,7 +72,6 @@ public class RegisterController extends HttpServlet {
             return;
         }
 
-        // 1️⃣ Kiểm tra confirm password
         if (!password.equals(confirmPassword)) {
             request.setAttribute("error", "Mật khẩu không khớp!");
             request.getRequestDispatcher("/WEB-INF/home/register.jsp")
@@ -85,7 +79,6 @@ public class RegisterController extends HttpServlet {
             return;
         }
 
-        // 2️⃣ Kiểm tra username tồn tại
         if (dao.checkCustomerExist(email)) {
             request.setAttribute("error", "Email đã được sử dụng!");
             request.getRequestDispatcher("/WEB-INF/home/register.jsp")
@@ -119,15 +112,5 @@ public class RegisterController extends HttpServlet {
             response.sendRedirect("login");
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

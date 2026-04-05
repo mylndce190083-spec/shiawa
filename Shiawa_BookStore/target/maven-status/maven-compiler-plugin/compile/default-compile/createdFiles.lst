@@ -10,6 +10,7 @@ model\Address.class
 controller\FeedbackController.class
 controller\AccountController.class
 controller\BookDetailController.class
+model\ChatKnowledge.class
 vnpay\vnpayQuery.class
 dao\CartItemDAO.class
 dao\OrderDetailDAO.class
@@ -28,6 +29,8 @@ controller\BookAdminController.class
 dao\BookImageDAO.class
 dao\AccountDAO.class
 controller\GetVoucherController.class
+controller\SupportChatController.class
+model\ChatMessage.class
 utils\Email$3.class
 controller\LoginController.class
 vnpay\vnpayRefund.class
@@ -51,7 +54,9 @@ controller\GetVoucherController$1.class
 controller\InventoryController.class
 dao\FeedbackDAO.class
 controller\CategoryController.class
+controller\IncomeController.class
 controller\BookRequestController.class
+controller\SupportAdminController.class
 model\Voucher.class
 controller\CheckoutController.class
 model\Customer.class
@@ -75,9 +80,11 @@ controller\ForgotPasswordController.class
 model\BookRequest.class
 dao\StockTxnDAO.class
 controller\BookController.class
+dao\ChatDAO.class
 dao\VoucherDAO.class
 controller\ChangePasswordController.class
 controller\StockInApprovalController.class
+dao\ChatKnowledgeDAO.class
 dao\BookDAO.class
 dao\VoucherDAO$ClaimVoucherResult.class
 model\BookImage.class
@@ -86,4 +93,5 @@ model\OrderItem.class
 com\mycompany\shiawa_bookstore\JakartaRestConfiguration.class
 controller\SearchController.class
 model\StockTxnItem.class
+model\ChatSession.class
 db\DBContext.class

@@ -6,7 +6,6 @@ package controller;
 
 import dao.FeedbackDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -28,16 +27,10 @@ public class FeedbackAdminController extends HttpServlet {
             throws ServletException, IOException {
 
         FeedbackDAO fbDao = new FeedbackDAO();
-
-        // lấy list feedback
-        List<Feedback> list = fbDao.getAllFeedback(); // bạn tự viết hàm này
+        List<Feedback> list = fbDao.getAllFeedback();
 
         request.setAttribute("feedbackList", list);
-
-        // để active menu
         request.setAttribute("pagePrimary", "feedback-admin");
-
-        // forward sang JSP admin
         request.getRequestDispatcher("/WEB-INF/feedback/list.jsp").forward(request, response);
     }
 
@@ -53,17 +46,5 @@ public class FeedbackAdminController extends HttpServlet {
         boolean result = dao.hideFeedback(id, status);
 
         response.getWriter().write(result ? "success" : "fail");
-
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

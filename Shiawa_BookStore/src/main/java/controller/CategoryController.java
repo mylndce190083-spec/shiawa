@@ -30,7 +30,6 @@ public class CategoryController extends HttpServlet {
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
 
-        // 1. Check đăng nhập + role
         if (user == null || !"Admin".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
@@ -101,23 +100,21 @@ public class CategoryController extends HttpServlet {
             boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
             boolean hasCategoryParent = categoryParentId != null;
 
-            // ===== SEARCH ƯU TIÊN =====
             if (hasKeyword) {
 
                 list = cateDAO.searchCateByTitle(keyword);
 
-            } // ===== FILTER =====
+            } 
             else if (hasCategoryParent) {
 
                 list = cateDAO.getCateByParentId(categoryParentId);
 
-            } // ===== LOAD ALL =====
+            }
             else {
 
                 list = cateDAO.getAllCategory();
             }
 
-            // ===== THÔNG BÁO KHI RỖNG =====
             if (list.isEmpty()) {
 
                 if (hasKeyword) {
@@ -165,15 +162,12 @@ public class CategoryController extends HttpServlet {
                     c.setCategoryName(name);
                     c.setParentId(categoryParentId);
 
-                    
                     cdao.insertChildCategory(c);
 
-                    // message thành công
                     session.setAttribute("msg", "Add category successfully");
                     session.setAttribute("msgType", "success");
 
                 } catch (Exception e) {
-                    // message thất bại
                     session.setAttribute("msg", "Add category failed");
                     session.setAttribute("msgType", "danger");
                 }
@@ -196,12 +190,10 @@ public class CategoryController extends HttpServlet {
                    
                     cdao.insertParentCategory(c);
 
-                    // message thành công
                     session.setAttribute("msg", "Add parent category successfully");
                     session.setAttribute("msgType", "success");
 
                 } catch (Exception e) {
-                    // message thất bại
                     session.setAttribute("msg", "Add parent category failed");
                     session.setAttribute("msgType", "danger");
                 }
@@ -234,12 +226,10 @@ public class CategoryController extends HttpServlet {
                   
                     cdao.updateChildCategory(c);
 
-                    // message thành công
                     session.setAttribute("msg", "Update category successfully");
                     session.setAttribute("msgType", "success");
 
                 } catch (Exception e) {
-                    // message thất bại
                     session.setAttribute("msg", "Update category failed");
                     session.setAttribute("msgType", "danger");
                 }
@@ -260,15 +250,12 @@ public class CategoryController extends HttpServlet {
                     c.setCategoryName(name);
                     c.setCategoryId(categoryId);
 
-                    
                     cdao.updateParentCategory(c);
 
-                    // message thành công
                     session.setAttribute("msg", "Update parent category successfully");
                     session.setAttribute("msgType", "success");
 
                 } catch (Exception e) {
-                    // message thất bại
                     session.setAttribute("msg", "Update parent category failed");
                     session.setAttribute("msgType", "danger");
                 }
@@ -284,26 +271,22 @@ public class CategoryController extends HttpServlet {
                 CategoryDAO cdao = new CategoryDAO();
                 Category category = cdao.getCategoryById(id);
 
-                if (category.getParentId() > 0) {//thể loại con, có parentId
+                if (category.getParentId() > 0) {
                     if (cdao.isCategoryHasBook(id)) {
-                        // nếu có sách đang có thể loại này -> không thể xóa
                         session.setAttribute("msg",
                                 "Cannot delete! This category has been using");
                         session.setAttribute("msgType", "warning");
                     } else {
-                        // nếu không có sách nào thuộc thể loại này -> có thể xóa
                         cdao.deleteCategory(id);
                         session.setAttribute("msg", "Delete category successfully");
                         session.setAttribute("msgType", "success");
                     }
-                } else {//thể loại cha
+                } else {
                     if (cdao.isParentCategoryHasChild(id)) {
-                        // nếu có thể loại con -> không thể xóa
                         session.setAttribute("msg",
                                 "Cannot delete! This category has child");
                         session.setAttribute("msgType", "warning");
                     } else {
-                        // nếu không có thể loại con -> có thể xóa
                         cdao.deleteCategory(id);
                         session.setAttribute("msg", "Delete parent category successfully");
                         session.setAttribute("msgType", "success");
@@ -317,11 +300,4 @@ public class CategoryController extends HttpServlet {
             return;
         }
     }
-
-   
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

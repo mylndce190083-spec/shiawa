@@ -7,7 +7,6 @@ package controller;
 import dao.AccountDAO;
 import dao.CustomerDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -57,26 +56,13 @@ public class ResetPasswordController extends HttpServlet {
 
         String hashed = adao.hashMD5(password);
         CustomerDAO dao = new CustomerDAO();
-        //reset pass voi otp
         if (user == null) {
             dao.updatePassword(hashed);
             response.sendRedirect("login");
             return;
         }
 
-        //reset pass trong profile
         dao.updatePasswordCustomer(hashed, user.getId());
         response.sendRedirect("profile");
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

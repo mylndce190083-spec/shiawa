@@ -28,7 +28,6 @@ public class AccountController extends HttpServlet {
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
 
-        // 1. Check đăng nhập + role
         if (user == null || !"Admin".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
@@ -37,21 +36,23 @@ public class AccountController extends HttpServlet {
         String view = request.getParameter("view");
         AccountDAO dao = new AccountDAO();
 
-        if ("activate".equals(view)) {
-
+        if ("activate".equals(view) || "deactivate".equals(view)) {
             int id = Integer.parseInt(request.getParameter("id"));
             String role = request.getParameter("role");
-            Account acc = dao.getAccountById(id, role);
-            dao.updateStatus(id, role, "active");
 
-            response.sendRedirect("account");
-            return;
+            if (user.getId() == id && user.getRole().equalsIgnoreCase(role)) {
+                session.setAttribute("message", "You cannot change your own status!");
+                response.sendRedirect("account");
+                return;
+            }
 
-        } else if ("deactivate".equals(view)) {
-
-            int id = Integer.parseInt(request.getParameter("id"));
-            String role = request.getParameter("role");
-            dao.updateStatus(id, role, "inactive");
+            if ("activate".equals(view)) {
+                dao.updateStatus(id, role, "active");
+                session.setAttribute("message", "Account activated successfully!");
+            } else {
+                dao.updateStatus(id, role, "inactive");
+                session.setAttribute("message", "Account deactivated successfully!");
+            }
 
             response.sendRedirect("account");
             return;
@@ -61,29 +62,24 @@ public class AccountController extends HttpServlet {
             String role = request.getParameter("role");
             Account acc = dao.getAccountById(id, role);
 
-            // DEBUG
             if (acc == null) {
                 System.out.println("Account not found!");
             } else {
                 System.out.println("Account found: " + acc.getUsername());
             }
             request.setAttribute("account", acc);
-            //request.setAttribute("currentPage", "account");
 
             request.getRequestDispatcher("/WEB-INF/account/detail.jsp")
                     .forward(request, response);
             return;
 
         } else if ("add".equals(view)) {
-            //request.setAttribute("currentPage", "account");
             request.getRequestDispatcher("/WEB-INF/account/add.jsp")
                     .forward(request, response);
             return;
         }
-        //request.setAttribute("pagePrimary", "account");
 
         String role = request.getParameter("role");;
-        // FIX lỗi role rỗng khi pagination
         if (role != null && role.trim().isEmpty()) {
             role = null;
         }
@@ -106,7 +102,7 @@ public class AccountController extends HttpServlet {
         request.setAttribute("totalPage", totalPage);
         request.setAttribute("accounts", list);
         request.setAttribute("selectedRole", role);
-        //chặn cache
+
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setDateHeader("Expires", 0);
@@ -129,33 +125,21 @@ public class AccountController extends HttpServlet {
             AccountDAO dao = new AccountDAO();
 
             if (dao.usernameExists(username)) {
-                request.setAttribute("error", "Username already exists!");
+                request.setAttribute("error", "Username already exists! hhhhhhhhhhhhhhhhhhhh");
                 request.getRequestDispatcher("/WEB-INF/account/add.jsp")
                         .forward(request, response);
                 return;
             }
-            // tạo password tạm
+
             String tempPassword = java.util.UUID.randomUUID()
                     .toString().substring(0, 8);
 
-            // tạo account
             dao.addUser(username, email, fullName, phone, role, tempPassword);
 
-            // gửi mail
             utils.Email.sendTempPasswordEmail(email, username, tempPassword);
 
             response.sendRedirect("account");
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

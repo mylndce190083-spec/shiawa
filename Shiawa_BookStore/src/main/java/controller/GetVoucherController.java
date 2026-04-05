@@ -8,7 +8,6 @@ package controller;
 import dao.VoucherDAO;
 import dao.VoucherDAO.ClaimVoucherResult;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -16,7 +15,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
-import model.Account;
 import model.Customer;
 import model.Voucher;
 
@@ -31,10 +29,9 @@ public class GetVoucherController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        Account user = (Account) session.getAttribute("user");
+        Customer cus = (Customer) session.getAttribute("customer");
 
-        // 1. Check đăng nhập + role
-        if (user == null || !"customer".equalsIgnoreCase(user.getRole())) {
+        if (cus == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
@@ -44,7 +41,6 @@ public class GetVoucherController extends HttpServlet {
         list = vdao.getAllAvailableVoucher();
 
         request.setAttribute("voucherList", list);
-
         request.getRequestDispatcher("/WEB-INF/home/get-voucher.jsp").forward(request, response);
 
     }
@@ -53,21 +49,20 @@ public class GetVoucherController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        Customer customer = (Customer) session.getAttribute("customer");
+        Customer cus = (Customer) session.getAttribute("customer");
         int voucherId = Integer.parseInt(request.getParameter("voucherId"));
         VoucherDAO vdao = new VoucherDAO();
 
-        if (customer == null) {
+        if (cus == null) {
             response.sendRedirect("login");
             return;
         }
 
         try {
 
-            ClaimVoucherResult result = vdao.claimVoucher(customer.getId(), voucherId);
+            ClaimVoucherResult result = vdao.claimVoucher(cus.getId(), voucherId);
             switch (result) {
                 case SUCCESS:
-                    // message thành công
                     session.setAttribute("msg", "Lấy voucher thành công!");
                     session.setAttribute("msgType", "success");
                     break;
@@ -83,30 +78,17 @@ public class GetVoucherController extends HttpServlet {
                     break;
 
                 default:
-                    // message thất bại
                     session.setAttribute("msg", "Lấy voucher thất bại!");
                     session.setAttribute("msgType", "danger");
             }
 
         } catch (Exception e) {
-            // message thất bại
             session.setAttribute("msg", "Lỗi!");
             session.setAttribute("msgType", "danger");
         }
 
         response.sendRedirect(request.getContextPath() + "/get-voucher");
         return;
-
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

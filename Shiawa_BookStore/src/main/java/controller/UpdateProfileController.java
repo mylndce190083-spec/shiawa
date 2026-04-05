@@ -6,7 +6,6 @@ package controller;
 
 import dao.CustomerDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -32,14 +31,18 @@ public class UpdateProfileController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        Customer customer = (Customer) session.getAttribute("customer");
+        Customer cus = (Customer) session.getAttribute("customer");
+
+        if (cus == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
 
         String username = request.getParameter("username");
         String phone = request.getParameter("phone");
         String address = request.getParameter("address");
         String fullname = request.getParameter("fullname");
 
-        // ================= VALIDATION =================
         String phoneRegex = "^0[35789][0-9]{8}$";
         String addressRegex = "^[A-Za-z0-9]{3,},\\sPhường\\s.+,\\sQuận\\s.+,\\sThành\\sphố\\s.+$";
 
@@ -56,18 +59,17 @@ public class UpdateProfileController extends HttpServlet {
             return;
         }
 
-        // ================= UPDATE =================
         CustomerDAO dao = new CustomerDAO();
-        boolean updated = dao.updateProfile(customer.getId(), username, phone, address, fullname);
+        boolean updated = dao.updateProfile(cus.getId(), username, phone, address, fullname);
 
         if (updated) {
 
-            customer.setUsername(username);
-            customer.setPhone(phone);
-            customer.setAddress(address);
-            customer.setFullname(fullname);
+            cus.setUsername(username);
+            cus.setPhone(phone);
+            cus.setAddress(address);
+            cus.setFullname(fullname);
 
-            session.setAttribute("customer", customer);
+            session.setAttribute("customer", cus);
             request.setAttribute("message", "Cập nhật thành công!");
 
         } else {
@@ -76,15 +78,5 @@ public class UpdateProfileController extends HttpServlet {
 
         request.getRequestDispatcher("/WEB-INF/home/profile.jsp").forward(request, response);
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

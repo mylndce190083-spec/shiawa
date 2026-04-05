@@ -23,7 +23,6 @@
         </c:if>
 
         <div class="d-flex align-items-center justify-content-between mb-4">
-            <!--<h6 class="mb-0">User List</h6>-->
             <div class="d-flex justify-content-between align-items-center">
                 <h6 class="mb-0">Book List</h6>
             </div>

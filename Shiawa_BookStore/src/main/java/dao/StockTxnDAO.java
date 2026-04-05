@@ -10,10 +10,6 @@ import model.StockTxnItem;
 
 public class StockTxnDAO extends DBContext {
 
-    /**
-     * Creates a transaction with items and updates Book.stock atomically.
-     * For OUT: validates stock >= qty for each item.
-     */
     public int createTxnAndApplyStock(StockTxn txn) throws Exception {
         Connection conn = getConnection();
         boolean oldAutoCommit = conn.getAutoCommit();
@@ -121,15 +117,9 @@ public class StockTxnDAO extends DBContext {
         }
 
         if ("ADJUST".equalsIgnoreCase(txnType)) {
-            // For adjust we treat qty as absolute delta: positive means add, negative not allowed in schema.
-            // To adjust down, user should use OUT. Keep this simple.
             throw new Exception("ADJUST is not supported by createTxnAndApplyStock() yet. Use IN/OUT.");
         }
 
         throw new Exception("Unknown txn_type: " + txnType);
     }
 }
-
-
-
-

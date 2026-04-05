@@ -11,7 +11,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import model.Book;
 import model.CartItem;
@@ -37,19 +36,15 @@ public class OrderDAO extends DBContext {
             System.out.println("URL: " + getConnection().getMetaData().getURL());
             System.out.println("DB Name: " + getConnection().getCatalog());
             System.out.println("=======================");
-            // DEBUG CONNECTION
             System.out.println("URL: " + getConnection().getMetaData().getURL());
             System.out.println("DB: " + getConnection().getCatalog());
 
-            // DEBUG COUNT
             String test = "SELECT COUNT(*) FROM Orders";
             PreparedStatement ps2 = getConnection().prepareStatement(test);
             ResultSet rs2 = ps2.executeQuery();
             if (rs2.next()) {
                 System.out.println("Order count in Java = " + rs2.getInt(1));
             }
-
-            // ---- QUERY CHÍNH ----
             String sql = """
             SELECT 
                 o.order_id,
@@ -228,7 +223,7 @@ public class OrderDAO extends DBContext {
                 = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setInt(1, customerId);
-            ps.setNull(2, java.sql.Types.INTEGER); // staff_id
+            ps.setNull(2, java.sql.Types.INTEGER);
             ps.setString(3, "PENDING");
             ps.setInt(4, discount);
             ps.setString(5, shippingAddress);
@@ -274,43 +269,24 @@ public class OrderDAO extends DBContext {
         try {
             con.setAutoCommit(false);
 
-            // 1️⃣ Insert order trước
             int orderId = insertOrder(con, customerId,
                     shippingAddress, shippingFee, receiverName, phone, paymentMethod, discount, voucherId);
 
             BookDAO bookDAO = new BookDAO();
             OrderDetailDAO detailDAO = new OrderDetailDAO();
 
-            // 2️⃣ Loop từng sản phẩm
             for (CartItem item : items) {
                 int stock = bookDAO.getStock(con, item.getBookId());
-                // Lấy stock hiện tại
-                // int stock = bookDAO.getStock(con, item.getBookId());
-                // Kiểm tra quantity hợp lệ
                 if (item.getQuantity() <= 0) {
                     throw new Exception("Invalid quantity for product ID "
                             + item.getBookId());
                 }
-//
-//                // Kiểm tra đủ hàng không
-//                if (stock < item.getQuantity()) {
-//                    throw new Exception("Product ID "
-//                            + item.getBookId()
-//                            + " only has "
-//                            + stock
-//                            + " items left");
-//                }
-// ❌ hết hàng
                 if (stock == 0) {
                     throw new Exception("Sản phẩm đã hết hàng");
                 }
-
-// ❌ mua quá
                 if (item.getQuantity() > stock) {
                     throw new Exception("Chỉ còn " + stock + " sản phẩm trong kho");
                 }
-
-                // Insert OrderDetail
                 detailDAO.insertOrderDetail(
                         con,
                         orderId,
@@ -318,8 +294,6 @@ public class OrderDAO extends DBContext {
                         item.getQuantity(),
                         item.getPrice()
                 );
-
-                // Update stock
                 bookDAO.updateStock(
                         con,
                         item.getBookId(),
@@ -333,16 +307,11 @@ public class OrderDAO extends DBContext {
                     cartDAO.delete(customerId, item.getBookId());
                 }
             }
-            // 3️⃣ Commit nếu mọi thứ OK
             con.commit();
             return orderId;
-
         } catch (Exception e) {
-
-            // 4️⃣ Rollback nếu lỗi
             con.rollback();
             throw e;
-
         } finally {
             con.close();
         }
@@ -398,12 +367,11 @@ public class OrderDAO extends DBContext {
                 }
 
                 o.setStatus(rs.getString("status"));
-                o.setPaymentMethod(rs.getString("payment_method")); // ✅ THÊM
+                o.setPaymentMethod(rs.getString("payment_method"));
                 o.setShippingAddress(rs.getString("shipping_address"));
                 o.setShippingFee(rs.getDouble("shipping_fee"));
                 o.setTotalAmount(rs.getDouble("total_amount"));
 
-                // 🔥 LOAD ITEMS CHO TỪNG ORDER
                 String itemSql = """
             SELECT 
                     oi.quantity,
@@ -439,7 +407,7 @@ public class OrderDAO extends DBContext {
                     items.add(item);
                 }
 
-                o.setItems(items);   // 🔥 CÁI QUAN TRỌNG NHẤT
+                o.setItems(items);
                 int totalQuantity = 0;
                 for (OrderItem item : items) {
                     totalQuantity += item.getQuantity();
@@ -510,7 +478,6 @@ public class OrderDAO extends DBContext {
                 o.setShippingAddress(rs.getString("shipping_address"));
                 o.setShippingFee(rs.getDouble("shipping_fee"));
 
-                // 🔥 QUAN TRỌNG
                 o.setTotalAmount(rs.getDouble("total_amount"));
 
                 list.add(o);
@@ -529,9 +496,7 @@ public class OrderDAO extends DBContext {
 
         try {
             con = getConnection();
-            con.setAutoCommit(false); // bật transaction
-
-            // 1️⃣ Kiểm tra đơn có thuộc customer và đang Pending không
+            con.setAutoCommit(false);
             String checkSql = """
             SELECT status, payment_method
             FROM Orders 
@@ -550,7 +515,6 @@ public class OrderDAO extends DBContext {
 
                 if ("Pending".equalsIgnoreCase(status)) {
 
-                    // 2️⃣ Lấy danh sách sản phẩm trong đơn
                     String itemSql = """
                     SELECT book_id, quantity
                     FROM OrderDetail
@@ -565,7 +529,6 @@ public class OrderDAO extends DBContext {
                         int bookId = rsItem.getInt("book_id");
                         int quantity = rsItem.getInt("quantity");
 
-                        // 3️⃣ Cộng lại stock cho cả 2 phương thức
                         String updateStock = """
                         UPDATE Book
                         SET stock = stock + ?
@@ -581,7 +544,6 @@ public class OrderDAO extends DBContext {
                     rsItem.close();
                     psItem.close();
 
-                    // 4️⃣ Update status: ONLINE -> CANCEL_REQUESTED, OFFLINE -> FAILED
                     String newStatus = "FAILED";
                     if ("ONLINE".equalsIgnoreCase(paymentMethod)) {
                         newStatus = "CANCEL_REQUESTED";
@@ -599,7 +561,7 @@ public class OrderDAO extends DBContext {
                     psUpdate.setInt(2, orderId);
                     psUpdate.executeUpdate();
                     psUpdate.close();
-                    con.commit(); // commit nếu mọi thứ OK
+                    con.commit();
                     System.out.println("Order " + orderId + " đã hủy, stock đã cộng lại.");
                 }
             }
@@ -607,7 +569,7 @@ public class OrderDAO extends DBContext {
         } catch (Exception e) {
             try {
                 if (con != null) {
-                    con.rollback(); // rollback nếu lỗi
+                    con.rollback();
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -664,7 +626,6 @@ public class OrderDAO extends DBContext {
                 o.setPhone(rs.getString("phone")); // ✅ thêm dòng này
                 o.setReceiverName(rs.getString("receiver_name"));
                 o.setPaymentMethod(rs.getString("payment_method"));
-                // 🔥 LOAD ORDER ITEMS
                 String itemSql = """
                  SELECT oi.quantity,
                            b.book_id,
@@ -693,14 +654,13 @@ public class OrderDAO extends DBContext {
                     OrderItem item = new OrderItem();
                     item.setQuantity(rs2.getInt("quantity"));
                     item.setBook(b);
-// 🔥 thêm 2 dòng này
                     item.setTitle(rs2.getString("title"));
                     item.setUrl_img(rs2.getString("image_url"));
                     item.setPrice(rs2.getDouble("price"));
                     items.add(item);
                 }
 
-                o.setItems(items);   // 🔥 CÁI QUAN TRỌNG NHẤT
+                o.setItems(items);
 
                 return o;
             }
@@ -844,7 +804,6 @@ public class OrderDAO extends DBContext {
         return 0;
     }
 
-
     public double getTotalIncome() {
         String sql = """
         SELECT SUM(od.quantity * od.price) AS total
@@ -905,7 +864,7 @@ public class OrderDAO extends DBContext {
                 b.setTitle(rs.getString("title"));
                 b.setSold(rs.getInt("sold"));
                 list.add(b);
-                }
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -934,7 +893,6 @@ public class OrderDAO extends DBContext {
                 orderId = rs.getInt(1);
             }
 
-            // KHÔNG lặp qua items ở đây nữa, việc này để createOrder lo
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -969,7 +927,6 @@ public class OrderDAO extends DBContext {
                 o.setStatus(rs.getString("status"));
                 o.setPaymentMethod(rs.getString("payment_method"));
 
-                // Load items cho từng order
                 List<OrderItem> items = detailDAO.getItemsByOrderId(o.getOrderId());
                 o.setItems(items);
 
@@ -1050,24 +1007,11 @@ public class OrderDAO extends DBContext {
                 o.setTotalAmount(totalAmount);
 
                 list.add(o);
-
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return list;
-    }
-
-    public static void main(String[] args) {
-        OrderDAO dao = new OrderDAO();
-
-//        List<Orders> list = dao.getAllOrders();
-//        for (Orders o : list) {
-//            System.out.println(o);
-//        }
-        System.out.println(dao.getOrderById(17));
-
     }
 }

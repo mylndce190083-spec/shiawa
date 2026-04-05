@@ -21,7 +21,6 @@
                 <form action="${pageContext.request.contextPath}/category-admin" method="post">
                     <input type="hidden" name="view" value="add"/>
 
-                    <!-- TITLE -->
                     <div class="mb-3">
                         <label class="form-label">Name</label>
                         <input type="text" name="name" class="form-control" required>

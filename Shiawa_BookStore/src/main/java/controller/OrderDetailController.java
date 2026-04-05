@@ -6,14 +6,13 @@ package controller;
 
 import dao.OrderDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.Account;
+import model.Customer;
 import model.Orders;
 
 /**
@@ -27,10 +26,9 @@ public class OrderDetailController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        Account user = (Account) session.getAttribute("user");
+        Customer cus = (Customer) session.getAttribute("customer");
 
-        // 1. Check đăng nhập + role
-        if (user == null || !"Customer".equalsIgnoreCase(user.getRole())) {
+        if (cus == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
@@ -49,15 +47,5 @@ public class OrderDetailController extends HttpServlet {
             throws ServletException, IOException {
 
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

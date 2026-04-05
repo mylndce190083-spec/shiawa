@@ -7,7 +7,6 @@ package controller;
 import dao.BookDAO;
 import dao.CategoryDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -27,7 +26,7 @@ public class HomeController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // kiểm tra có phải VNPAY trả kết quả về không
+
         String responseCode = request.getParameter("vnp_ResponseCode");
 
         if (responseCode != null) {
@@ -53,7 +52,7 @@ public class HomeController extends HttpServlet {
         } else {
             list = dao.getAllBook();
         }
-        for (Book b : list) {// lấy số lượng đã bán
+        for (Book b : list) {
             int sold = dao.getSoldQuantity(b.getBookId());
             b.setSold(sold);
         }
@@ -72,15 +71,4 @@ public class HomeController extends HttpServlet {
             throws ServletException, IOException {
 
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

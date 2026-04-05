@@ -6,7 +6,6 @@ package controller;
 
 import dao.OrderDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -30,7 +29,6 @@ public class IncomeController extends HttpServlet {
         HttpSession session = request.getSession();
         Object user = session.getAttribute("user");
 
-        // Check login (giống BookAdminController)
         if (user == null) {
             response.sendRedirect("login");
             return;
@@ -56,15 +54,5 @@ public class IncomeController extends HttpServlet {
             throws ServletException, IOException {
 
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

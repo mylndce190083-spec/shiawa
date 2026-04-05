@@ -8,14 +8,12 @@ import db.DBContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import model.Book;
 import model.BookAdmin;
-import model.CartItem;
 import model.Category;
 
 /**
@@ -73,27 +71,6 @@ public class BookDAO extends DBContext {
         return list;
     }
 
-    private BookAdmin mapBookAdmin(ResultSet rs) throws SQLException {
-        BookAdmin b = new BookAdmin();
-        b.setBookId(rs.getInt("book_id"));
-        b.setTitle(rs.getString("title"));
-        b.setAuthor(rs.getString("author"));
-        b.setPrice(rs.getDouble("price"));
-        b.setStock(rs.getInt("stock"));
-        b.setPublisher(rs.getString("publisher"));
-        b.setDiscount(rs.getInt("discount"));
-        String imgUrl = getImgURLbyBookId(rs.getInt("book_id"));
-        if (imgUrl == null || imgUrl.isBlank()) {
-            imgUrl = rs.getString("url_img");
-        }
-        b.setUrlImg(imgUrl);
-        b.setIsActive(rs.getBoolean("is_active"));
-        b.setCreatedAt(rs.getString("created_at"));
-        b.setCategoryName(rs.getString("category_name"));
-        return b;
-    }
-
-
     public void insertBook(BookAdmin b) {
         String sql = """
         INSERT INTO Book
@@ -126,7 +103,6 @@ public class BookDAO extends DBContext {
                 String author = rs.getString("author");
                 double price = rs.getDouble("price");
                 String description = rs.getString("description");
-                //tao cate
                 int cateId = rs.getInt("category_id");
                 Category cate = dao.getCategoryById(cateId);
 
@@ -136,7 +112,6 @@ public class BookDAO extends DBContext {
                 String imgUrl = this.getImgURLbyBookId(id);
                 boolean isActive = rs.getBoolean("is_active");
                 LocalDateTime createAte = rs.getTimestamp("created_at").toLocalDateTime();
-                //tao doi tuong product
                 Book b = new Book();
                 b.setBookId(id);
                 b.setTitle(title);
@@ -150,7 +125,7 @@ public class BookDAO extends DBContext {
                 b.setUrlImg(imgUrl);
                 b.setIsActive(isActive);
                 b.setCreatedAt(createAte);
-                b.setSold(getSoldQuantity(id));   // 🔥 thêm dòng này
+                b.setSold(getSoldQuantity(id));
                 list.add(b);
             }
 
@@ -268,13 +243,9 @@ public class BookDAO extends DBContext {
     }
 
     public int getStock(Connection con, int bookId) throws Exception {
-
         String sql = "SELECT stock FROM Book WHERE book_id = ?";
-
         try (PreparedStatement ps = con.prepareStatement(sql)) {
-
             ps.setInt(1, bookId);
-
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("stock");
@@ -288,22 +259,17 @@ public class BookDAO extends DBContext {
     public void updateStock(Connection con,
             int bookId,
             int quantity) throws Exception {
-
         String sql = """
         UPDATE Book
         SET stock = stock - ?
         WHERE book_id = ?
         AND stock >= ?
     """;
-
         try (PreparedStatement ps = con.prepareStatement(sql)) {
-
             ps.setInt(1, quantity);
             ps.setInt(2, bookId);
             ps.setInt(3, quantity);
-
             int rows = ps.executeUpdate();
-
             if (rows == 0) {
                 throw new Exception("Không đủ hàng trong kho!");
             }
@@ -326,12 +292,10 @@ public class BookDAO extends DBContext {
                 b.setTitle(rs.getString("title"));
                 b.setPrice(rs.getDouble("price"));
                 b.setUrlImg(this.getImgURLbyBookId(rs.getInt("book_id")));
-                //b.setUrlImg(rs.getString("url_img"));
-
                 Category c = new Category();
                 c.setCategoryName(rs.getString("category_name"));
                 b.setCategory(c);
-                b.setSold(getSoldQuantity(id));   // 🔥 thêm dòng này
+                b.setSold(getSoldQuantity(id));
                 list.add(b);
             }
 
@@ -441,7 +405,7 @@ public class BookDAO extends DBContext {
                 b.setUrlImg(imgUrl);
                 b.setIsActive(isActive);
                 b.setCreatedAt(createdAt);
-                b.setSold(getSoldQuantity(id));   // 🔥 thêm dòng này
+                b.setSold(getSoldQuantity(id));
                 list.add(b);
             }
 
@@ -477,113 +441,12 @@ public class BookDAO extends DBContext {
             ps.setString(2, b.getAuthor());
             ps.setInt(3, b.getCategoryId());
             ps.setDouble(4, b.getPrice());
-            //ps.setInt(5, b.getStock());
             ps.setBoolean(5, b.isIsActive());
             ps.setString(6, b.getDescription());
             ps.setString(7, b.getUrlImg());
             ps.setInt(8, b.getDiscount());
             ps.setInt(9, b.getBookId());
             ps.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-//    public boolean isBookUsedInOrder(int bookId) {
-//        String sql = """
-//        SELECT COUNT(*)
-//                FROM OrderDetail od
-//                JOIN Orders o ON od.order_id = o.order_id
-//                WHERE od.book_id = ?
-//                AND o.status != 'DELIVERED'
-//    """;
-//
-//        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
-//            ps.setInt(1, bookId);
-//            ResultSet rs = ps.executeQuery();
-//            if (rs.next()) {
-//                return rs.getInt(1) > 0;
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return false;
-//    }
-    public boolean isBookInActiveOrder(int bookId) {
-        String sql = """
-        SELECT COUNT(*)
-        FROM OrderDetail od
-        JOIN [Order] o ON od.order_id = o.order_id
-        WHERE od.book_id = ?
-        AND o.status NOT IN ('DELIVERED', 'FAILED')
-    """;
-
-        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
-            ps.setInt(1, bookId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public boolean canHardDelete(int bookId) {
-
-        // 1. check stock
-        String sql = "SELECT stock FROM Book WHERE book_id = ?";
-
-        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
-            ps.setInt(1, bookId);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                int stock = rs.getInt("stock");
-                if (stock > 0) {
-                    return false;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // 2. check order đang active
-        if (isBookInActiveOrder(bookId)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public void hardDeleteBook(int bookId) {
-
-        String deleteImages = "DELETE FROM BookImages WHERE book_id = ?";
-        String deleteBook = "DELETE FROM Book WHERE book_id = ?";
-
-        try (Connection conn = getConnection()) {
-
-            conn.setAutoCommit(false); // transaction
-
-            try (
-                    PreparedStatement psImg = conn.prepareStatement(deleteImages); PreparedStatement psBook = conn.prepareStatement(deleteBook)) {
-
-                // 1. Xóa ảnh trước
-                psImg.setInt(1, bookId);
-                psImg.executeUpdate();
-
-                // 2. Xóa book
-                psBook.setInt(1, bookId);
-                psBook.executeUpdate();
-
-                conn.commit();
-
-            } catch (Exception e) {
-                conn.rollback();
-                e.printStackTrace();
-            }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -633,7 +496,7 @@ public class BookDAO extends DBContext {
         return list;
     }
 
-    public List<BookAdmin> getBooksByCategory(int categoryId) { // filter
+    public List<BookAdmin> getBooksByCategory(int categoryId) {
         List<BookAdmin> list = new ArrayList<>();
 
         String sql = """
@@ -941,14 +804,5 @@ public class BookDAO extends DBContext {
             e.printStackTrace();
         }
         return 0;
-
-    }
-
-    public static void main(String[] args) {
-        BookDAO dao = new BookDAO();
-        List<Book> list = dao.getAllBook();
-        for (Book b : list) {
-            System.out.println(b);
-        }
     }
 }

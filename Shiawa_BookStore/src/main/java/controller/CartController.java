@@ -6,9 +6,7 @@ package controller;
 
 import dao.BookDAO;
 import dao.CartItemDAO;
-import dao.CustomerDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,7 +15,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.List;
-import model.Account;
 import model.Book;
 import model.CartItem;
 import model.Customer;
@@ -32,23 +29,16 @@ public class CartController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        HttpSession session = request.getSession();
-        Account user = (Account) session.getAttribute("user");
 
-        if (user == null || !"Customer".equalsIgnoreCase(user.getRole())) {
+        HttpSession session = request.getSession();
+        Customer cus = (Customer) session.getAttribute("customer");
+
+        if (cus == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
-        CustomerDAO customerDAO = new CustomerDAO();
-        Customer customer = customerDAO.getCustomerByAccountId(user.getId());
-
-        if (customer == null) {
-            response.sendRedirect(request.getContextPath() + "/cart");
-            return;
-        }
-        int customerId = customer.getId();
+        int customerId = cus.getId();
 
         CartItemDAO dao = new CartItemDAO();
         List<CartItem> cartItems = dao.getCartByCustomerId(customerId);
@@ -74,26 +64,13 @@ public class CartController extends HttpServlet {
         System.out.println("BOOK_ID = " + request.getParameter("book_id"));
 
         HttpSession session = request.getSession();
-        Account user = (Account) session.getAttribute("user");
+        Customer cus = (Customer) session.getAttribute("customer");
 
-        if (user == null || !"Customer".equalsIgnoreCase(user.getRole())) {
+        if (cus == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-
-        CustomerDAO customerDAO = new CustomerDAO();
-        Customer customer = customerDAO.getCustomerByAccountId(user.getId());
-        System.out.println("CUSTOMER = " + customer);
-        // ví dụ
-        if (customer != null) {
-            System.out.println("CUSTOMER_ID = " + customer.getId());
-        }
-        if (customer == null) {
-            response.sendRedirect(request.getContextPath() + "/cart");
-            return;
-        }
-
-        int customerId = customer.getId();
+        int customerId = cus.getId();
         int bookId = Integer.parseInt(request.getParameter("book_id"));
         String action = request.getParameter("action");
 
@@ -116,14 +93,14 @@ public class CartController extends HttpServlet {
                         response.getWriter().print(
                                 "{\"quantity\":" + currentQty + ","
                                 + "\"totalCartItems\":0,"
-                                + "\"message\":\"Chỉ còn " + book.getStock() + " sản phẩm\"}"
+                                + "\"message\":\"Đã thêm quá số lượng trong kho\"}"
                         );
                         return;
                     } else {
-                        request.setAttribute("error", "Chỉ còn " + book.getStock() + " sản phẩm");
                         response.sendRedirect(request.getContextPath() + "/cart");
                         return;
                     }
+
                 }
 
                 if (item != null) {
@@ -173,7 +150,7 @@ public class CartController extends HttpServlet {
             String message = "";
 
             if ("add".equals(action)) {
-                message = "Added to cart successfully!";
+                message = "Đã thêm vào giỏ hàng thành công!";
             }
 
             String json = "{"

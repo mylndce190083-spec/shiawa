@@ -8,7 +8,6 @@ import dao.BookDAO;
 import dao.BookImageDAO;
 import dao.CategoryDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -108,8 +107,7 @@ public class BookAdminController extends HttpServlet {
 
             BookDAO dao = new BookDAO();
             CategoryDAO cateDAO = new CategoryDAO();
-//            List<BookAdmin> list;
-//
+
             Integer categoryId = null;
             if (categoryParam != null && !categoryParam.trim().isEmpty()) {
                 categoryId = Integer.parseInt(categoryParam);
@@ -174,7 +172,6 @@ public class BookAdminController extends HttpServlet {
             HttpSession session = request.getSession();
 
             try {
-                //Update Book
                 BookAdmin b = new BookAdmin();
                 int discount = Integer.parseInt(request.getParameter("discount"));
 
@@ -192,7 +189,6 @@ public class BookAdminController extends HttpServlet {
                 b.setDescription(request.getParameter("description"));
                 b.setCategoryId(Integer.parseInt(request.getParameter("categoryId")));
                 b.setDiscount(discount);
-                //b.setPrice(Double.parseDouble(request.getParameter("price")));
                 double price;
                 try {
                     price = Double.parseDouble(request.getParameter("price"));
@@ -205,14 +201,12 @@ public class BookAdminController extends HttpServlet {
                 }
 
                 b.setPrice(price);
-                //b.setStock(Integer.parseInt(request.getParameter("stock")));
                 b.setIsActive("true".equals(request.getParameter("isActive")));
 
                 BookDAO dao = new BookDAO();
                 dao.updateBook(b);
 
                 BookImageDAO bookImageDAO = new BookImageDAO();
-                // Delete Img
                 String[] deleteIds = request.getParameterValues("deleteImageIds");
 
                 if (deleteIds != null) {
@@ -223,7 +217,6 @@ public class BookAdminController extends HttpServlet {
                     }
                 }
 
-                // Update Img
                 Collection<Part> parts = request.getParts();
 
                 for (Part part : parts) {
@@ -232,12 +225,9 @@ public class BookAdminController extends HttpServlet {
                         String fileName = Paths.get(part.getSubmittedFileName())
                                 .getFileName().toString();
 
-//                        String uploadPath = "D:/ShiawaUploads/book";//sua duong dan
-//uploadpath
                         String webappPath = getServletContext().getRealPath("/");
                         File webappDir = new File(webappPath);
 
-// đi lên 2 cấp
                         File projectRoot = webappDir.getParentFile().getParentFile();
                         String uploadPath = projectRoot.getAbsolutePath()
                                 + File.separator + "ShiawaUploads"
@@ -260,14 +250,12 @@ public class BookAdminController extends HttpServlet {
                     }
                 }
 
-                // Set Primary
                 String primaryImageId = request.getParameter("primaryImageId");
 
-                // Admin chọn primary
                 if (primaryImageId != null && !primaryImageId.isEmpty()) {
                     bookImageDAO.clearPrimaryByBookId(bookId);
                     bookImageDAO.setPrimaryId(Integer.parseInt(primaryImageId));
-                } // Admin không chọn primary
+                } 
                 else {
                     List<BookImage> currentImages = bookImageDAO.getByBookId(bookId);
 
@@ -308,15 +296,5 @@ public class BookAdminController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/book-admin");
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

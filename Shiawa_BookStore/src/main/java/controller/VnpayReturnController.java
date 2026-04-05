@@ -8,7 +8,6 @@ import dao.CartItemDAO;
 import dao.OrderDAO;
 import dao.VoucherDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -38,7 +37,6 @@ public class VnpayReturnController extends HttpServlet {
 
             List<CartItem> items = (List<CartItem>) session.getAttribute("pendingItems");
 
-            // FIX CHẮC CHẮN
             if (items == null || items.isEmpty()) {
                 System.out.println("❌ pendingItems NULL");
 
@@ -87,7 +85,6 @@ public class VnpayReturnController extends HttpServlet {
                 return;
             }
 
-            // clear session
             session.removeAttribute("pendingItems");
             session.removeAttribute("pendingAddress");
             session.removeAttribute("pendingReceiver");
@@ -112,15 +109,4 @@ public class VnpayReturnController extends HttpServlet {
             throws ServletException, IOException {
 
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

@@ -200,19 +200,16 @@
                 cursor: pointer;
             }
 
-            /* Hover gi?ng profile */
             .sidebar-avatar:hover{
                 transform: scale(1.1);
                 border-color: #20c997;
                 box-shadow: 0 0 10px rgba(32, 201, 151, 0.7);
             }
 
-            /* Active (khi click ho?c focus) */
             .sidebar-avatar:active{
                 transform: scale(0.95);
             }
 
-            /* Online indicator ??p h?n */
             .avatar-status{
                 width: 12px;
                 height: 12px;

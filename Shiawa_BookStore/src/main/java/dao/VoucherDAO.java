@@ -9,6 +9,7 @@ import db.DBContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import model.Voucher;
@@ -19,7 +20,6 @@ import model.Voucher;
  */
 public class VoucherDAO extends DBContext {
 
-    // Lấy tất cả voucher
     public List<Voucher> getAllVoucher() {
 
         List<Voucher> list = new ArrayList<>();
@@ -52,7 +52,6 @@ public class VoucherDAO extends DBContext {
         return list;
     }
 
-    // Lấy voucher theo ID
     public Voucher getVoucherById(int id) {
 
         String sql = "SELECT * FROM Voucher WHERE voucher_id = ?";
@@ -85,7 +84,6 @@ public class VoucherDAO extends DBContext {
         return null;
     }
 
-    // Thêm voucher
     public void insertVoucher(Voucher v) {
 
         String sql = "INSERT INTO Voucher(name, discount, quantity, createdAt, endedAt) VALUES(?,?,?,?,?)";
@@ -107,7 +105,6 @@ public class VoucherDAO extends DBContext {
         }
     }
 
-    // Update voucher
     public void updateVoucher(Voucher v) {
 
         String sql = "UPDATE Voucher SET name=?, discount=?, quantity=?, createdAt=?, endedAt=? WHERE voucher_id=?";
@@ -130,20 +127,16 @@ public class VoucherDAO extends DBContext {
         }
     }
 
-    // Xóa voucher
-    public void deleteVoucher(int id) {
-
-        String sql = "DELETE FROM Voucher WHERE voucher_id=?";
-
+    public boolean deleteVoucher(int id) {
+        String sql = "DELETE FROM Voucher WHERE voucher_id = ?";
         try {
-
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setInt(1, id);
-
-            ps.executeUpdate();
-
-        } catch (Exception e) {
+            int rows = ps.executeUpdate();
+            return rows > 0; 
+        } catch (SQLException e) {
             e.printStackTrace();
+            return false; 
         }
     }
 
@@ -253,19 +246,16 @@ public class VoucherDAO extends DBContext {
             conn = getConnection();
             conn.setAutoCommit(false);
 
-            // 1. check đã có chưa
             if (hasVoucher(conn, customerId, voucherId)) {
                 conn.rollback();
                 return ClaimVoucherResult.ALREADY_HAVE;
             }
 
-            // 2. giảm quantity trước
             if (!decreaseVoucherQuantity(conn, voucherId)) {
                 conn.rollback();
                 return ClaimVoucherResult.OUT_OF_STOCK;
             }
 
-            // 3. insert vào túi
             insertCustomerVoucher(conn, customerId, voucherId);
 
             conn.commit();
@@ -320,8 +310,6 @@ public class VoucherDAO extends DBContext {
                 v.setQuantity(rs.getInt("quantity"));
                 v.setCreatedAt(rs.getDate("createdAt"));
                 v.setEndedAt(rs.getDate("endedAt"));
-
-                // status từ Customer_Voucher
                 v.setStatus(rs.getString("status"));
 
                 list.add(v);
@@ -346,14 +334,4 @@ public class VoucherDAO extends DBContext {
             e.printStackTrace();
         }
     }
-
-    public static void main(String[] args) {
-        VoucherDAO dao = new VoucherDAO();
-        System.out.println(dao.getAllAvailableVoucher());
-        List<Voucher> list = dao.getMyVoucherList(1);
-        for (Voucher v : list) {
-            System.out.println(v);
-        }
-    }
-
 }

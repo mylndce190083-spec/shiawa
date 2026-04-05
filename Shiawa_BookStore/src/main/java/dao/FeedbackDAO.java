@@ -42,10 +42,8 @@ public class FeedbackDAO extends db.DBContext {
         String sql = "SELECT feedback_id FROM Feedback WHERE customer_id = ? AND book_id = ?";
         try {
             PreparedStatement st = getConnection().prepareStatement(sql);
-            // PHẢI SET TRƯỚC
             st.setInt(1, userId);
             st.setInt(2, bookId);
-            // RỒI MỚI EXECUTE
             ResultSet rs = st.executeQuery();
             return rs.next();
         } catch (SQLException ex) {
@@ -71,7 +69,6 @@ public class FeedbackDAO extends db.DBContext {
                 fb.setBookId(rs.getInt("book_id"));
                 fb.setRating(rs.getInt("rating"));
                 fb.setContent(rs.getString("comment"));
-                // Nếu model Feedback có trường username, hãy set vào để hiển thị tên người dùng
                 fb.setUsername(rs.getString("username"));
                 fb.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
                 fb.setOrderdetailId(rs.getInt("order_detail_id"));
@@ -115,8 +112,6 @@ public class FeedbackDAO extends db.DBContext {
                      FROM Feedback f 
                      JOIN Book b ON f.book_id = b.book_id
                      JOIN Customer u ON f.customer_id=u.customer_id
-                   
-                     	
     """;
 
         try (PreparedStatement ps = getConnection().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
@@ -146,7 +141,7 @@ public class FeedbackDAO extends db.DBContext {
         String sql = "UPDATE Feedback SET status = ? WHERE feedback_id = ?";
 
         try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
-            ps.setInt(1, status); // 0 hoặc 1
+            ps.setInt(1, status); 
             ps.setInt(2, id);
             return ps.executeUpdate() > 0;
         } catch (Exception e) {

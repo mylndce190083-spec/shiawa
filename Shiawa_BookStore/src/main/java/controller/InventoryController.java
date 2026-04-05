@@ -30,12 +30,10 @@ public class InventoryController extends HttpServlet {
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
 
-        // 1. Check đăng nhập + role
         if (user == null || !"Inventory".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-//        request.setAttribute("currentPage", "inventory");
         String view = request.getParameter("view");
 
         if ("list".equals(view)) {
@@ -189,7 +187,6 @@ public class InventoryController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //HttpSession session = request.getSession();
         String view = request.getParameter("view");
 
         if ("in".equals(view)) {

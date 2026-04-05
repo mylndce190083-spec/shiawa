@@ -309,7 +309,7 @@
                     <p class="sold">Đã bán ${b.sold}</p>
 
 
-                    <form onsubmit="addToCart(event, ${b.bookId})">
+                    <form onsubmit="addToCart(event, ${b.bookId}, ${b.stock})">
 
                         <c:choose>
                             <c:when test="${b.stock == 0}">
@@ -330,10 +330,6 @@
                 </div>
             </c:forEach>
         </section>
-
-
-
-
 
         <section class="cart-page" id="cartPage" style="display:none;">
 
@@ -386,14 +382,12 @@
                 <span class="subtotal">$15</span>
             </div>
 
-            <!-- VOUCHER -->
             <div class="voucher">
                 <input type="text" id="voucherInput" placeholder="Nhập mã giảm giá">
                 <button id="applyVoucher">Áp dụng</button>
                 <p id="voucherMessage"></p>
             </div>
 
-            <!-- TOTAL -->
             <div class="cart-footer">
                 <strong id="totalPrice">Total: $0</strong>
             </div>
@@ -401,7 +395,6 @@
         </div>
     </section>
 
-    <!-- ACCOUNT PAGE -->
     <section class="account-page" id="accountPage" style="display:none;">
 
         <h2>Tài khoản</h2>
@@ -412,7 +405,6 @@
             <span class="tab" data-tab="register">Đăng ký</span>
         </div>
 
-        <!-- LOGIN -->
         <div class="tab-content active" id="login">
             <label>Số điện thoại / Email</label>
             <input type="text" placeholder="Nhập số điện thoại hoặc email">
@@ -425,7 +417,6 @@
             <button class="submit-btn">Đăng nhập</button>
         </div>
 
-        <!-- REGISTER -->
         <div class="tab-content" id="register">
             <input type="text" placeholder="First Name">
             <input type="text" placeholder="Last Name">
@@ -438,13 +429,15 @@
     </section>
 
     <script>
-        const isLoggedIn = ${sessionScope.user != null};
+        const isLoggedIn = ${sessionScope.user != null ? "true" : "false"};
         function addToCart(event, bookId) {
             event.preventDefault();
+
             if (!isLoggedIn) {
                 window.location.href = "${pageContext.request.contextPath}/login";
                 return;
             }
+
             fetch("${pageContext.request.contextPath}/cart", {
                 method: "POST",
                 headers: {
@@ -453,41 +446,60 @@
                 },
                 body: "action=add&book_id=" + bookId
             })
-                    .then(res => res.json())   
+                    .then(res => res.json())
                     .then(data => {
-
-                        updateCartBadge(data.totalCartItems);  
-
-                        showToast();
-                    })
-                    .catch(error => console.error(error));
+                  
+                        if (data && data.success === true) {
+                            showToast(true, "Thêm giỏ hàng thành công!");
+                            updateCartBadge(data.totalCartItems);
+                        } else {
+                
+                            showToast(false, data.message || "Số lượng trong kho không đủ!");
+                        }
+                    });
         }
 
-        function showToast() {
+        function showToast(isSuccess, message) {
+            const old = document.getElementById("unique-toast-id");
+            if (old)
+                old.remove();
 
             const toast = document.createElement("div");
-            toast.className = "custom-toast";
-            toast.innerHTML = `
-        <div class="toast-content">
-            <span class="icon">🛒</span>
-            <div>
-                <strong>Thêm thành công!</strong>
-                <div class="sub">Sản phẩm đã vào giỏ hàng</div>
-            </div>
-        </div>
-        <div class="progress-bar"></div>
-    `;
+            toast.id = "unique-toast-id";
+
+   
+            Object.assign(toast.style, {
+                position: 'fixed',
+                top: '30px',
+                right: '20px',
+                width: '320px',
+                minHeight: '60px',
+                backgroundColor: isSuccess ? '#28a745' : '#dc3545',
+                color: '#ffffff',
+                borderRadius: '8px',
+                zIndex: '999999',
+                display: 'flex',
+                alignItems: 'center',
+                padding: '15px 20px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                fontFamily: 'Arial, sans-serif'
+            });
+
+             const icon = isSuccess ? "🛒 " : "🛒 ";
+            toast.innerText = icon + (message || (isSuccess ? "Thành công!" : "Thất bại!"));
 
             document.body.appendChild(toast);
 
+           
             setTimeout(() => {
-                toast.classList.add("show");
-            }, 10);
-
+                toast.style.transform = 'translateY(0)';
+            }, 100);
             setTimeout(() => {
-                toast.classList.remove("show");
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+                toast.style.transform = 'translateY(-150%)';
+                setTimeout(() => toast.remove(), 200);
+            }, 1000);
         }
         function updateCartBadge(count) {
             const badge = document.getElementById("cartBadge");

@@ -15,7 +15,6 @@
             <h6 class="mb-0">User Detail</h6>
         </div>
 
-<p>${account}</p>
         <div class="row">
 
             <!-- Avatar -->
@@ -23,7 +22,7 @@
 
                 <c:choose>
                     <c:when test="${not empty account.avatar}">
-                        <img src="${pageContext.request.contextPath}/${account.avatar}"
+                        <img src="${pageContext.request.contextPath}/image?file=${account.avatar}"
                              class="img-fluid rounded-circle border"
                              style="width:220px;height:220px;object-fit:cover;">
                     </c:when>

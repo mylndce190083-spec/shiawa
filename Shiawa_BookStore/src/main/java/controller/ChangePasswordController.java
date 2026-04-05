@@ -6,7 +6,6 @@ package controller;
 
 import dao.AccountDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -26,7 +25,6 @@ public class ChangePasswordController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        //kiểm tra session
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user") == null) {
             response.sendRedirect("home");
@@ -52,10 +50,8 @@ public class ChangePasswordController extends HttpServlet {
         String confirm = request.getParameter("confirmPassword");
 
         AccountDAO dao = new AccountDAO();
-        // hash mật khẩu cũ nhập vào
         String currentHash = dao.hashMD5(currentPass);
 
-        // kiểm tra password cũ đúng không
         if (!currentHash.equals(user.getPassword())) {
             request.setAttribute("error", "Current password is incorrect");
             request.getRequestDispatcher("/WEB-INF/account/change-password.jsp")
@@ -70,17 +66,10 @@ public class ChangePasswordController extends HttpServlet {
             return;
         }
 
-        // hash password
         String hash = dao.hashMD5(newPass);
-
-        // update password
         dao.updatePassword(user.getId(), user.getRole(), hash);
-
-        // cập nhật trạng thái đổi password
         dao.updateMustChangePassword(user.getId(), user.getRole(), false);
 
-        //mới thêm
-        // update session
         user.setMustChangePassword(false);
         session.setAttribute("user", user);
         String role = user.getRole();
@@ -93,15 +82,5 @@ public class ChangePasswordController extends HttpServlet {
             response.sendRedirect("home");
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

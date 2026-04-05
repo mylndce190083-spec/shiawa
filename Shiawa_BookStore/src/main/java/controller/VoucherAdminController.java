@@ -30,7 +30,6 @@ public class VoucherAdminController extends HttpServlet {
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
 
-        // 1. Check đăng nhập + role
         if (user == null || !"Admin".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
@@ -42,14 +41,12 @@ public class VoucherAdminController extends HttpServlet {
 
         if (view == null) {
 
-            // hiển thị danh sách voucher
             List<Voucher> list = dao.getAllVoucher();
             request.setAttribute("voucherList", list);
             request.getRequestDispatcher("/WEB-INF/voucher/list.jsp").forward(request, response);
 
         } else if (view.equals("add")) {
 
-            // mở trang add voucher
             request.getRequestDispatcher("/WEB-INF/voucher/create.jsp").forward(request, response);
 
         } else if (view.equals("edit")) {
@@ -63,7 +60,16 @@ public class VoucherAdminController extends HttpServlet {
         } else if (view.equals("delete")) {
 
             int id = Integer.parseInt(request.getParameter("id"));
-            dao.deleteVoucher(id);
+
+            boolean success = dao.deleteVoucher(id);
+
+            if (success) {
+                session.setAttribute("msg", "Delete voucher successfully!");
+                session.setAttribute("msgType", "success");
+            } else {
+                session.setAttribute("msg", "Cannot delete! Voucher is being used.");
+                session.setAttribute("msgType", "danger");
+            }
 
             response.sendRedirect("voucher-admin");
 
@@ -84,7 +90,7 @@ public class VoucherAdminController extends HttpServlet {
 
             String name = request.getParameter("name");
             double discount = Double.parseDouble(request.getParameter("discount"));
-            // VALIDATE
+
             if (discount < 0 || discount > 100) {
                 request.setAttribute("error", "Discount must be between 0 and 100");
                 request.getRequestDispatcher("/WEB-INF/voucher/create.jsp").forward(request, response);
@@ -103,6 +109,10 @@ public class VoucherAdminController extends HttpServlet {
 
             dao.insertVoucher(v);
 
+            HttpSession session = request.getSession();
+            session.setAttribute("msg", "Create voucher successfully!");
+            session.setAttribute("msgType", "success");
+
             response.sendRedirect("voucher-admin");
 
         } else if (view.equals("update")) {
@@ -110,7 +120,7 @@ public class VoucherAdminController extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("id"));
             String name = request.getParameter("name");
             double discount = Double.parseDouble(request.getParameter("discount"));
-            // VALIDATE
+
             if (!(discount < 0 || discount > 100)) {
 
                 int quantity = Integer.parseInt(request.getParameter("quantity"));
@@ -125,35 +135,20 @@ public class VoucherAdminController extends HttpServlet {
                 v.setCreatedAt(java.sql.Date.valueOf(createdAt));
                 v.setEndedAt(java.sql.Date.valueOf(endedAt));
 
-                // tránh lỗi null date
                 if (createdAt != null && !createdAt.isEmpty()) {
                     v.setCreatedAt(java.sql.Date.valueOf(createdAt));
                 }
                 if (endedAt != null && !endedAt.isEmpty()) {
                     v.setEndedAt(java.sql.Date.valueOf(endedAt));
                 }
-                // QUAN TRỌNG
-//                request.setAttribute("voucher", v);
-//                request.setAttribute("error", "Discount must be between 0 and 100");
-//
-//                request.getRequestDispatcher("/WEB-INF/voucher/edit.jsp").forward(request, response);
-//                return;
-            
-            dao.updateVoucher(v);
+                dao.updateVoucher(v);
 
-            response.sendRedirect("voucher-admin");
+                HttpSession session = request.getSession();
+                session.setAttribute("msg", "Update voucher successfully!");
+                session.setAttribute("msgType", "primary");
+
+                response.sendRedirect("voucher-admin");
             }
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

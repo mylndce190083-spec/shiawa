@@ -5,7 +5,6 @@
 package dao;
 
 import db.DBContext;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -62,7 +61,6 @@ public class CartItemDAO extends DBContext {
         return null;
     }
 
-    // insert mới
     public void insert(CartItem item) {
         String sql = """
             INSERT INTO CartItem(customer_id, book_id, quantity, price, created_at)
@@ -82,7 +80,6 @@ public class CartItemDAO extends DBContext {
         }
     }
 
-    // update số lượng
     public void updateQuantity(int customerId, int bookId, int quantity) {
         String sql = """
             UPDATE CartItem
@@ -134,13 +131,11 @@ public class CartItemDAO extends DBContext {
                 Timestamp t = rs.getTimestamp("created_at");
                 LocalDateTime createAt = (t != null) ? t.toLocalDateTime() : null;
  
-                // tạo Book (theo style quen tay)
                 Book book = new Book();
                 book.setBookId(bookId);
                 book.setTitle(rs.getString("title"));
                 book.setUrlImg(rs.getString("image_url"));
                 book.setStock(stock);
-                // tạo CartItem bằng constructor
                 CartItem item = new CartItem(
                         cartItemId,
                         customerId,
@@ -160,7 +155,6 @@ public class CartItemDAO extends DBContext {
         return list;
     }
 
-    // xóa
     public void delete(int customerId, int bookId) {
         String sql = """
             DELETE FROM CartItem
@@ -173,30 +167,6 @@ public class CartItemDAO extends DBContext {
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    public static void main(String[] args) {
-        CartItemDAO dao = new CartItemDAO();
-
-        int customerId = 1;
-
-        List<CartItem> cart = dao.getCartByCustomerId(customerId);
-
-        if (cart.isEmpty()) {
-            System.out.println("❌ Giỏ hàng trống");
-        } else {
-            System.out.println("✅ Số sản phẩm trong giỏ: " + cart.size());
-
-            for (CartItem item : cart) {
-                System.out.println("---------------");
-                System.out.println("CartItem ID : " + item.getCartItemId());
-                System.out.println("Book ID     : " + item.getBookId());
-                System.out.println("Book title  : " + item.getBook().getTitle());
-                System.out.println("Price       : " + item.getPrice());
-                System.out.println("Quantity    : " + item.getQuantity());
-                System.out.println("Image       : " + item.getBook().getUrlImg());
-            }
         }
     }
 

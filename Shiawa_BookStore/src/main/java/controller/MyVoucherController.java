@@ -7,7 +7,6 @@ package controller;
 
 import dao.VoucherDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,7 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
-import model.Account;
+import model.Customer;
 import model.Voucher;
 
 /**
@@ -30,17 +29,16 @@ public class MyVoucherController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        Account user = (Account) session.getAttribute("user");
+        Customer cus = (Customer) session.getAttribute("customer");
 
-        // 1. Check đăng nhập + role
-        if (user == null || !"customer".equalsIgnoreCase(user.getRole())) {
+        if (cus == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
         
         VoucherDAO vdao = new VoucherDAO();
         List<Voucher> list;
-        list = vdao.getMyVoucherList(user.getId());
+        list = vdao.getMyVoucherList(cus.getId());
 
         request.setAttribute("myVoucherList", list);
         request.setAttribute("now", new java.util.Date());
@@ -54,15 +52,5 @@ public class MyVoucherController extends HttpServlet {
             throws ServletException, IOException {
        
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

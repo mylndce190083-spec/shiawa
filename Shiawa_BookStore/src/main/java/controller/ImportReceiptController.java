@@ -1,6 +1,5 @@
 package controller;
 
-import dao.BookDAO;
 import dao.ImportReceiptDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,7 +11,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import model.Account;
-import model.Book;
 import model.ImportReceipt;
 import model.ImportReceiptDetail;
 
@@ -25,7 +23,6 @@ public class ImportReceiptController extends HttpServlet {
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
 
-        // 1. Check đăng nhập + role
         if (user == null || !"Inventory".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;

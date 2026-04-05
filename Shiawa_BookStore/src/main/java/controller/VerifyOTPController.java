@@ -6,7 +6,6 @@ package controller;
 
 import dao.CustomerDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -40,11 +39,4 @@ public class VerifyOTPController extends HttpServlet {
 
         request.getRequestDispatcher("/WEB-INF/home/reset-password.jsp").forward(request, response);
     }
-
-
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

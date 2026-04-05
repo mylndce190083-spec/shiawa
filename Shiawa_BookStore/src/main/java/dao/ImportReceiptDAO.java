@@ -179,7 +179,6 @@ public class ImportReceiptDAO extends DBContext {
         conn.setAutoCommit(false);
         try {
             int receiptId = receipt.getReceiptId();
-            // load old details
             List<ImportReceiptDetail> oldDetails = new ArrayList<>();
             String sqlOld = "SELECT detail_id, book_id, qty, import_price FROM ImportReceiptDetail WHERE receipt_id = ?";
             try (PreparedStatement ps = conn.prepareStatement(sqlOld)) {
@@ -197,18 +196,15 @@ public class ImportReceiptDAO extends DBContext {
                 }
             }
 
-            // rollback stock from old details
             for (ImportReceiptDetail d : oldDetails) {
                 updateBookStock(conn, d.getBookId(), -d.getQty());
             }
 
-            // delete old details
             try (PreparedStatement ps = conn.prepareStatement("DELETE FROM ImportReceiptDetail WHERE receipt_id = ?")) {
                 ps.setInt(1, receiptId);
                 ps.executeUpdate();
             }
 
-            // insert new details & update stock
             double total = 0;
             for (ImportReceiptDetail d : receipt.getDetails()) {
                 insertDetail(conn, receiptId, d);
@@ -231,7 +227,6 @@ public class ImportReceiptDAO extends DBContext {
         boolean oldAuto = conn.getAutoCommit();
         conn.setAutoCommit(false);
         try {
-            // load details
             List<ImportReceiptDetail> details = new ArrayList<>();
             String sql = "SELECT book_id, qty FROM ImportReceiptDetail WHERE receipt_id = ?";
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -246,12 +241,10 @@ public class ImportReceiptDAO extends DBContext {
                 }
             }
 
-            // rollback stock
             for (ImportReceiptDetail d : details) {
                 updateBookStock(conn, d.getBookId(), -d.getQty());
             }
 
-            // delete header (details cascade)
             try (PreparedStatement ps = conn.prepareStatement("DELETE FROM ImportReceipt WHERE receipt_id = ?")) {
                 ps.setInt(1, receiptId);
                 ps.executeUpdate();

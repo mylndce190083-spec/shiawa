@@ -15,8 +15,15 @@
             <a href="${pageContext.request.contextPath}/voucher-admin?view=add" class="btn btn-success">
                 <i class="fa fa-plus"></i> Add Voucher
             </a>
-        </div>
-
+        </div>  
+        <c:if test="${not empty sessionScope.msg}">
+            <div class="alert alert-${sessionScope.msgType}">
+                ${sessionScope.msg}
+            </div>
+            <c:remove var="msg" scope="session"/>
+            <c:remove var="msgType" scope="session"/>
+        </c:if>
+                
         <table class="table table-bordered table-hover">
             <thead class="table-success">
                 <tr>

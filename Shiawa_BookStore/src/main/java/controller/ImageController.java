@@ -5,7 +5,6 @@
 package controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -28,11 +27,8 @@ public class ImageController extends HttpServlet {
     
     @Override
     public void init() throws ServletException {
-        // lấy path webapp
         String webappPath = getServletContext().getRealPath("/");
         File webappDir = new File(webappPath);
-
-        // đi lên 2 cấp để về root project
         File projectRoot = webappDir.getParentFile().getParentFile();
 
         uploadRoot = projectRoot.getAbsolutePath() + File.separator + "ShiawaUploads";
@@ -50,7 +46,6 @@ public class ImageController extends HttpServlet {
             return;
         }
 
-        // decode URL
         fileParam = java.net.URLDecoder.decode(fileParam, "UTF-8");
 
         File file = new File(uploadRoot, fileParam);
@@ -90,15 +85,4 @@ public class ImageController extends HttpServlet {
             throws ServletException, IOException {
         
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

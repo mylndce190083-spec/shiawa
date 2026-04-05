@@ -78,17 +78,14 @@ public class BookImageDAO extends DBContext {
         try {
             var con = getConnection();
 
-            // Reset
             PreparedStatement ps1 = con.prepareStatement(resetSql);
             ps1.setInt(1, bookId);
             ps1.executeUpdate();
 
-            // Set new primary
             PreparedStatement ps2 = con.prepareStatement(setSql);
             ps2.setInt(1, imageId);
             ps2.executeUpdate();
 
-            // Update Book.url_img
             PreparedStatement ps3 = con.prepareStatement(updateBookSql);
             ps3.setInt(1, imageId);
             ps3.setInt(2, bookId);

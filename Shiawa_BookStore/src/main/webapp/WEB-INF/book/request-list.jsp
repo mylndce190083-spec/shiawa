@@ -27,7 +27,6 @@
         color: #0f5132;
     }
 
-    /* ITEMS BUTTON */
     .btn-detail {
         border-radius: 20px;
         padding: 5px 12px;
@@ -39,7 +38,6 @@
         color: white;
     }
 
-    /* ACTION */
     .action-text {
         font-weight: 500;
         font-size: 13px;
@@ -134,6 +132,5 @@
 
 </div>
 
-<!-- Recent Sales End -->
 <%@include file="../include/footerAdmin.jsp" %>
 

@@ -69,7 +69,6 @@
                 }
             }
 
-            /* Icon nhảy nhẹ */
             @keyframes pop {
                 0% {
                     transform: scale(0.5);

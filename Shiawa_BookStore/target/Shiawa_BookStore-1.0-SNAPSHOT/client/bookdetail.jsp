@@ -92,7 +92,7 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: rgba(0, 0, 0, 0.5); /* Nền mờ phía sau */
+                background: rgba(0, 0, 0, 0.5);
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -100,7 +100,6 @@
                 transition: opacity 0.3s ease;
             }
 
-            /* Khi bấm nút, URL có đuôi #success-pop sẽ kích hoạt mục này */
             .notification-overlay:target {
                 visibility: visible;
                 opacity: 1;
@@ -137,9 +136,8 @@
                 background: #1b5e20;
                 color: white;
             }
-            /* FORM CHỈNH SỬA */
             .form-container {
-                position: relative; /* QUAN TRỌNG */
+                position: relative;
             }
 
             .edit-btn {
@@ -147,8 +145,8 @@
                 top: 10px;
                 right: 10px;
 
-                color: #e53935;   /* 🔴 chữ đỏ */
-                background: none; /* ❌ không nền */
+                color: #e53935;
+                background: none;
                 border: none;
                 border-radius: 6px;
                 cursor: pointer;
@@ -237,7 +235,6 @@
                         </div>
                         <div class="d-flex gap-3">
 
-                            <!-- MUA NGAY -->
                             <form action="${pageContext.request.contextPath}/checkout" method="post">
                                 <input type="hidden" name="book_id" value="${book.bookId}">
                                 <input type="hidden" name="action" value="buy_now">
@@ -249,7 +246,6 @@
                                 </button>
                             </form>
 
-                            <!-- THÊM GIỎ -->
                             <form onsubmit="addToCart(event, ${book.bookId})">
                                 <button type="submit"
                                         class="btn btn-cart px-5 py-2 fw-bold"
@@ -371,10 +367,8 @@
             <jsp:include page="./layout/footer.jsp" />
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
             <script>
-                    const isLoggedIn = ${sessionScope.user != null ? 'true' : 'false'};
-
-                    function addToCart(event, bookId)
-                    {
+                    const isLoggedIn = ${sessionScope.user != null ? "true" : "false"};
+                    function addToCart(event, bookId) {
                         event.preventDefault();
 
                         if (!isLoggedIn) {
@@ -392,40 +386,59 @@
                         })
                                 .then(res => res.json())
                                 .then(data => {
-                                    updateCartBadge(data.totalCartItems);
-                                    showToast();
-                                })
-                                .catch(error => console.error(error));
+
+                                    if (data && data.success === true) {
+                                        showToast(true, "Thêm giỏ hàng thành công!");
+                                        updateCartBadge(data.totalCartItems);
+                                    } else {
+
+                                        showToast(false, data.message || "Số lượng trong kho không đủ!");
+                                    }
+                                });
                     }
 
-
-                    function showToast() {
+                    function showToast(isSuccess, message) {
+                        const old = document.getElementById("unique-toast-id");
+                        if (old)
+                            old.remove();
 
                         const toast = document.createElement("div");
-                        toast.className = "custom-toast";
-                        toast.innerHTML = `
-            <div class="toast-content">
-                <span class="icon">🛒</span>
-                <div>
-                    <strong>Thêm thành công!</strong>
-                    <div class="sub">Sản phẩm đã vào giỏ hàng</div>
-                </div>
-            </div>
-            <div class="progress-bar"></div>
-            `;
+                        toast.id = "unique-toast-id";
+
+
+                        Object.assign(toast.style, {
+                            position: 'fixed',
+                            top: '30px',
+                            right: '20px',
+                            width: '320px',
+                            minHeight: '60px',
+                            backgroundColor: isSuccess ? '#28a745' : '#dc3545',
+                            color: '#ffffff',
+                            borderRadius: '8px',
+                            zIndex: '999999',
+                            display: 'flex',
+                            alignItems: 'center',
+                            padding: '15px 20px',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            fontFamily: 'Arial, sans-serif'
+                        });
+
+                        const icon = isSuccess ? "🛒 " : "🛒 ";
+                        toast.innerText = icon + (message || (isSuccess ? "Thành công!" : "Thất bại!"));
 
                         document.body.appendChild(toast);
 
-                        setTimeout(() => {
-                            toast.classList.add("show");
-                        }, 10);
 
                         setTimeout(() => {
-                            toast.classList.remove("show");
-                            setTimeout(() => toast.remove(), 300);
-                        }, 3000);
+                            toast.style.transform = 'translateY(0)';
+                        }, 100);
+                        setTimeout(() => {
+                            toast.style.transform = 'translateY(-150%)';
+                            setTimeout(() => toast.remove(), 200);
+                        }, 1000);
                     }
-
                     function updateCartBadge(count) {
                         const badge = document.getElementById("cartBadge");
 

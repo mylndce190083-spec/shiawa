@@ -9,7 +9,6 @@ import java.io.File;
 import java.nio.file.Paths;
 import jakarta.servlet.http.Part;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -37,32 +36,27 @@ public class UpdateAvatarController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        Customer customer = (Customer) session.getAttribute("customer");
+        Customer cus = (Customer) session.getAttribute("customer");
 
-        if (customer == null) {
-            response.sendRedirect("login");
+        if (cus == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
-        // ===== lấy file
         Part filePart = request.getPart("avatarFile");
 
-        // ===== validate file
-        // Kiểm tra có chọn file không
         if (filePart == null || filePart.getSize() == 0) {
             request.setAttribute("error", "Vui lòng chọn ảnh!");
             request.getRequestDispatcher("/WEB-INF/home/profile.jsp").forward(request, response);
             return;
         }
-
-        // Kiểm tra dung lượng (ví dụ: tối đa 2MB)
+        
         if (filePart.getSize() > 2 * 1024 * 1024) {
             request.setAttribute("error", "Ảnh không được vượt quá 2MB!");
             request.getRequestDispatcher("/WEB-INF/home/profile.jsp").forward(request, response);
             return;
         }
 
-        // Kiểm tra loại file
         String contentType = filePart.getContentType();
         if (!contentType.startsWith("image/")) {
             request.setAttribute("error", "Chỉ được upload file ảnh!");
@@ -70,12 +64,9 @@ public class UpdateAvatarController extends HttpServlet {
             return;
         }
 
-        // ===== lưu file
-//        String uploadPath = "D:/ShiawaUploads/avatar";
         String webappPath = getServletContext().getRealPath("/");
         File webappDir = new File(webappPath);
 
-// đi lên 2 cấp
         File projectRoot = webappDir.getParentFile().getParentFile();
         String uploadPath = projectRoot.getAbsolutePath()
                 + File.separator + "ShiawaUploads"
@@ -96,25 +87,13 @@ public class UpdateAvatarController extends HttpServlet {
 
         String avatarPath = "avatar/" + newFileName;
 
-        // ===== update db
         CustomerDAO dao = new CustomerDAO();
-        dao.updateAvatar(customer.getId(), avatarPath);
+        dao.updateAvatar(cus.getId(), avatarPath);
 
-        customer.setAvatar(avatarPath);
-        session.setAttribute("customer", customer);
+        cus.setAvatar(avatarPath);
+        session.setAttribute("customer", cus);
         System.out.println("Upload path: " + uploadPath);
 
         response.sendRedirect("profile");
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

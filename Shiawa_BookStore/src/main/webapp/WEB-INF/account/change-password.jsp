@@ -20,7 +20,6 @@
 
             <h2>Change Password</h2>
 
-            <!-- TABS -->
             <div class="tab-content active">
 
                 <form action="${pageContext.request.contextPath}/change-password" method="post">

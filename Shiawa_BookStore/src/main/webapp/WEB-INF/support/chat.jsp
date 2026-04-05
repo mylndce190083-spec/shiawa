@@ -25,7 +25,6 @@ body {
     overflow: hidden;
 }
 
-/* Header */
 .chat-header {
     background: #00a651;
     color: #fff;
@@ -34,7 +33,6 @@ body {
     text-align: center;
 }
 
-/* Message area */
 .chat-body {
     flex: 1;
     padding: 15px;
@@ -42,7 +40,6 @@ body {
     background: #f9f9f9;
 }
 
-/* Message wrapper */
 .message {
     display: flex;
     margin-bottom: 12px;
@@ -56,7 +53,6 @@ body {
     justify-content: flex-end;
 }
 
-/* Bubble */
 .bubble {
     max-width: 70%;
     padding: 10px 14px;
@@ -65,7 +61,6 @@ body {
     position: relative;
 }
 
-/* Different roles */
 .bubble.user {
     background: #d1e7dd;
 }
@@ -78,14 +73,12 @@ body {
     background: #e2e3ff;
 }
 
-/* Sender */
 .sender {
     font-size: 11px;
     color: #666;
     margin-bottom: 4px;
 }
 
-/* Time */
 .time {
     font-size: 10px;
     color: #999;
@@ -93,7 +86,6 @@ body {
     text-align: right;
 }
 
-/* Input */
 .chat-footer {
     padding: 10px;
     border-top: 1px solid #ddd;

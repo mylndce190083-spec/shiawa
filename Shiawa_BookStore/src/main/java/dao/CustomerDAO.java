@@ -5,15 +5,9 @@
 package dao;
 
 import db.DBContext;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.Customer;
 
 /**
@@ -225,22 +219,4 @@ public class CustomerDAO extends DBContext {
             e.printStackTrace();
         }
     }
-
-    public static void main(String[] args) {
-        CustomerDAO dao = new CustomerDAO();
-        Timestamp expiry = new Timestamp(System.currentTimeMillis() + 5 * 60 * 1000);
-//        Customer c = new Customer(4, "thehien", "123", "thehien@gmail.com", "559");
-//        dao.insert(c);
-//        dao.saveOTP("ysabeola.kimchi101@gmail.com", "111111", expiry);
-        Customer c = dao.getCustomerByAccountIdUpgraded(24);
-        System.out.println(c);
-        if (dao.checkCustomerExist("abc@gmail.com")) {
-            System.out.println("ddddddddddddddddddđ");
-        } else {
-            System.out.println("ssssssssssssss");
-        }
-//        boolean check = dao.updateProfile(24, "Đức mẹ", "0987654321", "ấp 3, Phường Phúc Xá, Quận Ba Đình, Thành phố Hà Nội", "chaewon");
-//        System.out.println(check);
-    }
-
 }

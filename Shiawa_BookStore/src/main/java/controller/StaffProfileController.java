@@ -51,45 +51,53 @@ public class StaffProfileController extends HttpServlet {
 
         HttpSession session = request.getSession();
         Account user = (Account) session.getAttribute("user");
-
-        String username = request.getParameter("username");
-        String fullname = request.getParameter("fullname");
-        String email = request.getParameter("email");
-
-        String currentPass = request.getParameter("currentPass");
-        String newPass = request.getParameter("newPass");
-        String confirmNewPass = request.getParameter("confirmNewPass");
+        String action = request.getParameter("action");
 
         AccountDAO dao = new AccountDAO();
 
-        /* check username duplicate */
-        if (!username.equals(user.getUsername()) && dao.usernameExists(username)) {
-            request.setAttribute("error", "Username already exists");
-            request.getRequestDispatcher("/WEB-INF/profile/staff-profile.jsp")
-                    .forward(request, response);
-            return;
-        }
-        // update profile
-        user.setUsername(username);
-        user.setFullName(fullname);
-        user.setEmail(email);
+        if ("updateProfile".equals(action)) {
 
-        dao.updateProfile(user);
+            String username = request.getParameter("username");
+            String fullname = request.getParameter("fullname");
+            String email = request.getParameter("email");
 
-        // change password
-        if (currentPass != null && !currentPass.isEmpty()) {
+            if (!username.equals(user.getUsername()) && dao.usernameExists(username)) {
+                request.setAttribute("msg", "Username already exists dddd");
+                request.setAttribute("msgType", "danger");
+                request.getRequestDispatcher("/WEB-INF/profile/staff-profile.jsp")
+                        .forward(request, response);
+                return;
+            }
+
+            user.setUsername(username);
+            user.setFullName(fullname);
+            user.setEmail(email);
+
+            dao.updateProfile(user);
+
+            session.setAttribute("msg", "Profile updated successfully!");
+            session.setAttribute("msgType", "success");
+            response.sendRedirect("staff-profile");
+
+        } else if ("changePassword".equals(action)) {
+
+            String currentPass = request.getParameter("currentPass");
+            String newPass = request.getParameter("newPass");
+            String confirmNewPass = request.getParameter("confirmNewPass");
 
             String currentHash = dao.hashMD5(currentPass);
 
             if (!currentHash.equals(user.getPassword())) {
-                request.setAttribute("error", "Current password incorrect");
+                request.setAttribute("msg", "Current password incorrect");
+                session.setAttribute("msgType", "danger");
                 request.getRequestDispatcher("/WEB-INF/profile/staff-profile.jsp")
                         .forward(request, response);
                 return;
             }
 
             if (!newPass.equals(confirmNewPass)) {
-                request.setAttribute("error", "New password not match");
+                request.setAttribute("msg", "New password not match");
+                session.setAttribute("msgType", "primary");
                 request.getRequestDispatcher("/WEB-INF/profile/staff-profile.jsp")
                         .forward(request, response);
                 return;
@@ -98,24 +106,10 @@ public class StaffProfileController extends HttpServlet {
             String newHash = dao.hashMD5(newPass);
 
             dao.updatePassword(user.getId(), user.getRole(), newHash);
-
             user.setPassword(newHash);
+            session.setAttribute("msg", "Password changed successfully!");
+            session.setAttribute("msgType", "success");
+            response.sendRedirect("staff-profile");
         }
-
-        session.setAttribute("user", user);
-
-        response.sendRedirect("staff-profile");
-
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

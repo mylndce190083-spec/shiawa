@@ -7,22 +7,18 @@ package controller;
 
 import dao.BookDAO;
 import dao.FeedbackDAO;
-import dao.OrderDAO;
 import dao.OrderDetailDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.List;
 import model.Account;
 import model.Book;
 import model.Feedback;
 import model.OrderItem;
-import model.Orders;
 
 /**
  *
@@ -34,7 +30,7 @@ public class FeedbackController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //   request.getRequestDispatcher("/WEB-INF/home/feedback.jsp").forward(request, response);
+        
         response.setContentType("text/html;charset=UTF-8");
 
         String id_raw = request.getParameter("book_id");
@@ -78,7 +74,6 @@ public class FeedbackController extends HttpServlet {
         }
 
         try {
-            
             int rating = Integer.parseInt(request.getParameter("rating"));
             String content = request.getParameter("content");
             int bookId = Integer.parseInt(request.getParameter("book_id"));
@@ -98,28 +93,11 @@ public class FeedbackController extends HttpServlet {
             } else if ("unrated".equalsIgnoreCase(isRated)) {
                 fbDao.insertFeedback(fb, orderDetailId);
                 oddao.changeIsRatedById(orderDetailId);
-                
             }
-
-            // Chuyển hướng về trang chi tiết sách để xem đánh giá mới
             response.sendRedirect("bookdetail?id=" + bookId);
-
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("home");
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-    
-        
-
 }

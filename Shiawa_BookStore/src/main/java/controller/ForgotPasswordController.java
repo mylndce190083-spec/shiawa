@@ -6,7 +6,6 @@ package controller;
 
 import dao.CustomerDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -40,11 +39,8 @@ public class ForgotPasswordController extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/home/forgot.jsp").forward(request, response);
             return;
         }
-
-        // Tạo OTP 6 số
         String otp = String.valueOf((int)(Math.random() * 900000) + 100000);
 
-        // Hết hạn sau 5 phút
         Timestamp expiry = new Timestamp(System.currentTimeMillis() + 5 * 60 * 1000);
 
         dao.saveOTP(email, otp, expiry);
@@ -54,15 +50,4 @@ public class ForgotPasswordController extends HttpServlet {
         request.setAttribute("message", "OTP sent to your email!");
         request.getRequestDispatcher("/WEB-INF/home/verify-otp.jsp").forward(request, response);
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }
