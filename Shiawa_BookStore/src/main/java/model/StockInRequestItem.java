@@ -3,15 +3,14 @@ package model;
 public class StockInRequestItem {
     private int itemId;
     private int requestId;
-    private Integer bookId; // nullable when new book
-    private String newBookTitle; // nullable
+    private Integer bookId; 
+    private String newBookTitle; 
     private String newBookAuthor;
     private String newBookPublisher;
     private Integer newBookCategoryId;
     private int qty;
     private Double unitCost;
 
-    // display helper
     private String bookTitle;
 
     public int getItemId() {

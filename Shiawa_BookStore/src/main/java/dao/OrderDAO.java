@@ -189,6 +189,35 @@ public class OrderDAO extends DBContext {
         return false;
     }
 
+    public void restoreProductQuantity(int orderId) {
+    String sqlDetail = "SELECT book_id, quantity FROM OrderDetail WHERE order_id = ?";
+    String sqlUpdate = "UPDATE Book SET stock = stock + ? WHERE book_id = ?";
+
+    try (Connection conn = getConnection();
+         PreparedStatement psDetail = conn.prepareStatement(sqlDetail);
+         PreparedStatement psUpdate = conn.prepareStatement(sqlUpdate)) {
+
+        conn.setAutoCommit(false); 
+
+        psDetail.setInt(1, orderId);
+        ResultSet rs = psDetail.executeQuery();
+
+        while (rs.next()) {
+            int bookId = rs.getInt("book_id");
+            int stock = rs.getInt("quantity");
+
+            psUpdate.setInt(1, stock);
+            psUpdate.setInt(2, bookId);
+            psUpdate.executeUpdate();
+        }
+
+        conn.commit();
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+    
     public boolean updateStatusCustomer(int orderId, String status) {
         String sql = "UPDATE Orders SET status = ? WHERE order_id = ?";
         try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
@@ -435,7 +464,7 @@ public class OrderDAO extends DBContext {
             o.shipping_address,
             o.shipping_fee,
             o.discount,
-        o.payment_method,   -- 🔥 THÊM
+        o.payment_method,   
             SUM(od.quantity * od.price) 
                 + ISNULL(o.shipping_fee,0)
                 - ISNULL(o.discount,0) AS total_amount
@@ -451,7 +480,7 @@ public class OrderDAO extends DBContext {
             o.shipping_address,
             o.shipping_fee,
             o.discount,
-          o.payment_method   -- 🔥 THÊM
+          o.payment_method   
         ORDER BY o.order_date DESC
     """;
 
@@ -623,7 +652,7 @@ public class OrderDAO extends DBContext {
                 o.setShippingAddress(rs.getString("shipping_address"));
                 o.setShippingFee(rs.getDouble("shipping_fee"));
                 o.setCustomerName(rs.getString("full_name"));
-                o.setPhone(rs.getString("phone")); // ✅ thêm dòng này
+                o.setPhone(rs.getString("phone")); 
                 o.setReceiverName(rs.getString("receiver_name"));
                 o.setPaymentMethod(rs.getString("payment_method"));
                 String itemSql = """

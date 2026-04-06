@@ -8,7 +8,7 @@ public class StockInRequest {
     private int requestId;
     private String requestCode;
     private String note;
-    private String status; // PENDING | APPROVED | REJECTED
+    private String status; 
     private Integer requestedByStaffId;
     private Integer approvedByStaffId;
     private String requestedByStaffName;

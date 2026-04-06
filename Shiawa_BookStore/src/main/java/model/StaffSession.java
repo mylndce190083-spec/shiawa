@@ -3,7 +3,7 @@ package model;
 public class StaffSession {
     private int staffId;
     private String username;
-    private String role; // e.g. Admin, Staff
+    private String role; 
 
     public StaffSession() {}
 

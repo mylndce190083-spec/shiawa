@@ -5,9 +5,8 @@ public class StockTxnItem {
     private int txnId;
     private int bookId;
     private int qty;
-    private Double unitCost; // nullable
+    private Double unitCost; 
 
-    // display helpers (optional)
     private String bookTitle;
 
     public StockTxnItem() {

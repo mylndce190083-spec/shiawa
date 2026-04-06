@@ -38,7 +38,6 @@ public class VnpayReturnController extends HttpServlet {
             List<CartItem> items = (List<CartItem>) session.getAttribute("pendingItems");
 
             if (items == null || items.isEmpty()) {
-                System.out.println("❌ pendingItems NULL");
 
                 CartItemDAO cartDAO = new CartItemDAO();
                 items = cartDAO.getCartByCustomerId(user.getId());

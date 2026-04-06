@@ -79,7 +79,7 @@ public class AccountController extends HttpServlet {
             return;
         }
 
-        String role = request.getParameter("role");;
+        String role = request.getParameter("role");
         if (role != null && role.trim().isEmpty()) {
             role = null;
         }
@@ -125,7 +125,7 @@ public class AccountController extends HttpServlet {
             AccountDAO dao = new AccountDAO();
 
             if (dao.usernameExists(username)) {
-                request.setAttribute("error", "Username already exists! hhhhhhhhhhhhhhhhhhhh");
+                request.setAttribute("error", "Username already exists!");
                 request.getRequestDispatcher("/WEB-INF/account/add.jsp")
                         .forward(request, response);
                 return;

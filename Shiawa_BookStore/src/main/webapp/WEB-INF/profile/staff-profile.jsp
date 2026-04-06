@@ -230,5 +230,5 @@
         const container = document.getElementById("toast-container");
         if (container)
             container.remove();
-    }, 4000);
+    }, 10000);
 </script>

@@ -6,12 +6,12 @@ import java.util.List;
 
 public class StockTxn {
     private int txnId;
-    private String txnType; // IN | OUT | ADJUST
+    private String txnType;
     private String txnCode;
     private LocalDateTime txnDate;
-    private Integer supplierId; // nullable
+    private Integer supplierId;
     private String note;
-    private Integer createdByStaffId; // nullable
+    private Integer createdByStaffId;
 
     private List<StockTxnItem> items = new ArrayList<>();
 

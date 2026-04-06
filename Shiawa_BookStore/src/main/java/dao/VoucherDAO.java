@@ -224,7 +224,7 @@ public class VoucherDAO extends DBContext {
             ps.setInt(1, voucherId);
 
             int rows = ps.executeUpdate();
-            return rows > 0; // false nếu hết voucher
+            return rows > 0; 
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -274,7 +274,7 @@ public class VoucherDAO extends DBContext {
             try {
                 if (conn != null) {
                     conn.setAutoCommit(true);
-                    conn.close(); // ❗ nhớ đóng connection
+                    conn.close(); 
                 }
             } catch (Exception e) {
                 e.printStackTrace();

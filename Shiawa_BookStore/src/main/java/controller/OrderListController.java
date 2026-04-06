@@ -85,7 +85,7 @@ public class OrderListController extends HttpServlet {
 
         request.setAttribute(
                 "orders", orders);
-        request.setAttribute("currentStatus", status);   // ⭐ THÊM DÒNG NÀY
+        request.setAttribute("currentStatus", status);   
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPage", totalPage);
         request.getRequestDispatcher(

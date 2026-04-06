@@ -4,7 +4,8 @@
     Created on : Feb 28, 2026, 10:55:57 PM
     Author     : admin
 --%>
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
@@ -167,7 +168,13 @@
                     <img src="${pageContext.request.contextPath}/image?file=${book.urlImg}" alt="${book.title}">
                     <div class="book-detail-text">
                         <h6>${book.title}</h6>
-                        <div class="fw-bold text-success mt-1">${book.price} đ</div>
+                          <span class="fw-bold text-success mt-1">
+                                    <fmt:formatNumber 
+                                        value="${book.price}" 
+                                        type="number"
+                                        groupingUsed="true"
+                                        maxFractionDigits="0"/> VND</span>
+                      
                     </div>
                 </div>
 

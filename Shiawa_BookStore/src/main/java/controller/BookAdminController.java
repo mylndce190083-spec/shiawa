@@ -177,7 +177,7 @@ public class BookAdminController extends HttpServlet {
 
                 if (discount < 0 || discount > 100) {
 
-                    session.setAttribute("msg", "vui lòng nhập từ 0 đến 100");
+                    session.setAttribute("msg", "Enter between 0-100");
                     session.setAttribute("msgType", "danger");
                     response.sendRedirect(request.getContextPath() + "/book-admin");
                     return;
@@ -255,8 +255,7 @@ public class BookAdminController extends HttpServlet {
                 if (primaryImageId != null && !primaryImageId.isEmpty()) {
                     bookImageDAO.clearPrimaryByBookId(bookId);
                     bookImageDAO.setPrimaryId(Integer.parseInt(primaryImageId));
-                } 
-                else {
+                } else {
                     List<BookImage> currentImages = bookImageDAO.getByBookId(bookId);
 
                     if (currentImages.size() == 1) {
@@ -285,7 +284,6 @@ public class BookAdminController extends HttpServlet {
                 session.setAttribute("msg",
                         "Book is currently used in orders. Status changed to inactive.");
                 session.setAttribute("msgType", "warning");
-                //}
             } catch (Exception e) {
                 session.setAttribute("msg", "Delete book failed");
                 session.setAttribute("msgType", "danger");

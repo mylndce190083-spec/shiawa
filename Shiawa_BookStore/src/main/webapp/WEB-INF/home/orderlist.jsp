@@ -353,9 +353,7 @@
                                     </a>
                                 </c:if>
 
-                                <%-- TRƯỜNG HỢP 2: ĐÃ ĐÁNH GIÁ (Nút xám, KHÔNG bấm được) --%>
-                                <c:if test="${item.isRated == 'rated'}">     
-                                    <%-- Đổi từ thẻ <a> sang <span> để mất link và thêm pointer-events: none --%>
+                                <c:if test="${item.isRated == 'rated'}"> 
                                     <a href="#"  style="background: #888; color: white; padding: 6px 15px;
                                        border-radius: 8px; display: inline-block; font-size: 13px;
                                        font-weight: 600; cursor: not-allowed; pointer-events: none;">

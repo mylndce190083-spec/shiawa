@@ -255,8 +255,6 @@
                 })
                         .then(response => response.json())
                         .then(data => {
-
-                            // xóa dòng khỏi giao diện
                             document.getElementById("row-" + bookId).remove();
 
                             updateCartBadge(data.totalCartItems);
